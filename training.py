@@ -123,7 +123,7 @@ def main():
     print(f'Number of epochs: {NUM_EPOCHS}.')
     print(f'Learning rate: {LEARNING_RATE}.')
 
-    model = UNET(in_channels=32, out_channels=32,
+    model = UNET(in_channels=3, out_channels=3,
                  features=[4, 8, 16, 32]).to(DEVICE)
     # Instantiates the UNET neural network.
 
