@@ -140,5 +140,5 @@ def save_predictions_as_imgs(loader, model, folder="saved_images/", device="cuda
     model.train()
 
 
-train_loader, val_loader, test_loader = get_loaders(
+# train_loader, val_loader, test_loader = get_loaders(
     32, 1, True, 31)
