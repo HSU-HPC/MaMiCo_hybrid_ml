@@ -28,12 +28,11 @@ def load_checkpoint(checkpoint, model):
     model.load_state_dict(checkpoint["state_dict"])
 
 
-def get_loaders(batch_size, num_workers, pin_memory, couette_dim):
+def get_loaders(batch_size, num_workers, pin_memory, timesteps, couette_dim, sigma=0):
     # Consider that the couette solver now requires a desired_timesteps
     # parameter for improved reusabilty
-    sigma = 0.3
     my_couette_data = my3DCouetteSolver(
-        desired_timesteps=10000, vertical_resolution=couette_dim, sigma=sigma)
+        desired_timesteps=timesteps, vertical_resolution=couette_dim, sigma=sigma)
     print(f'Noise level: {sigma}.')
     # print(f'Shape of initial 3DCouetteData: {my_couette_data.shape}')
     my_images = my_couette_data[:-1]

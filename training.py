@@ -10,6 +10,10 @@ from utils import get_loaders  # , MSLELoss, check_accuracy, save3DArray2File
 plt.style.use(['science'])
 
 # Hyperparameters etc.
+FEATURES = [4, 8]
+TIMESTEPS = 1000
+COUETTE_DIM = 31
+SIGMA = 0.3
 LEARNING_RATE = 1e-3
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 BATCH_SIZE = 32
@@ -118,27 +122,25 @@ def val_fn(loader, model, loss_fn):
 
 def main():
 
-    features = [4, 8, 16, 32]
-    couette_train_dim = 31
-
+    print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
     print(f'Currently using device (cuda/CPU): {DEVICE}.')
     print('Current Trial Parameters and Model Hyperparameters:')
-    print(
-        f'Spatial Resolution: {couette_train_dim} x {couette_train_dim} x {couette_train_dim}')
+    print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
+    print(f'Couette timesteps: {TIMESTEPS}')
+    print(f'Spatial Resolution: {COUETTE_DIM} x {COUETTE_DIM} x {COUETTE_DIM}')
+    print(f'Noise level: {SIGMA*100}% of U_wall')
+    print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
     print('Loss function: nn.L1Loss')
     print('Activation function: ReLU')
-    print(f'Model depth as dictated by len(features): {len(features)}')
+    print(f'Model depth as dictated by len(features): {len(FEATURES)}')
     print(f'Learning rate: {LEARNING_RATE}.')
     print(f'Batch size: {BATCH_SIZE}')
     print(f'Number of epochs: {NUM_EPOCHS}.')
-    print('@@@@@')
-    print('@@@@@')
-    print('@@@@@')
-    print('@@@@@')
-    print('@@@@@')
+    print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
+    print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
+    print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
 
-    model = UNET(in_channels=3, out_channels=3,
-                 features=features).to(DEVICE)
+    model = UNET(in_channels=3, out_channels=3, features=FEATURES).to(DEVICE)
     # Instantiates the UNET neural network.
 
     loss_fn = nn.L1Loss()
@@ -150,7 +152,7 @@ def main():
     optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE)
 
     train_loader, val_loader, test_loader = get_loaders(
-        BATCH_SIZE, NUM_WORKERS, PIN_MEMORY, couette_train_dim)
+        BATCH_SIZE, NUM_WORKERS, PIN_MEMORY, TIMESTEPS, COUETTE_DIM, SIGMA)
 
     scaler = torch.cuda.amp.GradScaler()
     training_loss = 0.0
