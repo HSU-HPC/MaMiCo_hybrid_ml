@@ -10,7 +10,7 @@ from utils import get_loaders  # , MSLELoss, check_accuracy, save3DArray2File
 plt.style.use(['science'])
 
 # Hyperparameters etc.
-FEATURES = [4, 8]
+FEATURES = [4]
 TIMESTEPS = 1000
 COUETTE_DIM = 31
 SIGMA = 0.3
