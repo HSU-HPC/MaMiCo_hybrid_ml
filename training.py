@@ -13,7 +13,7 @@ plt.style.use(['science'])
 LEARNING_RATE = 1e-4
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 BATCH_SIZE = 32
-NUM_EPOCHS = 30             # 30
+NUM_EPOCHS = 100             # 30
 NUM_WORKERS = 4             # guideline: 4* num_GPU
 IMAGE_HEIGHT = 128          # 1280 originally
 IMAGE_WIDTH = 128           # 1918 originally
@@ -102,9 +102,9 @@ def val_fn(loader, model, loss_fn):
             # torch.save(predictions, 'predictions.txt')
             # torch.save(targets, 'targets.txt')
             predict_array = predictions.cpu().detach().numpy()
-            print(f'Predict_array datatype: {type(predict_array)}')
+            # print(f'Predict_array datatype: {type(predict_array)}')
             target_array = targets.cpu().detach().numpy()
-            print(f'Target_array datatype: {type(target_array)}')
+            # print(f'Target_array datatype: {type(target_array)}')
             # save3DArray2File(predict_array, 'predictions')
             # save3DArray2File(target_array, 'targets')
             # print(f'Prediction datatype: {type(predictions)}')
@@ -118,13 +118,19 @@ def val_fn(loader, model, loss_fn):
 
 def main():
 
+    features = [4, 8, 16]
+
     print(f'Currently using device (cuda/CPU): {DEVICE}.')
-    print('Current Hyperparameters:')
-    print(f'Number of epochs: {NUM_EPOCHS}.')
+    print('Current Trial Parameters and Model Hyperparameters:')
+    print('Loss function: nn.L1Loss')
+    print('Activation function: ReLU')
+    print(f'Model depth as dictated by len(features): {len(features)}')
     print(f'Learning rate: {LEARNING_RATE}.')
+    print(f'Batch size: {BATCH_SIZE}')
+    print(f'Number of epochs: {NUM_EPOCHS}.')
 
     model = UNET(in_channels=3, out_channels=3,
-                 features=[4, 8, 16]).to(DEVICE)
+                 features=features).to(DEVICE)
     # Instantiates the UNET neural network.
 
     loss_fn = nn.L1Loss()
@@ -152,13 +158,13 @@ def main():
     # np.savetxt("losses_file.csv", losses, delimiter=", ")
 
     # print('Currently using validation set:')
-    # val_loss = val_fn(val_loader, model, loss_fn)
+    val_loss = val_fn(val_loader, model, loss_fn)
 
     # print('Currently using test set:')
     # test_loss = val_fn(test_loader, model, loss_fn)
 
     print(f'The model currently yields a training loss of: {training_loss}.')
-    # print(f'The model currently yields a val loss of: {val_loss}.')
+    print(f'The model currently yields a val loss of: {val_loss}.')
     # print(f'The model currently yields a test loss of: {test_loss}.')
 
 

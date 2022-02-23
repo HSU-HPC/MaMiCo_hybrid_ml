@@ -35,7 +35,7 @@ def get_loaders(batch_size, num_workers, pin_memory, couette_dim):
     my_couette_data = my3DCouetteSolver(
         desired_timesteps=1000, vertical_resolution=couette_dim, sigma=sigma)
     print(f'Noise level: {sigma}.')
-    print(f'Shape of initial 3DCouetteData: {my_couette_data.shape}')
+    # print(f'Shape of initial 3DCouetteData: {my_couette_data.shape}')
     my_images = my_couette_data[:-1]
     my_masks = my_couette_data[1:]
     my_zip = list(zip(my_images, my_masks))
@@ -47,8 +47,8 @@ def get_loaders(batch_size, num_workers, pin_memory, couette_dim):
     number_train = int(0.8*total_images)
     number_val = int(0.9*total_images)
     my_train_images = my_shuffled_images[:number_train]
-    print(type(my_train_images))
-    print(my_train_images[0].shape)
+    # print(type(my_train_images))
+    # print(my_train_images[0].shape)
     my_train_masks = my_shuffled_masks[:number_train]
     my_val_images = my_shuffled_images[number_train:number_val]
     my_val_masks = my_shuffled_masks[number_train:number_val]
