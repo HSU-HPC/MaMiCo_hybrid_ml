@@ -13,7 +13,7 @@ plt.style.use(['science'])
 LEARNING_RATE = 1e-4
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 BATCH_SIZE = 32
-NUM_EPOCHS = 10             # 30
+NUM_EPOCHS = 100             # 30
 NUM_WORKERS = 4             # guideline: 4* num_GPU
 IMAGE_HEIGHT = 128          # 1280 originally
 IMAGE_WIDTH = 128           # 1918 originally
