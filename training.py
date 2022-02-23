@@ -10,7 +10,7 @@ from utils import get_loaders  # , MSLELoss, check_accuracy, save3DArray2File
 plt.style.use(['science'])
 
 # Hyperparameters etc.
-LEARNING_RATE = 2e-3
+LEARNING_RATE = 1e-4
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 BATCH_SIZE = 32
 NUM_EPOCHS = 30             # 30
@@ -124,7 +124,7 @@ def main():
     print(f'Learning rate: {LEARNING_RATE}.')
 
     model = UNET(in_channels=3, out_channels=3,
-                 features=[4, 8, 16, 32]).to(DEVICE)
+                 features=[4, 8, 16]).to(DEVICE)
     # Instantiates the UNET neural network.
 
     loss_fn = nn.L1Loss()
