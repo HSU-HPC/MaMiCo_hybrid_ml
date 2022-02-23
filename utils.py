@@ -33,7 +33,7 @@ def get_loaders(batch_size, num_workers, pin_memory, couette_dim):
     # parameter for improved reusabilty
     sigma = 0.3
     my_couette_data = my3DCouetteSolver(
-        desired_timesteps=1000, vertical_resolution=couette_dim, sigma=sigma)
+        desired_timesteps=10000, vertical_resolution=couette_dim, sigma=sigma)
     print(f'Noise level: {sigma}.')
     # print(f'Shape of initial 3DCouetteData: {my_couette_data.shape}')
     my_images = my_couette_data[:-1]
