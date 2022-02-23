@@ -123,13 +123,19 @@ def main():
 
     print(f'Currently using device (cuda/CPU): {DEVICE}.')
     print('Current Trial Parameters and Model Hyperparameters:')
-    print(f'Spatial Resolution: {couette_train_dim} x {couette_train_dim} x {couette_train_dim}')
+    print(
+        f'Spatial Resolution: {couette_train_dim} x {couette_train_dim} x {couette_train_dim}')
     print('Loss function: nn.L1Loss')
     print('Activation function: ReLU')
     print(f'Model depth as dictated by len(features): {len(features)}')
     print(f'Learning rate: {LEARNING_RATE}.')
     print(f'Batch size: {BATCH_SIZE}')
     print(f'Number of epochs: {NUM_EPOCHS}.')
+    print('@@@@@')
+    print('@@@@@')
+    print('@@@@@')
+    print('@@@@@')
+    print('@@@@@')
 
     model = UNET(in_channels=3, out_channels=3,
                  features=features).to(DEVICE)
