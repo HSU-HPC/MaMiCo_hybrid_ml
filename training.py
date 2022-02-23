@@ -119,9 +119,11 @@ def val_fn(loader, model, loss_fn):
 def main():
 
     features = [4, 8, 16, 32]
+    couette_train_dim = 31
 
     print(f'Currently using device (cuda/CPU): {DEVICE}.')
     print('Current Trial Parameters and Model Hyperparameters:')
+    print(f'Spatial Resolution: {couette_train_dim} x {couette_train_dim} x {couette_train_dim}')
     print('Loss function: nn.L1Loss')
     print('Activation function: ReLU')
     print(f'Model depth as dictated by len(features): {len(features)}')
@@ -140,7 +142,7 @@ def main():
     # Defines the loss function to be Mean Squared Logarithmic Error
 
     optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE)
-    couette_train_dim = 31
+
     train_loader, val_loader, test_loader = get_loaders(
         BATCH_SIZE, NUM_WORKERS, PIN_MEMORY, couette_train_dim)
 

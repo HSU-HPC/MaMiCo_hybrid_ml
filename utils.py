@@ -59,7 +59,7 @@ def get_loaders(batch_size, num_workers, pin_memory, couette_dim):
         my_train_images,
         my_train_masks,
     )
-    print(type(train_ds[7]))
+    # print(type(train_ds[7]))
     train_loader = DataLoader(
         dataset=train_ds,
         batch_size=batch_size,
