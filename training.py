@@ -5,7 +5,8 @@ import matplotlib.pyplot as plt
 import torch.nn as nn
 import torch.optim as optim
 from model import UNET
-from utils import get_loaders  # , MSLELoss, check_accuracy, save3DArray2File
+from utils import get_loaders   # MSLELoss, check_accuracy, save3DArray2File
+from drawing_board import save3D_RGBArray2File
 
 plt.style.use(['science'])
 
@@ -109,8 +110,8 @@ def val_fn(loader, model, loss_fn):
             # print(f'Predict_array datatype: {type(predict_array)}')
             target_array = targets.cpu().detach().numpy()
             # print(f'Target_array datatype: {type(target_array)}')
-            # save3DArray2File(predict_array, 'predictions')
-            # save3DArray2File(target_array, 'targets')
+            save3D_RGBArray2File(predict_array, 'predictions')
+            save3D_RGBArray2File(target_array, 'targets')
             # print(f'Prediction datatype: {type(predictions)}')
             # print(f'Prediction shape: {predictions.shape}')
             loss = loss_fn(predictions.float(), targets.float())
@@ -127,7 +128,8 @@ def main():
     print('Current Trial Parameters and Model Hyperparameters:')
     print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
     print(f'Couette timesteps: {TIMESTEPS}')
-    print(f'Spatial Resolution: {COUETTE_DIM} x {COUETTE_DIM} x {COUETTE_DIM}')
+    print(
+        f'Spatial Resolution: {COUETTE_DIM+1} x {COUETTE_DIM+1} x {COUETTE_DIM+1}')
     print(f'Noise level: {SIGMA*100}% of U_wall')
     print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
     print('Loss function: nn.L1Loss')

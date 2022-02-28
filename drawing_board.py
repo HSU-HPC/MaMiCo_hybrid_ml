@@ -1,5 +1,6 @@
 import numpy as np
 from couette_solver import my3DCouetteSolver
+from plotting import compareFlowProfile
 
 
 def randomRGBArray(t=0, ch=0, d=0, h=0, w=1):
@@ -57,14 +58,21 @@ def checkSaveLoad(input_array, loaded_array):
 
 
 def main():
-    my_RGB_couette = my3DCouetteSolver(20, sigma=0.3)
-    my_RGB_couette_shape = my_RGB_couette.shape
+    my_RGB_couette_noisy = my3DCouetteSolver(20, sigma=0.3)
+    my_RGB_couette_clean = my3DCouetteSolver(20, sigma=0.0)
+    print(my_RGB_couette_clean.shape)
+    print(my_RGB_couette_clean[0].shape)
 
-    save3D_RGBArray2File(my_RGB_couette, 'prediction')
+    my_RGB_couette_shape = my_RGB_couette_noisy.shape
 
-    loaded_array = load3D_RGBArrayFromFile('prediction_20_3_64_64_64.csv', my_RGB_couette_shape)
+    save3D_RGBArray2File(my_RGB_couette_noisy, 'prediction')
 
-    checkSaveLoad(my_RGB_couette, loaded_array)
+    loaded_noisy_array = load3D_RGBArrayFromFile(
+        'prediction_20_3_64_64_64.csv', my_RGB_couette_shape)
+
+    # checkSaveLoad(my_RGB_couette, loaded_array)
+
+    compareFlowProfile(loaded_noisy_array[4], my_RGB_couette_clean[4])
 
 
 if __name__ == "__main__":

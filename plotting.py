@@ -264,6 +264,55 @@ def compareFlowProfile(prediction_array, target_array, wall_height=20, u_wall=10
         # fig.tight_layout()
         plt.show()
 
+    if prediction_array.ndim == 4:
+        c, d, h, w = prediction_array.shape
+        v_step = wall_height / (w-1)
+        v_steps = np.arange(0, wall_height + v_step, v_step).tolist()
+
+        # , sharex=True, sharey=True)
+        fig, (ax1, ax2, ax3, ax4, ax5) = plt.subplots(
+            5, sharey=True, constrained_layout=True)  # sharex=True
+        # plt.ylabel('Velocity $u$')
+
+        ax1.set_title('Flow Profile $u_x$ in X-Direction', fontsize=10)
+        ax1.plot(v_steps, prediction_array[int(0), int(
+            h/2), int(h/2), :], label='prediction')
+        ax1.plot(v_steps, target_array[0, int(
+            h/2), int(h/2), :], label='target')
+
+        ax2.set_title('Flow Profile $u_x$ in Y-Direction', fontsize=10)
+        ax2.set_ylabel('Velocity $u$')
+        ax2.plot(v_steps, prediction_array[0, int(
+            h/2), :, int(h/2)], label='prediction')
+        ax2.plot(v_steps, target_array[0, int(
+            h/2), :, int(h/2)], label='target')
+
+        ax3.set_title('Flow Profile $u_x$ in Z-Direction', fontsize=10)
+        ax3.plot(v_steps, prediction_array[0, :, int(
+            h/2), int(h/2)], label='prediction')
+        ax3.plot(v_steps, target_array[0, :, int(
+            h/2), int(h/2)], label='target')
+
+        ax4.set_title('Flow Profile $u_y$ in X-Direction', fontsize=10)
+        ax4.plot(v_steps, prediction_array[1, :, int(
+            h/2), int(h/2)], label='prediction')
+        ax4.plot(v_steps, target_array[1, :, int(
+            h/2), int(h/2)], label='target')
+
+        ax5.set_title('Flow Profile $u_z$ in X-Direction', fontsize=10)
+        ax5.plot(v_steps, prediction_array[2, :, int(
+            h/2), int(h/2)], label='prediction')
+        ax5.plot(v_steps, target_array[2, :, int(
+            h/2), int(h/2)], label='target')
+
+        # fig.legend(loc='lower center', ncol=4)
+        # fig.tight_layout()
+        plt.yticks(range(int(-u_wall), int(u_wall*(2)+1), 10))
+        plt.xlabel('Spatial Dimension')
+        plt.legend(loc="best", ncol=2, fontsize=7)
+        # fig.tight_layout()
+        plt.show()
+
 
 def plotVelocityField(input_array, wall_height=20):
     if input_array.ndim == 2:
