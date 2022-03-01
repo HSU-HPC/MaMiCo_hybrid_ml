@@ -143,7 +143,6 @@ def main():
     print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
 
     model = UNET(in_channels=3, out_channels=3, features=FEATURES).to(DEVICE)
-    # Instantiates the UNET neural network.
 
     loss_fn = nn.L1Loss()
     # Defines the loss function to be MAE (=Mean Average Error).
