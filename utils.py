@@ -31,14 +31,25 @@ def load_checkpoint(checkpoint, model):
 def get_loaders(batch_size, num_workers, pin_memory, timesteps, couette_dim, sigma=0):
     # Consider that the couette solver now requires a desired_timesteps
     # parameter for improved reusabilty
-    my_couette_data = my3DCouetteSolver(
+    my_couette_data_1 = my3DCouetteSolver(
         desired_timesteps=timesteps, vertical_resolution=couette_dim, sigma=sigma)
+    my_couette_data_2 = my3DCouetteSolver(
+        desired_timesteps=timesteps, vertical_resolution=couette_dim, sigma=sigma)
+    my_couette_data_3 = my3DCouetteSolver(
+        desired_timesteps=timesteps, vertical_resolution=couette_dim, sigma=sigma)
+    my_couette_data_4 = my3DCouetteSolver(
+        desired_timesteps=timesteps, vertical_resolution=couette_dim, sigma=sigma)
+    my_couette_data_5 = my3DCouetteSolver(
+        desired_timesteps=timesteps, vertical_resolution=couette_dim, sigma=sigma)
+
     my_couette_data_valid = my3DCouetteSolver(
         desired_timesteps=timesteps, vertical_resolution=couette_dim, sigma=sigma)
     print(f'Noise level: {sigma}.')
     # print(f'Shape of initial 3DCouetteData: {my_couette_data.shape}')
-    my_images = my_couette_data[:-1]
-    my_masks = my_couette_data[1:]
+    my_images = np.concatenate((my_couette_data_1[:-1], my_couette_data_2[:-1],
+                               my_couette_data_3[:-1], my_couette_data_4[:-1], my_couette_data_5[:-1]), axis=0)
+    my_masks = np.concatenate((my_couette_data_1[1:], my_couette_data_2[1:],
+                              my_couette_data_3[1:], my_couette_data_4[1:], my_couette_data_5[1:]), axis=0)
 
     my_images_valid = my_couette_data_valid[:-1]
     my_masks_valid = my_couette_data_valid[1:]

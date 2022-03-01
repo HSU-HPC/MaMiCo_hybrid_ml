@@ -15,12 +15,14 @@ FEATURES = [4, 8, 16]
 TIMESTEPS = 1000
 COUETTE_DIM = 31
 SIGMA = 0.3
-LEARNING_RATE = 1e-3
-# LOSSFN = nn.L1Loss()
-LOSSFN = nn.MSELoss()
+LEARNING_RATE = 2e-3
+LOSSFN = nn.L1Loss()
+LOSS_FN = 'nn.L1Loss()'
+# LOSSFN = nn.MSELoss()
+# LOSS_FN = 'nn.MSELoss()'
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 BATCH_SIZE = 32
-NUM_EPOCHS = 100             # 30
+NUM_EPOCHS = 40             # 30
 NUM_WORKERS = 4             # guideline: 4* num_GPU
 IMAGE_HEIGHT = 128          # 1280 originally
 IMAGE_WIDTH = 128           # 1918 originally
@@ -138,7 +140,7 @@ def main():
         f'Spatial Resolution: {COUETTE_DIM+1} x {COUETTE_DIM+1} x {COUETTE_DIM+1}')
     print(f'Noise level: {SIGMA*100}% of U_wall')
     print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
-    print('Loss function: nn.L1Loss')
+    print(f'Loss function: {LOSS_FN}')
     print('Activation function: ReLU')
     print(f'Model depth as dictated by len(features): {len(FEATURES)}')
     print(f'Learning rate: {LEARNING_RATE}.')
