@@ -110,8 +110,8 @@ def val_fn(loader, model, loss_fn):
             # print(f'Predict_array datatype: {type(predict_array)}')
             target_array = targets.cpu().detach().numpy()
             # print(f'Target_array datatype: {type(target_array)}')
-            save3D_RGBArray2File(predict_array, 'predictions_MAE_')
-            save3D_RGBArray2File(target_array, 'targets_MAE_')
+            save3D_RGBArray2File(predict_array, 'predictions_MSE')
+            save3D_RGBArray2File(target_array, 'targets_MSE')
             # print(f'Prediction datatype: {type(predictions)}')
             # print(f'Prediction shape: {predictions.shape}')
             loss = loss_fn(predictions.float(), targets.float())
@@ -144,7 +144,7 @@ def main():
 
     model = UNET(in_channels=3, out_channels=3, features=FEATURES).to(DEVICE)
 
-    loss_fn = nn.L1Loss()
+    loss_fn = nn.MSELoss()
     # Defines the loss function to be MAE (=Mean Average Error).
 
     # loss_fn = MSLELoss()
