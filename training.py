@@ -15,7 +15,7 @@ FEATURES = [4, 8, 16]
 TIMESTEPS = 1000
 COUETTE_DIM = 31
 SIGMA = 0.3
-LEARNING_RATE = 1e-4
+LEARNING_RATE = 1e-3
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 BATCH_SIZE = 32
 NUM_EPOCHS = 100            # 30
@@ -144,7 +144,7 @@ def main():
 
     model = UNET(in_channels=3, out_channels=3, features=FEATURES).to(DEVICE)
 
-    loss_fn = nn.L1Loss()
+    ‚loss_fn = nn.L1Loss()
     # Defines the loss function to be MAE (=Mean Average Error).
 
     # loss_fn = MSLELoss()
