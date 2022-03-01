@@ -55,8 +55,8 @@ def get_loaders(batch_size, num_workers, pin_memory, timesteps, couette_dim, sig
     my_train_images = my_shuffled_images[0: number_train]
     my_train_masks = my_shuffled_masks[0: number_train]
 
-    my_val_images = my_images_valid[: 96]
-    my_val_masks = my_masks_valid[: 96]
+    my_val_images = my_images_valid[: 101]
+    my_val_masks = my_masks_valid[: 101]
 
     my_test_images = my_shuffled_images[number_val: -1]
     my_test_masks = my_shuffled_masks[number_val: -1]
