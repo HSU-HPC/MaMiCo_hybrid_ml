@@ -11,14 +11,16 @@ from drawing_board import save3D_RGBArray2File
 plt.style.use(['science'])
 
 # Hyperparameters etc.
-FEATURES = [4, 8, 16]
+FEATURES = [4, 8, 16, 32]
 TIMESTEPS = 1000
 COUETTE_DIM = 31
 SIGMA = 0.3
 LEARNING_RATE = 1e-3
+LOSSFN = nn.L1Loss()
+# LOSSFN = nn.MSELoss()
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 BATCH_SIZE = 32
-NUM_EPOCHS = 100            # 30
+NUM_EPOCHS = 40            # 30
 NUM_WORKERS = 4             # guideline: 4* num_GPU
 IMAGE_HEIGHT = 128          # 1280 originally
 IMAGE_WIDTH = 128           # 1918 originally
@@ -144,7 +146,7 @@ def main():
 
     model = UNET(in_channels=3, out_channels=3, features=FEATURES).to(DEVICE)
 
-    loss_fn = nn.MSELoss()
+    loss_fn = LOSSFN
     # Defines the loss function to be MAE (=Mean Average Error).
 
     # loss_fn = MSLELoss()
