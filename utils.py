@@ -39,8 +39,10 @@ def get_loaders(batch_size, num_workers, pin_memory, timesteps, couette_dim, sig
     # print(f'Shape of initial 3DCouetteData: {my_couette_data.shape}')
     my_images = my_couette_data[:-1]
     my_masks = my_couette_data[1:]
+
     my_images_valid = my_couette_data_valid[:-1]
     my_masks_valid = my_couette_data_valid[1:]
+
     my_zip = list(zip(my_images, my_masks))
     random.shuffle(my_zip)
     my_shuffled_images, my_shuffled_masks = zip(*my_zip)
@@ -53,8 +55,8 @@ def get_loaders(batch_size, num_workers, pin_memory, timesteps, couette_dim, sig
     my_train_images = my_shuffled_images[0: number_train]
     my_train_masks = my_shuffled_masks[0: number_train]
 
-    my_val_images = my_images_valid[: 32]
-    my_val_masks = my_masks_valid[: 32]
+    my_val_images = my_images_valid[: 96]
+    my_val_masks = my_masks_valid[: 96]
 
     my_test_images = my_shuffled_images[number_val: -1]
     my_test_masks = my_shuffled_masks[number_val: -1]
