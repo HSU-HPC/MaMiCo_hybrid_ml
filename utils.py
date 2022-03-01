@@ -37,21 +37,30 @@ def get_loaders(batch_size, num_workers, pin_memory, timesteps, couette_dim, sig
     # print(f'Shape of initial 3DCouetteData: {my_couette_data.shape}')
     my_images = my_couette_data[:-1]
     my_masks = my_couette_data[1:]
-    # my_zip = list(zip(my_images, my_masks))
-    # random.shuffle(my_zip)
-    # my_shuffled_images, my_shuffled_masks = zip(*my_zip)
+    my_zip = list(zip(my_images, my_masks))
+    random.shuffle(my_zip)
+    my_shuffled_images, my_shuffled_masks = zip(*my_zip)
     total_images = len(my_images)
     # Implement a 90/10/10:train/dev/test split:
-    # Consider that the couette solver yields 1100 - 1 timesteps
-    number_train = int(0.2*total_images)
-    number_val = int(0.1*total_images)
+    # Consider that the couette solver yields 1000 - 1 timesteps
+    number_train = int(0.8*total_images)
+    number_val = int(0.9*total_images)
+
+    my_train_images = my_shuffled_images[0: number_train]
+    my_train_masks = my_shuffled_masks[0: number_train]
+    my_val_images = my_shuffled_images[number_train: number_val]
+    my_val_masks = my_shuffled_masks[number_train: number_val]
+    my_test_images = my_shuffled_images[number_val: -1]
+    my_test_masks = my_shuffled_masks[number_val: -1]
+
+    '''
     my_train_images = my_images[number_train:]
     my_train_masks = my_masks[number_train:]
     my_val_images = my_images[number_val:number_train]
     my_val_masks = my_masks[number_val: number_train]
     my_test_images = my_images[:number_val]
     my_test_masks = my_masks[:number_val]
-
+    '''
     train_ds = MyFlowDataset(
         my_train_images,
         my_train_masks,
