@@ -13,7 +13,7 @@ plt.style.use(['science'])
 # Hyperparameters etc.
 FEATURES = [4, 8, 16]
 TIMESTEPS = 1000
-COUETTE_DIM = 63
+COUETTE_DIM = 31
 SIGMA = 0.3
 LEARNING_RATE = 1e-3
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
