@@ -58,21 +58,22 @@ def checkSaveLoad(input_array, loaded_array):
 
 
 def main():
+    '''
     my_RGB_couette_noisy = my3DCouetteSolver(20, sigma=0.3)
     my_RGB_couette_clean = my3DCouetteSolver(20, sigma=0.0)
     print(my_RGB_couette_clean.shape)
     print(my_RGB_couette_clean[0].shape)
-
     my_RGB_couette_shape = my_RGB_couette_noisy.shape
-
     save3D_RGBArray2File(my_RGB_couette_noisy, 'prediction')
+    '''
 
-    loaded_noisy_array = load3D_RGBArrayFromFile(
-        'prediction_20_3_64_64_64.csv', my_RGB_couette_shape)
+    loaded_predictions = load3D_RGBArrayFromFile(
+        'predictions_4_3_32_32_32.csv', (4, 3, 32, 32, 32))
 
-    # checkSaveLoad(my_RGB_couette, loaded_array)
+    loaded_targets = load3D_RGBArrayFromFile(
+        'targets_4_3_32_32_32.csv', (4, 3, 32, 32, 32))
 
-    compareFlowProfile(loaded_noisy_array[4], my_RGB_couette_clean[4])
+    compareFlowProfile(loaded_predictions[2], loaded_targets[2])
 
 
 if __name__ == "__main__":

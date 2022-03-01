@@ -11,14 +11,14 @@ from drawing_board import save3D_RGBArray2File
 plt.style.use(['science'])
 
 # Hyperparameters etc.
-FEATURES = [4]
+FEATURES = [4, 8, 16]
 TIMESTEPS = 1000
 COUETTE_DIM = 31
 SIGMA = 0.3
-LEARNING_RATE = 1e-3
+LEARNING_RATE = 1e-4
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 BATCH_SIZE = 32
-NUM_EPOCHS = 50             # 30
+NUM_EPOCHS = 100            # 30
 NUM_WORKERS = 4             # guideline: 4* num_GPU
 IMAGE_HEIGHT = 128          # 1280 originally
 IMAGE_WIDTH = 128           # 1918 originally
@@ -110,8 +110,8 @@ def val_fn(loader, model, loss_fn):
             # print(f'Predict_array datatype: {type(predict_array)}')
             target_array = targets.cpu().detach().numpy()
             # print(f'Target_array datatype: {type(target_array)}')
-            save3D_RGBArray2File(predict_array, 'predictions')
-            save3D_RGBArray2File(target_array, 'targets')
+            save3D_RGBArray2File(predict_array, 'predictions_MAE_')
+            save3D_RGBArray2File(target_array, 'targets_MAE_')
             # print(f'Prediction datatype: {type(predictions)}')
             # print(f'Prediction shape: {predictions.shape}')
             loss = loss_fn(predictions.float(), targets.float())
