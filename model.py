@@ -33,13 +33,13 @@ class DoubleConv(nn.Module):
             # 1: stride
             # 1: padding -> same padding
             nn.BatchNorm3d(out_channels),
-            # nn.ReLU(inplace=True),
-            nn.Tanh(),
+            nn.ReLU(inplace=True),
+            # nn.Tanh(),
             nn.Conv3d(out_channels, out_channels, kernel_size=3, stride=1,
                       padding=1, bias=False),
             nn.BatchNorm3d(out_channels),
-            # nn.ReLU(inplace=True),
-            nn.Tanh(),
+            nn.ReLU(inplace=True),
+            # nn.Tanh(),
         )
 
     def forward(self, x):

@@ -11,15 +11,15 @@ from drawing_board import save3D_RGBArray2File
 plt.style.use(['science'])
 
 # Hyperparameters etc.
-FEATURES = [4, 8, 16]
+FEATURES = [4, 8]
 TIMESTEPS = 1000
 COUETTE_DIM = 31
 SIGMA = 0.3
-LEARNING_RATE = 1e-3
-# LOSSFN = nn.L1Loss()
-# LOSS_FN = 'nn.L1Loss()'
-LOSSFN = nn.MSELoss()
-LOSS_FN = 'nn.MSELoss()'
+LEARNING_RATE = 2e-3
+LOSSFN = nn.L1Loss()
+LOSS_FN = 'nn.L1Loss()'
+# LOSSFN = nn.MSELoss()
+# LOSS_FN = 'nn.MSELoss()'
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 BATCH_SIZE = 32
 NUM_EPOCHS = 40             # 30
