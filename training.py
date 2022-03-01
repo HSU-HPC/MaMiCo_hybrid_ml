@@ -144,7 +144,7 @@ def main():
 
     model = UNET(in_channels=3, out_channels=3, features=FEATURES).to(DEVICE)
 
-    ‚loss_fn = nn.L1Loss()
+    loss_fn = nn.L1Loss()
     # Defines the loss function to be MAE (=Mean Average Error).
 
     # loss_fn = MSLELoss()
