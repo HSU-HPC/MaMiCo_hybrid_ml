@@ -224,11 +224,9 @@ if __name__ == '__main__':
     # plotFlowProfile(my_data)
     # plotVelocityField(my_data[8])
 
-    my_data_1 = my3DCouetteSolver(
-        desired_timesteps=t, vertical_resolution=v_res, sigma=0.0)
-    my_data_2 = my3DCouetteSolver(
-        desired_timesteps=t, vertical_resolution=v_res, sigma=0.0)
+    # my_data_1 = my3DCouetteSolver(desired_timesteps=t, vertical_resolution=v_res, sigma=0.0)
+    # my_data_2 = my3DCouetteSolver(desired_timesteps=t, vertical_resolution=v_res, sigma=0.0)
     # print(f'shape of 3d array = {my_data.shape}')
     # print(f'shape of timestep [31] = {my_data[31]}')
     # plotFlowProfile(my_data)
-    print(my_data_1[66]-my_data_2[66])
+    # print(my_data_1[66]-my_data_2[66])
