@@ -16,10 +16,10 @@ TIMESTEPS = 1000
 COUETTE_DIM = 31
 SIGMA = 0.3
 LEARNING_RATE = 1e-3
-LOSSFN = nn.L1Loss()
-LOSS_FN = 'MAE'
-# LOSSFN = nn.MSELoss()
-# LOSS_FN = 'MSE'
+# LOSSFN = nn.L1Loss()
+# LOSS_FN = 'MAE'
+LOSSFN = nn.MSELoss()
+LOSS_FN = 'MSE'
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 BATCH_SIZE = 32
 NUM_EPOCHS = 40             # 30
@@ -114,8 +114,8 @@ def val_fn(loader, model, loss_fn):
             # print(f'Predict_array datatype: {type(predict_array)}')
             target_array = targets.cpu().detach().numpy()
             # print(f'Target_array datatype: {type(target_array)}')
-            save3D_RGBArray2File(predict_array, f'predictions_{LOSS_FN}_')
-            save3D_RGBArray2File(target_array, f'targets_{LOSS_FN}_')
+            save3D_RGBArray2File(predict_array, f'predictions_{LOSS_FN}')
+            save3D_RGBArray2File(target_array, f'targets_{LOSS_FN}')
             # print(f'Prediction datatype: {type(predictions)}')
             # print(f'Prediction shape: {predictions.shape}')
             loss = loss_fn(predictions.float(), targets.float())
