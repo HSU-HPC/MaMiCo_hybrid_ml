@@ -195,7 +195,7 @@ def my3DCouetteSolver(desired_timesteps, u_wall=10, wall_height=20, nu=2, vertic
     my_3d_array = list2array(my_3d_RGB_list)
 
     if sigma != 0.0:
-        my_3d_array = applyNoise(my_3d_array, my_seed, sigma)
+        my_3d_array = applyNoise(my_3d_array, sigma, my_seed)
 
     # Sanity check: Plot the flow data
     # plotFlowProfile(my_2d_array, wall_height, vertical_resolution)
