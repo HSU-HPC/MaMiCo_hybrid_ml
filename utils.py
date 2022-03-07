@@ -44,9 +44,9 @@ def get_loaders(batch_size, num_workers, pin_memory, timesteps, couette_dim, sig
         desired_timesteps=timesteps, vertical_resolution=couette_dim, sigma=sigma)
     '''
     my_couette_data = my3DCouetteSolver(
-        desired_timesteps=timesteps, vertical_resolution=couette_dim, sigma=sigma)
+        desired_timesteps=timesteps, vertical_resolution=couette_dim, sigma=sigma, my_seed=1)
     my_couette_data_valid = my3DCouetteSolver(
-        desired_timesteps=timesteps, vertical_resolution=couette_dim, sigma=sigma)
+        desired_timesteps=timesteps, vertical_resolution=couette_dim, sigma=sigma, my_seed=2)
 
     # print(f'Shape of initial 3DCouetteData: {my_couette_data.shape}')
     '''
