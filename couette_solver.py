@@ -7,7 +7,8 @@ plt.style.use(['science'])
 np.set_printoptions(precision=2)
 
 
-def applyNoise(input_array, sigma, u_wall=10):
+def applyNoise(input_array, sigma, my_seed=1, u_wall=10):
+    np.random.seed(my_seed)
     output_array = np.random.normal(input_array, u_wall*sigma)
     return output_array
 
@@ -180,7 +181,7 @@ def my2DCouetteSolver(desired_timesteps, u_wall=10, wall_height=20, nu=2, vertic
     return my_2d_array
 
 
-def my3DCouetteSolver(desired_timesteps, u_wall=10, wall_height=20, nu=2, vertical_resolution=63, sigma=0):
+def my3DCouetteSolver(desired_timesteps, u_wall=10, wall_height=20, nu=2, vertical_resolution=63, sigma=0, my_seed=1):
 
     my_1d_list = couetteSolver(
         desired_timesteps, u_wall, wall_height, nu, vertical_resolution)
@@ -194,7 +195,7 @@ def my3DCouetteSolver(desired_timesteps, u_wall=10, wall_height=20, nu=2, vertic
     my_3d_array = list2array(my_3d_RGB_list)
 
     if sigma != 0.0:
-        my_3d_array = applyNoise(my_3d_array, sigma)
+        my_3d_array = applyNoise(my_3d_array, my_seed, sigma)
 
     # Sanity check: Plot the flow data
     # plotFlowProfile(my_2d_array, wall_height, vertical_resolution)
@@ -205,7 +206,7 @@ def my3DCouetteSolver(desired_timesteps, u_wall=10, wall_height=20, nu=2, vertic
 if __name__ == '__main__':
     np.set_printoptions(precision=2)
     t = 100
-    v_res = 4
+    v_res = 10
 
     # my_data = couetteSolver(desired_timesteps=t, vertical_resolution=v_res, sigma=0)
     # print(f'len of couette solver list = {len(my_data)}')
@@ -223,7 +224,11 @@ if __name__ == '__main__':
     # plotFlowProfile(my_data)
     # plotVelocityField(my_data[8])
 
-    # my_data = my2DCouetteSolver(desired_timesteps=t, vertical_resolution=v_res, sigma=0.0)
+    my_data_1 = my3DCouetteSolver(
+        desired_timesteps=t, vertical_resolution=v_res, sigma=0.0)
+    my_data_2 = my3DCouetteSolver(
+        desired_timesteps=t, vertical_resolution=v_res, sigma=0.0)
     # print(f'shape of 3d array = {my_data.shape}')
     # print(f'shape of timestep [31] = {my_data[31]}')
     # plotFlowProfile(my_data)
+    print(my_data_1[66]-my_data_2[66])
