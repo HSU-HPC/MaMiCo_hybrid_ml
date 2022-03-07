@@ -11,18 +11,18 @@ from drawing_board import save3D_RGBArray2File
 plt.style.use(['science'])
 
 # Hyperparameters etc.
-FEATURES = [4]
+FEATURES = [4, 8, 16]
 TIMESTEPS = 1000
 COUETTE_DIM = 31
 SIGMA = 0.3
-LEARNING_RATE = 2e-3
-# LOSSFN = nn.L1Loss()
-# LOSS_FN = 'nn.L1Loss()'
-LOSSFN = nn.MSELoss()
-LOSS_FN = 'nn.MSELoss()'
+LEARNING_RATE = 1e-3
+LOSSFN = nn.L1Loss()
+LOSS_FN = 'MAE'
+# LOSSFN = nn.MSELoss()
+# LOSS_FN = 'MSE'
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 BATCH_SIZE = 32
-NUM_EPOCHS = 20             # 30
+NUM_EPOCHS = 40             # 30
 NUM_WORKERS = 4             # guideline: 4* num_GPU
 IMAGE_HEIGHT = 128          # 1280 originally
 IMAGE_WIDTH = 128           # 1918 originally
@@ -114,12 +114,8 @@ def val_fn(loader, model, loss_fn):
             # print(f'Predict_array datatype: {type(predict_array)}')
             target_array = targets.cpu().detach().numpy()
             # print(f'Target_array datatype: {type(target_array)}')
-            if loss_fn == nn.L1Loss:
-                save3D_RGBArray2File(predict_array, 'predictions_MAE')
-                save3D_RGBArray2File(target_array, 'targets_MAE')
-            else:
-                save3D_RGBArray2File(predict_array, 'predictions_MSE')
-                save3D_RGBArray2File(target_array, 'targets_MSE')
+            save3D_RGBArray2File(predict_array, f'predictions_{LOSS_FN}_')
+            save3D_RGBArray2File(target_array, f'targets_{LOSS_FN}_')
             # print(f'Prediction datatype: {type(predictions)}')
             # print(f'Prediction shape: {predictions.shape}')
             loss = loss_fn(predictions.float(), targets.float())
