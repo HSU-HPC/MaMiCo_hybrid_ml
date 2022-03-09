@@ -146,8 +146,9 @@ def test_fn(loader, model, loss_fn, i):
     return loss
 
 
-def main():
-
+def displayHyperparameters():
+    print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
+    print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
     print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
     print(f'Currently using device (cuda/CPU): {DEVICE}.')
     print('Current Trial Parameters and Model Hyperparameters:')
@@ -167,31 +168,43 @@ def main():
     print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
     print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
 
-    model = UNET(in_channels=3, out_channels=3, features=FEATURES).to(DEVICE)
-    loss_fn = LOSSFN
-    optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE)
 
-    # train_loader, val_loader, test_loader = get_loaders(BATCH_SIZE, NUM_WORKERS, PIN_MEMORY, TIMESTEPS, COUETTE_DIM, SIGMA)
-    train_loader, test_1_loader, test_2_loader, test_3_loader, test_4_loader = get_loaders_test(
-        BATCH_SIZE, NUM_WORKERS, PIN_MEMORY, TIMESTEPS, COUETTE_DIM, SIGMA)
-    test_loaders = [test_1_loader, test_2_loader, test_3_loader, test_4_loader]
-    scaler = torch.cuda.amp.GradScaler()
-    training_loss = 0.0
-    losses = []
+def main():
+    l_functions = [nn.L1Loss(), 'MAE', nn.MSELoss(), 'MSE']
 
-    for epoch in range(NUM_EPOCHS):
-        training_loss = train_fn(
-            train_loader, model, optimizer, loss_fn, scaler)
-        losses.append(training_loss)
+    for i in range(2):
+        LOSSFN = l_functions[i]
+        LOSS_FN = l_functions[i+1]
+        displayHyperparameters()
 
-    print(f'The model currently yields a training loss of: {training_loss}.')
+        # Instantiate model, define loss function, optimizer and other utils.
+        model = UNET(in_channels=3, out_channels=3,
+                     features=FEATURES).to(DEVICE)
+        loss_fn = LOSSFN
+        optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE)
+        train_loader, test_1_loader, test_2_loader, test_3_loader, test_4_loader = get_loaders_test(
+            BATCH_SIZE, NUM_WORKERS, PIN_MEMORY, TIMESTEPS, COUETTE_DIM, SIGMA)
+        test_loaders = [test_1_loader, test_2_loader,
+                        test_3_loader, test_4_loader]
+        scaler = torch.cuda.amp.GradScaler()
+        training_loss = 0.0
+        losses = []
 
-    for i in range(0, 4):
-        print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
-        print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
-        print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
-        val_loss = test_fn(test_loaders[i], model, loss_fn, (i+1))
-        print(f'Test 0{i+1}: The model currently yields a loss of: {val_loss}.')
+        for epoch in range(NUM_EPOCHS):
+            training_loss = train_fn(
+                train_loader, model, optimizer, loss_fn, scaler)
+            losses.append(training_loss)
+
+        print(
+            f'The model currently yields a training loss of: {training_loss}.')
+
+        for i in range(0, 4):
+            print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
+            print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
+            print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
+            val_loss = test_fn(test_loaders[i], model, loss_fn, (i+1))
+            print(
+                f'Test 0{i+1}: The model currently yields a loss of: {val_loss}.')
 
 
 if __name__ == "__main__":
