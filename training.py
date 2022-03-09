@@ -173,8 +173,8 @@ def main():
     l_functions = [nn.L1Loss(), 'MAE', nn.MSELoss(), 'MSE']
 
     for i in range(2):
-        LOSSFN = l_functions[i]
-        LOSS_FN = l_functions[i+1]
+        LOSSFN = l_functions[2*i]
+        LOSS_FN = l_functions[2*i+1]
         displayHyperparameters()
 
         # Instantiate model, define loss function, optimizer and other utils.
