@@ -175,7 +175,7 @@ def main():
     for i in range(2):
         LOSSFN_ = l_functions[2*i]
         LOSS_FN_ = l_functions[2*i+1]
-        displayHyperparameters()
+        displayHyperparameters(LOSS_FN_)
 
         # Instantiate model, define loss function, optimizer and other utils.
         model = UNET(in_channels=3, out_channels=3,
