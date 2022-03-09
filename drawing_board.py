@@ -23,8 +23,9 @@ def save3D_RGBArray2File(input_array, string_file_name):
 
     # 2) Save 2D array to file
     t, c, d, h, w = input_array.shape
-    name = f'{string_file_name}_{t}_{c}_{d}_{h}_{w}'
-    np.savetxt(f'{name}.csv', input_reshaped)
+    if t != 32:
+        name = f'{string_file_name}_{t}_{c}_{d}_{h}_{w}'
+        np.savetxt(f'{name}.csv', input_reshaped)
 
 
 def load3DArrayFromFile(input_file, input_shape):
