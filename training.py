@@ -126,7 +126,7 @@ def val_fn(loader, model, loss_fn):
     return loss
 
 
-def test_fn(loader, model, loss_fn, i):
+def test_fn(loader, model, loss_fn, LOSS_FN_ i):
     loop = tqdm(loader)
 
     for batch_idx, (data, targets) in enumerate(loop):
@@ -137,8 +137,8 @@ def test_fn(loader, model, loss_fn, i):
             predictions = model(data)
             predict_array = predictions.cpu().detach().numpy()
             target_array = targets.cpu().detach().numpy()
-            save3D_RGBArray2File(predict_array, f'T_{i}_pred_{LOSS_FN}')
-            save3D_RGBArray2File(target_array, f'T_{i}_target_{LOSS_FN}')
+            save3D_RGBArray2File(predict_array, f'T_{i}_pred_{LOSS_FN_}')
+            save3D_RGBArray2File(target_array, f'T_{i}_target_{LOSS_FN_}')
             loss = loss_fn(predictions.float(), targets.float())
 
         loop.set_postfix(loss=loss.item())
@@ -146,7 +146,7 @@ def test_fn(loader, model, loss_fn, i):
     return loss
 
 
-def displayHyperparameters():
+def displayHyperparameters(LOSS_FN_):
     print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
     print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
     print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
@@ -158,7 +158,7 @@ def displayHyperparameters():
         f'Spatial Resolution: {COUETTE_DIM+1} x {COUETTE_DIM+1} x {COUETTE_DIM+1}')
     print(f'Noise level: {SIGMA*100}% of U_wall')
     print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
-    print(f'Loss function: {LOSS_FN}')
+    print(f'Loss function: {LOSS_FN_}')
     print('Activation function: ReLU')
     print(f'Model depth as dictated by len(features): {len(FEATURES)}')
     print(f'Learning rate: {LEARNING_RATE}.')
@@ -173,14 +173,14 @@ def main():
     l_functions = [nn.L1Loss(), 'MAE', nn.MSELoss(), 'MSE']
 
     for i in range(2):
-        LOSSFN = l_functions[2*i]
-        LOSS_FN = l_functions[2*i+1]
+        LOSSFN_ = l_functions[2*i]
+        LOSS_FN_ = l_functions[2*i+1]
         displayHyperparameters()
 
         # Instantiate model, define loss function, optimizer and other utils.
         model = UNET(in_channels=3, out_channels=3,
                      features=FEATURES).to(DEVICE)
-        loss_fn = LOSSFN
+        loss_fn = LOSSFN_
         optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE)
         train_loader, test_1_loader, test_2_loader, test_3_loader, test_4_loader = get_loaders_test(
             BATCH_SIZE, NUM_WORKERS, PIN_MEMORY, TIMESTEPS, COUETTE_DIM, SIGMA)
@@ -202,7 +202,7 @@ def main():
             print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
             print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
             print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
-            val_loss = test_fn(test_loaders[i], model, loss_fn, (i+1))
+            val_loss = test_fn(test_loaders[i], model, loss_fn, LOSS_FN_, (i+1))
             print(
                 f'Test 0{i+1}: The model currently yields a loss of: {val_loss}.')
 
