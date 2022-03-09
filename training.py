@@ -15,7 +15,7 @@ plt.style.use(['science'])
 FEATURES = [4]
 TIMESTEPS = 1000
 COUETTE_DIM = 31
-SIGMA = 0.3
+SIGMA = 0.5
 LEARNING_RATE = 2e-3
 # LOSSFN = nn.L1Loss()
 # LOSS_FN = 'MAE'
