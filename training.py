@@ -126,7 +126,7 @@ def val_fn(loader, model, loss_fn):
     return loss
 
 
-def test_fn(loader, model, loss_fn, LOSS_FN_ i):
+def test_fn(loader, model, loss_fn, LOSS_FN_, i):
     loop = tqdm(loader)
 
     for batch_idx, (data, targets) in enumerate(loop):
@@ -202,7 +202,8 @@ def main():
             print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
             print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
             print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
-            val_loss = test_fn(test_loaders[i], model, loss_fn, LOSS_FN_, (i+1))
+            val_loss = test_fn(
+                test_loaders[i], model, loss_fn, LOSS_FN_, (i+1))
             print(
                 f'Test 0{i+1}: The model currently yields a loss of: {val_loss}.')
 
