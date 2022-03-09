@@ -133,6 +133,95 @@ def get_loaders(batch_size, num_workers, pin_memory, timesteps, couette_dim, sig
 # Structural Similarity" by Zhou et al. (2004)
 
 
+def get_loaders_test(batch_size, num_workers, pin_memory, timesteps, couette_dim, sigma=0):
+
+    my_couette_data = my3DCouetteSolver(
+        desired_timesteps=timesteps, vertical_resolution=couette_dim, sigma=sigma, my_seed=1)
+    # 01 test: Different seed=2
+    my_couette_data_test_1 = my3DCouetteSolver(
+        desired_timesteps=timesteps, vertical_resolution=couette_dim, sigma=sigma, my_seed=2)
+    # 02 test: Increased noise sigma=0.5
+    my_couette_data_test_2 = my3DCouetteSolver(
+        desired_timesteps=timesteps, vertical_resolution=couette_dim, sigma=0.5, my_seed=2)
+    # 03 test: Lower wall speed
+    my_couette_data_test_3 = my3DCouetteSolver(
+        desired_timesteps=timesteps, u_wall=5, vertical_resolution=couette_dim, sigma=0.5, my_seed=2)
+    # 04 test: Increased wall height
+    my_couette_data_test_4 = my3DCouetteSolver(
+        desired_timesteps=timesteps, u_wall=5, wall_height=30, vertical_resolution=couette_dim, sigma=0.5, my_seed=2)
+
+    my_images = my_couette_data[:-1]
+    my_masks = my_couette_data[1:]
+    my_zip = list(zip(my_images, my_masks))
+    random.shuffle(my_zip)
+    my_shuffled_images, my_shuffled_masks = zip(*my_zip)
+
+    my_images_1 = my_couette_data_test_1[:101]
+    my_masks_1 = my_couette_data_test_1[1:102]
+
+    my_images_2 = my_couette_data_test_2[:101]
+    my_masks_2 = my_couette_data_test_2[1:102]
+
+    my_images_3 = my_couette_data_test_3[:101]
+    my_masks_3 = my_couette_data_test_3[1:102]
+
+    my_images_4 = my_couette_data_test_4[:101]
+    my_masks_4 = my_couette_data_test_4[1:102]
+    # ############################################################
+    train_ds = MyFlowDataset(
+        my_shuffled_images,
+        my_shuffled_masks)
+
+    train_loader = DataLoader(
+        dataset=train_ds,
+        batch_size=batch_size,
+        shuffle=True,
+        num_workers=num_workers)
+    # ############################################################
+    test_ds_1 = MyFlowDataset(
+        my_images_1,
+        my_masks_1)
+
+    test_loader_1 = DataLoader(
+        dataset=test_ds_1,
+        batch_size=batch_size,
+        shuffle=False,
+        num_workers=num_workers)
+    # ############################################################
+    test_ds_2 = MyFlowDataset(
+        my_images_2,
+        my_masks_2)
+
+    test_loader_2 = DataLoader(
+        dataset=test_ds_2,
+        batch_size=batch_size,
+        shuffle=False,
+        num_workers=num_workers)
+    # ############################################################
+    test_ds_3 = MyFlowDataset(
+        my_images_3,
+        my_masks_3)
+
+    test_loader_3 = DataLoader(
+        dataset=test_ds_3,
+        batch_size=batch_size,
+        shuffle=False,
+        num_workers=num_workers)
+    # ############################################################
+    test_ds_4 = MyFlowDataset(
+        my_images_4,
+        my_masks_4)
+
+    test_loader_4 = DataLoader(
+        dataset=test_ds_4,
+        batch_size=batch_size,
+        shuffle=False,
+        num_workers=num_workers)
+    # ############################################################
+
+    return train_loader, test_loader_1, test_loader_2, test_loader_3, test_loader_4
+
+
 def check_accuracy(loader, model, device="cuda"):
     num_correct = 0
     num_pixels = 0
