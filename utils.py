@@ -142,13 +142,13 @@ def get_loaders_test(batch_size, num_workers, pin_memory, timesteps, couette_dim
         desired_timesteps=timesteps, vertical_resolution=couette_dim, sigma=sigma, my_seed=2)
     # 02 test: Increased noise sigma=0.5
     my_couette_data_test_2 = my3DCouetteSolver(
-        desired_timesteps=timesteps, vertical_resolution=couette_dim, sigma=0.5, my_seed=2)
+        desired_timesteps=timesteps, u_wall=5, vertical_resolution=couette_dim, sigma=sigma, my_seed=2)
     # 03 test: Lower wall speed
     my_couette_data_test_3 = my3DCouetteSolver(
         desired_timesteps=timesteps, u_wall=5, vertical_resolution=couette_dim, sigma=0.5, my_seed=2)
     # 04 test: Increased wall height
     my_couette_data_test_4 = my3DCouetteSolver(
-        desired_timesteps=timesteps, u_wall=5, wall_height=30, vertical_resolution=couette_dim, sigma=0.5, my_seed=2)
+        desired_timesteps=timesteps, u_wall=5, vertical_resolution=63, sigma=0.5, my_seed=2)
 
     my_images = my_couette_data[:-1]
     my_masks = my_couette_data[1:]
