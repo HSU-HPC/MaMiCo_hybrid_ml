@@ -5,24 +5,25 @@ import matplotlib.pyplot as plt
 import torch.nn as nn
 import torch.optim as optim
 from model import UNET
-from utils import get_loaders   # MSLELoss, check_accuracy, save3DArray2File
+# MSLELoss, check_accuracy, save3DArray2File
+from utils import get_loaders, get_loaders_test
 from drawing_board import save3D_RGBArray2File
 
 plt.style.use(['science'])
 
 # Hyperparameters etc.
-FEATURES = [4, 8, 16]
+FEATURES = [4]
 TIMESTEPS = 1000
 COUETTE_DIM = 31
 SIGMA = 0.3
-LEARNING_RATE = 1e-3
+LEARNING_RATE = 2e-3
 # LOSSFN = nn.L1Loss()
 # LOSS_FN = 'MAE'
 LOSSFN = nn.MSELoss()
 LOSS_FN = 'MSE'
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 BATCH_SIZE = 32
-NUM_EPOCHS = 40             # 30
+NUM_EPOCHS = 20             # 30
 NUM_WORKERS = 4             # guideline: 4* num_GPU
 IMAGE_HEIGHT = 128          # 1280 originally
 IMAGE_WIDTH = 128           # 1918 originally
@@ -125,6 +126,26 @@ def val_fn(loader, model, loss_fn):
     return loss
 
 
+def test_fn(loader, model, loss_fn, i):
+    loop = tqdm(loader)
+
+    for batch_idx, (data, targets) in enumerate(loop):
+        data = data.float().to(device=DEVICE)
+        targets = targets.float().to(device=DEVICE)
+
+        with torch.cuda.amp.autocast():
+            predictions = model(data)
+            predict_array = predictions.cpu().detach().numpy()
+            target_array = targets.cpu().detach().numpy()
+            save3D_RGBArray2File(predict_array, f'T_{i}_pred_{LOSS_FN}')
+            save3D_RGBArray2File(target_array, f'T_{i}_target_{LOSS_FN}')
+            loss = loss_fn(predictions.float(), targets.float())
+
+        loop.set_postfix(loss=loss.item())
+
+    return loss
+
+
 def main():
 
     print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
@@ -147,18 +168,13 @@ def main():
     print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
 
     model = UNET(in_channels=3, out_channels=3, features=FEATURES).to(DEVICE)
-
     loss_fn = LOSSFN
-    # Defines the loss function to be MAE (=Mean Average Error).
-
-    # loss_fn = MSLELoss()
-    # Defines the loss function to be Mean Squared Logarithmic Error
-
     optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE)
 
-    train_loader, val_loader, test_loader = get_loaders(
+    # train_loader, val_loader, test_loader = get_loaders(BATCH_SIZE, NUM_WORKERS, PIN_MEMORY, TIMESTEPS, COUETTE_DIM, SIGMA)
+    train_loader, test_1_loader, test_2_loader, test_3_loader, test_4_loader = get_loaders_test(
         BATCH_SIZE, NUM_WORKERS, PIN_MEMORY, TIMESTEPS, COUETTE_DIM, SIGMA)
-
+    test_loaders = [test_1_loader, test_2_loader, test_3_loader, test_4_loader]
     scaler = torch.cuda.amp.GradScaler()
     training_loss = 0.0
     losses = []
@@ -167,20 +183,15 @@ def main():
         training_loss = train_fn(
             train_loader, model, optimizer, loss_fn, scaler)
         losses.append(training_loss)
-        # To save the model, refer to the original code described by Aladdin
-        # Persson (YouTube, GitHub)
-
-    # np.savetxt("losses_file.csv", losses, delimiter=", ")
-
-    # print('Currently using validation set:')
-    val_loss = val_fn(val_loader, model, loss_fn)
-
-    # print('Currently using test set:')
-    # test_loss = val_fn(test_loader, model, loss_fn)
 
     print(f'The model currently yields a training loss of: {training_loss}.')
-    print(f'The model currently yields a val loss of: {val_loss}.')
-    # print(f'The model currently yields a test loss of: {test_loss}.')
+
+    for i in range(0, 4):
+        print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
+        print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
+        print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
+        val_loss = val_fn(test_loaders[i], model, loss_fn, (i+1))
+        print(f'Test 0{i+1}: The model currently yields a loss of: {val_loss}.')
 
 
 if __name__ == "__main__":
