@@ -67,13 +67,12 @@ def main():
     save3D_RGBArray2File(my_RGB_couette_noisy, 'prediction')
     '''
 
-    loaded_predictions = load3D_RGBArrayFromFile(
-        'predictions_4_3_32_32_32.csv', (4, 3, 32, 32, 32))
+    a = np.random.rand(10, 3, 32, 32, 32)
+    b = np.random.rand(10, 3, 32, 32, 32)
 
-    loaded_targets = load3D_RGBArrayFromFile(
-        'targets_4_3_32_32_32.csv', (4, 3, 32, 32, 32))
+    c = np.concatenate((a, b), axis=0)
 
-    compareFlowProfile(loaded_predictions[2], loaded_targets[2])
+    print(c.shape)
 
 
 if __name__ == "__main__":
