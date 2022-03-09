@@ -19,7 +19,7 @@ SIGMA = 0.3
 LEARNING_RATE = 2e-3
 # LOSSFN = nn.L1Loss()
 # LOSS_FN = 'MAE'
-LOSSFN = nn.MSELoss()
+LOSSFN = nn.MELoss()
 LOSS_FN = 'MSE'
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 BATCH_SIZE = 32
@@ -190,7 +190,7 @@ def main():
         print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
         print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
         print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
-        val_loss = val_fn(test_loaders[i], model, loss_fn, (i+1))
+        val_loss = test_fn(test_loaders[i], model, loss_fn, (i+1))
         print(f'Test 0{i+1}: The model currently yields a loss of: {val_loss}.')
 
 
