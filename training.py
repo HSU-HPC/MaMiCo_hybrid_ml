@@ -6,7 +6,7 @@ import torch.nn as nn
 import torch.optim as optim
 from model import UNET
 # MSLELoss, check_accuracy, save3DArray2File
-from utils import get_loaders, get_loaders_test
+from utils import get_loaders, get_5_loaders, get_loaders_test
 from drawing_board import save3D_RGBArray2File
 
 plt.style.use(['science'])
@@ -299,7 +299,47 @@ def trial_3():
 
 
 def trial_4():
-    pass
+    print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
+    print('@@@@@@@@@@@@@@@            TRIAL 4           @@@@@@@@@@@@@@@')
+    print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
+    t = 1000                                            # Timesteps
+    d = 31                                              # Vertical resolution
+    s = 0.3                                             # Sigma
+    acti = 'ReLU'                                       # Activation function
+    loss = [nn.L1Loss(), 'MAE', nn.MSELoss(), 'MSE']    # Loss function
+    f = [4, 8, 16]                                      # List of features
+    a = 0.002                                           # Alpha (learning rate)
+    b = 32                                              # Batch size
+    # Number of epochs
+    e = [40, 20]
+
+    for i in range(2):
+        displayHyperparameters(t, d, s, loss[2*i+1], acti, f, a, b, e)
+
+        # Instantiate model, define loss function, optimizer and other utils.
+        model = UNET(in_channels=3, out_channels=3,
+                     features=f).to(DEVICE)
+        loss_fn = loss[2*i]
+        optimizer = optim.Adam(model.parameters(), lr=a)
+        train_loader, valid_loader = get_5_loaders(
+            b, NUM_WORKERS, PIN_MEMORY, t, d, s)
+
+        scaler = torch.cuda.amp.GradScaler()
+        training_loss = 0.0
+        losses = []
+
+        for epoch in range(e):
+            training_loss = train_fn(
+                train_loader, model, optimizer, loss_fn, scaler)
+            losses.append(training_loss)
+
+        losses.append(val_fn(valid_loader, model, loss_fn, '4', loss[2*i+1]))
+        print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
+        print(
+            f'@@@@@@@@@@ T-Error:{losses[-2]:.3f}            V-Error:{losses[-1]:.3f} @@@@@@@@@@')
+        print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
+        print(' ')
+        print(' ')
 
 
 def trial_5():
@@ -350,7 +390,7 @@ def main2():
 
 
 def main():
-    trial_3()
+    trial_4()
 
 
 if __name__ == "__main__":

@@ -81,9 +81,66 @@ def get_loaders(batch_size, num_workers, pin_memory, timesteps, couette_dim, sig
 
     return train_loader, val_loader
 
-# TODO: implement SSIM as a metric for comparing similarity between two images
-# as proposed in the paper "Image Quality Assessment: From Error Visibility to
-# Structural Similarity" by Zhou et al. (2004)
+
+def get_5_loaders(batch_size, num_workers, pin_memory, timesteps, couette_dim, sigma=0):
+    my_couette_data_1 = my3DCouetteSolver(
+        desired_timesteps=timesteps, vertical_resolution=couette_dim, sigma=sigma, my_seed=1)
+    my_couette_data_2 = my3DCouetteSolver(
+        desired_timesteps=timesteps, vertical_resolution=couette_dim, sigma=sigma, my_seed=3)
+    my_couette_data_3 = my3DCouetteSolver(
+        desired_timesteps=timesteps, vertical_resolution=couette_dim, sigma=sigma, my_seed=4)
+    my_couette_data_4 = my3DCouetteSolver(
+        desired_timesteps=timesteps, vertical_resolution=couette_dim, sigma=sigma, my_seed=5)
+    my_couette_data_5 = my3DCouetteSolver(
+        desired_timesteps=timesteps, vertical_resolution=couette_dim, sigma=sigma, my_seed=6)
+    my_couette_data_valid = my3DCouetteSolver(
+        desired_timesteps=timesteps, vertical_resolution=couette_dim, sigma=sigma, my_seed=2)
+
+    my_images = np.concatenate((my_couette_data_1[:-1], my_couette_data_2[:-1],
+                               my_couette_data_3[:-1], my_couette_data_4[:-1], my_couette_data_5[:-1]), axis=0)
+    my_masks = np.concatenate((my_couette_data_1[1:], my_couette_data_2[1:],
+                              my_couette_data_3[1:], my_couette_data_4[1:], my_couette_data_5[1:]), axis=0)
+
+    my_images_valid = my_couette_data_valid[:-1]
+    my_masks_valid = my_couette_data_valid[1:]
+
+    my_zip = list(zip(my_images, my_masks))
+    random.shuffle(my_zip)
+    my_shuffled_images, my_shuffled_masks = zip(*my_zip)
+
+    my_train_images = my_shuffled_images
+    my_train_masks = my_shuffled_masks
+
+    my_val_images = my_images_valid[: 101]
+    my_val_masks = my_masks_valid[: 101]
+
+    train_ds = MyFlowDataset(
+        my_train_images,
+        my_train_masks,
+    )
+    # print(type(train_ds[7]))
+    train_loader = DataLoader(
+        dataset=train_ds,
+        batch_size=batch_size,
+        shuffle=True,
+        num_workers=num_workers,
+        # pin_memory=pin_memory,
+    )
+
+    val_ds = MyFlowDataset(
+            my_val_images,
+            my_val_masks,
+        )
+
+    val_loader = DataLoader(
+            dataset=val_ds,
+            batch_size=batch_size,
+            shuffle=False,
+            num_workers=num_workers,
+            # pin_memory=pin_memory,
+        )
+
+    return train_loader, val_loader
 
 
 def get_loaders_test(batch_size, num_workers, pin_memory, timesteps, couette_dim, sigma=0):
