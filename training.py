@@ -202,7 +202,7 @@ def trial_1():
 
         losses.append(val_fn(valid_loader, model, loss_fn, '1', loss[2*i+1]))
         print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
-        print(f'@@@@@@ T-Error:{losses[-2]}      V-Error:{losses[-1]} @@@@@@')
+        print(f'@@@@@@@@@@ T-Error:{losses[-2]:.3f}              V-Error:{losses[-1]:.3f} @@@@@@@@@@')
         print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
 
 
