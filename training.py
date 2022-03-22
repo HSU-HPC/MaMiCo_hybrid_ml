@@ -148,7 +148,7 @@ def test_fn(loader, model, loss_fn, LOSS_FN_, i):
     return loss
 
 
-def displayHyperparameters(timesteps_, couette_dim_, sigma_, loss_fn_, features_, learning_rate_, batch_size_, num_epochs_):
+def displayHyperparameters(timesteps_, couette_dim_, sigma_, loss_fn_, activation_, features_, learning_rate_, batch_size_, num_epochs_):
     print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
     print(f'Currently using device (cuda/CPU): {DEVICE}.')
     print('Current Trial Parameters and Model Hyperparameters:')
@@ -159,7 +159,7 @@ def displayHyperparameters(timesteps_, couette_dim_, sigma_, loss_fn_, features_
     print(f'Noise level: {sigma_*100}% of U_wall')
     print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
     print(f'Loss function: {loss_fn_}')
-    print('Activation function: ReLU')
+    print(f'Activation function: {activation_}')
     print(f'Model depth as dictated by len(features): {len(features_)}')
     print(f'Learning rate: {learning_rate_}.')
     print(f'Batch size: {batch_size_}')
@@ -174,14 +174,15 @@ def trial_1():
     t = 1000                                            # Timesteps
     d = 31                                              # Vertical resolution
     s = 0.3                                             # Sigma
+    acti = 'ReLU'                                       # Activation function
     loss = [nn.L1Loss(), 'MAE', nn.MSELoss(), 'MSE']    # Loss function
     f = [4, 8, 16]                                      # List of features
     a = 0.001                                           # Alpha (learning rate)
     b = 32                                              # Batch size
-    e = 40                                               # Number of epochs
+    e = 40                                              # Number of epochs
 
     for i in range(2):
-        displayHyperparameters(t, d, s, loss[2*i+1], f, a, b, e)
+        displayHyperparameters(t, d, s, loss[2*i+1], acti, f, a, b, e)
 
         # Instantiate model, define loss function, optimizer and other utils.
         model = UNET(in_channels=3, out_channels=3,
@@ -216,14 +217,15 @@ def trial_2():
     t = 1000                                            # Timesteps
     d = 31                                              # Vertical resolution
     s = 0.3                                             # Sigma
+    acti = 'Tanh'                                       # Activation function
     loss = [nn.L1Loss(), 'MAE', nn.MSELoss(), 'MSE']    # Loss function
     f = [4, 8, 16]                                      # List of features
     a = 0.001                                           # Alpha (learning rate)
     b = 32                                              # Batch size
-    e = 40                                               # Number of epochs
+    e = 40                                              # Number of epochs
 
     for i in range(2):
-        displayHyperparameters(t, d, s, loss[2*i+1], f, a, b, e)
+        displayHyperparameters(t, d, s, loss[2*i+1], acti, f, a, b, e)
 
         # Instantiate model, define loss function, optimizer and other utils.
         model = UNET(in_channels=3, out_channels=3,
