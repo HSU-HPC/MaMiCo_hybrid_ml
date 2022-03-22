@@ -350,7 +350,7 @@ def main2():
 
 
 def main():
-    trial_2()
+    trial_3()
 
 
 if __name__ == "__main__":
