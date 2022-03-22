@@ -189,7 +189,7 @@ def trial_1():
         loss_fn = loss[2*i]
         optimizer = optim.Adam(model.parameters(), lr=a)
         train_loader, valid_loader = get_loaders(
-            b, NUM_WORKERS, PIN_MEMORY, t, d)
+            b, NUM_WORKERS, PIN_MEMORY, t, d, s)
 
         scaler = torch.cuda.amp.GradScaler()
         training_loss = 0.0
