@@ -227,7 +227,7 @@ def trial_2():
 
         # Instantiate model, define loss function, optimizer and other utils.
         model = UNET(in_channels=3, out_channels=3,
-                     features=f, activation=nn.tanh()).to(DEVICE)
+                     features=f, activation=nn.Tanh()).to(DEVICE)
         loss_fn = loss[2*i]
         optimizer = optim.Adam(model.parameters(), lr=a)
         train_loader, valid_loader = get_loaders(
