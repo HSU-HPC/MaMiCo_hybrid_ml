@@ -262,7 +262,7 @@ def trial_3():
     s = 0.3                                             # Sigma
     acti = 'ReLU'                                       # Activation function
     loss = [nn.L1Loss(), 'MAE', nn.MSELoss(), 'MSE']    # Loss function
-    f = [4, 8, 16, 32]                                      # List of features
+    f = [4, 8, 16, 32]                                  # List of features
     a = [0.001, 0.002]                                  # Alpha (learning rate)
     b = 32                                              # Batch size
     e = 40                                              # Number of epochs
@@ -353,7 +353,7 @@ def trial_5():
     s = 0.3                                             # Sigma
     acti = 'ReLU'                                       # Activation function
     loss = [nn.L1Loss(), 'MAE', nn.MSELoss(), 'MSE']    # Loss function
-    f = [4, 8]                                      # List of features
+    f = [4, 8]                                          # List of features
     a = 0.002                                           # Alpha (learning rate)
     b = 32                                              # Batch size
     e = 20                                              # Number of epochs
@@ -396,7 +396,7 @@ def trial_6():
     s = 0.3                                             # Sigma
     acti = 'ReLU'                                       # Activation function
     loss = [nn.L1Loss(), 'MAE', nn.MSELoss(), 'MSE']    # Loss function
-    f = [4]                                      # List of features
+    f = [4]                                             # List of features
     a = 0.002                                           # Alpha (learning rate)
     b = 32                                              # Batch size
     e = 20                                              # Number of epochs
@@ -430,43 +430,58 @@ def trial_6():
         print(' ')
 
 
-def main2():
-    l_functions = [nn.L1Loss(), 'MAE', nn.MSELoss(), 'MSE']
+def tests():
+        print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
+        print('@@@@@@@@@@@@@@@             TEST             @@@@@@@@@@@@@@@')
+        print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
+        t = 1000                                            # Timesteps
+        d = 31                                              # Vertical resolution
+        s = 0.3                                             # Sigma
+        acti = 'ReLU'                                       # Activation function
+        loss = [nn.L1Loss(), 'MAE', nn.MSELoss(), 'MSE']    # Loss function
+        f = [4]                                             # List of features
+        a = 0.002                                           # Alpha (learning rate)
+        b = 32                                              # Batch size
+        e = 20
 
-    for i in range(2):
-        LOSSFN_ = l_functions[2*i]
-        LOSS_FN_ = l_functions[2*i+1]
-        displayHyperparameters(LOSS_FN_)
+        for i in range(2):
+            displayHyperparameters(t, d, s, loss[2*i+1], acti, f, a, b, e)
 
-        # Instantiate model, define loss function, optimizer and other utils.
-        model = UNET(in_channels=3, out_channels=3,
-                     features=FEATURES).to(DEVICE)
-        loss_fn = LOSSFN_
-        optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE)
-        train_loader, test_1_loader, test_2_loader, test_3_loader, test_4_loader = get_loaders_test(
-            BATCH_SIZE, NUM_WORKERS, PIN_MEMORY, TIMESTEPS, COUETTE_DIM, SIGMA)
-        test_loaders = [test_1_loader, test_2_loader,
-                        test_3_loader, test_4_loader]
-        scaler = torch.cuda.amp.GradScaler()
-        training_loss = 0.0
-        losses = []
+            # Instantiate model, define loss function, optimizer and other utils.
+            model = UNET(in_channels=3, out_channels=3,
+                         features=f).to(DEVICE)
+            loss_fn = loss[2*i]
+            optimizer = optim.Adam(model.parameters(), lr=a)
+            train_loader, valid_loader = get_loaders(
+                b, NUM_WORKERS, PIN_MEMORY, t, d, s)
 
-        for epoch in range(NUM_EPOCHS):
-            training_loss = train_fn(
-                train_loader, model, optimizer, loss_fn, scaler)
-            losses.append(training_loss)
+            scaler = torch.cuda.amp.GradScaler()
+            training_loss = 0.0
+            losses = []
 
-        print(
-            f'The model currently yields a training loss of: {training_loss}.')
+            for epoch in range(e):
+                training_loss = train_fn(
+                    train_loader, model, optimizer, loss_fn, scaler)
+                losses.append(training_loss)
 
-        for i in range(0, 4):
+            losses.append(val_fn(valid_loader, model, loss_fn, '6', loss[2*i+1]))
             print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
-            print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
-            print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
-            val_loss = test_fn(
-                test_loaders[i], model, loss_fn, LOSS_FN_, (i+1))
             print(
-                f'Test 0{i+1}: The model currently yields a loss of: {val_loss}.')
+                f'@@@@@@@@@@ T-Error:{losses[-2]:.3f}            V-Error:{losses[-1]:.3f} @@@@@@@@@@')
+            print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
+            print(' ')
+            print(' ')
+            test_loader_1, test_loader_2, test_loader_3, test_loader_4 = get_loaders_test(b, NUM_WORKERS, PIN_MEMORY)
+            test_loaders = [test_loader_1, test_loader_2, test_loader_3, test_loader_4]
+
+            for i in range(0, 4):
+                print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
+                print(F'@@@@@@@@@@@@@@@          TEST {i+1} {loss[2*i+1]}         @@@@@@@@@@@@@@@')
+                print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
+                val_loss = test_fn(
+                    test_loaders[i], model, loss_fn, loss[2*i+1], (i+1))
+                print(
+                    f'Test 0{i+1}: The model currently yields a loss of: {val_loss}.')
 
 
 def main():

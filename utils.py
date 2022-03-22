@@ -143,28 +143,20 @@ def get_5_loaders(batch_size, num_workers, pin_memory, timesteps, couette_dim, s
     return train_loader, val_loader
 
 
-def get_loaders_test(batch_size, num_workers, pin_memory, timesteps, couette_dim, sigma=0):
+def get_loaders_test(batch_size, num_workers, pin_memory, timesteps=1000, couette_dim=31, sigma=0.3):
 
-    my_couette_data = my3DCouetteSolver(
-        desired_timesteps=timesteps, vertical_resolution=couette_dim, sigma=sigma, my_seed=1)
     # 01 test: Different seed=2
     my_couette_data_test_1 = my3DCouetteSolver(
-        desired_timesteps=timesteps, vertical_resolution=couette_dim, sigma=sigma, my_seed=2)
+        desired_timesteps=timesteps, vertical_resolution=couette_dim, sigma=sigma, my_seed=3)
     # 02 test: Increased noise sigma=0.5
     my_couette_data_test_2 = my3DCouetteSolver(
-        desired_timesteps=timesteps, u_wall=5, vertical_resolution=couette_dim, sigma=sigma, my_seed=2)
+        desired_timesteps=timesteps, u_wall=5, vertical_resolution=couette_dim, sigma=sigma, my_seed=3)
     # 03 test: Lower wall speed
     my_couette_data_test_3 = my3DCouetteSolver(
-        desired_timesteps=timesteps, vertical_resolution=couette_dim, sigma=0.5, my_seed=2)
+        desired_timesteps=timesteps, vertical_resolution=couette_dim, sigma=0.5, my_seed=3)
     # 04 test: Increased wall height
     my_couette_data_test_4 = my3DCouetteSolver(
-        desired_timesteps=timesteps, vertical_resolution=63, sigma=0.5, my_seed=2)
-
-    my_images = my_couette_data[:-1]
-    my_masks = my_couette_data[1:]
-    my_zip = list(zip(my_images, my_masks))
-    random.shuffle(my_zip)
-    my_shuffled_images, my_shuffled_masks = zip(*my_zip)
+        desired_timesteps=timesteps, vertical_resolution=63, sigma=0.5, my_seed=3)
 
     my_images_1 = my_couette_data_test_1[:101]
     my_masks_1 = my_couette_data_test_1[1:102]
@@ -177,16 +169,7 @@ def get_loaders_test(batch_size, num_workers, pin_memory, timesteps, couette_dim
 
     my_images_4 = my_couette_data_test_4[:101]
     my_masks_4 = my_couette_data_test_4[1:102]
-    # ############################################################
-    train_ds = MyFlowDataset(
-        my_shuffled_images,
-        my_shuffled_masks)
 
-    train_loader = DataLoader(
-        dataset=train_ds,
-        batch_size=batch_size,
-        shuffle=True,
-        num_workers=num_workers)
     # ############################################################
     test_ds_1 = MyFlowDataset(
         my_images_1,
@@ -229,7 +212,7 @@ def get_loaders_test(batch_size, num_workers, pin_memory, timesteps, couette_dim
         num_workers=num_workers)
     # ############################################################
 
-    return train_loader, test_loader_1, test_loader_2, test_loader_3, test_loader_4
+    return test_loader_1, test_loader_2, test_loader_3, test_loader_4
 
 
 def check_accuracy(loader, model, device="cuda"):
