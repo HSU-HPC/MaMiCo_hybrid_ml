@@ -262,7 +262,7 @@ def trial_3():
     s = 0.3                                             # Sigma
     acti = 'ReLU'                                       # Activation function
     loss = [nn.L1Loss(), 'MAE', nn.MSELoss(), 'MSE']    # Loss function
-    f = [4, 8, 16]                                      # List of features
+    f = [4, 8, 16, 32]                                      # List of features
     a = [0.001, 0.002]                                  # Alpha (learning rate)
     b = 32                                              # Batch size
     e = 40                                              # Number of epochs
