@@ -314,7 +314,7 @@ def trial_4():
     e = [40, 20]
 
     for i in range(2):
-        displayHyperparameters(t, d, s, loss[2*i+1], acti, f, a, b, e)
+        displayHyperparameters(t, d, s, loss[2*i+1], acti, f, a, b, e[i])
 
         # Instantiate model, define loss function, optimizer and other utils.
         model = UNET(in_channels=3, out_channels=3,
@@ -328,7 +328,7 @@ def trial_4():
         training_loss = 0.0
         losses = []
 
-        for epoch in range(e):
+        for epoch in range(e[i]):
             training_loss = train_fn(
                 train_loader, model, optimizer, loss_fn, scaler)
             losses.append(training_loss)
