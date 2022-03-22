@@ -99,7 +99,7 @@ def train_fn(loader, model, optimizer, loss_fn, scaler):
     return loss
 
 
-def val_fn(loader, model, loss_fn):
+def val_fn(loader, model, loss_fn, trial_string, loss_string):
 
     loop = tqdm(loader)
 
@@ -115,8 +115,10 @@ def val_fn(loader, model, loss_fn):
             # print(f'Predict_array datatype: {type(predict_array)}')
             target_array = targets.cpu().detach().numpy()
             # print(f'Target_array datatype: {type(target_array)}')
-            save3D_RGBArray2File(predict_array, f'predictions_{LOSS_FN}')
-            save3D_RGBArray2File(target_array, f'targets_{LOSS_FN}')
+            save3D_RGBArray2File(
+                predict_array, f'predictions_{trial_string}_{loss_string}')
+            save3D_RGBArray2File(
+                target_array, f'targets_{trial_string}_{loss_string}')
             # print(f'Prediction datatype: {type(predictions)}')
             # print(f'Prediction shape: {predictions.shape}')
             loss = loss_fn(predictions.float(), targets.float())
@@ -146,30 +148,85 @@ def test_fn(loader, model, loss_fn, LOSS_FN_, i):
     return loss
 
 
-def displayHyperparameters(LOSS_FN_):
-    print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
-    print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
+def displayHyperparameters(timesteps_, couette_dim_, sigma_, loss_fn_, features_, learning_rate_, batch_size_, num_epochs_):
     print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
     print(f'Currently using device (cuda/CPU): {DEVICE}.')
     print('Current Trial Parameters and Model Hyperparameters:')
     print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
-    print(f'Couette timesteps: {TIMESTEPS}')
+    print(f'Couette timesteps: {timesteps_}')
     print(
-        f'Spatial Resolution: {COUETTE_DIM+1} x {COUETTE_DIM+1} x {COUETTE_DIM+1}')
-    print(f'Noise level: {SIGMA*100}% of U_wall')
+        f'Spatial Resolution: {couette_dim_+1} x {couette_dim_+1} x {couette_dim_+1}')
+    print(f'Noise level: {sigma_*100}% of U_wall')
     print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
-    print(f'Loss function: {LOSS_FN_}')
+    print(f'Loss function: {loss_fn_}')
     print('Activation function: ReLU')
-    print(f'Model depth as dictated by len(features): {len(FEATURES)}')
-    print(f'Learning rate: {LEARNING_RATE}.')
-    print(f'Batch size: {BATCH_SIZE}')
-    print(f'Number of epochs: {NUM_EPOCHS}.')
-    print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
-    print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
+    print(f'Model depth as dictated by len(features): {len(features_)}')
+    print(f'Learning rate: {learning_rate_}.')
+    print(f'Batch size: {batch_size_}')
+    print(f'Number of epochs: {num_epochs_}.')
     print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
 
 
-def main():
+def trial_1():
+    print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
+    print('@@@@@@@@@@@@@@@            TRIAL 1           @@@@@@@@@@@@@@@')
+    print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
+    t = 1000                                            # Timesteps
+    d = 31                                              # Vertical resolution
+    s = 0.3                                             # Sigma
+    loss = [nn.L1Loss(), 'MAE', nn.MSELoss(), 'MSE']    # Loss function
+    f = [4, 8, 16]                                      # List of features
+    a = 0.001                                           # Alpha (learning rate)
+    b = 32                                              # Batch size
+    e = 40                                               # Number of epochs
+
+    for i in range(2):
+        displayHyperparameters(t, d, s, loss[2*i+1], f, a, b, e)
+
+        # Instantiate model, define loss function, optimizer and other utils.
+        model = UNET(in_channels=3, out_channels=3,
+                     features=f).to(DEVICE)
+        loss_fn = loss[2*i]
+        optimizer = optim.Adam(model.parameters(), lr=a)
+        train_loader, valid_loader = get_loaders(
+            b, NUM_WORKERS, PIN_MEMORY, t, d)
+
+        scaler = torch.cuda.amp.GradScaler()
+        training_loss = 0.0
+        losses = []
+
+        for epoch in range(e):
+            training_loss = train_fn(
+                train_loader, model, optimizer, loss_fn, scaler)
+            losses.append(training_loss)
+
+        losses.append(val_fn(valid_loader, model, loss_fn, '1', loss[2*i+1]))
+        print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
+        print(f'@@@@@@ T-Error:{losses[-2]}      V-Error:{losses[-1]} @@@@@@')
+        print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
+
+
+def trial_2():
+    pass
+
+
+def trial_3():
+    pass
+
+
+def trial_4():
+    pass
+
+
+def trial_5():
+    pass
+
+
+def trial_6():
+    pass
+
+
+def main2():
     l_functions = [nn.L1Loss(), 'MAE', nn.MSELoss(), 'MSE']
 
     for i in range(2):
@@ -206,6 +263,10 @@ def main():
                 test_loaders[i], model, loss_fn, LOSS_FN_, (i+1))
             print(
                 f'Test 0{i+1}: The model currently yields a loss of: {val_loss}.')
+
+
+def main():
+    trial_1()
 
 
 if __name__ == "__main__":

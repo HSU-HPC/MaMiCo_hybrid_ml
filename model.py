@@ -2,6 +2,7 @@ import torch
 import torch.nn as nn
 import torchvision.transforms.functional as TF
 from torchsummary import summary
+from ptflops import get_model_complexity_info
 
 
 # This Pytorch implementation of the well-known U-Net architecture was presented
@@ -19,7 +20,7 @@ from torchsummary import summary
 class DoubleConv(nn.Module):
     # For the MaMiCo implementation consider reflective padding and leaky ReLu.
     # Also, consider revisting BatchNorm2d.
-    def __init__(self, in_channels, out_channels):
+    def __init__(self, in_channels, out_channels, activation=nn.ReLU(inplace=True)):
         # PARAMETERS:
         # in_channels - channels contained in input data
         # out_channels - number of applied kernels -> channels contained in
@@ -33,13 +34,11 @@ class DoubleConv(nn.Module):
             # 1: stride
             # 1: padding -> same padding
             nn.BatchNorm3d(out_channels),
-            nn.ReLU(inplace=True),
-            # nn.Tanh(),
-            nn.Conv3d(out_channels, out_channels, kernel_size=3, stride=1,
-                      padding=1, bias=False),
+            activation,
+            nn.Conv3d(out_channels, out_channels, kernel_size=3,
+                      stride=1, padding=1, bias=False),
             nn.BatchNorm3d(out_channels),
-            nn.ReLU(inplace=True),
-            # nn.Tanh(),
+            activation,
         )
 
     def forward(self, x):
@@ -54,8 +53,7 @@ class UNET(nn.Module):
     # depth.
 
     def __init__(
-            self, in_channels=3, out_channels=3, features=[64, 128, 256, 512],
-    ):
+            self, in_channels=3, out_channels=3, features=[64, 128, 256, 512], activation=nn.ReLU(inplace=True)):
         # PARAMETERS:
         # in_channels - channels contained in input data
         # out_channels - channels to be contained in output data
@@ -70,7 +68,7 @@ class UNET(nn.Module):
 
         # Down part of UNET
         for feature in features:
-            self.downs.append(DoubleConv(in_channels, feature))
+            self.downs.append(DoubleConv(in_channels, feature, activation))
             in_channels = feature
 
         # Up part of UNET
@@ -80,10 +78,10 @@ class UNET(nn.Module):
                     feature*2, feature, kernel_size=2, stride=2,
                 )
             )
-            self.ups.append(DoubleConv(feature*2, feature))
+            self.ups.append(DoubleConv(feature*2, feature, activation))
 
         # This is the "deepest" part.
-        self.bottleneck = DoubleConv(features[-1], features[-1]*2)
+        self.bottleneck = DoubleConv(features[-1], features[-1]*2, activation)
 
         # This is the model's output.
         self.final_conv = nn.Conv3d(
@@ -130,8 +128,12 @@ class UNET(nn.Module):
 def test():
     # x = torch.randn((1, 3, 64, 64, 64))
 
-    model = UNET(in_channels=3, out_channels=3, features=[4])
-    summary(model, input_size=(3, 64, 64, 64))
+    model = UNET(in_channels=3, out_channels=3, features=[4, 8])
+    macs, params = get_model_complexity_info(
+        model, (3, 32, 32, 32), as_strings=True, print_per_layer_stat=True, verbose=True)
+    print('{:<30}  {:<8}'.format('Computational complexity: ', macs))
+    print('{:<30}  {:<8}'.format('Number of parameters: ', params))
+    # summary(model, input_size=(3, 32, 32, 32))
     # preds = model(x)
     # assert preds.shape == x.shape
 

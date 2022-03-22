@@ -1,6 +1,5 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from couette_solver import my1DCouetteSolver, my2DCouetteSolver, my3DCouetteSolver
 plt.style.use(['science'])
 np.set_printoptions(precision=2)
 
@@ -188,7 +187,7 @@ def plotFlowProfile(input_array, wall_height=20, u_wall=10):
         plt.show()
 
 
-def compareFlowProfile(prediction_array, target_array, wall_height=20, u_wall=10, sigma=0.3):
+def compareFlowProfile(title, file_name, prediction_array, prediction_array2, target_array, analytical=0, wall_height=20, u_wall=10, sigma=0.3):
 
     if prediction_array.ndim == 1:
         h = prediction_array.shape[0]
@@ -205,7 +204,6 @@ def compareFlowProfile(prediction_array, target_array, wall_height=20, u_wall=10
         plt.ylabel('Velocity $u$')
         plt.legend(loc="best", ncol=2, fontsize=7)
         # fig.tight_layout()
-        plt.show()
 
     if prediction_array.ndim == 2:
         h, w = prediction_array.shape
@@ -228,7 +226,6 @@ def compareFlowProfile(prediction_array, target_array, wall_height=20, u_wall=10
         plt.ylabel('Velocity $u$')
         plt.legend(loc="best", ncol=2, fontsize=7)
         # fig.tight_layout()
-        plt.show()
 
     if prediction_array.ndim == 3:
         d, h, w = prediction_array.shape
@@ -262,7 +259,6 @@ def compareFlowProfile(prediction_array, target_array, wall_height=20, u_wall=10
         plt.xlabel('Spatial Dimension')
         plt.legend(loc="best", ncol=2, fontsize=7)
         # fig.tight_layout()
-        plt.show()
 
     if prediction_array.ndim == 4:
         c, d, h, w = prediction_array.shape
@@ -272,46 +268,92 @@ def compareFlowProfile(prediction_array, target_array, wall_height=20, u_wall=10
         # , sharex=True, sharey=True)
         fig, (ax1, ax2, ax3, ax4, ax5) = plt.subplots(
             5, sharey=True, constrained_layout=True)  # sharex=True
+        # ##############################################################
+        # ##############################################################
+        fig.suptitle(f'{title}', fontsize=10, fontweight='bold')
+        # ##############################################################
+        # ##############################################################
         # plt.ylabel('Velocity $u$')
-
-        ax1.set_title('Flow Profile $u_x$ in X-Direction', fontsize=10)
+        ax1.text(4.5, 13, 'Flow Profile $u_x$ in X-Direction', fontsize=7,
+                 bbox={'facecolor': 'red', 'alpha': 0.0, 'pad': 0.3})
+        # ax1.set_title('Flow Profile $u_x$ in X-Direction', fontsize=10)
         ax1.plot(v_steps, prediction_array[int(0), int(
-            h/2), int(h/2), :], label='prediction')
+            h/2), int(h/2), :], ".r", markersize=0.5, label='MAE prediction')
+        ax1.plot(v_steps, prediction_array2[int(0), int(
+            h/2), int(h/2), :], ".y", markersize=0.5, label='MSE prediction')
         ax1.plot(v_steps, target_array[0, int(
             h/2), int(h/2), :], label='target')
 
-        ax2.set_title('Flow Profile $u_x$ in Y-Direction', fontsize=10)
-        ax2.set_ylabel('Velocity $u$')
+        # ax2.set_title('Flow Profile $u_x$ in Y-Direction', fontsize=10)
+        ax2.text(4.5, 13, 'Flow Profile $u_x$ in Y-Direction', fontsize=7,
+                 bbox={'facecolor': 'red', 'alpha': 0.0, 'pad': 0.3})
         ax2.plot(v_steps, prediction_array[0, int(
-            h/2), :, int(h/2)], label='prediction')
+            h/2), :, int(h/2)], ".r", markersize=0.5, label='MAE prediction')
+        ax2.plot(v_steps, prediction_array2[0, int(
+            h/2), :, int(h/2)], ".y", markersize=0.5, label='MSE prediction')
         ax2.plot(v_steps, target_array[0, int(
             h/2), :, int(h/2)], label='target')
 
-        ax3.set_title('Flow Profile $u_x$ in Z-Direction', fontsize=10)
+        # ax3.set_title('Flow Profile $u_x$ in Z-Direction', fontsize=10)
+        ax3.text(4.5, 13, 'Flow Profile $u_x$ in Z-Direction', fontsize=7,
+                 bbox={'facecolor': 'red', 'alpha': 0.0, 'pad': 0.3})
+        ax3.set_ylabel('Velocity $u$')
         ax3.plot(v_steps, prediction_array[0, :, int(
-            h/2), int(h/2)], label='prediction')
+            h/2), int(h/2)], ".r", markersize=0.5, label='MAE prediction')
+        ax3.plot(v_steps, prediction_array2[0, :, int(
+            h/2), int(h/2)], ".y", markersize=0.5, label='MSE prediction')
         ax3.plot(v_steps, target_array[0, :, int(
             h/2), int(h/2)], label='target')
 
-        ax4.set_title('Flow Profile $u_y$ in X-Direction', fontsize=10)
+        # ax4.set_title('Flow Profile $u_y$ in X-Direction', fontsize=10)
+        ax4.text(4.5, 13, 'Flow Profile $u_y$ in X-Direction', fontsize=7,
+                 bbox={'facecolor': 'red', 'alpha': 0.0, 'pad': 0.3})
         ax4.plot(v_steps, prediction_array[1, :, int(
-            h/2), int(h/2)], label='prediction')
+            h/2), int(h/2)], ".r", markersize=0.5, label='MAE prediction')
+        ax4.plot(v_steps, prediction_array2[1, :, int(
+            h/2), int(h/2)], ".y", markersize=0.5, label='MSE prediction')
         ax4.plot(v_steps, target_array[1, :, int(
             h/2), int(h/2)], label='target')
 
-        ax5.set_title('Flow Profile $u_z$ in X-Direction', fontsize=10)
+        # ax5.set_title('Flow Profile $u_z$ in X-Direction', fontsize=10)
+        ax5.text(4.5, 13, 'Flow Profile $u_z$ in X-Direction', fontsize=7,
+                 bbox={'facecolor': 'red', 'alpha': 0.0, 'pad': 0.3})
         ax5.plot(v_steps, prediction_array[2, :, int(
-            h/2), int(h/2)], label='prediction')
+            h/2), int(h/2)], ".r", markersize=0.5, label='MAE prediction')
+        ax5.plot(v_steps, prediction_array2[2, :, int(
+            h/2), int(h/2)], ".y", markersize=0.5, label='MSE prediction')
         ax5.plot(v_steps, target_array[2, :, int(
             h/2), int(h/2)], label='target')
 
-        # fig.legend(loc='lower center', ncol=4)
-        # fig.tight_layout()
-        plt.yticks(range(int(-u_wall), int(u_wall*(2)+1), 10))
-        plt.xlabel('Spatial Dimension')
-        plt.legend(loc="best", ncol=2, fontsize=7)
-        # fig.tight_layout()
-        plt.show()
+    if isinstance(analytical, np.ndarray):
+        ax1.plot(v_steps, analytical[0, int(
+            h/2), int(h/2), :], label='analytical')
+
+        ax2.plot(v_steps, analytical[0, int(
+            h/2), :, int(h/2)], label='analytical')
+
+        ax3.plot(v_steps, analytical[0, :, int(
+            h/2), int(h/2)], label='analytical')
+
+        ax4.plot(v_steps, analytical[1, :, int(
+            h/2), int(h/2)], label='analytical')
+
+        ax5.plot(v_steps, analytical[2, :, int(
+            h/2), int(h/2)], label='analytical')
+
+    ax1.legend(bbox_to_anchor=(0., 1.02, 1., .102),
+               loc='lower left', ncol=2, mode="expand", borderaxespad=0.)
+    # fig.legend(loc='lower center', ncol=4)
+    # fig.tight_layout()
+    plt.yticks(range(int(-u_wall), int(u_wall*(2)+6), 10))
+    plt.xlabel('Spatial Dimension')
+    # plt.legend(loc="best", ncol=2, fontsize=7)
+    # ax1.legend(bbox_to_anchor=(0., 1.02, 1., .102),
+    #           loc='lower left', ncol=2, mode="expand", borderaxespad=0.)
+    fig.set_size_inches(3.5, 6)
+    plt.show()
+    fig.savefig(
+        f'/Users/sebastianlerdo/Desktop/{file_name}_Flow_Profile.svg')
 
 
 def plotVelocityField(input_array, wall_height=20):
@@ -437,16 +479,7 @@ def compareVelocityField(prediction_array, target_array, wall_height=20):
 
 
 def main():
-    t = 100
-    v_res = 63
 
-    my_data1 = my2DCouetteSolver(
-        desired_timesteps=t, vertical_resolution=v_res, sigma=0)
-    my_data2 = my2DCouetteSolver(
-        desired_timesteps=t, vertical_resolution=v_res, sigma=0.5)
-
-    plotFlowProfile(my_data1)
-    compareFlowProfile(my_data1[35], my_data2[35])
     pass
 
 
