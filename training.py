@@ -493,8 +493,9 @@ def tests():
         scaler = torch.cuda.amp.GradScaler()
         training_loss = 0.0
         losses = []
+        epoch = 0
 
-        for epoch in range(e):
+        while epoch < e:
             training_loss = train_fn(
                 train_loader, model, optimizer, loss_fn, scaler)
             losses.append(training_loss)
@@ -507,6 +508,7 @@ def tests():
             print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
             print(' ')
             print(' ')
+            epoch += 1
 
         test_loader_1, test_loader_2, test_loader_3, test_loader_4 = get_loaders_test(
             b, NUM_WORKERS, PIN_MEMORY)
