@@ -496,23 +496,26 @@ def tests():
         epoch = 0
 
         while epoch < e:
-            training_loss = train_fn(train_loader, model, optimizer, loss_fn, scaler)
+            training_loss = train_fn(
+                train_loader, model, optimizer, loss_fn, scaler)
             losses.append(training_loss)
             epoch += 1
 
         if epoch == e:
-            test_loader_1, test_loader_2, test_loader_3, test_loader_4 = get_loaders_test(b, NUM_WORKERS, PIN_MEMORY)
-            test_loaders = [test_loader_1, test_loader_2, test_loader_3, test_loader_4]
+            test_loader_1, test_loader_2, test_loader_3, test_loader_4 = get_loaders_test(
+                b, NUM_WORKERS, PIN_MEMORY)
+            test_loaders = [test_loader_1, test_loader_2,
+                            test_loader_3, test_loader_4]
 
-            for i in range(0, 4):
+            for j in range(0, 4):
                 print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
                 print(
-                    f'@@@@@@@@@@@@@@@          TEST {i+1} {loss[2*i+1]}         @@@@@@@@@@@@@@@')
+                    f'@@@@@@@@@@@@@@@          TEST {j+1} {loss[2*i+1]}         @@@@@@@@@@@@@@@')
                 print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
                 val_loss = test_fn(
-                    test_loaders[i], model, loss_fn, loss[2*i+1], (i+1))
+                    test_loaders[j], model, loss_fn, loss[2*i+1], (j+1))
                 print(
-                    f'Test 0{i+1}: The model currently yields a loss of: {val_loss}.')
+                    f'Test 0{j+1}: The model currently yields a loss of: {val_loss}.')
                 errors = {key_list[c]: val_loss}
                 results_dict.update(errors)
                 c += 1
