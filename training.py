@@ -460,7 +460,7 @@ def trial_6():
 
 def tests():
     print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
-    print('@@@@@@@@@@@@@@@             TEST             @@@@@@@@@@@@@@@')
+    print('@@@@@@@@@@@@@@@            MODEL 6           @@@@@@@@@@@@@@@')
     print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
     t = 1000                                            # Timesteps
     d = 31                                              # Vertical resolution
@@ -496,26 +496,14 @@ def tests():
         epoch = 0
 
         while epoch < e:
-            training_loss = train_fn(
-                train_loader, model, optimizer, loss_fn, scaler)
+            training_loss = train_fn(train_loader, model, optimizer, loss_fn, scaler)
             losses.append(training_loss)
-
-            losses.append(val_fn(valid_loader, model,
-                          loss_fn, '6', loss[2*i+1]))
-            print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
-            print(
-                f'@@@@@@@@@@ T-Error:{losses[-2]:.3f}            V-Error:{losses[-1]:.3f} @@@@@@@@@@')
-            print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
-            print(' ')
-            print(' ')
             epoch += 1
 
-        test_loader_1, test_loader_2, test_loader_3, test_loader_4 = get_loaders_test(
-            b, NUM_WORKERS, PIN_MEMORY)
-        test_loaders = [test_loader_1, test_loader_2,
-                        test_loader_3, test_loader_4]
-
         if epoch == e:
+            test_loader_1, test_loader_2, test_loader_3, test_loader_4 = get_loaders_test(b, NUM_WORKERS, PIN_MEMORY)
+            test_loaders = [test_loader_1, test_loader_2, test_loader_3, test_loader_4]
+
             for i in range(0, 4):
                 print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
                 print(
