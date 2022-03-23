@@ -166,8 +166,8 @@ def trial_1():
     a = 0.001                                           # Alpha (learning rate)
     b = 32                                              # Batch size
     e = 40                                              # Number of epochs
-    key_list = ['1_MAE_Train_Error', '1_MAE_Valid_Error',
-                '1_MSE_Train_Error', '1_MSE_Valid_Error']
+    key_list = ['1_MAE_ReLU_Train_Error', '1_MAE_ReLU_Valid_Error',
+                '1_MSE_ReLU_Train_Error', '1_MSE_ReLU_Valid_Error']
     results_dict = {}
     for i in range(2):
         displayHyperparameters(t, d, s, loss[2*i+1], acti, f, a, b, e)
@@ -215,7 +215,9 @@ def trial_2():
     a = 0.001                                           # Alpha (learning rate)
     b = 32                                              # Batch size
     e = 40                                              # Number of epochs
-
+    key_list = ['2_MAE_Tanh_Train_Error', '2_MAE_Tanh_Valid_Error',
+                '2_MSE_Tanh_Train_Error', '2_MSE_Tanh_Valid_Error']
+    results_dict = {}
     for i in range(2):
         displayHyperparameters(t, d, s, loss[2*i+1], acti, f, a, b, e)
 
@@ -243,6 +245,10 @@ def trial_2():
         print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
         print(' ')
         print(' ')
+        errors = {key_list[2*i]: losses[-2], key_list[2*i+1]: losses[-1]}
+        results_dict.update(errors)
+
+    return results_dict
 
 
 def trial_3():
@@ -258,7 +264,12 @@ def trial_3():
     a = [0.001, 0.002]                                  # Alpha (learning rate)
     b = 32                                              # Batch size
     e = 40                                              # Number of epochs
-
+    key_list = ['3_MAE_alpha_1e-3_Train_Error', '3_MAE_alpha_1e-3_Valid_Error',
+                '3_MAE_alpha_2e-3_Train_Error', '3_MAE_alpha_2e-3_Valid_Error',
+                '3_MSE_alpha_1e-3_Train_Error', '3_MSE_alpha_1e-3_Valid_Error',
+                '3_MSE_alpha_2e-3_Train_Error', '3_MSE_alpha_2e-3_Valid_Error']
+    results_dict = {}
+    c = 0
     for i in range(2):
         for l in range(2):
             displayHyperparameters(t, d, s, loss[2*i+1], acti, f, a[l], b, e)
@@ -288,6 +299,10 @@ def trial_3():
             print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
             print(' ')
             print(' ')
+            errors = {key_list[2*c]: losses[-2], key_list[2*c+1]: losses[-1]}
+            results_dict.update(errors)
+            c += 1
+    return results_dict
 
 
 def trial_4():
@@ -304,7 +319,12 @@ def trial_4():
     b = 32                                              # Batch size
     # Number of epochs
     e = [40, 20]
-
+    key_list = ['4_MAE_epochs_40_Train_Error', '4_MAE_epochs_40_Valid_Error',
+                '4_MAE_epochs_20_Train_Error', '4_MAE_epochs_20_Valid_Error',
+                '4_MSE_epochs_40_Train_Error', '4_MSE_epochs_40_Valid_Error',
+                '4_MSE_epochs_20_Train_Error', '4_MSE_epochs_20_Valid_Error']
+    results_dict = {}
+    c = 0
     for i in range(2):
         for j in range(2):
             displayHyperparameters(t, d, s, loss[2*i+1], acti, f, a, b, e[j])
@@ -334,6 +354,10 @@ def trial_4():
             print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
             print(' ')
             print(' ')
+            errors = {key_list[2*c]: losses[-2], key_list[2*c+1]: losses[-1]}
+            results_dict.update(errors)
+            c += 1
+    return results_dict
 
 
 def trial_5():
@@ -349,7 +373,9 @@ def trial_5():
     a = 0.002                                           # Alpha (learning rate)
     b = 32                                              # Batch size
     e = 20                                              # Number of epochs
-
+    key_list = ['5_MAE_4_8_Train_Error', '5_MAE_4_8_Valid_Error',
+                '5_MSE_4_8_Train_Error', '5_MSE_4_8_Valid_Error']
+    results_dict = {}
     for i in range(2):
         displayHyperparameters(t, d, s, loss[2*i+1], acti, f, a, b, e)
 
@@ -377,6 +403,10 @@ def trial_5():
         print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
         print(' ')
         print(' ')
+        errors = {key_list[2*i]: losses[-2], key_list[2*i+1]: losses[-1]}
+        results_dict.update(errors)
+
+    return results_dict
 
 
 def trial_6():
@@ -392,7 +422,9 @@ def trial_6():
     a = 0.002                                           # Alpha (learning rate)
     b = 32                                              # Batch size
     e = 20                                              # Number of epochs
-
+    key_list = ['6_MAE_4_Train_Error', '6_MAE_4_Valid_Error',
+                '6_MSE_4_Train_Error', '6_MSE_4_Valid_Error']
+    results_dict = {}
     for i in range(2):
         displayHyperparameters(t, d, s, loss[2*i+1], acti, f, a, b, e)
 
@@ -420,6 +452,10 @@ def trial_6():
         print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
         print(' ')
         print(' ')
+        errors = {key_list[2*i]: losses[-2], key_list[2*i+1]: losses[-1]}
+        results_dict.update(errors)
+
+    return results_dict
 
 
 def tests():
@@ -484,10 +520,28 @@ def tests():
 
 def main():
     dict = trial_1()
+    dict.update(trial_2())
+    dict.update(trial_3())
+    dict.update(trial_4())
+    dict.update(trial_5())
+    dict.update(trial_6())
+    
+    '''
+    dict = {}
+    key_list = ['3_MAE_1e-3_Train_Error', '3_MAE_1e-3_Valid_Error',
+                '3_MAE_2e-3_Train_Error', '3_MAE_2e-3_Valid_Error',
+                '3_MSE_1e-3_Train_Error', '3_MSE_1e-3_Valid_Error',
+                '3_MSE_2e-3_Train_Error', '3_MSE_2e-3_Valid_Error']
+    c = 0
+    for i in range(2):
+        for j in range(2):
+            errors = {key_list[2*c]: 2*c, key_list[2*c+1]: 2*c+1}
+            dict.update(errors)
+            c += 1
+    '''
 
     for key, value in dict.items():
         print('{} : {}'.format(key, value))
-
 
 
 if __name__ == "__main__":
