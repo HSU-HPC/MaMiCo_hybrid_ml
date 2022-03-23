@@ -11,22 +11,8 @@ from drawing_board import save3D_RGBArray2File
 
 plt.style.use(['science'])
 
-# Hyperparameters etc.
-FEATURES = [4]
-TIMESTEPS = 1000
-COUETTE_DIM = 31
-SIGMA = 0.3
-LEARNING_RATE = 2e-3
-# LOSSFN = nn.L1Loss()
-# LOSS_FN = 'MAE'
-LOSSFN = nn.MSELoss()
-LOSS_FN = 'MSE'
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
-BATCH_SIZE = 32
-NUM_EPOCHS = 20             # 30
 NUM_WORKERS = 4             # guideline: 4* num_GPU
-IMAGE_HEIGHT = 128          # 1280 originally
-IMAGE_WIDTH = 128           # 1918 originally
 PIN_MEMORY = True
 LOAD_MODEL = False
 
@@ -180,7 +166,9 @@ def trial_1():
     a = 0.001                                           # Alpha (learning rate)
     b = 32                                              # Batch size
     e = 40                                              # Number of epochs
-
+    key_list = ['1_MAE_Train_Error', '1_MAE_Valid_Error',
+        '1_MSE_Train_Error', '1_MSE_Valid_Error']
+    results_dict = {}
     for i in range(2):
         displayHyperparameters(t, d, s, loss[2*i+1], acti, f, a, b, e)
 
@@ -208,6 +196,10 @@ def trial_1():
         print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
         print(' ')
         print(' ')
+        errors = {key_list[2*i]: losses[-2], key_list[2*i+1]: losses[-1]}
+        results_dict.update(errors)
+
+    return results_dict
 
 
 def trial_2():
@@ -490,8 +482,10 @@ def tests():
 
 
 def main():
-    trial_4()
+    dict = trial_1()
 
+    for key, value in dict:
+        print('{} : {}'.format(key, value))
 
 if __name__ == "__main__":
     main()
