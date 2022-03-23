@@ -460,14 +460,14 @@ def trial_6():
 
 def tests():
     print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
-    print('@@@@@@@@@@@@@@@            MODEL 6           @@@@@@@@@@@@@@@')
+    print('@@@@@@@@@@@@@@@            MODEL 1           @@@@@@@@@@@@@@@')
     print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
     t = 1000                                            # Timesteps
     d = 31                                              # Vertical resolution
     s = 0.3                                             # Sigma
     acti = 'ReLU'                                       # Activation function
     loss = [nn.L1Loss(), 'MAE', nn.MSELoss(), 'MSE']    # Loss function
-    f = [4]                                             # List of features
+    f = [4, 8, 16]                                             # List of features
     # Alpha (learning rate)
     a = 0.002
     b = 32                                              # Batch size
