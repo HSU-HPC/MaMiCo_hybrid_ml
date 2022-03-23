@@ -472,6 +472,12 @@ def tests():
     a = 0.002
     b = 32                                              # Batch size
     e = 20
+    key_list = ['T_1_MAE_Test_Error', 'T_2_MAE_Test_Error',
+                'T_3_MAE_Test_Error', 'T_4_MAE_Test_Error',
+                'T_1_MSE_Test_Error', 'T_2_MSE_Test_Error',
+                'T_3_MSE_Test_Error', 'T_4_MSE_Test_Error', ]
+    results_dict = {}
+    c = 0
 
     for i in range(2):
         displayHyperparameters(t, d, s, loss[2*i+1], acti, f, a, b, e)
@@ -516,16 +522,21 @@ def tests():
                 test_loaders[i], model, loss_fn, loss[2*i+1], (i+1))
             print(
                 f'Test 0{i+1}: The model currently yields a loss of: {val_loss}.')
+            errors = {key_list[c]: val_loss}
+            results_dict.update(errors)
+            c += 1
+    return results_dict
 
 
 def main():
-    dict = trial_1()
-    dict.update(trial_2())
-    dict.update(trial_3())
-    dict.update(trial_4())
-    dict.update(trial_5())
-    dict.update(trial_6())
-    
+    # dict = trial_1()
+    # dict.update(trial_2())
+    # dict.update(trial_3())
+    # dict.update(trial_4())
+    # dict.update(trial_5())
+    # dict.update(trial_6())
+    dict = tests()
+
     '''
     dict = {}
     key_list = ['3_MAE_1e-3_Train_Error', '3_MAE_1e-3_Valid_Error',
