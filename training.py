@@ -167,7 +167,7 @@ def trial_1():
     b = 32                                              # Batch size
     e = 40                                              # Number of epochs
     key_list = ['1_MAE_Train_Error', '1_MAE_Valid_Error',
-        '1_MSE_Train_Error', '1_MSE_Valid_Error']
+                '1_MSE_Train_Error', '1_MSE_Valid_Error']
     results_dict = {}
     for i in range(2):
         displayHyperparameters(t, d, s, loss[2*i+1], acti, f, a, b, e)
@@ -453,32 +453,42 @@ def tests():
         losses = []
 
         for epoch in range(e):
-            training_loss = train_fn(train_loader, model, optimizer, loss_fn, scaler)
+            training_loss = train_fn(
+                train_loader, model, optimizer, loss_fn, scaler)
             losses.append(training_loss)
 
-            losses.append(val_fn(valid_loader, model, loss_fn, '6', loss[2*i+1]))
+            losses.append(val_fn(valid_loader, model,
+                          loss_fn, '6', loss[2*i+1]))
             print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
-            print(f'@@@@@@@@@@ T-Error:{losses[-2]:.3f}            V-Error:{losses[-1]:.3f} @@@@@@@@@@')
+            print(
+                f'@@@@@@@@@@ T-Error:{losses[-2]:.3f}            V-Error:{losses[-1]:.3f} @@@@@@@@@@')
             print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
             print(' ')
             print(' ')
 
-        test_loader_1, test_loader_2, test_loader_3, test_loader_4 = get_loaders_test(b, NUM_WORKERS, PIN_MEMORY)
-        test_loaders = [test_loader_1, test_loader_2, test_loader_3, test_loader_4]
+        test_loader_1, test_loader_2, test_loader_3, test_loader_4 = get_loaders_test(
+            b, NUM_WORKERS, PIN_MEMORY)
+        test_loaders = [test_loader_1, test_loader_2,
+                        test_loader_3, test_loader_4]
 
         for i in range(0, 4):
             print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
-            print(f'@@@@@@@@@@@@@@@          TEST {i+1} {loss[2*i+1]}         @@@@@@@@@@@@@@@')
+            print(
+                f'@@@@@@@@@@@@@@@          TEST {i+1} {loss[2*i+1]}         @@@@@@@@@@@@@@@')
             print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
-            val_loss = test_fn(test_loaders[i], model, loss_fn, loss[2*i+1], (i+1))
-            print(f'Test 0{i+1}: The model currently yields a loss of: {val_loss}.')
+            val_loss = test_fn(
+                test_loaders[i], model, loss_fn, loss[2*i+1], (i+1))
+            print(
+                f'Test 0{i+1}: The model currently yields a loss of: {val_loss}.')
 
 
 def main():
     dict = trial_1()
 
-    for key, value in dict:
+    for key, value in dict.items():
         print('{} : {}'.format(key, value))
+
+
 
 if __name__ == "__main__":
     main()
