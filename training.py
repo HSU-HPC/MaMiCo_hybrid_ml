@@ -191,11 +191,11 @@ def trial_1():
                 train_loader, model, optimizer, loss_fn, scaler)
             losses.append(training_loss)
         end = time.time()
+        print(f'@@@@@@@@@@ Duration:{end-start} @@@@@@@@@@')
         losses.append(val_fn(valid_loader, model, loss_fn, '1', loss[2*i+1]))
         print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
         print(
             f'@@@@@@@@@@ T-Error:{losses[-2]:.3f}            V-Error:{losses[-1]:.3f} @@@@@@@@@@')
-        print(f'@@@@@@@@@@ Duration:{end-start}')
         print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
         print(' ')
         print(' ')
@@ -241,11 +241,11 @@ def trial_2():
                 train_loader, model, optimizer, loss_fn, scaler)
             losses.append(training_loss)
         end = time.time()
+        print(f'@@@@@@@@@@ Duration:{end-start} @@@@@@@@@@')
         losses.append(val_fn(valid_loader, model, loss_fn, '2', loss[2*i+1]))
         print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
         print(
             f'@@@@@@@@@@ T-Error:{losses[-2]:.3f}            V-Error:{losses[-1]:.3f} @@@@@@@@@@')
-        print(f'@@@@@@@@@@ Duration:{end-start}')
         print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
         print(' ')
         print(' ')
@@ -529,7 +529,7 @@ def tests():
 
 def main():
     dict = trial_1()
-    # dict.update(trial_2())
+    dict.update(trial_2())
     # dict.update(trial_3())
     # dict.update(trial_4())
     # dict.update(trial_5())
