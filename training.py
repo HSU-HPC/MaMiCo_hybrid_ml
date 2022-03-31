@@ -235,16 +235,17 @@ def trial_2():
         scaler = torch.cuda.amp.GradScaler()
         training_loss = 0.0
         losses = []
-
+        start = time.time()
         for epoch in range(e):
             training_loss = train_fn(
                 train_loader, model, optimizer, loss_fn, scaler)
             losses.append(training_loss)
-
+        end = time.time()
         losses.append(val_fn(valid_loader, model, loss_fn, '2', loss[2*i+1]))
         print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
         print(
             f'@@@@@@@@@@ T-Error:{losses[-2]:.3f}            V-Error:{losses[-1]:.3f} @@@@@@@@@@')
+        print(f'@@@@@@@@@@ Duration:{end-start}')
         print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
         print(' ')
         print(' ')
