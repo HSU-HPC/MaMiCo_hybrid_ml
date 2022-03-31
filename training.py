@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import torch.nn as nn
 import torch.optim as optim
 from model import UNET
+import time
 # MSLELoss, check_accuracy, save3DArray2File
 from utils import get_loaders, get_5_loaders, get_loaders_test
 from drawing_board import save3D_RGBArray2File
@@ -154,6 +155,7 @@ def displayHyperparameters(timesteps_, couette_dim_, sigma_, loss_fn_, activatio
 
 
 def trial_1():
+
     print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
     print('@@@@@@@@@@@@@@@            TRIAL 1           @@@@@@@@@@@@@@@')
     print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
@@ -183,16 +185,17 @@ def trial_1():
         scaler = torch.cuda.amp.GradScaler()
         training_loss = 0.0
         losses = []
-
+        start = time.time()
         for epoch in range(e):
             training_loss = train_fn(
                 train_loader, model, optimizer, loss_fn, scaler)
             losses.append(training_loss)
-
+        end = time.time()
         losses.append(val_fn(valid_loader, model, loss_fn, '1', loss[2*i+1]))
         print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
         print(
             f'@@@@@@@@@@ T-Error:{losses[-2]:.3f}            V-Error:{losses[-1]:.3f} @@@@@@@@@@')
+        print(f'@@@@@@@@@@ Duration:{end-start}')
         print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
         print(' ')
         print(' ')
@@ -467,7 +470,8 @@ def tests():
     s = 0.3                                             # Sigma
     acti = 'ReLU'                                       # Activation function
     loss = [nn.L1Loss(), 'MAE', nn.MSELoss(), 'MSE']    # Loss function
-    f = [4, 8, 16]                                             # List of features
+    # List of features
+    f = [4, 8, 16]
     # Alpha (learning rate)
     a = 0.002
     b = 32                                              # Batch size
