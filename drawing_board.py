@@ -1,6 +1,6 @@
 import numpy as np
 from couette_solver import my3DCouetteSolver
-from plotting import compareFlowProfile
+from plotting import compareFlowProfile, compareUxFlowProfile, colorMap
 
 
 def randomRGBArray(t=0, ch=0, d=0, h=0, w=1):
@@ -40,7 +40,7 @@ def load3DArrayFromFile(input_file, input_shape):
 
 def load3D_RGBArrayFromFile(input_file, output_shape):
     # 3) load 2D array from file
-    loaded_array = np.loadtxt(f'{input_file}')
+    loaded_array = np.loadtxt(f'Results/{input_file}')
     #f'/Users/sebastianlerdo/Desktop/Bundeswehr/Uni_Bw/HPC Laboratory_Project/Python Scripts/Predictions and Targets/Test/{input_file}')
     t, c, d, h, w = output_shape
 
@@ -177,6 +177,60 @@ def calculateFLOPS(c, d, h, w, features):
     print(f'The therein included number of GMACCs is: {maccs/(10**9)} ')
 
 
+def testColorMap():
+    '''
+    p_MAE = load3D_RGBArrayFromFile(
+        'predictions_1_MAE_5_3_32_32_32.csv', (5, 3, 32, 32, 32))
+    p_MSE = load3D_RGBArrayFromFile(
+        'predictions_1_MSE_5_3_32_32_32.csv', (5, 3, 32, 32, 32))
+    target = load3D_RGBArrayFromFile(
+        'targets_1_MAE_5_3_32_32_32.csv', (5, 3, 32, 32, 32))
+    analytical = load3D_RGBArrayFromFile(
+        'analytical_10_99_1_3_32_32_32.csv', (1, 3, 32, 32, 32))
+    u_1 = target[2, 0, :, :, :]
+    u_2 = analytical[0, 0, :, :, :]
+    u_3 = p_MAE[2, 0, :, :, :]
+    '''
+    t = 1000
+    u = 10
+    w = 20
+    n = 2
+    v = 31
+    sigma = 0
+    seed = 1
+    analytical = my3DCouetteSolver(desired_timesteps=t, u_wall=u, wall_height=w,
+                                   nu=n, vertical_resolution=v, sigma=sigma, my_seed=seed)
+    u_1 = analytical[1, 0, :, :, :]
+    '''
+    u_2 = analytical[15, 0, :, :, :]
+    u_3 = analytical[30, 0, :, :, :]
+    u_4 = analytical[62, 0, :, :, :]
+    u_5 = analytical[125, 0, :, :, :]
+    u_6 = analytical[250, 0, :, :, :]
+    u_7 = analytical[500, 0, :, :, :]
+    '''
+    u_8 = analytical[1000-1, 0, :, :, :]
+    u = [u_1, u_8]
+    colorMap(u)
+
+
+def trial1():
+    p_MAE = load3D_RGBArrayFromFile(
+        'predictions_1_MAE_5_3_32_32_32.csv', (5, 3, 32, 32, 32))
+    p_MSE = load3D_RGBArrayFromFile(
+        'predictions_1_MSE_5_3_32_32_32.csv', (5, 3, 32, 32, 32))
+    target = load3D_RGBArrayFromFile(
+        'targets_1_MAE_5_3_32_32_32.csv', (5, 3, 32, 32, 32))
+    analytical = load3D_RGBArrayFromFile(
+        'analytical_10_99_1_3_32_32_32.csv', (1, 3, 32, 32, 32))
+    analytical = analytical[0]
+
+    title = 'Trial 1'
+    save_as = 'Trial_01'
+    compareFlowProfile(
+        title, save_as, p_MAE[2], p_MSE[2], target[2], analytical)
+
+
 def test1():
     p_MAE = load3D_RGBArrayFromFile(
         'T_1_pred_MAE_5_3_32_32_32.csv', (5, 3, 32, 32, 32))
@@ -190,7 +244,9 @@ def test1():
 
     title = 'Test 1: Different Random Seed'
     save_as = 'Test_01'
-    compareFlowProfile(
+    # compareFlowProfile(
+    #    title, save_as, p_MAE[2], p_MSE[2], target[2], analytical)
+    compareUxFlowProfile(
         title, save_as, p_MAE[2], p_MSE[2], target[2], analytical)
 
 
@@ -207,7 +263,9 @@ def test2():
 
     title = 'Test 2: Wall Speed $U = 5$'
     save_as = 'Test_02'
-    compareFlowProfile(
+    # compareFlowProfile(
+    #     title, save_as, p_MAE[2], p_MSE[2], target[2], analytical)
+    compareUxFlowProfile(
         title, save_as, p_MAE[2], p_MSE[2], target[2], analytical)
 
 
@@ -224,7 +282,9 @@ def test3():
 
     title = 'Test 3: Increased Noise $ \sigma = 0.5U$'
     save_as = 'Test_03'
-    compareFlowProfile(
+    # compareFlowProfile(
+    #     title, save_as, p_MAE[2], p_MSE[2], target[2], analytical)
+    compareUxFlowProfile(
         title, save_as, p_MAE[2], p_MSE[2], target[2], analytical)
 
 
@@ -241,7 +301,9 @@ def test4():
 
     title = 'Test 4: Increased Spatial Resolution 64 x 64 x 64'
     save_as = 'Test_04'
-    compareFlowProfile(
+    # compareFlowProfile(
+    #     title, save_as, p_MAE[2], p_MSE[2], target[2], analytical)
+    compareUxFlowProfile(
         title, save_as, p_MAE[2], p_MSE[2], target[2], analytical)
 
 
@@ -296,8 +358,10 @@ def analytical_4():
 
 
 def main():
-
-    pass
+    test1()
+    test2()
+    test3()
+    test4()
 
 
 if __name__ == "__main__":
