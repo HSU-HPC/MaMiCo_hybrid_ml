@@ -242,6 +242,7 @@ def trial_2():
                 train_loader, model, optimizer, loss_fn, scaler)
             losses.append(training_loss)
         end = time.time()
+        losses2file(losses, f'trial_2_{loss[2*i+1]}')
         print(f'@@@@@@@@@@ Duration:{end-start} @@@@@@@@@@')
         losses.append(val_fn(valid_loader, model, loss_fn, '2', loss[2*i+1]))
         print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
@@ -295,6 +296,8 @@ def trial_3():
                 training_loss = train_fn(
                     train_loader, model, optimizer, loss_fn, scaler)
                 losses.append(training_loss)
+
+            losses2file(losses, f'trial_3_{loss[2*i+1]}_{l+1}e-3')
 
             losses.append(val_fn(valid_loader, model,
                           loss_fn, f'3_{l+1}e-3', loss[2*i+1]))
@@ -351,6 +354,8 @@ def trial_4():
                     train_loader, model, optimizer, loss_fn, scaler)
                 losses.append(training_loss)
 
+            losses2file(losses, f'trial_4_{loss[2*i+1]}_{str(e[j])}')
+
             losses.append(val_fn(valid_loader, model, loss_fn,
                           f'4_epoch_{e[j]}', loss[2*i+1]))
             print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
@@ -401,6 +406,9 @@ def trial_5():
                 train_loader, model, optimizer, loss_fn, scaler)
             losses.append(training_loss)
 
+
+        losses2file(losses, f'trial_5_{loss[2*i+1]}')
+
         losses.append(val_fn(valid_loader, model, loss_fn, '5', loss[2*i+1]))
         print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
         print(
@@ -449,6 +457,8 @@ def trial_6():
             training_loss = train_fn(
                 train_loader, model, optimizer, loss_fn, scaler)
             losses.append(training_loss)
+
+        losses2file(losses, f'trial_6_{loss[2*i+1]}')
 
         losses.append(val_fn(valid_loader, model, loss_fn, '6', loss[2*i+1]))
         print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
@@ -530,12 +540,11 @@ def tests():
 
 def main():
     dict = trial_1()
-    # dict.update(trial_2())
-    # dict = trial_3()
-    # dict.update(trial_4())
-    # dict.update(trial_5())
-    # dict.update(trial_6())
-    # dict = tests()
+    dict.update(trial_2())
+    dict = trial_3()
+    dict.update(trial_4())
+    dict.update(trial_5())
+    dict.update(trial_6())
 
     '''
     dict = {}
