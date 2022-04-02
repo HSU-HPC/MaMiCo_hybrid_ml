@@ -7,7 +7,7 @@ import torch.optim as optim
 from model import UNET
 import time
 # MSLELoss, check_accuracy, save3DArray2File
-from utils import get_loaders, get_5_loaders, get_loaders_test
+from utils import get_loaders, get_5_loaders, get_loaders_test, losses2file
 from drawing_board import save3D_RGBArray2File
 
 plt.style.use(['science'])
@@ -191,6 +191,7 @@ def trial_1():
                 train_loader, model, optimizer, loss_fn, scaler)
             losses.append(training_loss.item())
         end = time.time()
+        losses2file(losses, f'trial_1_{loss[2*i+1]}')
         print(f'@@@@@@@@@@ Duration:{end-start} @@@@@@@@@@')
         losses.append(val_fn(valid_loader, model, loss_fn, '1', loss[2*i+1]))
         print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
@@ -198,7 +199,6 @@ def trial_1():
             f'@@@@@@@@@@ T-Error:{losses[-2]:.3f}            V-Error:{losses[-1]:.3f} @@@@@@@@@@')
         print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
         print(' ')
-        print(losses)
         print(' ')
         errors = {key_list[2*i]: losses[-2], key_list[2*i+1]: losses[-1]}
         results_dict.update(errors)
@@ -529,12 +529,12 @@ def tests():
 
 
 def main():
-    # dict = trial_1()
+    dict = trial_1()
     # dict.update(trial_2())
-    dict = trial_3()
-    dict.update(trial_4())
-    dict.update(trial_5())
-    dict.update(trial_6())
+    # dict = trial_3()
+    # dict.update(trial_4())
+    # dict.update(trial_5())
+    # dict.update(trial_6())
     # dict = tests()
 
     '''
