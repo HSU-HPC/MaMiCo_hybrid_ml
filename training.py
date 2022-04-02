@@ -529,12 +529,12 @@ def tests():
 
 
 def main():
-    dict = trial_1()
-    dict.update(trial_2())
-    # dict.update(trial_3())
-    # dict.update(trial_4())
-    # dict.update(trial_5())
-    # dict.update(trial_6())
+    # dict = trial_1()
+    # dict.update(trial_2())
+    dict = trial_3()
+    dict.update(trial_4())
+    dict.update(trial_5())
+    dict.update(trial_6())
     # dict = tests()
 
     '''
