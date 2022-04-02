@@ -9,15 +9,6 @@ from dataset import MyFlowDataset
 from torch.utils.data import DataLoader
 
 
-class MSLELoss(nn.Module):
-    def __init__(self):
-        super().__init__()
-        self.mse = nn.MSELoss()
-
-    def forward(self, pred, actual):
-        return self.mse(torch.log(pred + 1), torch.log(actual + 1))
-
-
 def save_checkpoint(state, filename="my_checkpoint.pth.tar"):
     print("=> Saving checkpoint")
     torch.save(state, filename)
@@ -255,6 +246,10 @@ def save_predictions_as_imgs(loader, model, folder="saved_images/", device="cuda
         torchvision.utils.save_image(y.unsqueeze(1), f"{folder}{idx}.png")
 
     model.train()
+
+
+def losses2file(losses, filename):
+    np.savetxt(f"Losses_{filename}.csv", losses, delimiter=", ", fmt='% s')
 
 
 # train_loader, val_loader, test_loader = get_loaders(32, 1, True, 31)
