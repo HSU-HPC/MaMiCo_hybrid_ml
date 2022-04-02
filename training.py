@@ -198,6 +198,7 @@ def trial_1():
             f'@@@@@@@@@@ T-Error:{losses[-2]:.3f}            V-Error:{losses[-1]:.3f} @@@@@@@@@@')
         print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
         print(' ')
+        print(losses)
         print(' ')
         errors = {key_list[2*i]: losses[-2], key_list[2*i+1]: losses[-1]}
         results_dict.update(errors)
