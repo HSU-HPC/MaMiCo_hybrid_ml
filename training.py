@@ -189,7 +189,7 @@ def trial_1():
         for epoch in range(e):
             training_loss = train_fn(
                 train_loader, model, optimizer, loss_fn, scaler)
-            losses.append(training_loss)
+            losses.append(training_loss.item())
         end = time.time()
         print(f'@@@@@@@@@@ Duration:{end-start} @@@@@@@@@@')
         losses.append(val_fn(valid_loader, model, loss_fn, '1', loss[2*i+1]))
@@ -198,8 +198,7 @@ def trial_1():
             f'@@@@@@@@@@ T-Error:{losses[-2]:.3f}            V-Error:{losses[-1]:.3f} @@@@@@@@@@')
         print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
         print(' ')
-        for i in losses:
-            print(i.item())
+        print(losses)
         print(' ')
         errors = {key_list[2*i]: losses[-2], key_list[2*i+1]: losses[-1]}
         results_dict.update(errors)
