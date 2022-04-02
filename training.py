@@ -199,7 +199,7 @@ def trial_1():
         print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
         print(' ')
         for i in losses:
-            print(i)
+            print(i.item())
         print(' ')
         errors = {key_list[2*i]: losses[-2], key_list[2*i+1]: losses[-1]}
         results_dict.update(errors)
