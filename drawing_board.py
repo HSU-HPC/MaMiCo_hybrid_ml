@@ -1,6 +1,7 @@
 import numpy as np
+import csv
 from couette_solver import my3DCouetteSolver
-from plotting import compareFlowProfile, compareUxFlowProfile, colorMap
+from plotting import compareFlowProfile, compareUxFlowProfile, colorMap, showSample, plotLoss, plotLoss34
 
 
 def randomRGBArray(t=0, ch=0, d=0, h=0, w=1):
@@ -47,6 +48,10 @@ def load3D_RGBArrayFromFile(input_file, output_shape):
     # 4) Revert 2D array to 3D array
     original_array = loaded_array.reshape(t, c, d, h, w)
     return original_array
+
+
+def loadLoss2List(input_file):
+    return np.loadtxt(f'Results/{input_file}.csv')
 
 
 def checkSaveLoad(input_array, loaded_array):
@@ -231,6 +236,29 @@ def trial1():
         title, save_as, p_MAE[2], p_MSE[2], target[2], analytical)
 
 
+def losses():
+
+    for i in [1, 2, 5, 6]:
+        losses_MAE = loadLoss2List(f'Losses_trial_{i}_MAE')
+        losses_MSE = loadLoss2List(f'Losses_trial_{i}_MSE')
+        plotLoss(losses_MAE, losses_MSE, f'{i}')
+
+    labels = [['MAE', '1e-3', 'MAE', '2e-3', 'MSE', '1e-3', 'MSE', '2e-3'],
+              ['MAE', '20', 'MAE', '40', 'MSE', '20', 'MSE', '40']]
+
+    for i in [3, 4]:
+        losses_MAE_1 = loadLoss2List(
+            f'Losses_trial_{i}_{labels[(i-3)][0]}_{labels[(i-3)][1]}')
+        losses_MAE_2 = loadLoss2List(
+            f'Losses_trial_{i}_{labels[(i-3)][2]}_{labels[(i-3)][3]}')
+        losses_MSE_1 = loadLoss2List(
+            f'Losses_trial_{i}_{labels[(i-3)][4]}_{labels[(i-3)][5]}')
+        losses_MSE_2 = loadLoss2List(
+            f'Losses_trial_{i}_{labels[(i-3)][6]}_{labels[(i-3)][7]}')
+        plotLoss34(losses_MAE_1, losses_MAE_2, losses_MSE_1,
+                   losses_MSE_2, labels[i-3], f'{i}')
+
+
 def test1():
     p_MAE = load3D_RGBArrayFromFile(
         'T_1_pred_MAE_5_3_32_32_32.csv', (5, 3, 32, 32, 32))
@@ -357,11 +385,12 @@ def analytical_4():
     save3D_RGBArray2File(analytical, 'analytical_10_99')
 
 
+def variance(train, valid):
+    return abs(train-valid)/train
+
+
 def main():
-    test1()
-    test2()
-    test3()
-    test4()
+    losses()
 
 
 if __name__ == "__main__":

@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 from couette_solver import my3DCouetteSolver
+from utils import losses2file
 plt.style.use(['science'])
 np.set_printoptions(precision=2)
 
@@ -493,9 +494,9 @@ def compareVelocityField(prediction_array, target_array, wall_height=20):
 
 def colorMap(u_vector):
     len_u = len(u_vector)
-    d, h2, w2 = u_vector[0].shape
-    v_step = w2 / (h2-1)
-    v_steps = np.arange(0, w2 + v_step, v_step).tolist()
+    d, h, w = u_vector[0].shape
+    v_step = 20 / (h-1)
+    v_steps = np.arange(0, 20 + v_step, v_step).tolist()
     X, Y, Z = np.meshgrid(v_steps, v_steps, v_steps)
     counter = 1
     # Creating color map
@@ -508,7 +509,7 @@ def colorMap(u_vector):
 
     # Creating subplots
     for u in u_vector:
-        ax = fig.add_subplot(len_u, 1, counter, projection='3d')
+        ax = fig.add_subplot((len_u), 1, counter, projection='3d')
         sc = ax.scatter3D(Z, Y, X, c=u, alpha=0.8, marker='.',
                           s=0.25, vmin=0, vmax=10, cmap=cm)
         ax.set_xlabel("X", fontsize=7, fontweight='bold')
@@ -521,6 +522,7 @@ def colorMap(u_vector):
         ax.set_yticks([])
         ax.set_zticks([])
         ax.grid(False)
+        # Visualizing central cells
         counter += 1
 
     fig.subplots_adjust(right=0.8)
@@ -530,78 +532,31 @@ def colorMap(u_vector):
     plt.show()
     fig.savefig('Plots/Sample_Volume.png')
 
-    '''
-    U_1 = u_1
-    U_2 = u_2
-    U_3 = u_3
-    # U_3 = target[2, 0, :, :, :]
-    d, h2, w2 = u_1.shape
-    v_step = w2 / (h2-1)
-    v_steps = np.arange(0, w2 + v_step, v_step).tolist()
-    X, Y, Z = np.meshgrid(v_steps, v_steps, v_steps)
 
-    cm = plt.cm.get_cmap('YlGnBu')
-
-    # Creating figure
+def showSample():
+    v_step = 20 / (31)
+    v_steps = np.arange(0, 20 + v_step, v_step).tolist()
     fig = plt.figure()
-    fig.suptitle('3D Analytical Couette Flow Sample of $u_x$ at $T=98$',
-                 fontsize=10, fontweight='bold')
 
-    # Creating plot 1
-    ax1 = fig.add_subplot(3, 1, 1, projection='3d')
-    sc = ax1.scatter3D(Z, Y, X, c=U_1, alpha=0.8, marker='.',
-                       s=0.25, vmin=-4., vmax=14., cmap=cm)
-    ax1.set_xlabel("X", fontsize=7, fontweight='bold')
-    ax1.set_ylabel("Z", fontsize=7, fontweight='bold')
-    ax1.set_zlabel("Y", fontsize=7, fontweight='bold')
-    ax1.xaxis.labelpad = -10
-    ax1.yaxis.labelpad = -10
-    ax1.zaxis.labelpad = -10
-    ax1.set_xticks([])
-    ax1.set_yticks([])
-    ax1.set_zticks([])
-    ax1.grid(False)
-    # plt.colorbar(sc, orientation="vertical", fraction=0.07, location='left')
+    ax = fig.add_subplot(1, 1, 1, projection='3d')
+    line = np.linspace(-5, 25, 100)
+    middle = 10 * np.ones(100, )
+    ax.plot3D(middle, middle, line, 'black')
+    ax.plot3D(middle, line, middle, 'black')
+    ax.plot3D(line, middle, middle, 'black')
+    ax.set_xlabel("X", fontsize=7, fontweight='bold')
+    ax.set_ylabel("Z", fontsize=7, fontweight='bold')
+    ax.set_zlabel("Y", fontsize=7, fontweight='bold')
+    ax.xaxis.labelpad = -10
+    ax.yaxis.labelpad = -10
+    ax.zaxis.labelpad = -10
+    ax.set_xticks([])
+    ax.set_yticks([])
+    ax.set_zticks([])
+    ax.grid(False)
 
-    # Creating plot 2
-    ax2 = fig.add_subplot(3, 1, 2, projection='3d')
-    sc = ax2.scatter3D(Z, Y, X, c=U_2, alpha=0.8, marker='.',
-                       s=0.25, vmin=-4., vmax=14.,  cmap=cm)
-    ax2.set_xlabel("X", fontsize=7, fontweight='bold')
-    ax2.set_ylabel("Z", fontsize=7, fontweight='bold')
-    ax2.set_zlabel("Y", fontsize=7, fontweight='bold')
-    ax2.xaxis.labelpad = -10
-    ax2.yaxis.labelpad = -10
-    ax2.zaxis.labelpad = -10
-    ax2.set_xticks([])
-    ax2.set_yticks([])
-    ax2.set_zticks([])
-    ax2.grid(False)
-
-    # Creating plot 3
-    ax3 = fig.add_subplot(3, 1, 3, projection='3d')
-    sc = ax3.scatter3D(Z, Y, X, c=U_3, alpha=0.8, marker='.',
-                       s=0.25, vmin=-4., vmax=14.,  cmap=cm)
-    ax3.set_xlabel("X", fontsize=7, fontweight='bold')
-    ax3.set_ylabel("Z", fontsize=7, fontweight='bold')
-    ax3.set_zlabel("Y", fontsize=7, fontweight='bold')
-    ax3.xaxis.labelpad = -10
-    ax3.yaxis.labelpad = -10
-    ax3.zaxis.labelpad = -10
-    ax3.set_xticks([])
-    ax3.set_yticks([])
-    ax3.set_zticks([])
-    ax3.grid(False)
-
-    # fig.colorbar(sc, orientation="vertical",
-    #              fraction=0.07, location='left')
-    fig.subplots_adjust(right=0.8)
-    cbar_ax = fig.add_axes([0.85, 0.15, 0.05, 0.7])
-    fig.colorbar(sc, cax=cbar_ax)
-    fig.set_size_inches(3.5, 3.5)
     plt.show()
-    '''
-    pass
+    fig.savefig('Plots/Sampling_of_Volume.png')
 
 
 def colorMap2():
@@ -645,10 +600,79 @@ def colorMap2():
     plt.show()
 
 
+def plotLoss(losses_MAE, losses_MSE, file_name):
+    asymp_MAE = losses_MAE[-1] * np.ones((losses_MAE.shape))
+    asymp_MSE = losses_MSE[-1] * np.ones((losses_MSE.shape))
+
+    fig, (ax1, ax2) = plt.subplots(2, constrained_layout=True)
+    fig.supxlabel('Number of Epochs')
+    fig.supylabel('Average Error')
+    ax1.plot(losses_MAE, label='MAE')
+    ax1.plot(asymp_MAE, ':', label='Asymptote')
+    ax1.set_yticks([0, 1, 2, 3, 4])
+    ax1.set_xticks([1, 10, 20, 30, 40])
+    ax1.legend(bbox_to_anchor=(0., 1.02, 1., .102), loc='lower left',
+               ncol=2, mode="expand", borderaxespad=0.)
+    ax2.plot(losses_MSE, label='MSE')
+    ax2.plot(asymp_MSE, ':', label='Asymptote')
+    ax2.set_yticks([0, 5, 10, 15, 20, 25])
+    ax2.set_xticks([1, 10, 20, 30, 40])
+    # ax2.set_ylabel("Average Error")
+    # ax2.set_xlabel("Number of Epochs")
+    ax2.legend(bbox_to_anchor=(0., 1.02, 1., .102), loc='lower left',
+               ncol=2, mode="expand", borderaxespad=0.)
+    fig.set_size_inches(3.5, 3)
+    plt.show()
+    fig.savefig(f'Plots/Losses_Trial_{file_name}.svg')
+
+
+def plotLoss34(losses_MAE_1, losses_MAE_2, losses_MSE_1, losses_MSE_2, labels, file_name):
+    asymp_MAE = losses_MAE_2[-1] * np.ones((losses_MAE_1.shape))
+    asymp_MSE = losses_MSE_2[-1] * np.ones((losses_MSE_1.shape))
+
+    fig, (ax1, ax2) = plt.subplots(2, constrained_layout=True)
+    fig.supxlabel('Number of Epochs')
+    fig.supylabel('Average Error')
+    ax1.plot(losses_MAE_1, label=f'{labels[0]} {labels[1]}')
+    ax1.plot(losses_MAE_2, label=f'{labels[2]} {labels[3]}')
+    ax1.plot(asymp_MAE, ':', label='Asymptote')
+    ax1.set_yticks([0, 1, 2, 3, 4])
+    ax1.set_xticks([1, 10, 20, 30, 40])
+    ax1.legend(bbox_to_anchor=(0., 1.02, 1., .102), loc='lower left',
+               ncol=2, mode="expand", borderaxespad=0.)
+    ax2.plot(losses_MSE_1, label=f'{labels[4]} {labels[5]}')
+    ax2.plot(losses_MSE_2, label=f'{labels[6]} {labels[7]}')
+    ax2.plot(asymp_MSE, ':', label='Asymptote')
+    ax2.set_yticks([0, 5, 10, 15, 20, 25])
+    ax2.set_xticks([1, 10, 20, 30, 40])
+    # ax2.set_ylabel("Average Error")
+    # ax2.set_xlabel("Number of Epochs")
+    ax2.legend(bbox_to_anchor=(0., 1.02, 1., .102), loc='lower left',
+               ncol=2, mode="expand", borderaxespad=0.)
+    fig.set_size_inches(3.5, 3.5)
+    plt.show()
+    fig.savefig(f'Plots/Losses_Trial_{file_name}.svg')
+
+
 def main():
 
     pass
 
 
 if __name__ == "__main__":
-    colorMap()
+    trial_1_MAE = [3.284456491470337, 3.3167638778686523, 3.2933876514434814,
+                   3.1420695781707764, 3.2184691429138184, 3.1728017330169678,
+                   3.099424123764038, 3.0835835933685303, 3.1370689868927,
+                   3.0623743534088135, 3.0479209423065186, 2.9709527492523193,
+                   3.012511730194092, 2.983220100402832, 2.9370648860931396,
+                   2.9364683628082275, 2.846618413925171, 2.8045599460601807,
+                   2.820608377456665, 2.723856210708618, 2.783599615097046,
+                   2.7084238529205322, 2.6841301918029785, 2.605388879776001,
+                   2.590070962905884, 2.5433056354522705, 2.594238042831421,
+                   2.5806050300598145, 2.5178327560424805, 2.492647171020508,
+                   2.4916369915008545, 2.462554931640625, 2.4499239921569824,
+                   2.414311408996582, 2.4634335041046143, 2.449998378753662,
+                   2.4065840244293213, 2.4373674392700195, 2.411790132522583,
+                   2.4002745151519775]
+
+    losses2file(trial_1_MAE, 'trial_1_MAE')
