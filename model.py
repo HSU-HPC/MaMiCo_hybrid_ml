@@ -173,14 +173,14 @@ class INTERIM_MD_UNET(nn.Module):
         for feature in reversed(features):
             self.ups.append(
                 nn.ConvTranspose3d(
-                    feature*2, feature, kernel_size=2, stride=2,
+                    feature+2, feature, kernel_size=2, stride=2,
                 )
             )
-            self.ups.append(DoubleConv(feature*2, feature, activation))
+            self.ups.append(DoubleConv(feature+2, feature, activation))
 
         # This is the "deepest" part.
         # self.bottleneck = DoubleConv(features[-1], features[-1]*2, activation)
-        self.bottleneck = DoubleConv(features[-1], features[-1]*2, activation)
+        self.bottleneck = DoubleConv(features[-1], features[-1]+2, activation)
 
         # This is the model's output.
         self.final_conv = nn.Conv3d(
