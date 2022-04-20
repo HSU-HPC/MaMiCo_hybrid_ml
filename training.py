@@ -4,7 +4,7 @@ from tqdm import tqdm
 import matplotlib.pyplot as plt
 import torch.nn as nn
 import torch.optim as optim
-from model import UNET
+from model import UNET, INTERIM_MD_UNET
 import time
 # MSLELoss, check_accuracy, save3DArray2File
 from utils import get_loaders, get_5_loaders, get_loaders_test, losses2file
@@ -40,7 +40,7 @@ def train_fn(loader, model, optimizer, loss_fn, scaler):
             # Other ops, like reductions, often require the dynamic range of
             # float32. Mixed precision tries to match each op to its appropriate
             # datatype.
-            predictions = model(data)
+            predictions, _ = model(data)
             loss = loss_fn(predictions.float(), targets.float())
 
         # Next consider the backward training path, especially the corresponding
@@ -95,17 +95,15 @@ def val_fn(loader, model, loss_fn, trial_string, loss_string):
         targets = targets.float().to(device=DEVICE)
 
         with torch.cuda.amp.autocast():
-            predictions = model(data)
+            predictions, _ = model(data)
             # torch.save(predictions, 'predictions.txt')
             # torch.save(targets, 'targets.txt')
             predict_array = predictions.cpu().detach().numpy()
             # print(f'Predict_array datatype: {type(predict_array)}')
             target_array = targets.cpu().detach().numpy()
             # print(f'Target_array datatype: {type(target_array)}')
-            save3D_RGBArray2File(
-                predict_array, f'predictions_{trial_string}_{loss_string}')
-            save3D_RGBArray2File(
-                target_array, f'targets_{trial_string}_{loss_string}')
+            # save3D_RGBArray2File(predict_array, f'predictions_{trial_string}_{loss_string}')
+            # save3D_RGBArray2File(target_array, f'targets_{trial_string}_{loss_string}')
             # print(f'Prediction datatype: {type(predictions)}')
             # print(f'Prediction shape: {predictions.shape}')
             loss = loss_fn(predictions.float(), targets.float())
@@ -123,11 +121,11 @@ def test_fn(loader, model, loss_fn, LOSS_FN_, i):
         targets = targets.float().to(device=DEVICE)
 
         with torch.cuda.amp.autocast():
-            predictions = model(data)
-            predict_array = predictions.cpu().detach().numpy()
-            target_array = targets.cpu().detach().numpy()
-            save3D_RGBArray2File(predict_array, f'T_{i}_pred_{LOSS_FN_}')
-            save3D_RGBArray2File(target_array, f'T_{i}_target_{LOSS_FN_}')
+            predictions, _ = model(data)
+            # predict_array = predictions.cpu().detach().numpy()
+            # target_array = targets.cpu().detach().numpy()
+            # save3D_RGBArray2File(predict_array, f'T_{i}_pred_{LOSS_FN_}')
+            # save3D_RGBArray2File(target_array, f'T_{i}_target_{LOSS_FN_}')
             loss = loss_fn(predictions.float(), targets.float())
 
         loop.set_postfix(loss=loss.item())
@@ -472,6 +470,57 @@ def trial_6():
     return results_dict
 
 
+def trial_7():
+    print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
+    print('@@@@@@@@@@@@@@@            TRIAL 7           @@@@@@@@@@@@@@@')
+    print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
+    t = 1000                                            # Timesteps
+    d = 31                                              # Vertical resolution
+    s = 0.3                                             # Sigma
+    acti = 'ReLU'                                       # Activation function
+    loss = [nn.L1Loss(), 'MAE', nn.MSELoss(), 'MSE']    # Loss function
+    f = [4, 6, 8, 10]                                   # List of features
+    a = 0.002                                           # Alpha (learning rate)
+    b = 32                                              # Batch size
+    e = 50                                              # Number of epochs
+    key_list = ['7_MAE_4_Train_Error', '7_MAE_4_Valid_Error',
+                '7_MSE_4_Train_Error', '7_MSE_4_Valid_Error']
+    results_dict = {}
+    for i in range(2):
+        displayHyperparameters(t, d, s, loss[2*i+1], acti, f, a, b, e)
+
+        # Instantiate model, define loss function, optimizer and other utils.
+        model = INTERIM_MD_UNET(
+            in_channels=3, out_channels=3, features=f).to(DEVICE)
+        loss_fn = loss[2*i]
+        optimizer = optim.Adam(model.parameters(), lr=a)
+        train_loader, valid_loader = get_loaders(
+            b, NUM_WORKERS, PIN_MEMORY, t, d, s)
+
+        scaler = torch.cuda.amp.GradScaler()
+        training_loss = 0.0
+        losses = []
+
+        for epoch in range(e):
+            training_loss = train_fn(
+                train_loader, model, optimizer, loss_fn, scaler)
+            losses.append(training_loss)
+
+        # losses2file(losses, f'trial_6_{loss[2*i+1]}')
+
+        losses.append(val_fn(valid_loader, model, loss_fn, '6', loss[2*i+1]))
+        print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
+        print(
+            f'@@@@@@@@@@ T-Error:{losses[-2]:.3f}            V-Error:{losses[-1]:.3f} @@@@@@@@@@')
+        print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
+        print(' ')
+        print(' ')
+        errors = {key_list[2*i]: losses[-2], key_list[2*i+1]: losses[-1]}
+        results_dict.update(errors)
+
+    return results_dict
+
+
 def tests():
     print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
     print('@@@@@@@@@@@@@@@            MODEL 1           @@@@@@@@@@@@@@@')
@@ -540,7 +589,7 @@ def tests():
 def main():
     # dict = trial_1()
     # dict.update(trial_2())
-    dict = trial_3()
+    dict = trial_7()
     # dict.update(trial_4())
     # dict.update(trial_5())
     # dict.update(trial_6())

@@ -125,18 +125,111 @@ class UNET(nn.Module):
         return self.final_conv(x)
 
 
+class LSTM(nn.Module):
+    def __init__(self, input_size, hidden_size, num_layers):
+        super(LSTM, self).__init__()
+
+        self.num_layers = num_layers
+        self.hidden_size = hidden_size
+        self.lstm = nn.LSTM(input_size, hidden_size,
+                            num_layers, batch_first=True)
+        self.regressor = nn.Linear(hidden_size, input_size)
+
+    def forward(self, x):
+        h0 = torch.zeros(self.num_layers, x.size(0), self.hidden_size)
+        c0 = torch.zeros(self.num_layers, x.size(0), self.hidden_size)
+        out, _ = self.lstm(x, (h0, c0))
+        out = out[:, -1, :]
+        return self.regressor(out)
+
+
+class INTERIM_MD_UNET(nn.Module):
+    def __init__(
+            self, in_channels=3, out_channels=3, features=[4, 6, 8, 10], activation=nn.ReLU(inplace=True)):
+        # PARAMETERS:
+        # in_channels - channels contained in input data
+        # out_channels - channels to be contained in output data
+        # features - corresponds to the number of applied kernels per convolution
+
+        # Note that this hybrid model was concieved to be used for common MaMiCo
+        # spatial dimensions such as 18 x 18 x 18. With this, the input dimension
+        # is reduced via 18x18x18 -> 9x9x9 -> 4x4x4 -> 2x2x2. The bottleneck
+        # signal is unrolled and passed to the multivaraite LSTM model.
+
+        # For initial proof of concept trials we will consider the dimensions
+        # 32x32x32 -> 16x16x16 -> 8x8x8 -> 4x4x4 -> 2x2x2
+
+        super(INTERIM_MD_UNET, self).__init__()
+        self.ups = nn.ModuleList()
+        self.downs = nn.ModuleList()
+        self.pool = nn.MaxPool3d(kernel_size=2, stride=2)
+
+        # Down part of UNET
+        for feature in features:
+            self.downs.append(DoubleConv(in_channels, feature, activation))
+            in_channels = feature
+
+        # Up part of UNET
+        for feature in reversed(features):
+            self.ups.append(
+                nn.ConvTranspose3d(
+                    feature*2, feature, kernel_size=2, stride=2,
+                )
+            )
+            self.ups.append(DoubleConv(feature*2, feature, activation))
+
+        # This is the "deepest" part.
+        # self.bottleneck = DoubleConv(features[-1], features[-1]*2, activation)
+        self.bottleneck = DoubleConv(features[-1], features[-1]*2, activation)
+
+        # This is the model's output.
+        self.final_conv = nn.Conv3d(
+            features[0], out_channels, kernel_size=1, stride=1)
+
+    def forward(self, x):
+
+        skip_connections = []
+
+        # The following for-loop describes the entire (left) contracting side,
+        # including storing the skip-connections:
+        for down in self.downs:
+            x = down(x)
+            skip_connections.append(x)
+            x = self.pool(x)
+
+        # This is the bottleneck
+        x = self.bottleneck(x)
+        latent_space = torch.flatten(x)
+        skip_connections = skip_connections[::-1]
+
+        # The following for-loop describes the entire (right) expanding side.
+        for idx in range(0, len(self.ups), 2):
+            x = self.ups[idx](x)
+            skip_connection = skip_connections[idx//2]
+            concat_skip = torch.cat((skip_connection, x), dim=1)
+            x = self.ups[idx+1](concat_skip)
+
+        return self.final_conv(x), latent_space
+
+
 def test():
     # x = torch.randn((1, 3, 64, 64, 64))
 
-    model = UNET(in_channels=3, out_channels=3, features=[4, 8])
-    macs, params = get_model_complexity_info(
-        model, (3, 32, 32, 32), as_strings=True, print_per_layer_stat=True, verbose=True)
-    print('{:<30}  {:<8}'.format('Computational complexity: ', macs))
-    print('{:<30}  {:<8}'.format('Number of parameters: ', params))
-    # summary(model, input_size=(3, 32, 32, 32))
+    # model = LSTM_MD_UNET(in_channels=3, out_channels=3, features=[4, 6, 8, 10])
+    # model = UNET(in_channels=3, out_channels=3, features=[64, 128, 256, 512])
+    # macs, params = get_model_complexity_info(
+    #     model, (3, 32, 32, 32), as_strings=True, print_per_layer_stat=True, verbose=True)
+    # print('{:<30}  {:<8}'.format('Computational complexity: ', macs))
+    # print('{:<30}  {:<8}'.format('Number of parameters: ', params))
+    model = LSTM(input_size=80, hidden_size=256, num_layers=2)
+    x = torch.randn((1, 5, 80))
+    preds = model(x)
+    print(preds)
+    # summary(model, input_size=80)
     # preds = model(x)
     # assert preds.shape == x.shape
 
 
 if __name__ == "__main__":
     test()
+    pass
