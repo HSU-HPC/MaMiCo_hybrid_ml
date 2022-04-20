@@ -40,7 +40,7 @@ def train_fn(loader, model, optimizer, loss_fn, scaler):
             # Other ops, like reductions, often require the dynamic range of
             # float32. Mixed precision tries to match each op to its appropriate
             # datatype.
-            predictions, _ = model(data)
+            predictions, latent_space = model(data)
             loss = loss_fn(predictions.float(), targets.float())
 
         # Next consider the backward training path, especially the corresponding

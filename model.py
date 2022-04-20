@@ -209,7 +209,7 @@ class INTERIM_MD_UNET(nn.Module):
             concat_skip = torch.cat((skip_connection, x), dim=1)
             x = self.ups[idx+1](concat_skip)
 
-        return self.final_conv(x), latent_space
+        return (self.final_conv(x), latent_space)
 
 
 def test():
