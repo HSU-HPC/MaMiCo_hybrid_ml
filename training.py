@@ -490,7 +490,7 @@ def trial_7():
         displayHyperparameters(t, d, s, loss[2*i+1], acti, f, a, b, e)
 
         # Instantiate model, define loss function, optimizer and other utils.
-        model = INTERIM_MD_UNET(
+        model = UNET(
             in_channels=3, out_channels=3, features=f).to(DEVICE)
         loss_fn = loss[2*i]
         optimizer = optim.Adam(model.parameters(), lr=a)
