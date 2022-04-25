@@ -133,6 +133,28 @@ def test_fn(loader, model, loss_fn, LOSS_FN_, i):
     return loss
 
 
+def get_latent_spaces(loader, model, loss_fn):
+    loop = tqdm(loader)
+    latent_spaces = []
+
+    for batch_idx, (data, targets) in enumerate(loop):
+        data = data.float().to(device=DEVICE)
+        targets = targets.float().to(device=DEVICE)
+
+        with torch.cuda.amp.autocast():
+            predictions, latent_space = model(data)
+            # predict_array = predictions.cpu().detach().numpy()
+            # target_array = targets.cpu().detach().numpy()
+            # save3D_RGBArray2File(predict_array, f'T_{i}_pred_{LOSS_FN_}')
+            # save3D_RGBArray2File(target_array, f'T_{i}_target_{LOSS_FN_}')
+            loss = loss_fn(predictions.float(), targets.float())
+            latent_spaces.append(latent_space)
+
+        loop.set_postfix(loss=loss.item())
+
+    return latent_spaces
+
+
 def displayHyperparameters(timesteps_, couette_dim_, sigma_, loss_fn_, activation_, features_, learning_rate_, batch_size_, num_epochs_):
     print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
     print(f'Currently using device (cuda/CPU): {DEVICE}.')
@@ -482,10 +504,8 @@ def trial_7():
     f = [4, 8, 16, 32]                                   # List of features
     a = 0.002                                           # Alpha (learning rate)
     b = 32                                              # Batch size
-    e = 50                                              # Number of epochs
-    key_list = ['7_MAE_4_Train_Error', '7_MAE_4_Valid_Error',
-                '7_MSE_4_Train_Error', '7_MSE_4_Valid_Error']
-    results_dict = {}
+    e = 15                                              # Number of epochs
+
     for i in range(2):
         displayHyperparameters(t, d, s, loss[2*i+1], acti, f, a, b, e)
 
@@ -494,8 +514,7 @@ def trial_7():
             in_channels=3, out_channels=3, features=f).to(DEVICE)
         loss_fn = loss[2*i]
         optimizer = optim.Adam(model.parameters(), lr=a)
-        train_loader, valid_loader = get_loaders(
-            b, NUM_WORKERS, PIN_MEMORY, t, d, s)
+        train_loader, valid_loader = get_loaders(b, NUM_WORKERS, PIN_MEMORY, t, d, s)
 
         scaler = torch.cuda.amp.GradScaler()
         training_loss = 0.0
@@ -506,19 +525,18 @@ def trial_7():
                 train_loader, model, optimizer, loss_fn, scaler)
             losses.append(training_loss)
 
-        # losses2file(losses, f'trial_6_{loss[2*i+1]}')
+        latent_space = get_latent_spaces(valid_loader, model, loss_fn)
+        print(latent_space[0].shape)
+        print(latent_space[1].shape)
 
-        losses.append(val_fn(valid_loader, model, loss_fn, '6', loss[2*i+1]))
+        losses.append(val_fn(valid_loader, model, loss_fn, '7', loss[2*i+1]))
         print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
         print(
             f'@@@@@@@@@@ T-Error:{losses[-2]:.3f}            V-Error:{losses[-1]:.3f} @@@@@@@@@@')
         print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
         print(' ')
         print(' ')
-        errors = {key_list[2*i]: losses[-2], key_list[2*i+1]: losses[-1]}
-        results_dict.update(errors)
-
-    return results_dict
+    pass
 
 
 def tests():
@@ -587,12 +605,7 @@ def tests():
 
 
 def main():
-    # dict = trial_1()
-    # dict.update(trial_2())
     dict = trial_7()
-    # dict.update(trial_4())
-    # dict.update(trial_5())
-    # dict.update(trial_6())
 
     '''
     dict = {}

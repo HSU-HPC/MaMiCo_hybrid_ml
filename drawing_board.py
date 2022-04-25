@@ -1,5 +1,6 @@
 import numpy as np
 import csv
+import torch
 from couette_solver import my3DCouetteSolver
 from plotting import compareFlowProfile, compareUxFlowProfile, colorMap, showSample, plotLoss, plotLoss34
 
@@ -329,10 +330,14 @@ def test4():
 
     title = 'Test 4: Increased Spatial Resolution 64 x 64 x 64'
     save_as = 'Test_04'
-    # compareFlowProfile(
-    #     title, save_as, p_MAE[2], p_MSE[2], target[2], analytical)
-    compareUxFlowProfile(
+    compareFlowProfile(
         title, save_as, p_MAE[2], p_MSE[2], target[2], analytical)
+    titles = ['MAE Prediction', 'MSE Prediction',
+              'Target', 'Analytical']
+    colorMap([p_MAE[2, 0, :, :, :], p_MSE[2, 0, :, :, :],
+              target[2, 0, :, :, :], analytical[0, :, :, :]], titles)
+    # compareUxFlowProfile(
+    #     title, save_as, p_MAE[2], p_MSE[2], target[2], analytical)
 
 
 def analytical_1_3():
@@ -390,7 +395,15 @@ def variance(train, valid):
 
 
 def main():
-    losses()
+    x = torch.rand(3, 32, 32, 32)
+    print(x.shape)
+    print(torch.unsqueeze(x, 0).shape)
+
+    input_dim = (3, 32, 32, 32)
+    h_dims = []
+    out_dim = (3, 32, 32, 32)
+    layer_dims = [input_dim] + h_dims + [out_dim]
+    print(layer_dims)
 
 
 if __name__ == "__main__":
