@@ -509,34 +509,30 @@ def trial_7():
     for i in range(2):
         displayHyperparameters(t, d, s, loss[2*i+1], acti, f, a, b, e)
 
-        # Instantiate model, define loss function, optimizer and other utils.
+        # Instantiate model and other utils.
         model = INTERIM_MD_UNET(
             in_channels=3, out_channels=3, features=f).to(DEVICE)
+        # Define loss function
         loss_fn = loss[2*i]
+        # Define optimizer
         optimizer = optim.Adam(model.parameters(), lr=a)
-        train_loader, valid_loader = get_loaders(b, NUM_WORKERS, PIN_MEMORY, t, d, s)
-
+        # Instantiate other utils
+        train_loader, valid_loader = get_loaders(
+            b, NUM_WORKERS, PIN_MEMORY, t, d, s)
+        # Prepare training cycle
         scaler = torch.cuda.amp.GradScaler()
         training_loss = 0.0
-        losses = []
 
+        # Training cycle
         for epoch in range(e):
             training_loss = train_fn(
                 train_loader, model, optimizer, loss_fn, scaler)
-            losses.append(training_loss)
 
-        latent_space = get_latent_spaces(valid_loader, model, loss_fn)
-        print(latent_space[0].shape)
-        print(latent_space[1].shape)
+        # Latent spaces via validation set
+        latent_spaces = get_latent_spaces(valid_loader, model, loss_fn)
+        print(latent_spaces[0])
+        print(latent_spaces[1])
 
-        losses.append(val_fn(valid_loader, model, loss_fn, '7', loss[2*i+1]))
-        print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
-        print(
-            f'@@@@@@@@@@ T-Error:{losses[-2]:.3f}            V-Error:{losses[-1]:.3f} @@@@@@@@@@')
-        print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
-        print(' ')
-        print(' ')
-    pass
 
 
 def tests():
