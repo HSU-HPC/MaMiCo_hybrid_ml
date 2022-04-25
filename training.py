@@ -152,7 +152,7 @@ def get_latent_spaces(loader, model, loss_fn):
 
         loop.set_postfix(loss=loss.item())
 
-    latent_spaces_np = np.zeros((1, 3, 32, 32, 32))
+    latent_spaces_np = np.zeros((1, 64, 2, 2, 2))
     for element in latent_spaces:
         latent_spaces_np = np.vstack((latent_spaces_np, element))
 
