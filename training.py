@@ -40,7 +40,7 @@ def train_fn(loader, model, optimizer, loss_fn, scaler):
             # Other ops, like reductions, often require the dynamic range of
             # float32. Mixed precision tries to match each op to its appropriate
             # datatype.
-            predictions, latent_space = model(data)
+            predictions, _ = model(data)
             loss = loss_fn(predictions.float(), targets.float())
 
         # Next consider the backward training path, especially the corresponding
@@ -143,7 +143,7 @@ def get_latent_spaces(loader, model, loss_fn):
 
         with torch.cuda.amp.autocast():
             predictions, latent_space = model(data)
-            # predict_array = predictions.cpu().detach().numpy()
+            latent_space = latent_space.cpu().detach().numpy()
             # target_array = targets.cpu().detach().numpy()
             # save3D_RGBArray2File(predict_array, f'T_{i}_pred_{LOSS_FN_}')
             # save3D_RGBArray2File(target_array, f'T_{i}_target_{LOSS_FN_}')
@@ -152,7 +152,13 @@ def get_latent_spaces(loader, model, loss_fn):
 
         loop.set_postfix(loss=loss.item())
 
-    return latent_spaces
+    latent_spaces_np = np.zeros((1, 3, 32, 32, 32))
+    for element in latent_spaces:
+        latent_spaces_np = np.vstack((latent_spaces_np, element))
+
+    latent_spaces_np = latent_spaces_np[1:, :, :, :, :]
+
+    return latent_spaces_np
 
 
 def displayHyperparameters(timesteps_, couette_dim_, sigma_, loss_fn_, activation_, features_, learning_rate_, batch_size_, num_epochs_):
@@ -530,10 +536,8 @@ def trial_7():
 
         # Latent spaces via validation set
         latent_spaces = get_latent_spaces(valid_loader, model, loss_fn)
-        print(latent_spaces[0].size())
-        print(latent_spaces[1])
-        print(latent_spaces[-2].size())
-        print(latent_spaces[-1])
+        print(latent_spaces.shape)
+        save3D_RGBArray2File(latent_spaces, f"latent_space_test_{loss[2*i+1]}")
 
 
 def tests():

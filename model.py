@@ -1,5 +1,6 @@
 import torch
 import torch.nn as nn
+from drawing_board import save3D_RGBArray2File
 import torchvision.transforms.functional as TF
 from torchsummary import summary
 from ptflops import get_model_complexity_info
@@ -221,10 +222,14 @@ def test():
     #     model, (3, 32, 32, 32), as_strings=True, print_per_layer_stat=True, verbose=True)
     # print('{:<30}  {:<8}'.format('Computational complexity: ', macs))
     # print('{:<30}  {:<8}'.format('Number of parameters: ', params))
-    model = LSTM(input_size=80, hidden_size=256, num_layers=2)
-    x = torch.randn((1, 5, 80))
-    preds = model(x)
-    print(preds)
+    model = INTERIM_MD_UNET(
+        in_channels=3, out_channels=3, features=[4, 8, 16, 32])
+    x = torch.randn((50, 3, 32, 32, 32))
+    preds, latent_space = model(x)
+    print(preds.size())
+    print(latent_space.size())
+    save3D_RGBArray2File(
+        latent_space.cpu().detach().numpy(), "latent_space_test")
     # summary(model, input_size=80)
     # preds = model(x)
     # assert preds.shape == x.shape

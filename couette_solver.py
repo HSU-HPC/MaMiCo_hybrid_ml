@@ -204,9 +204,34 @@ def my3DCouetteSolver(desired_timesteps, u_wall=10, wall_height=20, nu=2, vertic
 
 
 if __name__ == '__main__':
-    np.set_printoptions(precision=2)
-    t = 100
-    v_res = 10
+    '''
+    my_array_1 = np.random.rand(5, 1, 1, 1, 5)
+    my_array_2 = np.random.rand(5, 1, 1, 1, 5)
+    my_array_3 = np.random.rand(5, 1, 1, 1, 5)
+    my_zeros = np.zeros((1, 1, 1, 1, 5))
+    print(my_zeros)
+    print(my_array_1.shape)
+    my_long_array = np.vstack((my_array_1, my_array_2))
+    my_long_array = np.vstack((my_long_array, my_array_3))
+    print(my_long_array.shape)
+    print(my_array_1[0])
+    print(my_long_array[0])
+    print(my_array_2[-1])
+    print(my_long_array[9])
+    print(my_array_3[-1])
+    print(my_long_array[-1])
+    '''
+
+    my_long_array = np.zeros((1, 1, 1, 1, 5))
+    for i in range(3):
+        my_array = np.random.rand(5, 1, 1, 1, 5)
+        print(my_array.shape)
+        my_long_array = np.vstack((my_long_array, my_array))
+        print(my_long_array.shape)
+    print(my_long_array[0])
+    my_long_array = my_long_array[1:, :, :, :, :]
+    print(my_long_array.shape)
+    print(my_long_array[0])
 
     # my_data = couetteSolver(desired_timesteps=t, vertical_resolution=v_res, sigma=0)
     # print(f'len of couette solver list = {len(my_data)}')

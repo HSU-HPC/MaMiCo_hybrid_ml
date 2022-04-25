@@ -206,6 +206,27 @@ def get_loaders_test(batch_size, num_workers, pin_memory, timesteps=1000, couett
     return test_loader_1, test_loader_2, test_loader_3, test_loader_4
 
 
+def load3D_RGBArrayFromFile(input_file, output_shape):
+    # 3) load 2D array from file
+    loaded_array = np.loadtxt(
+        f'/Users/sebastianlerdo/github/MD_U-Net/{input_file}')
+    #f'/Users/sebastianlerdo/github/MD_U-Net/{input_file}')
+    t, c, d, h, w = output_shape
+
+    # 4) Revert 2D array to 3D array
+    original_array = loaded_array.reshape(t, c, d, h, w)
+    return original_array
+
+
+def get_loaders_from_file(batch_size=0, num_workers=0, pin_memory=0):
+    file_name = "latent_space_test_500_64_2_2_2.csv"
+    data_shape = (500, 64, 2, 2, 2)
+    my_loaded_data = load3D_RGBArrayFromFile(file_name, data_shape)
+    print(my_loaded_data.shape)
+
+    pass
+
+
 def check_accuracy(loader, model, device="cuda"):
     num_correct = 0
     num_pixels = 0
@@ -252,4 +273,6 @@ def losses2file(losses, filename):
     np.savetxt(f"Losses_{filename}.csv", losses, delimiter=", ", fmt='% s')
 
 
-# train_loader, val_loader, test_loader = get_loaders(32, 1, True, 31)
+if __name__ == "__main__":
+    get_loaders_from_file()
+    pass
