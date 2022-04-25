@@ -530,9 +530,9 @@ def trial_7():
 
         # Latent spaces via validation set
         latent_spaces = get_latent_spaces(valid_loader, model, loss_fn)
-        print(latent_spaces[0])
+        print(latent_spaces[0].size())
         print(latent_spaces[1])
-        print(latent_spaces[-2])
+        print(latent_spaces[-2].size())
         print(latent_spaces[-1])
 
 
@@ -616,10 +616,12 @@ def main():
             errors = {key_list[2*c]: 2*c, key_list[2*c+1]: 2*c+1}
             dict.update(errors)
             c += 1
-    '''
+
 
     for key, value in dict.items():
         print('{} : {}'.format(key, value))
+
+    '''
 
 
 if __name__ == "__main__":
