@@ -532,7 +532,8 @@ def trial_7():
         latent_spaces = get_latent_spaces(valid_loader, model, loss_fn)
         print(latent_spaces[0])
         print(latent_spaces[1])
-
+        print(latent_spaces[-2])
+        print(latent_spaces[-1])
 
 
 def tests():
