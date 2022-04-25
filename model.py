@@ -199,7 +199,7 @@ class INTERIM_MD_UNET(nn.Module):
 
         # This is the bottleneck
         x = self.bottleneck(x)
-        latent_space = torch.flatten(x)
+        latent_space = x
         skip_connections = skip_connections[::-1]
 
         # The following for-loop describes the entire (right) expanding side.
