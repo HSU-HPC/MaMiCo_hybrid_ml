@@ -41,8 +41,8 @@ def get_loaders(batch_size, num_workers, pin_memory, timesteps, couette_dim, sig
     my_train_images = my_shuffled_images
     my_train_masks = my_shuffled_masks
 
-    my_val_images = my_images_valid[: 101]
-    my_val_masks = my_masks_valid[: 101]
+    my_val_images = my_images_valid
+    my_val_masks = my_masks_valid
 
     train_ds = MyFlowDataset(
         my_train_images,
@@ -218,13 +218,24 @@ def load3D_RGBArrayFromFile(input_file, output_shape):
     return original_array
 
 
-def get_loaders_from_file(batch_size=0, num_workers=0, pin_memory=0):
+def get_loaders_from_file(batch_size, num_workers, pin_memory):
     file_name = "latent_space_test_500_64_2_2_2.csv"
     data_shape = (500, 64, 2, 2, 2)
-    my_loaded_data = load3D_RGBArrayFromFile(file_name, data_shape)
-    print(my_loaded_data.shape)
+    my_loaded_data_1 = load3D_RGBArrayFromFile(file_name, data_shape)
+    print(my_loaded_data_1.shape)
 
-    pass
+    my_images_1 = my_loaded_data_1[:-1]
+    my_masks_1 = my_loaded_data_1[1:]
+
+    my_dataset = MyFlowDataset(my_images_1, my_masks_1)
+    my_loader = DataLoader(
+        dataset=my_dataset,
+        batch_size=batch_size,
+        shuffle=False,
+        num_workers=num_workers
+        )
+
+    return my_loader
 
 
 def check_accuracy(loader, model, device="cuda"):
