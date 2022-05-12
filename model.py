@@ -127,11 +127,13 @@ class UNET(nn.Module):
 
 
 class LSTM(nn.Module):
-    def __init__(self, input_size, hidden_size, num_layers):
+    def __init__(self, input_size, hidden_size, num_layers, seq_length):
         super(LSTM, self).__init__()
-
+        # seq_length = 5 or 256 ?
         self.num_layers = num_layers
+        self.input_size = input_size
         self.hidden_size = hidden_size
+        self.seq_length = seq_length
         self.lstm = nn.LSTM(input_size, hidden_size,
                             num_layers, batch_first=True)
         self.regressor = nn.Linear(hidden_size, input_size)
@@ -139,6 +141,26 @@ class LSTM(nn.Module):
     def forward(self, x):
         h0 = torch.zeros(self.num_layers, x.size(0), self.hidden_size)
         c0 = torch.zeros(self.num_layers, x.size(0), self.hidden_size)
+        out, _ = self.lstm(x, (h0, c0))
+        out = out[:, -1, :]
+        return self.regressor(out)
+
+
+class BidirectionalLSTM(nn.Module):
+    def __init__(self, input_size, hidden_size, num_layers, seq_length):
+        super(BidirectionalLSTM, self).__init__()
+        # seq_length = 5 or 256 ?
+        self.num_layers = num_layers
+        self.input_size = input_size
+        self.hidden_size = hidden_size
+        self.seq_length = seq_length
+        self.lstm = nn.LSTM(input_size, hidden_size,
+                            num_layers, batch_first=True, bidirectional=True)
+        self.regressor = nn.Linear(hidden_size*2, input_size)
+
+    def forward(self, x):
+        h0 = torch.zeros(self.num_layers*2, x.size(0), self.hidden_size)
+        c0 = torch.zeros(self.num_layers*2, x.size(0), self.hidden_size)
         out, _ = self.lstm(x, (h0, c0))
         out = out[:, -1, :]
         return self.regressor(out)
@@ -214,8 +236,10 @@ class INTERIM_MD_UNET(nn.Module):
 
 
 def test():
-    # x = torch.randn((1, 3, 64, 64, 64))
-
+    x = torch.randn(10, 5, 512)
+    model = LSTM(input_size=512, hidden_size=1024, num_layers=7, seq_length=5)
+    print(model(x).shape)
+    '''
     # model = LSTM_MD_UNET(in_channels=3, out_channels=3, features=[4, 6, 8, 10])
     # model = UNET(in_channels=3, out_channels=3, features=[64, 128, 256, 512])
     # macs, params = get_model_complexity_info(
@@ -233,6 +257,7 @@ def test():
     # summary(model, input_size=80)
     # preds = model(x)
     # assert preds.shape == x.shape
+    '''
 
 
 if __name__ == "__main__":

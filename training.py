@@ -4,10 +4,10 @@ from tqdm import tqdm
 import matplotlib.pyplot as plt
 import torch.nn as nn
 import torch.optim as optim
-from model import UNET, INTERIM_MD_UNET
+from model import UNET, INTERIM_MD_UNET, LSTM, BidirectionalLSTM
 import time
 # MSLELoss, check_accuracy, save3DArray2File
-from utils import get_loaders, get_5_loaders, get_loaders_test, losses2file
+from utils import get_loaders, get_5_loaders, get_loaders_test, losses2file, get_loaders_from_file
 from drawing_board import save3D_RGBArray2File
 
 plt.style.use(['science'])
@@ -26,7 +26,10 @@ def train_fn(loader, model, optimizer, loss_fn, scaler):
 
     for batch_idx, (data, targets) in enumerate(loop):
         data = data.float().to(device=DEVICE)
+        # print("Checking dimension of input data: ", data.shape)
         targets = targets.float().to(device=DEVICE)
+        # print("Checking dimension of target data: ", targets.shape)
+        loss = 0
         # data = data.float().unsqueeze(1).to(device=DEVICE)
         # targets = targets.float().unsqueeze(1).to(device=DEVICE)
 
@@ -40,8 +43,9 @@ def train_fn(loader, model, optimizer, loss_fn, scaler):
             # Other ops, like reductions, often require the dynamic range of
             # float32. Mixed precision tries to match each op to its appropriate
             # datatype.
-            predictions, _ = model(data)
+            predictions = model(data)
             loss = loss_fn(predictions.float(), targets.float())
+            print(loss.item())
 
         # Next consider the backward training path, especially the corresponding
         # scaler which is an object of the class GRADIENT SCALING:
@@ -82,7 +86,29 @@ def train_fn(loader, model, optimizer, loss_fn, scaler):
         # update tqdm loop
         loop.set_postfix(loss=loss.item())
         # postfix(): Specify additional stats to display at the end of the bar.
+    print("###########")
+    print(loss.cpu().detach().numpy())
+    print("###########")
+    return loss
 
+
+def train_lstm(loader, model, optimizer, criterion, scaler):
+    for batch_idx, (data, targets) in enumerate(tqdm(loader)):
+        data = data.float().squeeze(1)
+        targets = targets.float()
+
+        # forward
+        with torch.cuda.amp.autocast():
+            scores = model(data)
+            loss = criterion(scores, targets)
+            print(loss.item())
+
+        # backward
+        optimizer.zero_grad()
+        loss.backward()
+
+        # gradient descent update step/adam step
+        optimizer.step()
     return loss
 
 
@@ -540,6 +566,41 @@ def trial_7():
         save3D_RGBArray2File(latent_spaces, f"latent_space_test_{loss[2*i+1]}")
 
 
+def trial_8():
+    print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
+    print('@@@@@@@@@@@@@@@         TRIAL 8 LSTM         @@@@@@@@@@@@@@@')
+    print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
+
+    a = 0.001                                           # Alpha (learning rate)
+    b = 8                                               # Batch size
+    e = 5                                               # Number of epochs
+
+    model = BidirectionalLSTM(
+        input_size=512, hidden_size=1024, num_layers=7, seq_length=5)
+    # Define loss function
+    loss_fn = nn.L1Loss()
+    # Define optimizer
+    optimizer = optim.Adam(model.parameters(), lr=a)
+    # Instantiate other utils
+    train_loader = get_loaders_from_file(
+        batch_size=b, num_workers=4, pin_memory=True)
+    # Prepare training cycle
+    scaler = torch.cuda.amp.GradScaler()
+    training_loss = 0.0
+    losses = []
+
+    # Training cycle
+    for epoch in range(e):
+        print(f"@@@@@@@@@@@@@@@ Current epoch: {epoch} @@@@@@@@@@@@@@@")
+        training_loss = train_lstm(
+            train_loader, model, optimizer, loss_fn, scaler)
+        losses.append(training_loss)
+
+    print("Final Epoch Loss Progression:")
+    for element in losses:
+        print(element)
+
+
 def tests():
     print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
     print('@@@@@@@@@@@@@@@            MODEL 1           @@@@@@@@@@@@@@@')
@@ -606,9 +667,21 @@ def tests():
 
 
 def main():
-    dict = trial_7()
+    trial_8()
 
     '''
+    x = torch.zeros((5, 64, 2, 2, 2))
+    print(x.shape)
+    print(x[0, 0, 0, 0, 0])
+    x = x[1:]
+    print(x.shape)
+    print(x[0, 0, 0, 0, 0])
+    x = torch.vstack((x, torch.rand(1, 64, 2, 2, 2)))
+    print(x.shape)
+    print(x[0, 0, 0, 0, 0])
+    print(x[-1, -1, -1, -1, -1])
+
+
     dict = {}
     key_list = ['3_MAE_1e-3_Train_Error', '3_MAE_1e-3_Valid_Error',
                 '3_MAE_2e-3_Train_Error', '3_MAE_2e-3_Valid_Error',

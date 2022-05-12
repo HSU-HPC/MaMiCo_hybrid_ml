@@ -219,13 +219,20 @@ def load3D_RGBArrayFromFile(input_file, output_shape):
 
 
 def get_loaders_from_file(batch_size, num_workers, pin_memory):
-    file_name = "latent_space_test_500_64_2_2_2.csv"
-    data_shape = (500, 64, 2, 2, 2)
+    file_name = "latent_space_test_MSE_999_64_2_2_2.csv"
+    data_shape = (999, 64, 2, 2, 2)
     my_loaded_data_1 = load3D_RGBArrayFromFile(file_name, data_shape)
-    print(my_loaded_data_1.shape)
-
-    my_images_1 = my_loaded_data_1[:-1]
-    my_masks_1 = my_loaded_data_1[1:]
+    print("Checking dimension of loaded data: ", my_loaded_data_1.shape)
+    my_loaded_data_1 = np.reshape(my_loaded_data_1, (999, 512))
+    print("Checking dimension of reshaped data: ", my_loaded_data_1.shape)
+    lstm_data = np.zeros((994, 5, 512))
+    for i in range(my_loaded_data_1.shape[0]-5):
+        lstm_data[i] = my_loaded_data_1[i:i+5, :]
+    print("Checking dimension of lstm data: ", lstm_data.shape)
+    my_images_1 = lstm_data
+    print("Checking dimension of input data: ", my_images_1.shape)
+    my_masks_1 = my_loaded_data_1[5:, :]
+    print("Checking dimension of target data: ", my_masks_1.shape)
 
     my_dataset = MyFlowDataset(my_images_1, my_masks_1)
     my_loader = DataLoader(
@@ -285,5 +292,17 @@ def losses2file(losses, filename):
 
 
 if __name__ == "__main__":
-    get_loaders_from_file()
+    a = get_loaders_from_file(batch_size=32, num_workers=2, pin_memory=True)
+    '''
+    random_data = np.random.rand(999, 64, 2, 2, 2)
+    print(random_data.shape)
+    random_structured_data = np.reshape(random_data, (999, 512))
+    print(random_structured_data.shape)
+    lstm_data = np.zeros((994, 5, 512))
+
+    for i in range(random_structured_data.shape[0]-5):
+        lstm_data[i] = random_structured_data[i:i+5, :]
+
+    print(lstm_data.shape)
+    '''
     pass
