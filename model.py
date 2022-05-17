@@ -171,7 +171,7 @@ class GRU(nn.Module):
     # input.shape = (batch_size, num_seq, input_size)
     # output.shape = (batch_size, 1, input_size)
     def __init__(self, input_size, hidden_size, num_layers, device):
-        super(RNN, self).__init__()
+        super(GRU, self).__init__()
         self.input_size = input_size
         self.hidden_size = hidden_size
         self.num_layers = num_layers
