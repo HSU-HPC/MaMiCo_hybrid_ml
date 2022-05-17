@@ -614,7 +614,7 @@ def trial_8():
     print("Loss Progression:")
     for i in range(e):
         print(
-            f'Epoch: {i+1}, Max loss: {max_losses[i]}, Min loss: {min_losses[i]}, Final loss: {final_losses[i]}, Average loss: {average_losses[i]}.')
+            f'Epoch: {i+1}, Max loss: {max_losses[i]:.7f}, Min loss: {min_losses[i]:.7f}, Final loss: {final_losses[i]:.7f}, Average loss: {average_losses[i]:.7f}.')
 
 
 def trial_RNNs():
