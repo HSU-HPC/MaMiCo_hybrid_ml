@@ -584,7 +584,7 @@ def trial_8():
     e = 25                                               # Number of epochs
 
     model = LSTM(
-        input_size=512, hidden_size=1024, num_layers=2, device=device)
+        input_size=512, hidden_size=1024, num_layers=2, device=device).to(device)
     # Define loss function
     loss_fn = nn.MSELoss()
     # Define optimizer
