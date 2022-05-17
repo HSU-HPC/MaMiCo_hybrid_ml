@@ -104,7 +104,7 @@ def train_lstm(loader, model, optimizer, criterion, scaler):
             scores = model(data)
             loss = criterion(scores, targets)
             losses.append(loss.item())
-            print(loss.item())
+            # print(loss.item())
 
         # backward
         optimizer.zero_grad()
