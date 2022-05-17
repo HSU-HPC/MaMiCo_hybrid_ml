@@ -606,26 +606,29 @@ def trial_8():
 
     # Training cycle
     for epoch in range(e):
-        print(f"@@@@@@@@@@@@@@@ Current epoch: {epoch} @@@@@@@@@@@@@@@")
         training_loss = train_lstm(
-            train_loader, model, optimizer, loss_fn, scaler)
+            loader=train_loader,
+            model=model,
+            optimizer=optimizer,
+            criterion=loss_fn,
+            scaler=scaler
+        )
         max_losses.append(training_loss[0])
         min_losses.append(training_loss[1])
         final_losses.append(training_loss[2])
         average_losses.append(training_loss[-1])
-    print("@@@@@@@@@@@@@@@         MODEL SUMMARY         @@@@@@@@@@@@@@@")
-    print(f'Name: {names[2]}')
-    print(f'Num layers: {num_layers[0]}')
-    print(f'Learning rate: {learning_rates[0]}')
-    print(f'Num epochs: {e}')
-    print("Loss Progression:")
-    for i in range(e):
-        if i < 9:
-            print(
-                f'Epoch: 0{i+1}, Max loss: {max_losses[i]:.7f}, Min loss: {min_losses[i]:.7f}, Final loss: {final_losses[i]:.7f}, Average loss: {average_losses[i]:.7f}.')
-        else:
-            print(
-                f'Epoch: {i+1}, Max loss: {max_losses[i]:.7f}, Min loss: {min_losses[i]:.7f}, Final loss: {final_losses[i]:.7f}, Average loss: {average_losses[i]:.7f}.')
+
+    # Print model summary
+    model_summary(
+        name=names[2],
+        num_layers=num_layers[0],
+        learning_rate=learning_rates[0],
+        epochs=e,
+        max_losses=max_losses,
+        min_losses=min_losses,
+        final_losses=final_losses,
+        average_losses=average_losses
+    )
 
 
 def trial_RNNs():
@@ -633,23 +636,178 @@ def trial_RNNs():
     print('@@@@@@@@@@@@@@@          TRIAL RNNs          @@@@@@@@@@@@@@@')
     print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
 
-    # Alpha (learning rate)
-    a = 0.0005
-    b = 8                                                # Batch size
-    e = 25                                               # Number of epochs
+    batch = 8                                                # Batch size
+    epoch = 50                                               # Number of epochs
     names = ['RNN', 'GRU', 'LSTM']
-    model_RNN = RNN(
-        input_size=512, hidden_size=1024, num_layers=2, device=device)
-    model_GRU = GRU(
-        input_size=512, hidden_size=1024, num_layers=2, device=device)
-    model_LSTM = LSTM(
-        input_size=512, hidden_size=1024, num_layers=2, seq_length=5)
-    # model_ShallowRegressionLSTM = LSTM()
+    num_layers = [2, 4, 8]
+    learning_rates = [0.0005, 0.0001, 0.00005]
 
-    # Experiment with RNNs
-    # Experiment with GRUs
-    # Experiment with LSTMs (num_layers, learning rate, epochs)
-    pass
+    # Loop for RNN
+    for i in range(3):                                      # num_layers
+        for j in range(3):                                  # learning_rates
+            # First, instantiate the ML model
+            model = RNN(
+                input_size=512,
+                hidden_size=1024,
+                num_layers=num_layers[i],
+                device=device
+            ).to(device)
+            # Second, define loss function and optimizer
+            loss_fn = nn.MSELoss()
+            optimizer = optim.Adam(model.parameters(), lr=learning_rates[j])
+            # Third, instantiate loader
+            train_loader = get_loaders_from_file(
+                batch_size=batch,
+                num_workers=4,
+                pin_memory=True
+            )
+            # Fourth, instantiate remaining utils: scaler and loss containers
+            scaler = torch.cuda.amp.GradScaler()
+            max_losses = []
+            min_losses = []
+            final_losses = []
+            average_losses = []
+            # Fifth, loop through the epochs and perform training
+            for e in range(epoch):
+                training_loss = train_lstm(
+                    loader=train_loader,
+                    model=model,
+                    optimizer=optimizer,
+                    criterion=loss_fn,
+                    scaler=scaler
+                )
+                max_losses.append(training_loss[0])
+                min_losses.append(training_loss[1])
+                final_losses.append(training_loss[2])
+                average_losses.append(training_loss[3])
+            # Finally, print out model summary
+            model_summary(
+                name=names[0],
+                num_layers=num_layers[i],
+                learning_rate=learning_rates[j],
+                epochs=epoch,
+                max_losses=max_losses,
+                min_losses=min_losses,
+                final_losses=final_losses,
+                average_losses=average_losses
+            )
+
+        # Repeat loop for GRU
+        for i in range(3):                                      # num_layers
+            for j in range(3):                                  # learning_rates
+                # First, instantiate the ML model
+                model = GRU(
+                    input_size=512,
+                    hidden_size=1024,
+                    num_layers=num_layers[i],
+                    device=device
+                ).to(device)
+                # Second, define loss function and optimizer
+                loss_fn = nn.MSELoss()
+                optimizer = optim.Adam(model.parameters(), lr=learning_rates[j])
+                # Third, instantiate loader
+                train_loader = get_loaders_from_file(
+                    batch_size=batch,
+                    num_workers=4,
+                    pin_memory=True
+                )
+                # Fourth, instantiate remaining utils: scaler and loss containers
+                scaler = torch.cuda.amp.GradScaler()
+                max_losses = []
+                min_losses = []
+                final_losses = []
+                average_losses = []
+                # Fifth, loop through the epochs and perform training
+                for e in range(epoch):
+                    training_loss = train_lstm(
+                        loader=train_loader,
+                        model=model,
+                        optimizer=optimizer,
+                        criterion=loss_fn,
+                        scaler=scaler
+                    )
+                    max_losses.append(training_loss[0])
+                    min_losses.append(training_loss[1])
+                    final_losses.append(training_loss[2])
+                    average_losses.append(training_loss[3])
+                # Finally, print out model summary
+                model_summary(
+                    name=names[1],
+                    num_layers=num_layers[i],
+                    learning_rate=learning_rates[j],
+                    epochs=epoch,
+                    max_losses=max_losses,
+                    min_losses=min_losses,
+                    final_losses=final_losses,
+                    average_losses=average_losses
+                )
+
+        # Repeat loop for LSTM
+        for i in range(3):                                      # num_layers
+            for j in range(3):                                  # learning_rates
+                # First, instantiate the ML model
+                model = LSTM(
+                    input_size=512,
+                    hidden_size=1024,
+                    num_layers=num_layers[i],
+                    device=device
+                ).to(device)
+                # Second, define loss function and optimizer
+                loss_fn = nn.MSELoss()
+                optimizer = optim.Adam(model.parameters(), lr=learning_rates[j])
+                # Third, instantiate loader
+                train_loader = get_loaders_from_file(
+                    batch_size=batch,
+                    num_workers=4,
+                    pin_memory=True
+                )
+                # Fourth, instantiate remaining utils: scaler and loss containers
+                scaler = torch.cuda.amp.GradScaler()
+                max_losses = []
+                min_losses = []
+                final_losses = []
+                average_losses = []
+                # Fifth, loop through the epochs and perform training
+                for e in range(epoch):
+                    training_loss = train_lstm(
+                        loader=train_loader,
+                        model=model,
+                        optimizer=optimizer,
+                        criterion=loss_fn,
+                        scaler=scaler
+                    )
+                    max_losses.append(training_loss[0])
+                    min_losses.append(training_loss[1])
+                    final_losses.append(training_loss[2])
+                    average_losses.append(training_loss[3])
+                # Finally, print out model summary
+                model_summary(
+                    name=names[2],
+                    num_layers=num_layers[i],
+                    learning_rate=learning_rates[j],
+                    epochs=epoch,
+                    max_losses=max_losses,
+                    min_losses=min_losses,
+                    final_losses=final_losses,
+                    average_losses=average_losses
+                )
+
+
+def model_summary(name, num_layers, learning_rate, epochs, max_losses, min_losses, final_losses, average_losses):
+    print("@@@@@@@@@@@@@@@         MODEL SUMMARY         @@@@@@@@@@@@@@@")
+    print(f'Name: {name}')
+    print(f'Num layers: {num_layers}')
+    print(f'Learning rate: {learning_rate}')
+    print(f'Num epochs: {epochs}')
+
+    for i in range(epochs):
+        if i < 9:
+            print(
+                f'Epoch: 0{i+1}, Max loss: {max_losses[i]:.7f}, Min loss: {min_losses[i]:.7f}, Final loss: {final_losses[i]:.7f}, Average loss: {average_losses[i]:.7f}.')
+        else:
+            print(
+                f'Epoch: {i+1}, Max loss: {max_losses[i]:.7f}, Min loss: {min_losses[i]:.7f}, Final loss: {final_losses[i]:.7f}, Average loss: {average_losses[i]:.7f}.')
+
 
 
 def tests():
@@ -718,7 +876,7 @@ def tests():
 
 
 def main():
-    trial_8()
+    trial_RNNs()
 
     '''
     x = torch.zeros((5, 64, 2, 2, 2))
