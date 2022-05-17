@@ -619,9 +619,9 @@ def trial_RNNs():
     print('@@@@@@@@@@@@@@@          TRIAL RNNs          @@@@@@@@@@@@@@@')
     print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
 
-    a = 0.001                                           # Alpha (learning rate)
-    b = 8                                               # Batch size
-    e = 5                                               # Number of epochs
+    a = 0.0005                                           # Alpha (learning rate)
+    b = 8                                                # Batch size
+    e = 20                                               # Number of epochs
 
     model_RNN = LSTM()
     model_GRU = LSTM()
