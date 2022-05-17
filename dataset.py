@@ -9,8 +9,8 @@ class MyFlowDataset(Dataset):
         self.sample_masks = my_masks
 
     def __len__(self):
-        assert len(self.sample_masks) == len(
-            self.sample_images), "Image-Mask Dimension Mismatch."
+        # assert len(self.sample_masks) == len(
+        #    self.sample_images), "Image-Mask Dimension Mismatch."
         return len(self.sample_images)
 
     def __getitem__(self, idx):

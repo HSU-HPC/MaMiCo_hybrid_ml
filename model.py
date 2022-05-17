@@ -134,8 +134,13 @@ class LSTM(nn.Module):
         self.input_size = input_size
         self.hidden_size = hidden_size
         self.seq_length = seq_length
-        self.lstm = nn.LSTM(input_size, hidden_size,
-                            num_layers, batch_first=True)
+
+        self.lstm = nn.LSTM(
+            input_size=input_size,
+            hidden_size=hidden_size,
+            num_layers=num_layers,
+            batch_first=True
+        )
         self.regressor = nn.Linear(hidden_size, input_size)
 
     def forward(self, x):
@@ -146,24 +151,34 @@ class LSTM(nn.Module):
         return self.regressor(out)
 
 
-class BidirectionalLSTM(nn.Module):
-    def __init__(self, input_size, hidden_size, num_layers, seq_length):
-        super(BidirectionalLSTM, self).__init__()
-        # seq_length = 5 or 256 ?
-        self.num_layers = num_layers
-        self.input_size = input_size
-        self.hidden_size = hidden_size
-        self.seq_length = seq_length
-        self.lstm = nn.LSTM(input_size, hidden_size,
-                            num_layers, batch_first=True, bidirectional=True)
-        self.regressor = nn.Linear(hidden_size*2, input_size)
+class ShallowRegressionLSTM(nn.Module):
+    def __init__(self, num_sensors, hidden_units):
+        super().__init__()
+        self.num_sensors = num_sensors  # this is the number of features
+        self.hidden_units = hidden_units
+        self.num_layers = 1
+
+        self.lstm = nn.LSTM(
+            input_size=num_sensors,
+            hidden_size=hidden_units,
+            batch_first=True,
+            num_layers=self.num_layers
+        )
+
+        self.linear = nn.Linear(in_features=self.hidden_units, out_features=num_sensors)
 
     def forward(self, x):
-        h0 = torch.zeros(self.num_layers*2, x.size(0), self.hidden_size)
-        c0 = torch.zeros(self.num_layers*2, x.size(0), self.hidden_size)
-        out, _ = self.lstm(x, (h0, c0))
-        out = out[:, -1, :]
-        return self.regressor(out)
+        batch_size = x.shape[0]
+        h0 = torch.zeros(self.num_layers, batch_size, self.hidden_units).requires_grad_()
+        c0 = torch.zeros(self.num_layers, batch_size, self.hidden_units).requires_grad_()
+
+        _, (hn, _) = self.lstm(x, (h0, c0))
+        out = self.linear(hn[0]).flatten()  # First dim of Hn is num_layers, which is set to 1 above.
+
+        return out
+
+
+
 
 
 class INTERIM_MD_UNET(nn.Module):
@@ -237,8 +252,15 @@ class INTERIM_MD_UNET(nn.Module):
 
 def test():
     x = torch.randn(10, 5, 512)
-    model = LSTM(input_size=512, hidden_size=1024, num_layers=7, seq_length=5)
+    model = LSTM(input_size=512, hidden_size=1024, num_layers=1, seq_length=5)
     print(model(x).shape)
+
+
+
+
+
+
+
     '''
     # model = LSTM_MD_UNET(in_channels=3, out_channels=3, features=[4, 6, 8, 10])
     # model = UNET(in_channels=3, out_channels=3, features=[64, 128, 256, 512])

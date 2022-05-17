@@ -4,7 +4,7 @@ from tqdm import tqdm
 import matplotlib.pyplot as plt
 import torch.nn as nn
 import torch.optim as optim
-from model import UNET, INTERIM_MD_UNET, LSTM, BidirectionalLSTM
+from model import UNET, INTERIM_MD_UNET, LSTM
 import time
 # MSLELoss, check_accuracy, save3DArray2File
 from utils import get_loaders, get_5_loaders, get_loaders_test, losses2file, get_loaders_from_file
@@ -575,10 +575,10 @@ def trial_8():
     b = 8                                               # Batch size
     e = 5                                               # Number of epochs
 
-    model = BidirectionalLSTM(
+    model = LSTM(
         input_size=512, hidden_size=1024, num_layers=7, seq_length=5)
     # Define loss function
-    loss_fn = nn.L1Loss()
+    loss_fn = nn.MSELoss()
     # Define optimizer
     optimizer = optim.Adam(model.parameters(), lr=a)
     # Instantiate other utils
@@ -599,6 +599,22 @@ def trial_8():
     print("Final Epoch Loss Progression:")
     for element in losses:
         print(element)
+
+
+def trial_RNNs():
+    print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
+    print('@@@@@@@@@@@@@@@          TRIAL RNNs          @@@@@@@@@@@@@@@')
+    print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
+
+    a = 0.001                                           # Alpha (learning rate)
+    b = 8                                               # Batch size
+    e = 5                                               # Number of epochs
+
+    model_RNN = LSTM()
+    model_GRU = LSTM()
+    model_LSTM = LSTM()
+    model_ShallowRegressionLSTM = LSTM()
+    pass
 
 
 def tests():
