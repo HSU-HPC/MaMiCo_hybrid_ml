@@ -4,7 +4,7 @@ from tqdm import tqdm
 import matplotlib.pyplot as plt
 import torch.nn as nn
 import torch.optim as optim
-from model import UNET, INTERIM_MD_UNET, LSTM
+from model import UNET, INTERIM_MD_UNET, RNN, GRU, LSTM
 import time
 # MSLELoss, check_accuracy, save3DArray2File
 from utils import get_loaders, get_5_loaders, get_loaders_test, losses2file, get_loaders_from_file
@@ -13,6 +13,7 @@ from drawing_board import save3D_RGBArray2File
 plt.style.use(['science'])
 
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 NUM_WORKERS = 4             # guideline: 4* num_GPU
 PIN_MEMORY = True
 LOAD_MODEL = False
@@ -577,9 +578,10 @@ def trial_8():
     print('@@@@@@@@@@@@@@@         TRIAL 8 LSTM         @@@@@@@@@@@@@@@')
     print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
 
-    a = 0.001                                           # Alpha (learning rate)
+    # Alpha (learning rate)
+    a = 0.0005
     b = 8                                               # Batch size
-    e = 5                                               # Number of epochs
+    e = 25                                               # Number of epochs
 
     model = LSTM(
         input_size=512, hidden_size=1024, num_layers=2, seq_length=5)
@@ -619,14 +621,22 @@ def trial_RNNs():
     print('@@@@@@@@@@@@@@@          TRIAL RNNs          @@@@@@@@@@@@@@@')
     print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
 
-    a = 0.0005                                           # Alpha (learning rate)
+    # Alpha (learning rate)
+    a = 0.0005
     b = 8                                                # Batch size
-    e = 20                                               # Number of epochs
+    e = 25                                               # Number of epochs
 
-    model_RNN = LSTM()
-    model_GRU = LSTM()
-    model_LSTM = LSTM()
-    model_ShallowRegressionLSTM = LSTM()
+    model_RNN = RNN(
+        input_size=512, hidden_size=1024, num_layers=2, device=device)
+    model_GRU = GRU(
+        input_size=512, hidden_size=1024, num_layers=2, device=device)
+    model_LSTM = LSTM(
+        input_size=512, hidden_size=1024, num_layers=2, seq_length=5)
+    # model_ShallowRegressionLSTM = LSTM()
+
+    # Experiment with RNNs
+    # Experiment with GRUs
+    # Experiment with LSTMs (num_layers, learning rate, epochs)
     pass
 
 

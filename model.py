@@ -126,29 +126,113 @@ class UNET(nn.Module):
         return self.final_conv(x)
 
 
-class LSTM(nn.Module):
-    def __init__(self, input_size, hidden_size, num_layers, seq_length):
-        super(LSTM, self).__init__()
-        # seq_length = 5 or 256 ?
-        self.num_layers = num_layers
+class RNN(nn.Module):
+    # input.shape = (batch_size, num_seq, input_size)
+    # output.shape = (batch_size, 1, input_size)
+    def __init__(self, input_size, hidden_size, num_layers, device):
+        super(RNN, self).__init__()
         self.input_size = input_size
         self.hidden_size = hidden_size
-        self.seq_length = seq_length
+        self.num_layers = num_layers
+        self.device = device
+        self.rnn = nn.RNN(
+            input_size=input_size,
+            hidden_size=hidden_size,
+            num_layers=num_layers,
+            batch_first=True
+        )
+        self.fc = nn.Linear(self.hidden_size, self.input_size)
 
+    def forward(self, x):
+        # Set initial hidden states(for RNN, GRU, LSTM)
+        h0 = torch.zeros(self.num_layers, x.size(
+            0), self.hidden_size).to(self.device)
+        # h0.shape =
+
+        # Set initial cell states (for LSTM)
+        # c0 = torch.zeros(self.num_layers, x.size(0), self.hidden_size).to(device)
+        # c0.shape =
+
+        # Forward propagate RNN
+        out, _ = self.rnn(x, h0)
+        # out.shape =
+
+        # Decode the hidden state of the last time step
+        out = out[:, -1, :]
+        # out.shape =
+
+        # Apply linear regressor to the last time step
+        out = self.fc(out)
+        # out.shape =
+        return out
+
+
+class GRU(nn.Module):
+    # input.shape = (batch_size, num_seq, input_size)
+    # output.shape = (batch_size, 1, input_size)
+    def __init__(self, input_size, hidden_size, num_layers, device):
+        super(RNN, self).__init__()
+        self.input_size = input_size
+        self.hidden_size = hidden_size
+        self.num_layers = num_layers
+        self.device = device
+        self.gru = nn.GRU(
+            input_size=input_size,
+            hidden_size=hidden_size,
+            num_layers=num_layers,
+            batch_first=True
+        )
+        self.fc = nn.Linear(self.hidden_size, self.input_size)
+
+    def forward(self, x):
+        # Set initial hidden states(for RNN, GRU, LSTM)
+        h0 = torch.zeros(self.num_layers, x.size(
+            0), self.hidden_size).to(self.device)
+        # h0.shape =
+
+        # Set initial cell states (for LSTM)
+        # c0 = torch.zeros(self.num_layers, x.size(0), self.hidden_size).to(device)
+        # c0.shape =
+
+        # Forward propagate RNN
+        out, _ = self.gru(x, h0)
+        # out.shape =
+
+        # Decode the hidden state of the last time step
+        out = out[:, -1, :]
+        # out.shape =
+
+        # Apply linear regressor to the last time step
+        out = self.fc(out)
+        # out.shape =
+        return out
+
+
+class LSTM(nn.Module):
+    # input.shape = (batch_size, num_seq, input_size)
+    # output.shape = (batch_size, 1, input_size)
+    def __init__(self, input_size, hidden_size, num_layers, device):
+        super(LSTM, self).__init__()
+        self.input_size = input_size
+        self.hidden_size = hidden_size
+        self.num_layers = num_layers
+        self.device = device
         self.lstm = nn.LSTM(
             input_size=input_size,
             hidden_size=hidden_size,
             num_layers=num_layers,
             batch_first=True
         )
-        self.regressor = nn.Linear(hidden_size, input_size)
+        self.fc = nn.Linear(hidden_size, input_size)
 
     def forward(self, x):
-        h0 = torch.zeros(self.num_layers, x.size(0), self.hidden_size)
-        c0 = torch.zeros(self.num_layers, x.size(0), self.hidden_size)
+        h0 = torch.zeros(self.num_layers, x.size(
+            0), self.hidden_size).to(self.device)
+        c0 = torch.zeros(self.num_layers, x.size(
+            0), self.hidden_size).to(self.device)
         out, _ = self.lstm(x, (h0, c0))
         out = out[:, -1, :]
-        return self.regressor(out)
+        return self.fc(out)
 
 
 class ShallowRegressionLSTM(nn.Module):
@@ -165,20 +249,21 @@ class ShallowRegressionLSTM(nn.Module):
             num_layers=self.num_layers
         )
 
-        self.linear = nn.Linear(in_features=self.hidden_units, out_features=num_sensors)
+        self.linear = nn.Linear(
+            in_features=self.hidden_units, out_features=num_sensors)
 
     def forward(self, x):
         batch_size = x.shape[0]
-        h0 = torch.zeros(self.num_layers, batch_size, self.hidden_units).requires_grad_()
-        c0 = torch.zeros(self.num_layers, batch_size, self.hidden_units).requires_grad_()
+        h0 = torch.zeros(self.num_layers, batch_size,
+                         self.hidden_units).requires_grad_()
+        c0 = torch.zeros(self.num_layers, batch_size,
+                         self.hidden_units).requires_grad_()
 
         _, (hn, _) = self.lstm(x, (h0, c0))
-        out = self.linear(hn[0]).flatten()  # First dim of Hn is num_layers, which is set to 1 above.
+        # First dim of Hn is num_layers, which is set to 1 above.
+        out = self.linear(hn[0]).flatten()
 
         return out
-
-
-
 
 
 class INTERIM_MD_UNET(nn.Module):
@@ -254,12 +339,6 @@ def test():
     x = torch.randn(10, 5, 512)
     model = LSTM(input_size=512, hidden_size=1024, num_layers=1, seq_length=5)
     print(model(x).shape)
-
-
-
-
-
-
 
     '''
     # model = LSTM_MD_UNET(in_channels=3, out_channels=3, features=[4, 6, 8, 10])
