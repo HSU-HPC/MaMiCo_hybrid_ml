@@ -209,7 +209,7 @@ def get_loaders_test(batch_size, num_workers, pin_memory, timesteps=1000, couett
 def load3D_RGBArrayFromFile(input_file, output_shape):
     # 3) load 2D array from file
     loaded_array = np.loadtxt(
-        f'/Users/sebastianlerdo/github/MD_U-Net/{input_file}')
+        f'./{input_file}')
     #f'/Users/sebastianlerdo/github/MD_U-Net/{input_file}')
     t, c, d, h, w = output_shape
 
