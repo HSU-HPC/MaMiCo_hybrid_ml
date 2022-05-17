@@ -596,6 +596,9 @@ def trial_8():
     # Prepare training cycle
     scaler = torch.cuda.amp.GradScaler()
     training_loss = 0.0
+    names = ['RNN', 'GRU', 'LSTM']
+    num_layers = [2, 4, 8]
+    learning_rates = [0.0005, 0.0001, 0.00005]
     max_losses = []
     min_losses = []
     final_losses = []
@@ -610,7 +613,11 @@ def trial_8():
         min_losses.append(training_loss[1])
         final_losses.append(training_loss[2])
         average_losses.append(training_loss[-1])
-
+    print("@@@@@@@@@@@@@@@         MODEL SUMMARY         @@@@@@@@@@@@@@@")
+    print(f'Name: {names[2]}')
+    print(f'Num layers: {num_layers[0]}')
+    print(f'Learning rate: {learning_rates[0]}')
+    print(f'Num epochs: {e}')
     print("Loss Progression:")
     for i in range(e):
         if i < 9:
@@ -630,7 +637,7 @@ def trial_RNNs():
     a = 0.0005
     b = 8                                                # Batch size
     e = 25                                               # Number of epochs
-
+    names = ['RNN', 'GRU', 'LSTM']
     model_RNN = RNN(
         input_size=512, hidden_size=1024, num_layers=2, device=device)
     model_GRU = GRU(
