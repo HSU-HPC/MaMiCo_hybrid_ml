@@ -93,10 +93,10 @@ def train_fn(loader, model, optimizer, loss_fn, scaler):
 
 
 def train_lstm(loader, model, optimizer, criterion, scaler):
+    losses = []
     for batch_idx, (data, targets) in enumerate(tqdm(loader)):
         data = data.float().squeeze(1)
         targets = targets.float()
-        losses = []
         # forward
         with torch.cuda.amp.autocast():
             scores = model(data)
@@ -110,10 +110,11 @@ def train_lstm(loader, model, optimizer, criterion, scaler):
 
         # gradient descent update step/adam step
         optimizer.step()
-        max_loss = max(losses)
-        min_loss = min(losses)
-        final_loss = losses[-1]
-        average_loss = sum(losses)/len(losses)
+    # print('Length of losses list in train_LSTM(): ', len(losses))
+    max_loss = max(losses)
+    min_loss = min(losses)
+    final_loss = losses[-1]
+    average_loss = sum(losses)/len(losses)
     return [max_loss, min_loss, final_loss, average_loss]
 
 
@@ -609,7 +610,8 @@ def trial_8():
 
     print("Loss Progression:")
     for i in range(e):
-        print(f'Epoch: {i+1}, Max loss: {max_losses[i]}, Min loss: {min_losses[i]}, Final loss: {final_losses[i]}, Average loss: {average_losses[i]}.')
+        print(
+            f'Epoch: {i+1}, Max loss: {max_losses[i]}, Min loss: {min_losses[i]}, Final loss: {final_losses[i]}, Average loss: {average_losses[i]}.')
 
 
 def trial_RNNs():
