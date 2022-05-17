@@ -11,6 +11,7 @@ from utils import get_loaders, get_5_loaders, get_loaders_test, losses2file, get
 from drawing_board import save3D_RGBArray2File
 
 plt.style.use(['science'])
+np.set_printoptions(precision=6)
 
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
