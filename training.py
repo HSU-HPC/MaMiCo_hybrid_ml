@@ -96,11 +96,12 @@ def train_lstm(loader, model, optimizer, criterion, scaler):
     for batch_idx, (data, targets) in enumerate(tqdm(loader)):
         data = data.float().squeeze(1)
         targets = targets.float()
-
+        losses = []
         # forward
         with torch.cuda.amp.autocast():
             scores = model(data)
             loss = criterion(scores, targets)
+            losses.append(loss.item())
             print(loss.item())
 
         # backward
@@ -109,7 +110,11 @@ def train_lstm(loader, model, optimizer, criterion, scaler):
 
         # gradient descent update step/adam step
         optimizer.step()
-    return loss
+        max_loss = max(losses)
+        min_loss = min(losses)
+        final_loss = losses[-1]
+        average_loss = sum(losses)/len(losses)
+    return [max_loss, min_loss, final_loss, average_loss]
 
 
 def val_fn(loader, model, loss_fn, trial_string, loss_string):
@@ -587,18 +592,24 @@ def trial_8():
     # Prepare training cycle
     scaler = torch.cuda.amp.GradScaler()
     training_loss = 0.0
-    losses = []
+    max_losses = []
+    min_losses = []
+    final_losses = []
+    average_losses = []
 
     # Training cycle
     for epoch in range(e):
         print(f"@@@@@@@@@@@@@@@ Current epoch: {epoch} @@@@@@@@@@@@@@@")
         training_loss = train_lstm(
             train_loader, model, optimizer, loss_fn, scaler)
-        losses.append(training_loss)
+        max_losses.append(training_loss[0])
+        min_losses.append(training_loss[1])
+        final_losses.append(training_loss[2])
+        average_losses.append(training_loss[-1])
 
-    print("Final Epoch Loss Progression:")
-    for element in losses:
-        print(element)
+    print("Loss Progression:")
+    for i in range(e):
+        print(f'Epoch: {i+1}, Max loss: {max_losses[i]}, Min loss: {min_losses[i]}, Final loss: {final_losses[i]}, Average loss: {average_losses[i]}.')
 
 
 def trial_RNNs():
