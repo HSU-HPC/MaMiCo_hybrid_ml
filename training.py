@@ -27,6 +27,7 @@ def train_fn(loader, model, optimizer, loss_fn, scaler):
     # using tqdm(iterable).
     epoch_loss = 0
     counter = 0
+    optimizer.zero_grad()
 
     for batch_idx, (data, targets) in enumerate(loop):
         data = data.float().to(device=DEVICE)
