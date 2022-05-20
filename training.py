@@ -25,6 +25,8 @@ def train_fn(loader, model, optimizer, loss_fn, scaler):
     loop = tqdm(loader)
     # The tqdm module allows to display a smart progress meter for iterables
     # using tqdm(iterable).
+    epoch_loss = 0
+    counter = 0
 
     for batch_idx, (data, targets) in enumerate(loop):
         data = data.float().to(device=DEVICE)
@@ -48,6 +50,8 @@ def train_fn(loader, model, optimizer, loss_fn, scaler):
             predictions = model(data)
             loss = loss_fn(predictions.float(), targets.float())
             print(loss.item())
+            epoch_loss += loss.item()
+            counter += 1
 
         # Next consider the backward training path, especially the corresponding
         # scaler which is an object of the class GRADIENT SCALING:
@@ -91,7 +95,8 @@ def train_fn(loader, model, optimizer, loss_fn, scaler):
     print("###########")
     print(loss.cpu().detach().numpy())
     print("###########")
-    return loss
+
+    return epoch_loss/counter
 
 
 def train_lstm(loader, model, optimizer, criterion, scaler):
@@ -970,6 +975,83 @@ def model_summary(name, num_layers, learning_rate, epochs, max_losses, min_losse
                 f'Epoch: {i+1}, Max loss: {max_losses[i]:.7f}, Min loss: {min_losses[i]:.7f}, Final loss: {final_losses[i]:.7f}, Average loss: {average_losses[i]:.7f}.')
 
 
+def first_trial_hybrid():
+    print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
+    print('@@@@@@@@@@@@@@@      FIRST TRIAL Hybrid      @@@@@@@@@@@@@@@')
+    print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
+
+    t = 1000                                            # Timesteps
+    d = 31                                              # Vertical resolution
+    s = 0.3                                             # Sigma
+    acti = 'ReLU'                                       # Activation function
+    loss = [nn.MSELoss(), 'MSE']                        # Loss function
+    f = [4, 8, 16, 32]                                  # List of features
+    a = [0.0001, 0.00005]                               # Alpha (learning rate)
+    b = 1                                               # Batch size
+    e = 150                                             # Number of epochs
+
+    key_list = ['H1_MSE_alpha_1e-3_Train_Error', 'H1_MSE_alpha_5e-4_Valid_Error',
+                'H1_MSE_alpha_1e-3_Train_Error', 'H1_MSE_alpha_5e-4_Valid_Error']
+    results_dict = {}
+    # Create counter to track
+    c = 0
+    for i in range(1):                                  # Index for loss function
+        for j in range(2):                              # Index for learning rates
+            displayHyperparameters(t, d, s, loss[1], acti, f, a[j], b, e)
+
+            # Instantiate model
+            model = INTERIM_MD_UNET(
+                device=device,
+                in_channels=3,
+                out_channels=3,
+                features=[4, 8, 16, 32],
+                activation=nn.ReLU(inplace=True),
+                RNN_in_size=512,
+                RNN_hid_size=1024,
+                RNN_lay=2
+            ).to(device)
+
+            # Define loss function and optimizer
+            loss_fn = loss[0]
+            optimizer = optim.Adam(model.parameters(), lr=a[j])
+
+            # Create train and valid loaders
+            train_loader, valid_loader = get_loaders(
+                b, NUM_WORKERS, PIN_MEMORY, t, d, s)
+
+            # Define other utils: scaler, loss placeholder, placeholder container
+            scaler = torch.cuda.amp.GradScaler()
+            training_loss = 0.0
+            losses = []
+
+            # Initiate training loop and append average epoch loss to container
+            for epoch in range(e):
+                training_loss = train_fn(
+                    train_loader, model, optimizer, loss_fn, scaler)
+                losses.append(training_loss)
+
+            # Save losses to file for later visualization of training progress
+            losses2file(losses, f'trial_3_{loss[2*i+1]}_{j+1}e-3')
+
+            # Perform validation set to check proof of concept
+            losses.append(val_fn(valid_loader, model, loss_fn,
+                          f'3_{j+1}e-3', loss[2*i+1]))
+
+            # Print statements for quick feedback
+            print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
+            print(
+                f'@@@@@@@@@@ T-Error:{losses[-2]:.3f}            V-Error:{losses[-1]:.3f} @@@@@@@@@@')
+            print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
+            print(' ')
+            print(' ')
+
+            # create dictionary to hold training and validation errors
+            errors = {key_list[2*c]: losses[-2], key_list[2*c+1]: losses[-1]}
+            results_dict.update(errors)
+            c += 1
+    return results_dict
+
+
 def tests():
     print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
     print('@@@@@@@@@@@@@@@            MODEL 1           @@@@@@@@@@@@@@@')
@@ -1036,7 +1118,10 @@ def tests():
 
 
 def main():
-    second_trial_RNNs()
+    dict = first_trial_hybrid()
+
+    for key, value in dict.items():
+        print('{} : {}'.format(key, value))
 
     '''
     x = torch.zeros((5, 64, 2, 2, 2))
