@@ -6,6 +6,7 @@ from torchsummary import summary
 from ptflops import get_model_complexity_info
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+use_cuda = torch.cuda.is_available()
 
 # This Pytorch implementation of the well-known U-Net architecture was presented
 # by Aladdin Persson (YouTube, GitHub). The main idea is to first create the
@@ -21,8 +22,10 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 
 def tensor_FIFO_pipe(tensor, x):
-    return torch.cat((tensor[1:], x))
-
+    if use_cuda:
+        return torch.cat((tensor[1:], x)).cuda()
+    else:
+        return torch.cat((tensor[1:], x))
 
 class DoubleConv(nn.Module):
     # For the MaMiCo implementation consider reflective padding and leaky ReLu.
