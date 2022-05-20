@@ -33,7 +33,6 @@ def train_fn(loader, model, optimizer, loss_fn, scaler):
         # print("Checking dimension of input data: ", data.shape)
         targets = targets.float().to(device=DEVICE)
         # print("Checking dimension of target data: ", targets.shape)
-        loss = 0
         # data = data.float().unsqueeze(1).to(device=DEVICE)
         # targets = targets.float().unsqueeze(1).to(device=DEVICE)
 
