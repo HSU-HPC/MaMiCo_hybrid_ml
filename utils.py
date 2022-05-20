@@ -245,6 +245,30 @@ def get_loaders_from_file(batch_size, num_workers, pin_memory):
     return my_loader
 
 
+def get_loaders_from_file2(batch_size, num_workers, pin_memory):
+    file_name = "latent_space_test_MSE_999_64_2_2_2.csv"
+    data_shape = (999, 64, 2, 2, 2)
+    my_loaded_data_1 = load3D_RGBArrayFromFile(file_name, data_shape)
+    print("Checking dimension of loaded data: ", my_loaded_data_1.shape)
+    my_loaded_data_1 = np.reshape(my_loaded_data_1, (999, 1, 512))
+    print("Checking dimension of reshaped data: ", my_loaded_data_1.shape)
+
+    my_images_1 = my_loaded_data_1[:-1]
+    print("Checking dimension of input data: ", my_images_1.shape)
+    my_masks_1 = my_loaded_data_1[1:]
+    print("Checking dimension of target data: ", my_masks_1.shape)
+
+    my_dataset = MyFlowDataset(my_images_1, my_masks_1)
+    my_loader = DataLoader(
+        dataset=my_dataset,
+        batch_size=batch_size,
+        shuffle=False,
+        num_workers=num_workers
+        )
+
+    return my_loader
+
+
 def check_accuracy(loader, model, device="cuda"):
     num_correct = 0
     num_pixels = 0
@@ -292,7 +316,7 @@ def losses2file(losses, filename):
 
 
 if __name__ == "__main__":
-    a = get_loaders_from_file(batch_size=32, num_workers=2, pin_memory=True)
+    a = get_loaders_from_file2(batch_size=32, num_workers=2, pin_memory=True)
     '''
     random_data = np.random.rand(999, 64, 2, 2, 2)
     print(random_data.shape)
