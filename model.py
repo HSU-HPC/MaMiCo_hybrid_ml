@@ -21,11 +21,9 @@ use_cuda = torch.cuda.is_available()
 # without noise for proof of concept.
 
 
-def tensor_FIFO_pipe(tensor, x):
-    if use_cuda:
-        return torch.cat((tensor[1:], x)).cuda()
-    else:
-        return torch.cat((tensor[1:], x))
+def tensor_FIFO_pipe(tensor, x, device):
+    return torch.cat((tensor[1:], x)).to(device)
+
 
 class DoubleConv(nn.Module):
     # For the MaMiCo implementation consider reflective padding and leaky ReLu.
@@ -265,6 +263,7 @@ class INTERIM_MD_UNET(nn.Module):
         # 32x32x32 -> 16x16x16 -> 8x8x8 -> 4x4x4 -> 2x2x2 AND -> batchsize = 8
 
         super(INTERIM_MD_UNET, self).__init__()
+        self.device = device
         self.ups = nn.ModuleList()
         self.downs = nn.ModuleList()
         self.pool = nn.MaxPool3d(kernel_size=2, stride=2)
@@ -324,7 +323,7 @@ class INTERIM_MD_UNET(nn.Module):
         # print('Class-3-Sequenceinput shape: ', self.sequence.size())
 
         # Apply FIFO pipeline and sanity check contents
-        self.sequence = tensor_FIFO_pipe(self.sequence, latent_space)
+        self.sequence = tensor_FIFO_pipe(self.sequence, latent_space, self.device).to(self.device)
         # print(self.sequence)
 
         # Create RNN input and sanity check dimensions

@@ -93,7 +93,6 @@ def train_fn(loader, model, optimizer, loss_fn, scaler):
         loop.set_postfix(loss=loss.item())
         # postfix(): Specify additional stats to display at the end of the bar.
 
-
     return epoch_loss/counter
 
 
