@@ -55,6 +55,9 @@ def train_fn(loader, model, optimizer, loss_fn, scaler):
         # Next consider the backward training path, especially the corresponding
         # scaler which is an object of the class GRADIENT SCALING:
         #
+        loss.backward()
+        optimizer.step()
+        optimizer.zero_grad()
         # If the forward pass for a particular op has float16 inputs, the
         # backward pass for that op will produce float16 gradients. Gradient
         # values with small magnitudes may not be representable in float16.
@@ -70,10 +73,10 @@ def train_fn(loader, model, optimizer, loss_fn, scaler):
         # Each parameter’s gradient (.grad attribute) should be unscaled before
         # the optimizer updates the parameters, so the scale factor does not
         # interfere with the learning rate.
-        optimizer.zero_grad()
+        # ---> optimizer.zero_grad()
         # .zero_grad(): Sets the gradients of all optimized torch.Tensors to 0.
         #
-        scaler.scale(loss).backward()
+        # ---> scaler.scale(loss).backward()
         # .scale(): Multiplies (‘scales’) a tensor or list of tensors by the
         # scale factor and returns scaled outputs. If this instance of
         # GradScaler is not enabled, outputs are returned unmodified.
@@ -82,11 +85,11 @@ def train_fn(loader, model, optimizer, loss_fn, scaler):
         # leaves. This function accumulates gradients in the leaves - you might
         # need to zero .grad attributes or set them to None before calling it.
         #
-        scaler.step(optimizer)
+        # ---> scaler.step(optimizer)
         # .step(): gradients automatically unscaled and returns the return
         # value of optimizer.step()
         #
-        scaler.update()
+        # ---> scaler.update()
         # .update():
         # update tqdm loop
         loop.set_postfix(loss=loss.item())
