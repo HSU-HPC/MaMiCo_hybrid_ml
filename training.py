@@ -7,7 +7,7 @@ import torch.optim as optim
 from model import UNET, INTERIM_MD_UNET, RNN, GRU, LSTM
 import time
 # MSLELoss, check_accuracy, save3DArray2File
-from utils import get_loaders, get_5_loaders, get_loaders_test, losses2file, get_loaders_from_file
+from utils import get_loaders, get_5_loaders, get_loaders_test, losses2file, get_loaders_from_file, get_loaders_from_file2
 from drawing_board import save3D_RGBArray2File
 
 plt.style.use(['science'])
@@ -961,7 +961,7 @@ def second_trial_RNNs():
 
 def third_trial_RNN():
     print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
-    print('@@@@@@@@@@@@@@@       Thrid TRIAL RNNs       @@@@@@@@@@@@@@@')
+    print('@@@@@@@@@@@@@@@       Third TRIAL RNNs       @@@@@@@@@@@@@@@')
     print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
 
     batch = 1                                                # Batch size
