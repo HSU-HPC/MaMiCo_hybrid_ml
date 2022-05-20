@@ -22,7 +22,7 @@ use_cuda = torch.cuda.is_available()
 
 
 def tensor_FIFO_pipe(tensor, x, device):
-    return torch.cat((tensor[1:], x)).to(device)
+    return torch.cat((tensor[1:].to(device), x.to(device)))
 
 
 class DoubleConv(nn.Module):
@@ -323,7 +323,8 @@ class INTERIM_MD_UNET(nn.Module):
         # print('Class-3-Sequenceinput shape: ', self.sequence.size())
 
         # Apply FIFO pipeline and sanity check contents
-        self.sequence = tensor_FIFO_pipe(self.sequence, latent_space, self.device).to(self.device)
+        self.sequence = tensor_FIFO_pipe(
+            self.sequence, latent_space, self.device).to(self.device)
         # print(self.sequence)
 
         # Create RNN input and sanity check dimensions
