@@ -13,7 +13,7 @@ from drawing_board import save3D_RGBArray2File
 plt.style.use(['science'])
 np.set_printoptions(precision=6)
 
-DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
+DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 NUM_WORKERS = 4             # guideline: 4* num_GPU
 PIN_MEMORY = True
@@ -92,9 +92,7 @@ def train_fn(loader, model, optimizer, loss_fn, scaler):
         # update tqdm loop
         loop.set_postfix(loss=loss.item())
         # postfix(): Specify additional stats to display at the end of the bar.
-    print("###########")
-    print(loss.cpu().detach().numpy())
-    print("###########")
+
 
     return epoch_loss/counter
 
