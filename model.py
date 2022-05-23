@@ -162,7 +162,7 @@ class RNN(nn.Module):
         # c0.shape =
 
         # Forward propagate RNN
-        print("Checking dimension of input data: ", x.shape)
+        # print("Checking dimension of input data: ", x.shape)
         out, _ = self.rnn(x, h0)
         # out.shape =
 
