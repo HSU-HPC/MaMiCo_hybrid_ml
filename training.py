@@ -656,7 +656,7 @@ def first_trial_RNNs():
     print('@@@@@@@@@@@@@@@      FIRST TRIAL RNNs        @@@@@@@@@@@@@@@')
     print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
 
-    batch = 8                                                # Batch size
+    batch = 1                                                # Batch size
     epoch = 50                                               # Number of epochs
     names = ['RNN', 'GRU', 'LSTM']
     num_layers = [2, 4, 8]
