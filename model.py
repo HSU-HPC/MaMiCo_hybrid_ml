@@ -173,10 +173,10 @@ class RNN(nn.Module):
         # Decode the hidden state of the last time step
         out = out[:, -1, :]
         # out.shape =
-        out = torch.reshape(out, (1, 1, 512))
 
         # Apply linear regressor to the last time step
         out = self.fc(out)
+        out = torch.reshape(out, (1, 1, 512))
         # out.shape =
         return out
 
