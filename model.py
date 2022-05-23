@@ -151,6 +151,7 @@ class RNN(nn.Module):
         self.fc = nn.Linear(self.hidden_size, self.input_size)
 
     def forward(self, x):
+        x = torch.reshape(x, (1, 1, 512))
         # Set initial hidden states(for RNN, GRU, LSTM)
         h0 = torch.zeros(self.num_layers, x.size(
             0), self.hidden_size)
