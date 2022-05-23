@@ -1194,7 +1194,7 @@ def tests():
 
 
 def main():
-    first_trial_RNNs()
+    # first_trial_RNNs()
     third_trial_RNN()
     # dict = first_trial_hybrid()
     # for key, value in dict.items():
