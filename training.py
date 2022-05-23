@@ -663,8 +663,8 @@ def first_trial_RNNs():
     learning_rates = [0.0005, 0.0001, 0.00005]
 
     # Loop for RNN
-    for i in range(3):                                      # num_layers
-        for j in range(3):                                  # learning_rates
+    for i in range(1):                                      # num_layers
+        for j in range(2, 3):                                  # learning_rates
             # First, instantiate the ML model
             model = RNN(
                 input_size=512,
@@ -1194,6 +1194,7 @@ def tests():
 
 
 def main():
+    first_trial_RNNs()
     third_trial_RNN()
     # dict = first_trial_hybrid()
     # for key, value in dict.items():
