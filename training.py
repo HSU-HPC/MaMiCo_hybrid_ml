@@ -122,7 +122,7 @@ def train_lstm(loader, model, optimizer, criterion, scaler):
     min_loss = min(losses)
     final_loss = losses[-1]
     average_loss = sum(losses)/len(losses)
-    print('current averaged batch lossis : ', average_loss)
+    print('current averaged batch loss is : ', average_loss)
     return [max_loss, min_loss, final_loss, average_loss]
 
 
@@ -1181,9 +1181,9 @@ def tests():
 
 def main():
     third_trial_RNN()
-
-    for key, value in dict.items():
-        print('{} : {}'.format(key, value))
+    # dict = first_trial_hybrid()
+    # for key, value in dict.items():
+    #     print('{} : {}'.format(key, value))
 
     '''
     x = torch.zeros((5, 64, 2, 2, 2))

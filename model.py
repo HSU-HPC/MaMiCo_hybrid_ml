@@ -142,6 +142,7 @@ class RNN(nn.Module):
         self.hidden_size = hidden_size
         self.num_layers = num_layers
         self.device = device
+        self.sequenc = torch.zeros(5, 512)
         self.rnn = nn.RNN(
             input_size=input_size,
             hidden_size=hidden_size,
@@ -151,7 +152,7 @@ class RNN(nn.Module):
         self.fc = nn.Linear(self.hidden_size, self.input_size)
 
     def forward(self, x):
-        x = torch.reshape(x, (1, 1, 512))
+        # x = torch.reshape(x, (1, 1, 512))
         # Set initial hidden states(for RNN, GRU, LSTM)
         h0 = torch.zeros(self.num_layers, x.size(
             0), self.hidden_size).to(self.device)
@@ -163,6 +164,9 @@ class RNN(nn.Module):
 
         # Forward propagate RNN
         # print("Checking dimension of input data: ", x.shape)
+        self.sequence = tensor_FIFO_pipe(
+            self.sequence, x, self.device).to(self.device)
+        x = torch.reshape(self.sequence, (1, 5, 512))
         out, _ = self.rnn(x, h0)
         # out.shape =
 
