@@ -153,7 +153,7 @@ class RNN(nn.Module):
     def forward(self, x):
         # Set initial hidden states(for RNN, GRU, LSTM)
         h0 = torch.zeros(self.num_layers, x.size(
-            0), self.hidden_size).to(self.device)
+            0), self.hidden_size)
         # h0.shape =
 
         # Set initial cell states (for LSTM)
@@ -161,6 +161,7 @@ class RNN(nn.Module):
         # c0.shape =
 
         # Forward propagate RNN
+        print("Checking dimension of input data: ", x.shape)
         out, _ = self.rnn(x, h0)
         # out.shape =
 
