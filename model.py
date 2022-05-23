@@ -320,14 +320,9 @@ class INTERIM_MD_UNET(nn.Module):
         # This is the bottleneck
         x = self.bottleneck(x)
 
-        # Extract the latent space and sanity check dimensions
-        latent_space = x.to(self.device)
-        print('Class-1-Latent Space shape: ', latent_space.size())
-
-        # Create RNN-input from latent space and sanity check dimensions
-        sequenceInput = torch.reshape(
-            latent_space, (1, 512)).to(self.device)
-        print('Class-2-SequenceInput shape: ', sequenceInput.size())
+        # Create RNN-input from x and sanity check dimensions
+        # x = torch.reshape(x, (1, 512)).to(self.device)
+        # print('Class-2-SequenceInput shape: ', sequenceInput.size())
 
         # Prepare RNN: Set initial hidden states(for RNN, GRU, LSTM)
         h0 = torch.zeros(self.num_layers, x.size(
@@ -335,17 +330,17 @@ class INTERIM_MD_UNET(nn.Module):
 
         # Prepare RNN: Forward propagate RNN
         self.sequence = tensor_FIFO_pipe(
-            self.sequence, sequenceInput, self.device).to(self.device)
-        x = torch.reshape(self.sequence, (1, 5, 512))
-        x, _ = self.rnn(x, h0)
+            self.sequence, torch.reshape(x, (1, 512)), self.device).to(self.device)
+
+        x, _ = self.rnn(torch.reshape(self.sequence, (1, 5, 512)), h0)
 
         # Decode the hidden state of the last time step
         x = x[:, -1, :]
 
         # Apply linear regressor to the last time step
         x = self.fc(x)
-        x = torch.reshape(x, (1, 1, 512))
-        print('Class-3-rnnOutput shape: ', x.size())
+        # x = torch.reshape(x, (1, 1, 512))
+        # print('Class-3-rnnOutput shape: ', x.size())
 
         # Merge output into CNN signal (->x) and sanity check dimensions
         x = torch.reshape(x, (1, 64, 2, 2, 2))
