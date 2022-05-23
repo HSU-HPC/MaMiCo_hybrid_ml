@@ -122,6 +122,10 @@ def train_lstm(loader, model, optimizer, criterion, scaler):
     min_loss = min(losses)
     final_loss = losses[-1]
     average_loss = sum(losses)/len(losses)
+    print('Losses for the first 10 inputs:')
+    print(f'[0]: {losses[0]:.7f}, [1]: {losses[1]:.7f}, [2]: {losses[2]:.7f}, [3]: {losses[3]:.7f}, [4]: {losses[4]:.7f},')
+    print(f'[5]: {losses[5]:.7f}, [6]: {losses[6]:.7f}, [7]: {losses[7]:.7f}, [8]: {losses[8]:.7f}, [9]: {losses[9]:.7f},')
+
     print('current averaged batch loss is : ', average_loss)
     return [max_loss, min_loss, final_loss, average_loss]
 
@@ -972,7 +976,7 @@ def third_trial_RNN():
     learning_rates = [0.00005, 0.00001, 0.000005]
 
     # Loop for RNN
-    for j in range(3):                                  # learning_rates
+    for j in range(2, 3):                                  # learning_rates
         # First, instantiate the ML model
         model = RNN(
             input_size=512,
