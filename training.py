@@ -126,7 +126,7 @@ def train_lstm(loader, model, optimizer, criterion, scaler):
         counter += 1
         if loss > max_loss:
             max_loss = loss
-            time buffer = counter
+            time_buffer = counter
     # print('Length of losses list in train_LSTM(): ', len(losses))
     max_loss = max(losses)
     min_loss = min(losses)
