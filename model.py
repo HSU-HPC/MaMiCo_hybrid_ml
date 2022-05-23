@@ -320,7 +320,8 @@ class INTERIM_MD_UNET(nn.Module):
         print('Class-2-Latent Space shape: ', latent_space.size())
 
         # Create RNN input and sanity check dimensions
-        sequenceInput = torch.reshape(latent_space, (1, 1, 512)).to(self.device)
+        sequenceInput = torch.reshape(
+            latent_space, (1, 512)).to(self.device)
         print('Class-4-SequenceInput shape: ', sequenceInput.size())
 
         # Apply RNN and sanity check output dimensions
