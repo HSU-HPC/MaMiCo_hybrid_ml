@@ -103,12 +103,13 @@ def train_lstm(loader, model, optimizer, criterion, scaler):
     losses = []
     for batch_idx, (data, targets) in enumerate(tqdm(loader)):
         print("Checking dimension of input  data: ", data.shape)
-        print("Checking dimension of output data: ", targets.shape)
         data = data.float().squeeze(1).to(device)
         targets = targets.float().to(device)
         # forward
         with torch.cuda.amp.autocast():
             scores = model(data)
+            print("Checking dimension of output data: ", scores.shape)
+            print("Checking dimension of target data: ", targets.shape)
             loss = criterion(scores, targets)
             losses.append(loss.item())
             # print(loss.item())
