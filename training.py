@@ -101,6 +101,9 @@ def train_fn(loader, model, optimizer, loss_fn, scaler):
 
 def train_lstm(loader, model, optimizer, criterion, scaler):
     losses = []
+    counter = 0
+    time_buffer = 0
+    max_loss =
     for batch_idx, (data, targets) in enumerate(tqdm(loader)):
         # print("Checking dimension of input  data: ", data.shape)
         data = data.float().squeeze(1).to(device)
@@ -120,6 +123,10 @@ def train_lstm(loader, model, optimizer, criterion, scaler):
 
         # gradient descent update step/adam step
         optimizer.step()
+        counter += 1
+        if loss > max_loss:
+            max_loss = loss
+            time buffer = counter
     # print('Length of losses list in train_LSTM(): ', len(losses))
     max_loss = max(losses)
     min_loss = min(losses)
@@ -128,8 +135,8 @@ def train_lstm(loader, model, optimizer, criterion, scaler):
     print('Losses for the first 10 inputs:')
     print(f'[0]: {losses[0]:.7f}, [1]: {losses[1]:.7f}, [2]: {losses[2]:.7f}, [3]: {losses[3]:.7f}, [4]: {losses[4]:.7f},')
     print(f'[5]: {losses[5]:.7f}, [6]: {losses[6]:.7f}, [7]: {losses[7]:.7f}, [8]: {losses[8]:.7f}, [9]: {losses[9]:.7f},')
+    print(f'Max loss at t={time_buffer}: {max_loss:.7f}, Min loss: {min_loss:.7f}, Final loss: {final_loss:.7f}, Average loss: {average_loss:.7f}.')
 
-    print('current averaged batch loss is : ', average_loss)
     return [max_loss, min_loss, final_loss, average_loss]
 
 
