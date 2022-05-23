@@ -122,6 +122,7 @@ def train_lstm(loader, model, optimizer, criterion, scaler):
     min_loss = min(losses)
     final_loss = losses[-1]
     average_loss = sum(losses)/len(losses)
+    print('current averaged batch lossis : ', average_loss)
     return [max_loss, min_loss, final_loss, average_loss]
 
 
