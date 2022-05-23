@@ -56,7 +56,7 @@ def train_fn(loader, model, optimizer, loss_fn, scaler):
         # Next consider the backward training path, especially the corresponding
         # scaler which is an object of the class GRADIENT SCALING:
         #
-        loss.backward()
+        loss.backward(retain_graph=True)
         optimizer.step()
         optimizer.zero_grad()
         # If the forward pass for a particular op has float16 inputs, the
