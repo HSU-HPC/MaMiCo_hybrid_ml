@@ -102,6 +102,8 @@ def train_fn(loader, model, optimizer, loss_fn, scaler):
 def train_lstm(loader, model, optimizer, criterion, scaler):
     losses = []
     for batch_idx, (data, targets) in enumerate(tqdm(loader)):
+        print("Checking dimension of input  data: ", data.shape)
+        print("Checking dimension of output data: ", targets.shape)
         data = data.float().squeeze(1).to(device)
         targets = targets.float().to(device)
         # forward
