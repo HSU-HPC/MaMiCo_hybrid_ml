@@ -266,14 +266,23 @@ class INTERIM_MD_UNET(nn.Module):
 
         super(INTERIM_MD_UNET, self).__init__()
         self.device = device
+        # U-Net building blocks
         self.ups = nn.ModuleList()
         self.downs = nn.ModuleList()
         self.pool = nn.MaxPool3d(kernel_size=2, stride=2)
-        self.rnn = RNN(
-            input_size=512,
-            hidden_size=1024,
-            num_layers=RNN_lay,
-            device=device)
+
+        # RNN building blocks
+        self.input_size = RNN_in_size
+        self.hidden_size = RNN_hid_size
+        self.num_layers = 2
+        self.rnn = nn.RNN(
+            input_size=self.input_size,
+            hidden_size=self.hidden_size,
+            num_layers=self.num_layers,
+            batch_first=True
+        )
+        self.sequence = torch.zeros(5, 512)
+        self.fc = nn.Linear(self.hidden_size, self.input_size)
 
         # Down part of UNET
         for feature in features:
@@ -315,22 +324,32 @@ class INTERIM_MD_UNET(nn.Module):
         latent_space = x.to(self.device)
         print('Class-1-Latent Space shape: ', latent_space.size())
 
-        # Reshape latent space and sanity check dimensions
-        latent_space = torch.flatten(latent_space, start_dim=1).to(self.device)
-        print('Class-2-Latent Space shape: ', latent_space.size())
-
-        # Create RNN input and sanity check dimensions
+        # Create RNN-input from latent space and sanity check dimensions
         sequenceInput = torch.reshape(
             latent_space, (1, 512)).to(self.device)
-        print('Class-4-SequenceInput shape: ', sequenceInput.size())
+        print('Class-2-SequenceInput shape: ', sequenceInput.size())
 
-        # Apply RNN and sanity check output dimensions
-        rnnOutput = self.rnn(sequenceInput).to(self.device)
-        print('Class-5-rnnOutput shape: ', rnnOutput.size())
+        # Prepare RNN: Set initial hidden states(for RNN, GRU, LSTM)
+        h0 = torch.zeros(self.num_layers, x.size(
+            0), self.hidden_size).to(self.device)
+
+        # Prepare RNN: Forward propagate RNN
+        self.sequence = tensor_FIFO_pipe(
+            self.sequence, sequenceInput, self.device).to(self.device)
+        x = torch.reshape(self.sequence, (1, 5, 512))
+        x, _ = self.rnn(x, h0)
+
+        # Decode the hidden state of the last time step
+        x = x[:, -1, :]
+
+        # Apply linear regressor to the last time step
+        x = self.fc(x)
+        x = torch.reshape(x, (1, 1, 512))
+        print('Class-3-rnnOutput shape: ', x.size())
 
         # Merge output into CNN signal (->x) and sanity check dimensions
-        x = torch.reshape(rnnOutput, (1, 64, 2, 2, 2))
-        print('Class-6-CNN signal shape: ', x.size())
+        x = torch.reshape(x, (1, 64, 2, 2, 2))
+        print('Class-4-CNN signal shape: ', x.size())
 
         skip_connections = skip_connections[::-1]
 
