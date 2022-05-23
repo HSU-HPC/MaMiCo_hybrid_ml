@@ -142,7 +142,7 @@ class RNN(nn.Module):
         self.hidden_size = hidden_size
         self.num_layers = num_layers
         self.device = device
-        self.sequence = torch.zeros(5, 512)
+        # self.sequence = torch.zeros(5, 512)
         self.rnn = nn.RNN(
             input_size=input_size,
             hidden_size=hidden_size,
@@ -164,9 +164,8 @@ class RNN(nn.Module):
 
         # Forward propagate RNN
         # print("Checking dimension of input data: ", x.shape)
-        self.sequence = tensor_FIFO_pipe(
-            self.sequence, x, self.device).to(self.device)
-        x = torch.reshape(self.sequence, (1, 5, 512))
+        # self.sequence = tensor_FIFO_pipe(self.sequence, x, self.device).to(self.device)
+        # x = torch.reshape(self.sequence, (1, 5, 512))
         out, _ = self.rnn(x, h0)
         # out.shape =
 
@@ -176,7 +175,7 @@ class RNN(nn.Module):
 
         # Apply linear regressor to the last time step
         out = self.fc(out)
-        out = torch.reshape(out, (1, 1, 512))
+        # out = torch.reshape(out, (1, 1, 512))
         # out.shape =
         return out
 
