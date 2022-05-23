@@ -162,7 +162,8 @@ class RNN(nn.Module):
 
         # Forward propagate RNN
         # print("Checking dimension of input data: ", x.shape)
-        self.sequence = tensor_FIFO_pipe(self.sequence, x, self.device).to(self.device)
+        self.sequence = tensor_FIFO_pipe(
+            self.sequence, x, self.device).to(self.device)
         x = torch.reshape(self.sequence, (1, 5, 512))
         out, _ = self.rnn(x, h0)
 
@@ -312,11 +313,11 @@ class INTERIM_MD_UNET(nn.Module):
         x = self.bottleneck(x)
 
         # Extract the latent space and sanity check dimensions
-        latent_space = x
+        latent_space = x.to(self.device)
         # print('Class-1-Latent Space shape: ', latent_space.size())
 
         # Reshape latent space and sanity check dimensions
-        latent_space = torch.flatten(latent_space, start_dim=1)
+        latent_space = torch.flatten(latent_space, start_dim=1).to(self.device)
         # print('Class-2-Latent Space shape: ', latent_space.size())
 
         # View self.sequence and sanity check dimensions
@@ -324,16 +325,16 @@ class INTERIM_MD_UNET(nn.Module):
         # print('Class-3-Sequenceinput shape: ', self.sequence.size())
 
         # Apply FIFO pipeline and sanity check contents
-        self.sequence = tensor_FIFO_pipe(
-            self.sequence, latent_space, self.device).to(self.device)
+        # self.sequence = tensor_FIFO_pipe(
+        #     self.sequence, latent_space, self.device).to(self.device)
         # print(self.sequence)
 
         # Create RNN input and sanity check dimensions
-        sequenceInput = torch.reshape(self.sequence, (1, 5, 512))
+        sequenceInput = torch.reshape(self.sequence, (1, 1, 512)).to(self.device)
         # print('Class-4-SequenceInput shape: ', sequenceInput.size())
 
         # Apply RNN and sanity check output dimensions
-        rnnOutput = self.rnn(sequenceInput)
+        rnnOutput = self.rnn(sequenceInput).to(self.device)
         # print('Class-5-rnnOutput shape: ', rnnOutput.size())
 
         # Merge output into CNN signal (->x) and sanity check dimensions

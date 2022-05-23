@@ -1195,10 +1195,10 @@ def tests():
 
 def main():
     # first_trial_RNNs()
-    third_trial_RNN()
-    # dict = first_trial_hybrid()
-    # for key, value in dict.items():
-    #     print('{} : {}'.format(key, value))
+    # third_trial_RNN()
+    dict = first_trial_hybrid()
+    for key, value in dict.items():
+        print('{} : {}'.format(key, value))
 
     '''
     x = torch.zeros((5, 64, 2, 2, 2))
