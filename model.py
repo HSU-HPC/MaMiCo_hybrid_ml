@@ -142,7 +142,7 @@ class RNN(nn.Module):
         self.hidden_size = hidden_size
         self.num_layers = num_layers
         self.device = device
-        self.sequenc = torch.zeros(5, 512)
+        self.sequence = torch.zeros(5, 512)
         self.rnn = nn.RNN(
             input_size=input_size,
             hidden_size=hidden_size,
