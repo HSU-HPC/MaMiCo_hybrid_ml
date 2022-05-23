@@ -154,7 +154,7 @@ class RNN(nn.Module):
         x = torch.reshape(x, (1, 1, 512))
         # Set initial hidden states(for RNN, GRU, LSTM)
         h0 = torch.zeros(self.num_layers, x.size(
-            0), self.hidden_size)
+            0), self.hidden_size).to(self.device)
         # h0.shape =
 
         # Set initial cell states (for LSTM)
