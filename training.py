@@ -664,7 +664,7 @@ def first_trial_RNNs():
 
     # Loop for RNN
     for i in range(1):                                      # num_layers
-        for j in range(2, 3):                                  # learning_rates
+        for j in range(1):                                  # learning_rates
             # First, instantiate the ML model
             model = RNN(
                 input_size=512,
