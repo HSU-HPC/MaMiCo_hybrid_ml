@@ -41,11 +41,11 @@ class DoubleConv(nn.Module):
             # 3: kernel_size
             # 1: stride
             # 1: padding -> same padding
-            nn.BatchNorm3d(out_channels),
+            # nn.BatchNorm3d(out_channels),
             activation,
             nn.Conv3d(out_channels, out_channels, kernel_size=3,
                       stride=1, padding=1, bias=False),
-            nn.BatchNorm3d(out_channels),
+            # nn.BatchNorm3d(out_channels),
             activation,
         )
 
