@@ -344,7 +344,7 @@ class INTERIM_MD_UNET(nn.Module):
 
         # Merge output into CNN signal (->x) and sanity check dimensions
         x = torch.reshape(x, (1, 64, 2, 2, 2))
-        print('Class-4-CNN signal shape: ', x.size())
+        # print('Class-4-CNN signal shape: ', x.size())
 
         skip_connections = skip_connections[::-1]
 
