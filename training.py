@@ -1101,10 +1101,11 @@ def first_trial_hybrid():
             losses = []
 
             # Initiate training loop and append average epoch loss to container
-            for epoch in range(e):
-                training_loss = train_fn(
-                    train_loader, model, optimizer, loss_fn, scaler)
-                losses.append(training_loss)
+            with torch.autograd.detect_anomaly():
+                for epoch in range(e):
+                    training_loss = train_fn(
+                        train_loader, model, optimizer, loss_fn, scaler)
+                    losses.append(training_loss)
 
             # Save losses to file for later visualization of training progress
             losses2file(losses, f'trial_3_{loss[2*i+1]}_{j+1}e-3')
