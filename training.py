@@ -1081,7 +1081,7 @@ def first_trial_hybrid():
                 in_channels=3,
                 out_channels=3,
                 features=[4, 8, 16, 32],
-                activation=nn.ReLU(inplace=True),
+                activation=nn.ReLU(),
                 RNN_in_size=512,
                 RNN_hid_size=1024,
                 RNN_lay=2
