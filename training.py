@@ -257,15 +257,13 @@ def get_latent_spaces(loader, model, loss_fn):
 
 
 def displayHyperparameters(timesteps_, couette_dim_, sigma_, loss_fn_, activation_, features_, learning_rate_, batch_size_, num_epochs_):
-    print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
-    print(f'Currently using device (cuda/CPU): {DEVICE}.')
+    print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n')
+    print(f'Currently using device (cuda/CPU): {DEVICE}.\n')
     print('Current Trial Parameters and Model Hyperparameters:')
-    print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
     print(f'Couette timesteps: {timesteps_}')
     print(
         f'Spatial Resolution: {couette_dim_+1} x {couette_dim_+1} x {couette_dim_+1}')
-    print(f'Noise level: {sigma_*100}% of U_wall')
-    print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
+    print(f'Noise level: {sigma_*100}% of U_wall\n')
     print(f'Loss function: {loss_fn_}')
     print(f'Activation function: {activation_}')
     print(f'Model depth as dictated by len(features): {len(features_)}')
@@ -1077,7 +1075,8 @@ def third_trial_RNN():
 
 
 def model_summary(name, num_layers, learning_rate, max_losses=0, min_losses=0, final_losses=0, average_losses=0, epochs=0):
-    print("@@@@@@@@@@@@@@@         MODEL SUMMARY         @@@@@@@@@@@@@@@")
+    print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n')
+    print("                        MODEL SUMMARY                        ")
     print(f'Name: {name}')
     print(f'Num layers: {num_layers}')
     print(f'Learning rate: {learning_rate}')
@@ -1091,11 +1090,11 @@ def model_summary(name, num_layers, learning_rate, max_losses=0, min_losses=0, f
             else:
                 print(
                     f'Epoch: {i+1}, Max loss: {max_losses[i]:.7f}, Min loss: {min_losses[i]:.7f}, Final loss: {final_losses[i]:.7f}, Average loss: {average_losses[i]:.7f}.')
-
+    print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n')
 
 def first_trial_hybrid():
-    print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
-    print('@@@@@@@@@@@@@@@      FIRST TRIAL Hybrid      @@@@@@@@@@@@@@@')
+    print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n')
+    print('                     FIRST TRIAL Hybrid                     \n')
     print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
 
     t = 100                                             # Timesteps
