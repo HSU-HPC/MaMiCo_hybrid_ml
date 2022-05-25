@@ -4,7 +4,7 @@ from tqdm import tqdm
 import matplotlib.pyplot as plt
 import torch.nn as nn
 import torch.optim as optim
-from model import UNET, INTERIM_MD_UNET, RNN, GRU, LSTM
+from model import UNET, Hybrid_MD_RNN_UNET, RNN, GRU, LSTM
 import time
 # MSLELoss, check_accuracy, save3DArray2File
 from utils import get_loaders, get_5_loaders, get_loaders_test, losses2file, get_loaders_from_file, get_loaders_from_file2
@@ -108,25 +108,25 @@ def train_hybrid(loader, model, optimizer, criterion, scaler, current_epoch):
         # print("Checking dimension of input  data: ", data.shape)
         data = data.float().squeeze(1).to(device)
         targets = targets.float().to(device)
+
         # forward
         with torch.cuda.amp.autocast():
             scores = model(data)
-            # print("Checking dimension of output data: ", scores.shape)
-            # print("Checking dimension of target data: ", targets.shape)
             loss = criterion(scores, targets)
             losses.append(loss.item())
-            # print(loss.item())
 
         # backward
         loss.backward(retain_graph=True)
         optimizer.step()
         optimizer.zero_grad()
 
+        # Check for max error
         counter += 1
         if loss > max_loss:
             max_loss = loss
             time_buffer = counter
-    # print('Length of losses list in train_LSTM(): ', len(losses))
+
+    # Saving error values
     max_loss = max(losses)
     min_loss = min(losses)
     final_loss = losses[-1]
@@ -137,7 +137,7 @@ def train_hybrid(loader, model, optimizer, criterion, scaler, current_epoch):
     print(f'[5]: {losses[5]:.7f}, [6]: {losses[6]:.7f}, [7]: {losses[7]:.7f}, [8]: {losses[8]:.7f}, [9]: {losses[9]:.7f},\n')
     print(f'Max loss at t={time_buffer}: {max_loss:.7f}, Min loss: {min_loss:.7f}, Final loss: {final_loss:.7f}, Average loss: {average_loss:.7f}.\n')
     print('\n \n \n')
-    pass
+    return (max_loss, min_loss, final_loss, average_loss)
 
 
 def train_lstm(loader, model, optimizer, criterion, scaler):
@@ -1107,9 +1107,9 @@ def first_trial_hybrid():
     b = 1                                               # Batch size
     e = 1                                            # Number of epochs
 
-    key_list = ['H1_MSE_alpha_1e-3_Train_Error', 'H1_MSE_alpha_5e-4_Valid_Error',
-                'H1_MSE_alpha_1e-3_Train_Error', 'H1_MSE_alpha_5e-4_Valid_Error']
-    results_dict = {}
+    # key_list = ['H1_MSE_alpha_1e-3_Train_Error', 'H1_MSE_alpha_5e-4_Valid_Error',
+    #             'H1_MSE_alpha_1e-3_Train_Error', 'H1_MSE_alpha_5e-4_Valid_Error']
+    # results_dict = {}
     # Create counter to track
     c = 0
     for i in range(1):                                  # Index for loss function
@@ -1117,7 +1117,7 @@ def first_trial_hybrid():
             displayHyperparameters(t, d, s, loss[1], acti, f, a[j], b, e)
 
             # Instantiate model
-            model = INTERIM_MD_UNET(
+            model = Hybrid_MD_RNN_UNET(
                 device=device,
                 in_channels=3,
                 out_channels=3,
@@ -1139,34 +1139,24 @@ def first_trial_hybrid():
             # Define other utils: scaler, loss placeholder, placeholder container
             scaler = torch.cuda.amp.GradScaler()
             training_loss = 0.0
-            losses = []
+            max_losses = []
+            min_losses = []
+            final_losses = []
+            average_losses = []
 
             # Initiate training loop and append average epoch loss to container
             for epoch in range(1, (e+1)):
                 training_loss = train_hybrid(
                     train_loader, model, optimizer, loss_fn, scaler, epoch)
-                losses.append(training_loss)
+                max_losses.append(training_loss[0])
+                min_losses.append(training_loss[1])
+                final_losses.append(training_loss[2])
+                average_losses.append(training_loss[3])
 
             # Save losses to file for later visualization of training progress
-            losses2file(losses, f'trial_3_{loss[2*i+1]}_{j+1}e-3')
+            losses2file(average_losses, f'first_hybrid_trial__{loss[2*i+1]}_{j+1}e-3')
 
-            # Perform validation set to check proof of concept
-            losses.append(val_fn(valid_loader, model, loss_fn,
-                          f'3_{j+1}e-3', loss[2*i+1]))
-
-            # Print statements for quick feedback
-            print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
-            print(
-                f'@@@@@@@@@@ T-Error:{losses[-2]:.3f}            V-Error:{losses[-1]:.3f} @@@@@@@@@@')
-            print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
-            print(' ')
-            print(' ')
-
-            # create dictionary to hold training and validation errors
-            errors = {key_list[2*c]: losses[-2], key_list[2*c+1]: losses[-1]}
-            results_dict.update(errors)
-            c += 1
-    return results_dict
+    return (max_losses, min_losses, final_losses, average_losses)
 
 
 def tests():
@@ -1237,7 +1227,8 @@ def tests():
 def main():
     # first_trial_RNNs()
     # third_trial_RNN()
-    first_trial_hybrid()
+    losses = first_trial_hybrid()
+
     '''
     for key, value in dict.items():
         print('{} : {}'.format(key, value))

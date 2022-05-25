@@ -244,7 +244,7 @@ class LSTM(nn.Module):
         return self.fc(out)
 
 
-class INTERIM_MD_UNET(nn.Module):
+class Hybrid_MD_RNN_UNET(nn.Module):
     def __init__(self, device, in_channels=3, out_channels=3, features=[4, 6, 8, 10], activation=nn.ReLU(inplace=True), RNN_in_size=512, RNN_hid_size=1024, RNN_lay=2):
         # PARAMETERS:
         # in_channels - channels contained in input data
@@ -264,7 +264,7 @@ class INTERIM_MD_UNET(nn.Module):
         # For the initial proof of concept trials we will consider the dimensions
         # 32x32x32 -> 16x16x16 -> 8x8x8 -> 4x4x4 -> 2x2x2 AND -> batchsize = 8
 
-        super(INTERIM_MD_UNET, self).__init__()
+        super(Hybrid_MD_RNN_UNET, self).__init__()
         self.device = device
         # U-Net building blocks
         self.ups = nn.ModuleList()
@@ -366,7 +366,7 @@ def test():
     #     model, (3, 32, 32, 32), as_strings=True, print_per_layer_stat=True, verbose=True)
     # print('{:<30}  {:<8}'.format('Computational complexity: ', macs))
     # print('{:<30}  {:<8}'.format('Number of parameters: ', params))
-    model = INTERIM_MD_UNET(
+    model = Hybrid_MD_RNN_UNET(
         device=device,
         in_channels=3,
         out_channels=3,
