@@ -472,6 +472,122 @@ class Hybrid_MD_GRU_UNET(nn.Module):
         return self.final_conv(x)
 
 
+class Hybrid_MD_LSTM_UNET(nn.Module):
+    def __init__(self, device, in_channels=3, out_channels=3, features=[4, 6, 8, 10], activation=nn.ReLU(inplace=True), RNN_in_size=512, RNN_hid_size=1024, RNN_lay=2):
+        # PARAMETERS:
+        # in_channels - channels contained in input data
+        # out_channels - channels to be contained in output data
+        # features - corresponds to the number of applied kernels per convolution
+        # activation - enables to freely choose desired activation function
+        # RNN_in_size - corresponds to the number of input features in RNN
+        # RNN_hid_size - coresponds to the number of perceptrons in hidden layer
+        # RNN_lay - corresponds to the number of hidden layers
+        # device - used to enable CUDA
+
+        # Note that this hybrid model was concieved to be used for common MaMiCo
+        # spatial dimensions such as 18 x 18 x 18. With this, the input dimension
+        # is reduced via 18x18x18 -> 9x9x9 -> 4x4x4 -> 2x2x2. The bottleneck
+        # signal is unrolled and passed to the RNN (multivariate LSTM model).
+
+        # For the initial proof of concept trials we will consider the dimensions
+        # 32x32x32 -> 16x16x16 -> 8x8x8 -> 4x4x4 -> 2x2x2 AND -> batchsize = 8
+
+        super(Hybrid_MD_LSTM_UNET, self).__init__()
+        self.device = device
+        # U-Net building blocks
+        self.ups = nn.ModuleList()
+        self.downs = nn.ModuleList()
+        self.pool = nn.MaxPool3d(kernel_size=2, stride=2)
+
+        # RNN building blocks
+        self.input_size = RNN_in_size
+        self.hidden_size = RNN_hid_size
+        self.num_layers = 2
+        self.lstm = nn.LSTM(
+            input_size=self.input_size,
+            hidden_size=self.hidden_size,
+            num_layers=self.num_layers,
+            batch_first=True
+        )
+        self.sequence = torch.zeros(5, 512)
+        self.fc = nn.Linear(self.hidden_size, self.input_size)
+
+        # Down part of UNET
+        for feature in features:
+            self.downs.append(DoubleConv(in_channels, feature, activation))
+            in_channels = feature
+
+        # Up part of UNET
+        for feature in reversed(features):
+            self.ups.append(
+                nn.ConvTranspose3d(
+                    feature*2, feature, kernel_size=2, stride=2,
+                )
+            )
+            self.ups.append(DoubleConv(feature*2, feature, activation))
+
+        # This is the "deepest" part.
+        # self.bottleneck = DoubleConv(features[-1], features[-1]*2, activation)
+        self.bottleneck = DoubleConv(features[-1], features[-1]*2, activation)
+
+        # This is the model's output.
+        self.final_conv = nn.Conv3d(
+            features[0], out_channels, kernel_size=1, stride=1)
+
+    def forward(self, x):
+
+        skip_connections = []
+
+        # The following for-loop describes the entire (left) contracting side,
+        # including storing the skip-connections:
+        for down in self.downs:
+            x = down(x)
+            skip_connections.append(x)
+            x = self.pool(x)
+
+        # This is the bottleneck
+        x = self.bottleneck(x)
+
+        # Create RNN-input from x and sanity check dimensions
+        # x = torch.reshape(x, (1, 512)).to(self.device)
+        # print('Class-2-SequenceInput shape: ', sequenceInput.size())
+
+        # Prepare LSTM: Set initial hidden states(for RNN, GRU, LSTM)
+        h0 = torch.zeros(self.num_layers, x.size(
+            0), self.hidden_size).to(self.device)
+        c0 = torch.zeros(self.num_layers, x.size(
+            0), self.hidden_size).to(self.device)
+
+        # Prepare RNN: Forward propagate RNN
+        self.sequence = tensor_FIFO_pipe(
+            self.sequence, torch.reshape(x, (1, 512)), self.device).to(self.device)
+
+        x, _ = self.lstm(torch.reshape(self.sequence, (1, 5, 512)), (h0, c0))
+
+        # Decode the hidden state of the last time step
+        x = x[:, -1, :]
+
+        # Apply linear regressor to the last time step
+        x = self.fc(x)
+        # x = torch.reshape(x, (1, 1, 512))
+        # print('Class-3-rnnOutput shape: ', x.size())
+
+        # Merge output into CNN signal (->x) and sanity check dimensions
+        x = torch.reshape(x, (1, 64, 2, 2, 2))
+        # print('Class-4-CNN signal shape: ', x.size())
+
+        skip_connections = skip_connections[::-1]
+
+        # The following for-loop describes the entire (right) expanding side.
+        for idx in range(0, len(self.ups), 2):
+            x = self.ups[idx](x)
+            skip_connection = skip_connections[idx//2]
+            concat_skip = torch.cat((skip_connection, x), dim=1)
+            x = self.ups[idx+1](concat_skip)
+
+        return self.final_conv(x)
+
+
 def test():
 
     # model = LSTM_MD_UNET(in_channels=3, out_channels=3, features=[4, 6, 8, 10])
