@@ -1092,12 +1092,13 @@ def model_summary(name, num_layers, learning_rate, max_losses=0, min_losses=0, f
                     f'Epoch: {i+1}, Max loss: {max_losses[i]:.7f}, Min loss: {min_losses[i]:.7f}, Final loss: {final_losses[i]:.7f}, Average loss: {average_losses[i]:.7f}.')
     print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n')
 
+
 def first_trial_hybrid():
     print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n')
     print('                     FIRST TRIAL Hybrid                     \n')
     print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
 
-    t = 100                                             # Timesteps
+    t = 1000                                            # Timesteps
     d = 31                                              # Vertical resolution
     s = 0.3                                             # Sigma
     acti = 'ReLU'                                       # Activation function
@@ -1107,17 +1108,16 @@ def first_trial_hybrid():
     a = [0.0001, 0.00005, 0.00001]                      # Alpha (learning rate)
     a_name = ['1e-4', '5e-5', '1e-5']
     b = 1                                               # Batch size
-    e = 1                                               # Number of epochs
+    e = 100                                             # Number of epochs
 
     # key_list = ['H1_MSE_alpha_1e-3_Train_Error', 'H1_MSE_alpha_5e-4_Valid_Error',
     #             'H1_MSE_alpha_1e-3_Train_Error', 'H1_MSE_alpha_5e-4_Valid_Error']
     # results_dict = {}
     # Create counter to track
     c = 0
-    '''
+
     for i in range(1):                                  # Index for loss function
         for j in range(3):                              # Index for learning rates
-            displayHyperparameters(t, d, s, loss[1], acti, f, a_name[j], b, e)
 
             # Instantiate model
             model = Hybrid_MD_RNN_UNET(
@@ -1167,7 +1167,6 @@ def first_trial_hybrid():
     c = 1
     for i in range(1):                                  # Index for loss function
         for j in range(3):                              # Index for learning rates
-            displayHyperparameters(t, d, s, loss[1], acti, f, a_name[j], b, e)
 
             # Instantiate model
             model = Hybrid_MD_GRU_UNET(
@@ -1213,11 +1212,10 @@ def first_trial_hybrid():
                         f'01_hybrid_{model_name[c]}_max_{loss[1]}_{a_name[j]}')
             losses2file(min_losses,
                         f'01_hybrid_{model_name[c]}_min_{loss[1]}_{a_name[j]}')
-    '''
+
     c = 2
     for i in range(1):                                  # Index for loss function
         for j in range(3):                              # Index for learning rates
-            displayHyperparameters(t, d, s, loss[1], acti, f, a_name[j], b, e)
 
             model_summary(
                 name=model_name[c],
