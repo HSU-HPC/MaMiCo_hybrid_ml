@@ -1118,7 +1118,11 @@ def first_trial_hybrid():
 
     for i in range(1):                                  # Index for loss function
         for j in range(3):                              # Index for learning rates
-
+            model_summary(
+                name=model_name[c],
+                num_layers=2,
+                learning_rate=a[j]
+            )
             # Instantiate model
             model = Hybrid_MD_RNN_UNET(
                 device=device,
@@ -1167,7 +1171,11 @@ def first_trial_hybrid():
     c = 1
     for i in range(1):                                  # Index for loss function
         for j in range(3):                              # Index for learning rates
-
+            model_summary(
+                name=model_name[c],
+                num_layers=2,
+                learning_rate=a[j]
+            )
             # Instantiate model
             model = Hybrid_MD_GRU_UNET(
                 device=device,
