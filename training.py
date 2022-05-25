@@ -99,6 +99,84 @@ def train_fn(loader, model, optimizer, loss_fn, scaler):
     return epoch_loss/counter
 
 
+def train_hybrid(loader, model, optimizer, loss_fn, scaler, current_epoch):
+    # The train function will complete one epoch of the training cycle.
+    loop = tqdm(loader)
+    # The tqdm module allows to display a smart progress meter for iterables
+    # using tqdm(iterable).
+    epoch_loss = 0
+    counter = 0
+    optimizer.zero_grad()
+
+    for batch_idx, (data, targets) in enumerate(loop):
+        data = data.float().to(device=DEVICE)
+        # print("Checking dimension of input data: ", data.shape)
+        targets = targets.float().to(device=DEVICE)
+        # print("Checking dimension of target data: ", targets.shape)
+        # data = data.float().unsqueeze(1).to(device=DEVICE)
+        # targets = targets.float().unsqueeze(1).to(device=DEVICE)
+
+        # First consider the forward training path. This means calculate the
+        # the predictions and determine the resultung error using the loss_fn.
+        with torch.cuda.amp.autocast():
+            # torch.cuda.amp and torch provide convenience methods for mixed
+            # precision, where some operations use the torch.float32 (float)
+            # datatype and other operations use torch.float16 (half). Some ops,
+            # like linear layers and convolutions, are much faster in float16.
+            # Other ops, like reductions, often require the dynamic range of
+            # float32. Mixed precision tries to match each op to its appropriate
+            # datatype.
+            predictions = model(data)
+            loss = loss_fn(predictions.float(), targets.float())
+            print(loss.item())
+            epoch_loss += loss.item()
+            counter += 1
+
+        # Next consider the backward training path, especially the corresponding
+        # scaler which is an object of the class GRADIENT SCALING:
+        #
+        loss.backward(retain_graph=True)
+        optimizer.step()
+        optimizer.zero_grad()
+        # If the forward pass for a particular op has float16 inputs, the
+        # backward pass for that op will produce float16 gradients. Gradient
+        # values with small magnitudes may not be representable in float16.
+        # These values will flush to zero (“underflow”), so the update for the
+        # corresponding parameters will be lost.
+        #
+        # To prevent underflow, “gradient scaling” multiplies the network’s
+        # loss(es) by a scale factor and invokes a backward pass on the scaled
+        # loss(es). Gradients flowing backward through the network are then
+        # scaled by the same factor. In other words, gradient values have a
+        # larger magnitude, so they don’t flush to zero.
+        #
+        # Each parameter’s gradient (.grad attribute) should be unscaled before
+        # the optimizer updates the parameters, so the scale factor does not
+        # interfere with the learning rate.
+        # ---> optimizer.zero_grad()
+        # .zero_grad(): Sets the gradients of all optimized torch.Tensors to 0.
+        #
+        # ---> scaler.scale(loss).backward()
+        # .scale(): Multiplies (‘scales’) a tensor or list of tensors by the
+        # scale factor and returns scaled outputs. If this instance of
+        # GradScaler is not enabled, outputs are returned unmodified.
+        #
+        # .backward(): Computes the gradient of current tensor w.r.t. graph
+        # leaves. This function accumulates gradients in the leaves - you might
+        # need to zero .grad attributes or set them to None before calling it.
+        #
+        # ---> scaler.step(optimizer)
+        # .step(): gradients automatically unscaled and returns the return
+        # value of optimizer.step()
+        #
+        # ---> scaler.update()
+        # .update():
+        # update tqdm loop
+        loop.set_postfix(loss=loss.item())
+        # postfix(): Specify additional stats to display at the end of the bar.
+    pass
+
+
 def train_lstm(loader, model, optimizer, criterion, scaler):
     losses = []
     counter = 0
@@ -1064,7 +1142,7 @@ def first_trial_hybrid():
     f = [4, 8, 16, 32]                                  # List of features
     a = [0.0001, 0.00005]                               # Alpha (learning rate)
     b = 1                                               # Batch size
-    e = 150                                             # Number of epochs
+    e = 1                                            # Number of epochs
 
     key_list = ['H1_MSE_alpha_1e-3_Train_Error', 'H1_MSE_alpha_5e-4_Valid_Error',
                 'H1_MSE_alpha_1e-3_Train_Error', 'H1_MSE_alpha_5e-4_Valid_Error']
@@ -1102,9 +1180,9 @@ def first_trial_hybrid():
 
             # Initiate training loop and append average epoch loss to container
             with torch.autograd.detect_anomaly():
-                for epoch in range(e):
+                for epoch in range(1, (e+1)):
                     training_loss = train_fn(
-                        train_loader, model, optimizer, loss_fn, scaler)
+                        train_loader, model, optimizer, loss_fn, scaler, epoch)
                     losses.append(training_loss)
 
             # Save losses to file for later visualization of training progress
