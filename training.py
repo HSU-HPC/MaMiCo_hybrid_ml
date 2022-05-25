@@ -1097,15 +1097,17 @@ def first_trial_hybrid():
     print('@@@@@@@@@@@@@@@      FIRST TRIAL Hybrid      @@@@@@@@@@@@@@@')
     print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
 
-    t = 1000                                            # Timesteps
+    t = 100                                             # Timesteps
     d = 31                                              # Vertical resolution
     s = 0.3                                             # Sigma
     acti = 'ReLU'                                       # Activation function
     loss = [nn.MSELoss(), 'MSE']                        # Loss function
+    model_name = ['RNN', 'GRU', 'LSTM']                       # Model type
     f = [4, 8, 16, 32]                                  # List of features
-    a = [0.0001, 0.00005]                               # Alpha (learning rate)
+    a = [0.0001, 0.00005, 0.00001]                      # Alpha (learning rate)
+    a_name = ['1e-4', '5e-5', '1e-5']
     b = 1                                               # Batch size
-    e = 1                                            # Number of epochs
+    e = 1                                               # Number of epochs
 
     # key_list = ['H1_MSE_alpha_1e-3_Train_Error', 'H1_MSE_alpha_5e-4_Valid_Error',
     #             'H1_MSE_alpha_1e-3_Train_Error', 'H1_MSE_alpha_5e-4_Valid_Error']
@@ -1113,7 +1115,7 @@ def first_trial_hybrid():
     # Create counter to track
     c = 0
     for i in range(1):                                  # Index for loss function
-        for j in range(2):                              # Index for learning rates
+        for j in range(3):                              # Index for learning rates
             displayHyperparameters(t, d, s, loss[1], acti, f, a[j], b, e)
 
             # Instantiate model
@@ -1154,7 +1156,13 @@ def first_trial_hybrid():
                 average_losses.append(training_loss[3])
 
             # Save losses to file for later visualization of training progress
-            losses2file(average_losses, f'first_hybrid_trial__{loss[2*i+1]}_{j+1}e-3')
+            losses2file(average_losses,
+                        f'01_hybrid_{model_name[c]}_average_{loss[1]}_{a_name[j]}')
+            losses2file(max_losses,
+                        f'01_hybrid_{model_name[c]}_max_{loss[1]}_{a_name[j]}')
+            losses2file(min_losses,
+                        f'01_hybrid_{model_name[c]}_min_{loss[1]}_{a_name[j]}')
+    c += 1
 
     return (max_losses, min_losses, final_losses, average_losses)
 
