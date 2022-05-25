@@ -99,81 +99,44 @@ def train_fn(loader, model, optimizer, loss_fn, scaler):
     return epoch_loss/counter
 
 
-def train_hybrid(loader, model, optimizer, loss_fn, scaler, current_epoch):
-    # The train function will complete one epoch of the training cycle.
-    loop = tqdm(loader)
-    # The tqdm module allows to display a smart progress meter for iterables
-    # using tqdm(iterable).
-    epoch_loss = 0
+def train_hybrid(loader, model, optimizer, criterion, scaler, current_epoch):
+    losses = []
     counter = 0
-    optimizer.zero_grad()
-
-    for batch_idx, (data, targets) in enumerate(loop):
-        data = data.float().to(device=DEVICE)
-        # print("Checking dimension of input data: ", data.shape)
-        targets = targets.float().to(device=DEVICE)
-        # print("Checking dimension of target data: ", targets.shape)
-        # data = data.float().unsqueeze(1).to(device=DEVICE)
-        # targets = targets.float().unsqueeze(1).to(device=DEVICE)
-
-        # First consider the forward training path. This means calculate the
-        # the predictions and determine the resultung error using the loss_fn.
+    time_buffer = 0
+    max_loss = 0
+    for batch_idx, (data, targets) in enumerate(tqdm(loader)):
+        # print("Checking dimension of input  data: ", data.shape)
+        data = data.float().squeeze(1).to(device)
+        targets = targets.float().to(device)
+        # forward
         with torch.cuda.amp.autocast():
-            # torch.cuda.amp and torch provide convenience methods for mixed
-            # precision, where some operations use the torch.float32 (float)
-            # datatype and other operations use torch.float16 (half). Some ops,
-            # like linear layers and convolutions, are much faster in float16.
-            # Other ops, like reductions, often require the dynamic range of
-            # float32. Mixed precision tries to match each op to its appropriate
-            # datatype.
-            predictions = model(data)
-            loss = loss_fn(predictions.float(), targets.float())
-            print(loss.item())
-            epoch_loss += loss.item()
-            counter += 1
+            scores = model(data)
+            # print("Checking dimension of output data: ", scores.shape)
+            # print("Checking dimension of target data: ", targets.shape)
+            loss = criterion(scores, targets)
+            losses.append(loss.item())
+            # print(loss.item())
 
-        # Next consider the backward training path, especially the corresponding
-        # scaler which is an object of the class GRADIENT SCALING:
-        #
+        # backward
         loss.backward(retain_graph=True)
         optimizer.step()
         optimizer.zero_grad()
-        # If the forward pass for a particular op has float16 inputs, the
-        # backward pass for that op will produce float16 gradients. Gradient
-        # values with small magnitudes may not be representable in float16.
-        # These values will flush to zero (“underflow”), so the update for the
-        # corresponding parameters will be lost.
-        #
-        # To prevent underflow, “gradient scaling” multiplies the network’s
-        # loss(es) by a scale factor and invokes a backward pass on the scaled
-        # loss(es). Gradients flowing backward through the network are then
-        # scaled by the same factor. In other words, gradient values have a
-        # larger magnitude, so they don’t flush to zero.
-        #
-        # Each parameter’s gradient (.grad attribute) should be unscaled before
-        # the optimizer updates the parameters, so the scale factor does not
-        # interfere with the learning rate.
-        # ---> optimizer.zero_grad()
-        # .zero_grad(): Sets the gradients of all optimized torch.Tensors to 0.
-        #
-        # ---> scaler.scale(loss).backward()
-        # .scale(): Multiplies (‘scales’) a tensor or list of tensors by the
-        # scale factor and returns scaled outputs. If this instance of
-        # GradScaler is not enabled, outputs are returned unmodified.
-        #
-        # .backward(): Computes the gradient of current tensor w.r.t. graph
-        # leaves. This function accumulates gradients in the leaves - you might
-        # need to zero .grad attributes or set them to None before calling it.
-        #
-        # ---> scaler.step(optimizer)
-        # .step(): gradients automatically unscaled and returns the return
-        # value of optimizer.step()
-        #
-        # ---> scaler.update()
-        # .update():
-        # update tqdm loop
-        loop.set_postfix(loss=loss.item())
-        # postfix(): Specify additional stats to display at the end of the bar.
+
+        counter += 1
+        if loss > max_loss:
+            max_loss = loss
+            time_buffer = counter
+    # print('Length of losses list in train_LSTM(): ', len(losses))
+    max_loss = max(losses)
+    min_loss = min(losses)
+    final_loss = losses[-1]
+    average_loss = sum(losses)/len(losses)
+    print(f'Current epoch: {current_epoch}\n')
+    print('Losses for the first 10 inputs:\n')
+    print(f'[0]: {losses[0]:.7f}, [1]: {losses[1]:.7f}, [2]: {losses[2]:.7f}, [3]: {losses[3]:.7f}, [4]: {losses[4]:.7f},\n')
+    print(f'[5]: {losses[5]:.7f}, [6]: {losses[6]:.7f}, [7]: {losses[7]:.7f}, [8]: {losses[8]:.7f}, [9]: {losses[9]:.7f},\n')
+    print(f'Max loss at t={time_buffer}: {max_loss:.7f}, Min loss: {min_loss:.7f}, Final loss: {final_loss:.7f}, Average loss: {average_loss:.7f}.\n')
+    print('\n \n \n')
     pass
 
 
@@ -1181,7 +1144,7 @@ def first_trial_hybrid():
             # Initiate training loop and append average epoch loss to container
             with torch.autograd.detect_anomaly():
                 for epoch in range(1, (e+1)):
-                    training_loss = train_fn(
+                    training_loss = train_hybrid(
                         train_loader, model, optimizer, loss_fn, scaler, epoch)
                     losses.append(training_loss)
 
@@ -1275,11 +1238,12 @@ def tests():
 def main():
     # first_trial_RNNs()
     # third_trial_RNN()
-    dict = first_trial_hybrid()
+    first_trial_hybrid()
+    '''
     for key, value in dict.items():
         print('{} : {}'.format(key, value))
 
-    '''
+    
     x = torch.zeros((5, 64, 2, 2, 2))
     print(x.shape)
     print(x[0, 0, 0, 0, 0])
