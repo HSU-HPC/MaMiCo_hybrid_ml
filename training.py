@@ -1076,20 +1076,21 @@ def third_trial_RNN():
         )
 
 
-def model_summary(name, num_layers, learning_rate, epochs, max_losses, min_losses, final_losses, average_losses):
+def model_summary(name, num_layers, learning_rate, max_losses=0, min_losses=0, final_losses=0, average_losses=0, epochs=0):
     print("@@@@@@@@@@@@@@@         MODEL SUMMARY         @@@@@@@@@@@@@@@")
     print(f'Name: {name}')
     print(f'Num layers: {num_layers}')
     print(f'Learning rate: {learning_rate}')
-    print(f'Num epochs: {epochs}')
 
-    for i in range(epochs):
-        if i < 9:
-            print(
-                f'Epoch: 0{i+1}, Max loss: {max_losses[i]:.7f}, Min loss: {min_losses[i]:.7f}, Final loss: {final_losses[i]:.7f}, Average loss: {average_losses[i]:.7f}.')
-        else:
-            print(
-                f'Epoch: {i+1}, Max loss: {max_losses[i]:.7f}, Min loss: {min_losses[i]:.7f}, Final loss: {final_losses[i]:.7f}, Average loss: {average_losses[i]:.7f}.')
+    if epochs != 0:
+        print(f'Num epochs: {epochs}')
+        for i in range(epochs):
+            if i < 9:
+                print(
+                    f'Epoch: 0{i+1}, Max loss: {max_losses[i]:.7f}, Min loss: {min_losses[i]:.7f}, Final loss: {final_losses[i]:.7f}, Average loss: {average_losses[i]:.7f}.')
+            else:
+                print(
+                    f'Epoch: {i+1}, Max loss: {max_losses[i]:.7f}, Min loss: {min_losses[i]:.7f}, Final loss: {final_losses[i]:.7f}, Average loss: {average_losses[i]:.7f}.')
 
 
 def first_trial_hybrid():
@@ -1218,6 +1219,12 @@ def first_trial_hybrid():
     for i in range(1):                                  # Index for loss function
         for j in range(3):                              # Index for learning rates
             displayHyperparameters(t, d, s, loss[1], acti, f, a_name[j], b, e)
+
+            model_summary(
+                name=model_name[c],
+                num_layers=2,
+                learning_rate=a[j]
+            )
 
             # Instantiate model
             model = Hybrid_MD_LSTM_UNET(
