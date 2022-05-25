@@ -4,7 +4,7 @@ from tqdm import tqdm
 import matplotlib.pyplot as plt
 import torch.nn as nn
 import torch.optim as optim
-from model import UNET, Hybrid_MD_RNN_UNET, RNN, GRU, LSTM
+from model import UNET, RNN, GRU, LSTM, Hybrid_MD_RNN_UNET, Hybrid_MD_GRU_UNET
 import time
 # MSLELoss, check_accuracy, save3DArray2File
 from utils import get_loaders, get_5_loaders, get_loaders_test, losses2file, get_loaders_from_file, get_loaders_from_file2
@@ -131,11 +131,11 @@ def train_hybrid(loader, model, optimizer, criterion, scaler, current_epoch):
     min_loss = min(losses)
     final_loss = losses[-1]
     average_loss = sum(losses)/len(losses)
-    print(f'Current epoch: {current_epoch}\n')
-    print('Losses for the first 10 inputs:\n')
-    print(f'[0]: {losses[0]:.7f}, [1]: {losses[1]:.7f}, [2]: {losses[2]:.7f}, [3]: {losses[3]:.7f}, [4]: {losses[4]:.7f},\n')
-    print(f'[5]: {losses[5]:.7f}, [6]: {losses[6]:.7f}, [7]: {losses[7]:.7f}, [8]: {losses[8]:.7f}, [9]: {losses[9]:.7f},\n')
-    print(f'Max loss at t={time_buffer}: {max_loss:.7f}, Min loss: {min_loss:.7f}, Final loss: {final_loss:.7f}, Average loss: {average_loss:.7f}.\n')
+    print(f'Current epoch: {current_epoch}')
+    print('Losses for the first 10 inputs:')
+    print(f'[0]: {losses[0]:.7f}, [1]: {losses[1]:.7f}, [2]: {losses[2]:.7f}, [3]: {losses[3]:.7f}, [4]: {losses[4]:.7f},')
+    print(f'[5]: {losses[5]:.7f}, [6]: {losses[6]:.7f}, [7]: {losses[7]:.7f}, [8]: {losses[8]:.7f}, [9]: {losses[9]:.7f}.')
+    print(f'Max loss at t={time_buffer}: {max_loss:.7f}, Min loss: {min_loss:.7f}, Final loss: {final_loss:.7f}, Average loss: {average_loss:.7f}.')
     print('\n \n \n')
     return (max_loss, min_loss, final_loss, average_loss)
 
@@ -611,7 +611,7 @@ def trial_7():
         displayHyperparameters(t, d, s, loss[2*i+1], acti, f, a, b, e)
 
         # Instantiate model and other utils.
-        model = INTERIM_MD_UNET(
+        model = Hybrid_MD_RNN_UNET(
             in_channels=3, out_channels=3, features=f).to(DEVICE)
         # Define loss function
         loss_fn = loss[2*i]
@@ -1114,6 +1114,7 @@ def first_trial_hybrid():
     # results_dict = {}
     # Create counter to track
     c = 0
+    '''
     for i in range(1):                                  # Index for loss function
         for j in range(3):                              # Index for learning rates
             displayHyperparameters(t, d, s, loss[1], acti, f, a_name[j], b, e)
@@ -1162,7 +1163,63 @@ def first_trial_hybrid():
                         f'01_hybrid_{model_name[c]}_max_{loss[1]}_{a_name[j]}')
             losses2file(min_losses,
                         f'01_hybrid_{model_name[c]}_min_{loss[1]}_{a_name[j]}')
+        '''
     c += 1
+
+    for i in range(1):                                  # Index for loss function
+        for j in range(3):                              # Index for learning rates
+            displayHyperparameters(t, d, s, loss[1], acti, f, a_name[j], b, e)
+
+            # Instantiate model
+            model = Hybrid_MD_GRU_UNET(
+                device=device,
+                in_channels=3,
+                out_channels=3,
+                features=[4, 8, 16, 32],
+                activation=nn.ReLU(),
+                RNN_in_size=512,
+                RNN_hid_size=1024,
+                RNN_lay=2
+            ).to(device)
+
+            # Define loss function and optimizer
+            loss_fn = loss[0]
+            optimizer = optim.Adam(model.parameters(), lr=a[j])
+
+            # Create train and valid loaders
+            train_loader, valid_loader = get_loaders(
+                b, NUM_WORKERS, PIN_MEMORY, t, d, s)
+
+            # Define other utils: scaler, loss placeholder, placeholder container
+            scaler = torch.cuda.amp.GradScaler()
+            training_loss = 0.0
+            max_losses = []
+            min_losses = []
+            final_losses = []
+            average_losses = []
+
+            # Initiate training loop and append average epoch loss to container
+            for epoch in range(1, (e+1)):
+                training_loss = train_hybrid(
+                    train_loader, model, optimizer, loss_fn, scaler, epoch)
+                max_losses.append(training_loss[0])
+                min_losses.append(training_loss[1])
+                final_losses.append(training_loss[2])
+                average_losses.append(training_loss[3])
+
+            # Save losses to file for later visualization of training progress
+            losses2file(average_losses,
+                        f'01_hybrid_{model_name[c]}_average_{loss[1]}_{a_name[j]}')
+            losses2file(max_losses,
+                        f'01_hybrid_{model_name[c]}_max_{loss[1]}_{a_name[j]}')
+            losses2file(min_losses,
+                        f'01_hybrid_{model_name[c]}_min_{loss[1]}_{a_name[j]}')
+    c += 1
+
+
+
+
+
 
     return (max_losses, min_losses, final_losses, average_losses)
 
