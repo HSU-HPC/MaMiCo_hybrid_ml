@@ -1142,11 +1142,10 @@ def first_trial_hybrid():
             losses = []
 
             # Initiate training loop and append average epoch loss to container
-            with torch.autograd.detect_anomaly():
-                for epoch in range(1, (e+1)):
-                    training_loss = train_hybrid(
-                        train_loader, model, optimizer, loss_fn, scaler, epoch)
-                    losses.append(training_loss)
+            for epoch in range(1, (e+1)):
+                training_loss = train_hybrid(
+                    train_loader, model, optimizer, loss_fn, scaler, epoch)
+                losses.append(training_loss)
 
             # Save losses to file for later visualization of training progress
             losses2file(losses, f'trial_3_{loss[2*i+1]}_{j+1}e-3')
@@ -1243,7 +1242,7 @@ def main():
     for key, value in dict.items():
         print('{} : {}'.format(key, value))
 
-    
+
     x = torch.zeros((5, 64, 2, 2, 2))
     print(x.shape)
     print(x[0, 0, 0, 0, 0])
