@@ -1116,7 +1116,7 @@ def first_trial_hybrid():
     c = 0
     for i in range(1):                                  # Index for loss function
         for j in range(3):                              # Index for learning rates
-            displayHyperparameters(t, d, s, loss[1], acti, f, a[j], b, e)
+            displayHyperparameters(t, d, s, loss[1], acti, f, a_name[j], b, e)
 
             # Instantiate model
             model = Hybrid_MD_RNN_UNET(
