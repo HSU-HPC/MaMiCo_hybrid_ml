@@ -408,6 +408,10 @@ class Hybrid_MD_GRU_UNET(nn.Module):
         self.activation = nn.ReLU()
         self.helper_up_1 = nn.ConvTranspose3d(
             in_channels=32, out_channels=32, kernel_size=2, stride=1, padding=0, bias=False)
+        self.helper_up_2 = nn.Conv3d(
+            in_channels=4, out_channels=4, kernel_size=3, stride=1, padding=0, bias=False)
+        self.helper_up_3 = nn.Conv3d(
+            in_channels=3, out_channels=3, kernel_size=3, stride=1, padding=0, bias=False)
 
         # RNN building blocks
         self.input_size = RNN_in_size
@@ -498,9 +502,11 @@ class Hybrid_MD_GRU_UNET(nn.Module):
             x = self.ups[idx+1](concat_skip)
         print("Size of x before downsizing to MD: ", x.size())
 
-        for i in range(3):
-            x = nn.Conv3d(x.shape[1], 3, kernel_size=3,
-                          stride=1, padding=0, bias=False)(x)
+        x = self.helper_up_2(x)
+        x = self.activation()
+
+        for i in range(2):
+            x = self.helper_up_3(x)
             x = self.activation(x)
 
         return x
