@@ -406,6 +406,7 @@ class Hybrid_MD_GRU_UNET(nn.Module):
         self.helper_down = nn.Conv3d(
             in_channels=16, out_channels=16, kernel_size=2, stride=1, padding=0, bias=False)
         self.activation = nn.ReLU()
+        self.helper_up_1 = nn.ConvTranspose3d(in_channels=32, out_channels=32, kernel_size=2, stride=1, padding=0, bias=False)
 
         # RNN building blocks
         self.input_size = RNN_in_size
