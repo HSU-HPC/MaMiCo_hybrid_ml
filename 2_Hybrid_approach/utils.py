@@ -37,7 +37,7 @@ def mamico_csv2dataset(file_name):
     # containing 1000 timesteps.
     #
 
-    dataset = np.zeros((5, 3, 10, 3, 3))
+    dataset = np.zeros((1000, 3, 26, 26, 26))
 
     with open(f'{file_name}') as csvfile:
         csv_reader = csv.reader(csvfile, delimiter=';')
