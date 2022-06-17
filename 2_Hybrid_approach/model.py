@@ -404,6 +404,8 @@ class Hybrid_MD_GRU_UNET(nn.Module):
         self.ups = nn.ModuleList()
         self.downs = nn.ModuleList()
         self.pool = nn.MaxPool3d(kernel_size=2, stride=2)
+        self.helper_down = nn.Conv3d(
+            in_channels=16, out_channels=16, kernel_size=2, stride=1, padding=0, bias=False)
         self.activation = nn.ReLU()
 
         # RNN building blocks
@@ -451,8 +453,7 @@ class Hybrid_MD_GRU_UNET(nn.Module):
         # This is the bottleneck
         print("This is the bottleneck:")
         print("Size of x before additional Conv3D: ", x.size())
-        x = nn.Conv3d(x.shape[1], x.shape[1], kernel_size=2,
-                      stride=1, padding=0, bias=False)(x.to(device))
+        x = self.helper_down(x)
         print("Size of x after additional Conv3D: ", x.size())
         x = self.activation(x)
         x = self.bottleneck(x)
@@ -461,7 +462,6 @@ class Hybrid_MD_GRU_UNET(nn.Module):
 
         # Create RNN-input from x and sanity check dimensions
         # x = torch.reshape(x, (1, self.input_size)).to(self.device)
-        # print('Class-2-SequenceInput shape: ', sequenceInput.size())
 
         # Prepare RNN: Set initial hidden states(for RNN, GRU, LSTM)
         h0 = torch.zeros(self.num_layers, x.size(
@@ -480,11 +480,11 @@ class Hybrid_MD_GRU_UNET(nn.Module):
         # Apply linear regressor to the last time step
         x = self.fc(x)
         # x = torch.reshape(x, (1, 1, 512))
-        # print('Class-3-rnnOutput shape: ', x.size())
+        print('Class-3-rnnOutput shape: ', x.size())
 
         # Merge output into CNN signal (->x) and sanity check dimensions
         x = torch.reshape(x, (1, int((self.input_size/8)), 2, 2, 2))
-        # print('Class-4-CNN signal shape: ', x.size())
+        print('Class-4-CNN signal shape: ', x.size())
         x = nn.ConvTranspose3d(
             x.shape[1], x.shape[1], kernel_size=2, stride=1, padding=0, bias=False)(x)
         x = self.activation(x)
