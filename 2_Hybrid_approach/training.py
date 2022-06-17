@@ -108,7 +108,7 @@ def training_factory(user_input):
     # @_batch_size - other batch sizes are not possible. Refer to model description for more intuition
     _num_epochs = 15
     # @_num_epochs - the amount of times the model will train with each dataset
-    _train_loaders = get_mamico_loaders('example_file')
+    _train_loaders = get_mamico_loaders()
     # @_train_loaders - container to hold the dataloaders for each dataset
     _scaler = torch.cuda.amp.GradScaler()
     # @_scaler - @@@@@@@@@@@@
