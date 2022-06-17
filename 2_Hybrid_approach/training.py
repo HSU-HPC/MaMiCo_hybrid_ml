@@ -225,12 +225,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-def main():
-    training_factory(userModelSpecs())
-
-
-if __name__ == "__main__":
-    main()
-    main()
