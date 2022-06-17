@@ -503,7 +503,7 @@ class Hybrid_MD_GRU_UNET(nn.Module):
         print("Size of x before downsizing to MD: ", x.size())
 
         x = self.helper_up_2(x)
-        x = self.activation()
+        x = self.activation(x)
 
         for i in range(2):
             x = self.helper_up_3(x)
