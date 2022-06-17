@@ -7,7 +7,6 @@ import matplotlib.pyplot as plt
 from tqdm import tqdm
 import numpy as np
 import torch
-torch.use_deterministic_algorithms(True)
 
 plt.style.use(['science'])
 np.set_printoptions(precision=6)

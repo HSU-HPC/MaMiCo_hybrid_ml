@@ -4,7 +4,6 @@ import torchvision.transforms.functional as TF
 from drawing_board import save3D_RGBArray2File
 import torch.nn as nn
 import torch
-torch.use_deterministic_algorithms(True)
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 use_cuda = torch.cuda.is_available()
