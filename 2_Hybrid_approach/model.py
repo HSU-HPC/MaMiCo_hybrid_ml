@@ -406,7 +406,8 @@ class Hybrid_MD_GRU_UNET(nn.Module):
         self.helper_down = nn.Conv3d(
             in_channels=16, out_channels=16, kernel_size=2, stride=1, padding=0, bias=False)
         self.activation = nn.ReLU()
-        self.helper_up_1 = nn.ConvTranspose3d(in_channels=32, out_channels=32, kernel_size=2, stride=1, padding=0, bias=False)
+        self.helper_up_1 = nn.ConvTranspose3d(
+            in_channels=32, out_channels=32, kernel_size=2, stride=1, padding=0, bias=False)
 
         # RNN building blocks
         self.input_size = RNN_in_size
@@ -485,8 +486,7 @@ class Hybrid_MD_GRU_UNET(nn.Module):
         # Merge output into CNN signal (->x) and sanity check dimensions
         x = torch.reshape(x, (1, int((self.input_size/8)), 2, 2, 2))
         print('Class-4-CNN signal shape: ', x.size())
-        x = nn.ConvTranspose3d(
-            x.shape[1], x.shape[1], kernel_size=2, stride=1, padding=0, bias=False)(x)
+        x = self.helper_up_1(x)
         x = self.activation(x)
         skip_connections = skip_connections[::-1]
 
