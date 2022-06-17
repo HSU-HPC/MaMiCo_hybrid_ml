@@ -409,7 +409,7 @@ class Hybrid_MD_GRU_UNET(nn.Module):
         self.helper_up_1 = nn.ConvTranspose3d(
             in_channels=32, out_channels=32, kernel_size=2, stride=1, padding=0, bias=False)
         self.helper_up_2 = nn.Conv3d(
-            in_channels=4, out_channels=4, kernel_size=3, stride=1, padding=0, bias=False)
+            in_channels=4, out_channels=3, kernel_size=3, stride=1, padding=0, bias=False)
         self.helper_up_3 = nn.Conv3d(
             in_channels=3, out_channels=3, kernel_size=3, stride=1, padding=0, bias=False)
 
