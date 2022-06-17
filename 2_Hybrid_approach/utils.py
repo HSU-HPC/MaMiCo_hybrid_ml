@@ -39,7 +39,7 @@ def mamico_csv2dataset(file_name):
 
     dataset = np.zeros((5, 3, 10, 3, 3))
 
-    with open(f'{file_name}.csv') as csvfile:
+    with open(f'{file_name}') as csvfile:
         csv_reader = csv.reader(csvfile, delimiter=';')
 
         for row in csv_reader:
