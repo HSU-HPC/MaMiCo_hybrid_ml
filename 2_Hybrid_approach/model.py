@@ -452,7 +452,7 @@ class Hybrid_MD_GRU_UNET(nn.Module):
         print("This is the bottleneck:")
         print("Size of x before additional Conv3D: ", x.size())
         x = nn.Conv3d(x.shape[1], x.shape[1], kernel_size=2,
-                      stride=1, padding=0, bias=False)(x)
+                      stride=1, padding=0, bias=False)(x.to(device))
         print("Size of x after additional Conv3D: ", x.size())
         x = self.activation(x)
         x = self.bottleneck(x)
