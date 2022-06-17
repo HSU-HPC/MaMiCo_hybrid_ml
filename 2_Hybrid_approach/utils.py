@@ -66,8 +66,8 @@ def get_mamico_loaders(file_names=0, num_workers=4):
 
     if file_names == 0:
         prefix = '/home/lerdo/lerdo_HPC_Lab_Project/Trainingdata'
-        file_names = [
-            f'{prefix}/couette_test_combined_domain_0_5.csv',
+        file_names = [f'{prefix}/couette_test_combined_domain_0_5.csv']
+        '''
             f'{prefix}/couette_test_combined_domain_1_0.csv',
             f'{prefix}/couette_test_combined_domain_1_5.csv',
             f'{prefix}/couette_test_combined_domain_2_0.csv',
@@ -76,7 +76,7 @@ def get_mamico_loaders(file_names=0, num_workers=4):
             f'{prefix}/couette_test_combined_domain_5_0.csv',
             f'{prefix}/couette_test_combined_domain_0_5.csv',
             f'{prefix}/kvs_test_combined_domain.csv'
-        ]
+        ]'''
 
     for file_name in file_names:
         dataset = mamico_csv2dataset(file_name)

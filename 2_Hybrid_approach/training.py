@@ -1,12 +1,13 @@
-import torch
-import numpy as np
-from tqdm import tqdm
-import matplotlib.pyplot as plt
-import torch.nn as nn
-import torch.optim as optim
-from model import Hybrid_MD_RNN_UNET, Hybrid_MD_GRU_UNET, Hybrid_MD_LSTM_UNET
-import time
 from utils import get_mamico_loaders, losses2file, userModelSpecs
+import time
+from model import Hybrid_MD_RNN_UNET, Hybrid_MD_GRU_UNET, Hybrid_MD_LSTM_UNET
+import torch.optim as optim
+import torch.nn as nn
+import matplotlib.pyplot as plt
+from tqdm import tqdm
+import numpy as np
+import torch
+torch.use_deterministic_algorithms(True)
 
 plt.style.use(['science'])
 np.set_printoptions(precision=6)

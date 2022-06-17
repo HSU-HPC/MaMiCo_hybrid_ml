@@ -1,9 +1,10 @@
-import torch
-import torch.nn as nn
-from drawing_board import save3D_RGBArray2File
-import torchvision.transforms.functional as TF
-from torchsummary import summary
 from ptflops import get_model_complexity_info
+from torchsummary import summary
+import torchvision.transforms.functional as TF
+from drawing_board import save3D_RGBArray2File
+import torch.nn as nn
+import torch
+torch.use_deterministic_algorithms(True)
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 use_cuda = torch.cuda.is_available()
@@ -621,7 +622,7 @@ class Hybrid_MD_LSTM_UNET(nn.Module):
 
 
 def test():
-    model = Hybrid_MD_LSTM_UNET(device=device, in_channels=3, out_channels=3, features=[
+    model = Hybrid_MD_GRU_UNET(device=device, in_channels=3, out_channels=3, features=[
               4, 8, 16], activation=nn.ReLU(inplace=True), RNN_in_size=256, RNN_hid_size=512, RNN_lay=2)
     x = torch.randn(1, 3, 24, 24, 24)
     print('Test-Input shape: ', x.shape)
