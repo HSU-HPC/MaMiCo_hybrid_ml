@@ -35,7 +35,7 @@ def train_hybrid(loader, model, optimizer, criterion, scaler, current_epoch):
     # @time_buffer - used to track time at which max_loss occurs
 
     for batch_idx, (data, targets) in enumerate(tqdm(loader, position=0, leave=True)):
-        print("\n")
+        print(" \n")
 
         data = data.float().squeeze(1).to(device)
         targets = targets.float().to(device)
