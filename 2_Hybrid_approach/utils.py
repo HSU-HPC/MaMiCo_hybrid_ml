@@ -80,7 +80,7 @@ def get_mamico_loaders(file_names=0, num_workers=4):
 
     for file_name in file_names:
         dataset = mamico_csv2dataset(file_name)
-        print("Utils.py - Sanity Check - Dimension of loaded dataset: ", dataset.shape)
+        # print("Utils.py - Sanity Check - Dimension of loaded dataset: ", dataset.shape)
         dataset = MyMamicoDataset(dataset)
         dataloader = DataLoader(
             dataset=dataset,

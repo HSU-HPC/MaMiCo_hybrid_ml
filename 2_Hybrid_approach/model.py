@@ -456,13 +456,13 @@ class Hybrid_MD_GRU_UNET(nn.Module):
             x = self.pool(x)
 
         # This is the bottleneck
-        print("This is the bottleneck:")
-        print("Size of x before additional Conv3D: ", x.size())
+        # print("This is the bottleneck:")
+        # print("Size of x before additional Conv3D: ", x.size())
         x = self.helper_down(x)
-        print("Size of x after additional Conv3D: ", x.size())
+        # print("Size of x after additional Conv3D: ", x.size())
         x = self.activation(x)
         x = self.bottleneck(x)
-        print("Size of x after bottleneck: ", x.size())
+        # print("Size of x after bottleneck: ", x.size())
         x = self.activation(x)
 
         # Create RNN-input from x and sanity check dimensions
@@ -485,11 +485,11 @@ class Hybrid_MD_GRU_UNET(nn.Module):
         # Apply linear regressor to the last time step
         x = self.fc(x)
         # x = torch.reshape(x, (1, 1, 512))
-        print('Class-3-rnnOutput shape: ', x.size())
+        # print('Class-3-rnnOutput shape: ', x.size())
 
         # Merge output into CNN signal (->x) and sanity check dimensions
         x = torch.reshape(x, (1, int((self.input_size/8)), 2, 2, 2))
-        print('Class-4-CNN signal shape: ', x.size())
+        # print('Class-4-CNN signal shape: ', x.size())
         x = self.helper_up_1(x)
         x = self.activation(x)
         skip_connections = skip_connections[::-1]
@@ -500,7 +500,7 @@ class Hybrid_MD_GRU_UNET(nn.Module):
             skip_connection = skip_connections[idx//2]
             concat_skip = torch.cat((skip_connection, x), dim=1)
             x = self.ups[idx+1](concat_skip)
-        print("Size of x before downsizing to MD: ", x.size())
+        # print("Size of x before downsizing to MD: ", x.size())
 
         x = self.helper_up_2(x)
         x = self.activation(x)

@@ -35,6 +35,7 @@ def train_hybrid(loader, model, optimizer, criterion, scaler, current_epoch):
     # @time_buffer - used to track time at which max_loss occurs
 
     for batch_idx, (data, targets) in enumerate(tqdm(loader)):
+        print("\n")
 
         data = data.float().squeeze(1).to(device)
         targets = targets.float().to(device)
@@ -195,7 +196,8 @@ def training_factory(user_input):
         epochs=_num_epochs)
     return
 
-    torch.save(_model.state_dict(), '/')
+    torch.save(_model.state_dict(
+    ), f'{_model_names[_model_name]}_{_rnn_layer}_{_hid_size}_{_learning_rate}')
 
 
 def model_performance(model_name, rnn_layer, hid_size, learning_rate, max_losses=0, min_losses=0, average_losses=0, epochs=0):
