@@ -94,6 +94,7 @@ def get_mamico_loaders(file_names=0, num_workers=4):
 
 
 def userModelSpecs():
+    '''
     invalid = True
     while invalid:
         print("Please choose which hybrid model to train:")
@@ -189,6 +190,17 @@ def userModelSpecs():
             invalid = False
         else:
             print("Invalid input \n")
+    '''
+
+    _model_name = "Hybrid_MD_GRU_UNET"
+    _rnn_layers = 2
+    _hid_size = 256
+    _learning_rate = 0.0001
+
+    model_name = 2
+    rnn_layers = 1
+    hid_size = 1
+    learning_rate = 1
 
     print('------------------------------------------------------------')
     print('                       Model Summary')
@@ -196,7 +208,7 @@ def userModelSpecs():
     print(f'Model Name: {_model_name}')
     print(f'RNN Layers: {_rnn_layers}')
     print(f'Size hidden Layer: {_hid_size}')
-    print(f'Learning Rate:{_learning_rate}')
+    print(f'Learning Rate: {_learning_rate}')
     print('------------------------------------------------------------')
 
     # Consider if returning a list or a dictionary is more beneficial
