@@ -4,7 +4,7 @@ from model import Hybrid_MD_RNN_UNET, Hybrid_MD_GRU_UNET, Hybrid_MD_LSTM_UNET
 import torch.optim as optim
 import torch.nn as nn
 import matplotlib.pyplot as plt
-from tqdm import tqdm
+from tqdm.auto import tqdm
 import numpy as np
 import torch
 
