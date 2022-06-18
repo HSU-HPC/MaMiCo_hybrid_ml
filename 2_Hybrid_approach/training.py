@@ -44,7 +44,7 @@ def train_hybrid(loader, model, optimizer, criterion, scaler, current_epoch):
         with torch.cuda.amp.autocast():
             scores = model(data)
             loss = criterion(scores, targets)
-            print(f'{loss} \n')
+            print(f'Current loss: {loss} \n')
             losses.append(loss.item())
 
         # backward
