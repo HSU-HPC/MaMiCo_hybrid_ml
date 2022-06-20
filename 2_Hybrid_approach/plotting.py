@@ -688,6 +688,8 @@ def main():
 
 
 if __name__ == "__main__":
-    clean_mamico_data('/home/lerdo/lerdo_HPC_Lab_Project/Trainingdata', 'couette_test_combined_domain_3_0.csv')
-    my_dataset = mamico_csv2dataset('/home/lerdo/lerdo_HPC_Lab_Project/Trainingdata/clean_couette_test_combined_domain_3_0.csv')
-    colorMap(dataset=my_dataset, 'visualization of mamico data x-vel')
+    clean_mamico_data('/home/lerdo/lerdo_HPC_Lab_Project/Trainingdata',
+                      'couette_test_combined_domain_3_0.csv')
+    my_dataset = mamico_csv2dataset(
+        '/home/lerdo/lerdo_HPC_Lab_Project/Trainingdata/clean_couette_test_combined_domain_3_0.csv')
+    colorMap(my_dataset, 'visualization of mamico data x-vel')
