@@ -7,7 +7,7 @@ mpl.use('Agg')
 np.set_printoptions(precision=2)
 
 
-def colorMap(dataset, filename, v_component=0):
+def colorMap(dataset, dataset_name):
     # BRIEF: This function is used to visualize a dataset in a 3D
     # scatterplot, aka color map. Here, the use case is tailored
     # to simulation results containing 1000 timesteps in a 26x26x26
@@ -16,24 +16,26 @@ def colorMap(dataset, filename, v_component=0):
     #
     # PARAMETERS:
     # dataset - contains the MaMiCoDataset [1000, 3, 26, 26, 26]
-    # filename - the name of the file that the plot should be saved to
+    # dataset_name - refers to a unique numeric identifier
 
-    steps = np.arange(0, 26).tolist()
+    t, c, d, h, w = dataset.shape
+    steps = np.arange(0, h).tolist()
     X, Y, Z = np.meshgrid(steps, steps, steps)
     counter = 0
-    t = [0, 25, 50, 100, 200, 400, 800, 999]
+    t = [0, 25, 50, 100, 200, 400, 600, 800, 999]
 
     # Creating color map
     cm = plt.cm.get_cmap('Spectral')
 
     # Creating figure
     fig = plt.figure()
+    fig.suptitle(f'Visualization of Dataset: {dataset_name}', fontsize=16)
 
     # Creating subplots
-    while counter < 8:
-        ax = fig.add_subplot(4, 2, (counter+1), projection='3d')
-        ax.set_title(f'Volume Sample at t={t[counter]}', fontsize=10)
-        sc = ax.scatter3D(X, Y, Z, c=dataset[t[counter], v_component, :, :, :],
+    while counter < 9:
+        ax = fig.add_subplot(3, 3, (counter+1), projection='3d')
+        ax.set_title(f't={t[counter]}', fontsize=10)
+        sc = ax.scatter3D(X, Y, Z, c=dataset[t[counter], 0, :, :, :],
                           alpha=0.8, marker='.', s=0.25, vmin=-4, vmax=4, cmap=cm)
         ax.set_xlabel("X", fontsize=7, fontweight='bold')
         ax.set_ylabel("Y", fontsize=7, fontweight='bold')
@@ -48,205 +50,73 @@ def colorMap(dataset, filename, v_component=0):
     cbar_ax = fig.add_axes([0.85, 0.15, 0.05, 0.7])
     fig.colorbar(sc, cax=cbar_ax)
     # fig.set_size_inches(3.5, 2)
-    fig.savefig('Testing_MaMiCo_Visualization.png')
-    fig.savefig('myfig.eps', format='eps')
-    plt.show()
+    fig.savefig(f'Colormap_Visualization_{dataset_name}.png')
+    # fig.savefig('myfig.eps', format='eps')
+    # plt.show()
 
 
-def visualizeMaMiCoDataset(_filename):
+def flowProfile(dataset, dataset_name, u_wall=1):
+    # BRIEF: This function is used to visualize a dataset in a 2D
+    # flow profile. Here, the use case is tailored to simulation
+    # results containing 1000 timesteps in a 26x26x26 spatial domain.
+    # To this end, 9 timesteps will be considered for each velocity
+    # component [0, 25, 50, 100, 200, 400, 600, 800, 999]
+    #
+    # PARAMETERS:
+    # dataset - contains the MaMiCoDataset [1000, 3, 26, 26, 26]
+    # dataset_name - refers to a unique numeric identifier
+    # u_wall - the speed of the moving wall for the specific couette
+    # scenario
+
+    t, c, d, h, w = dataset.shape
+    steps = np.arange(0, h).tolist()
+
+    mid = int(h/2)
+    samples = [0, 25, 50, 100, 200, 400, 600, 800, 999]
+
+    fig, (ax1, ax2, ax3) = plt.subplots(
+        3, sharey=True, constrained_layout=True)  # sharex=True
+    # plt.ylabel('Velocity $u$')
+    fig.suptitle('Flow Profiles in X-,Y- and Z-Direction', fontsize=10)
+
+    # Plot all u_x entries along the central x-axis
+    ax1.set_xlabel("X")
+    ax1.set_ylabel("$u_x$")
+    # Plot all u_x entries along the central Y-axis
+    ax2.set_xlabel("Y")
+    ax2.set_ylabel("$u_x$")
+    # Plot all u_x entries along the central Z-axis
+    ax3.set_xlabel("Z")
+    ax3.set_ylabel("$u_x$")
+
+    for time in samples:
+        ax1.plot(steps, dataset[time, 0, :, mid, mid], label=f't = {time}')
+        ax2.plot(steps, dataset[time, 0, mid, :, mid], label=f't = {time}')
+        ax3.plot(steps, dataset[time, 0, mid, mid, :], label=f't = {time}')
+
+    plt.yticks(range(int(-u_wall), int(u_wall*(2)+1), 10))
+    # plt.xlabel('Spatial Dimension')
+    plt.legend(ncol=4, fontsize=7)
+
+    fig.savefig(f'Flowprofile_Visualization_{dataset_name}.png')
+
+
+def visualizeMaMiCoDataset(filenames, dataset_names, u_wall):
     # BRIEF: This function is used to visualize the MaMiCo generated simulation
     # data. It loads the dataset from a csv file.
     # Here, the use case is tailored to simulation results containing 1000
     # timesteps in a 26 x 26 x 26 spatial domain. Hence the default values.
     # PARAMETERS:
-    # _filename -  the name of the file of interest including file suffix,
+    # filename -  the name of the file of interest including file suffix,
     # e.g. 'my_values.csv'
-    _dataset = mamico_csv2dataset(_filename)
 
-    pass
-
-
-def save3DArray2File(input_array, prediction):
-    # 1) Convert 3D array to 2D array
-    input_reshaped = input_array.reshape(input_array.shape[0], -1)
-
-    # 2) Save 2D array to file
-    t, c, x, y = input_array.shape
-    name = f'{prediction}_{t}_{x}_{y}'
-    np.savetxt(f'{name}.csv', input_reshaped)
-
-
-def load3DArrayFromFile(input_file, input_shape):
-    # 3) load 2D array from file
-    loaded_array = np.loadtxt(f'{input_file}')
-
-    # 4) Revert 2D array to 3D array
-    original_array = loaded_array.reshape(
-        loaded_array.shape[0], loaded_array.shape[1] // input_shape[2], input_shape[2])
-    return original_array
-
-
-def checkSaveLoad(input_array, loaded_array):
-    print("shape of input array: ", input_array.shape)
-    print("shape of loaded array: ", loaded_array.shape)
-
-    if (input_array == loaded_array).all():
-        print("Yes, both the arrays are same")
-    else:
-        print("No, both the arrays are not same")
-
-
-def plotFlowProfile(input_array, wall_height=20, u_wall=10):
-
-    if input_array.ndim == 2:
-        t, h = input_array.shape
-
-        v_step = wall_height / (h-1)
-        v_steps = np.arange(0, wall_height + v_step, v_step).tolist()
-
-        # , sharex=True, sharey=True)
-        fig, (ax1) = plt.subplots(1, sharey=True, constrained_layout=True)
-        # fig.suptitle('Flow Profiles in X- and Y-Direction', fontsize=10)
-
-        ax1.set_title('Flow Profile in Y-Direction', fontsize=10)
-        ax1.plot(v_steps, input_array[0, :], label='t = 0')
-        ax1.plot(v_steps, input_array[int(
-            0.01*t), :], label=f't = {int(0.01*t)}')
-        ax1.plot(v_steps, input_array[int(
-            0.05*t), :], label=f't = {int(0.05*t)}')
-        ax1.plot(v_steps, input_array[int(
-            0.10*t), :], label=f't = {int(0.1*t)}')
-        ax1.plot(v_steps, input_array[int(
-            0.25*t), :], label=f't = {int(0.25*t)}')
-        ax1.plot(v_steps, input_array[int(
-            0.50*t), :], label=f't = {int(0.5*t)}')
-        ax1.plot(v_steps, input_array[int(
-            0.75*t), :], label=f't = {int(0.75*t)}')
-        ax1.plot(v_steps, input_array[-1, :], label=f't = {t}')
-
-        plt.yticks(range(int(-u_wall), int(u_wall*(2)+1), 10))
-        plt.xlabel('Spatial Dimension')
-        plt.ylabel('Velocity $u$')
-        plt.legend(ncol=4, fontsize=7)
-        plt.show()
-
-    if input_array.ndim == 3:
-        t, h, w = input_array.shape
-
-        v_step = wall_height / (w-1)
-        v_steps = np.arange(0, wall_height + v_step, v_step).tolist()
-
-        # , sharex=True, sharey=True)
-        fig, (ax1, ax2) = plt.subplots(2, sharey=True, constrained_layout=True)
-        # fig.suptitle('Flow Profiles in X- and Y-Direction', fontsize=10)
-
-        ax1.set_title('Flow Profile in X-Direction', fontsize=10)
-        ax1.plot(v_steps, input_array[0, int(h/2), :], label='t = 0')
-        ax1.plot(v_steps, input_array[int(
-            0.01*t), int(h/2), :], label=f't = {int(0.01*t)}')
-        ax1.plot(v_steps, input_array[int(
-            0.05*t), int(h/2), :], label=f't = {int(0.05*t)}')
-        ax1.plot(v_steps, input_array[int(
-            0.10*t), int(h/2), :], label=f't = {int(0.1*t)}')
-        ax1.plot(v_steps, input_array[int(
-            0.25*t), int(h/2), :], label=f't = {int(0.25*t)}')
-        ax1.plot(v_steps, input_array[int(
-            0.50*t), int(h/2), :], label=f't = {int(0.5*t)}')
-        ax1.plot(v_steps, input_array[int(
-            0.75*t), int(h/2), :], label=f't = {int(0.75*t)}')
-        ax1.plot(v_steps, input_array[-1, int(h/2), :], label=f't = {t}')
-
-        ax2.set_title('Flow Profile in Y-Direction', fontsize=10)
-        ax2.plot(v_steps, input_array[0, :, int(h/2)], label='t = 0')
-        ax2.plot(v_steps, input_array[int(
-            0.01*t), :, int(h/2)], label=f't = {int(0.01*t)}')
-        ax2.plot(v_steps, input_array[int(
-            0.05*t), :, int(h/2)], label=f't = {int(0.05*t)}')
-        ax2.plot(v_steps, input_array[int(
-            0.10*t), :, int(h/2)], label=f't = {int(0.1*t)}')
-        ax2.plot(v_steps, input_array[int(
-            0.25*t), :, int(h/2)], label=f't = {int(0.25*t)}')
-        ax2.plot(v_steps, input_array[int(
-            0.50*t), :, int(h/2)], label=f't = {int(0.5*t)}')
-        ax2.plot(v_steps, input_array[int(
-            0.75*t), :, int(h/2)], label=f't = {int(0.75*t)}')
-        ax2.plot(v_steps, input_array[-1, :, int(h/2)], label=f't = {t}')
-
-        plt.yticks(range(int(-u_wall), int(u_wall*(2)+1), 10))
-        plt.xlabel('Spatial Dimension')
-        plt.ylabel('Velocity $u$')
-        plt.legend(ncol=4, fontsize=7)
-        plt.show()
-
-    if input_array.ndim == 4:
-        t, d, h, w = input_array.shape
-
-        v_step = wall_height / (w-1)
-        v_steps = np.arange(0, wall_height + v_step, v_step).tolist()
-
-        # , sharex=True, sharey=True)
-        fig, (ax1, ax2, ax3) = plt.subplots(
-            3, sharey=True, constrained_layout=True)  # sharex=True
-        # plt.ylabel('Velocity $u$')
-        # fig.suptitle('Flow Profiles in X-,Y- and Z-Direction ($U_{wall}$ in X-Direction)', fontsize=10)
-
-        ax1.set_title('Flow Profile in X-Direction', fontsize=10)
-        ax1.plot(v_steps, input_array[0, int(h/2), int(h/2), :], label='t = 0')
-        ax1.plot(v_steps, input_array[int(
-            0.01*t), int(h/2), int(h/2), :], label=f't = {int(0.01*t)}')
-        ax1.plot(v_steps, input_array[int(
-            0.05*t), int(h/2), int(h/2), :], label=f't = {int(0.05*t)}')
-        ax1.plot(v_steps, input_array[int(
-            0.10*t), int(h/2), int(h/2), :], label=f't = {int(0.1*t)}')
-        ax1.plot(v_steps, input_array[int(
-            0.25*t), int(h/2), int(h/2), :], label=f't = {int(0.25*t)}')
-        ax1.plot(v_steps, input_array[int(
-            0.50*t), int(h/2), int(h/2), :], label=f't = {int(0.5*t)}')
-        ax1.plot(v_steps, input_array[int(
-            0.75*t), int(h/2), int(h/2), :], label=f't = {int(0.75*t)}')
-        ax1.plot(v_steps, input_array[-1, int(h/2),
-                 int(h/2), :], label=f't = {t}')
-
-        ax2.set_title('Flow Profile in Y-Direction', fontsize=10)
-        ax2.set_ylabel('Velocity $u$')
-        ax2.plot(v_steps, input_array[0, int(h/2), :, int(h/2)], label='t = 0')
-        ax2.plot(v_steps, input_array[int(
-            0.01*t), int(h/2), :, int(h/2)], label=f't = {int(0.01*t)}')
-        ax2.plot(v_steps, input_array[int(
-            0.05*t), int(h/2), :, int(h/2)], label=f't = {int(0.05*t)}')
-        ax2.plot(v_steps, input_array[int(
-            0.10*t), int(h/2), :, int(h/2)], label=f't = {int(0.1*t)}')
-        ax2.plot(v_steps, input_array[int(
-            0.25*t), int(h/2), :, int(h/2)], label=f't = {int(0.25*t)}')
-        ax2.plot(v_steps, input_array[int(
-            0.50*t), int(h/2), :, int(h/2)], label=f't = {int(0.5*t)}')
-        ax2.plot(v_steps, input_array[int(
-            0.75*t), int(h/2), :, int(h/2)], label=f't = {int(0.75*t)}')
-        ax2.plot(v_steps, input_array[-1, int(h/2),
-                 :, int(h/2)], label=f't = {t}')
-
-        ax3.set_title('Flow Profile in Z-Direction', fontsize=10)
-        ax3.plot(v_steps, input_array[0, :, int(h/2), int(h/2)], label='t = 0')
-        ax3.plot(v_steps, input_array[int(
-            0.01*t), :, int(h/2), int(h/2)], label=f't = {int(0.01*t)}')
-        ax3.plot(v_steps, input_array[int(
-            0.05*t), :, int(h/2), int(h/2)], label=f't = {int(0.05*t)}')
-        ax3.plot(v_steps, input_array[int(
-            0.10*t), :, int(h/2), int(h/2)], label=f't = {int(0.1*t)}')
-        ax3.plot(v_steps, input_array[int(
-            0.25*t), :, int(h/2), int(h/2)], label=f't = {int(0.25*t)}')
-        ax3.plot(v_steps, input_array[int(
-            0.50*t), :, int(h/2), int(h/2)], label=f't = {int(0.5*t)}')
-        ax3.plot(v_steps, input_array[int(
-            0.75*t), :, int(h/2), int(h/2)], label=f't = {int(0.75*t)}')
-        ax3.plot(v_steps, input_array[-1, :,
-                 int(h/2), int(h/2)], label=f't = {t}')
-        # fig.legend(loc='lower center', ncol=4)
-        # fig.tight_layout()
-        plt.yticks(range(int(-u_wall), int(u_wall*(2)+1), 10))
-        plt.xlabel('Spatial Dimension')
-        plt.legend(ncol=4, fontsize=7)
-        plt.show()
+    for i in range(len(filenames)):
+        # Load dataset from csv
+        _dataset = mamico_csv2dataset(filenames[i])
+        # Create 3D scatterplot for meaningful timesteps.
+        colorMap(_dataset, dataset_names[i])
+        flowProfile(_dataset, dataset_names[i], u_wall[i])
+    return
 
 
 def compareFlowProfile(title, file_name, prediction_array, prediction_array2, target_array, analytical=0, wall_height=20, u_wall=10, sigma=0.3):
@@ -681,7 +551,10 @@ def main():
 
 
 if __name__ == "__main__":
+    visualizeMaMiCoDataset(
+        filenames=['/home/lerdo/lerdo_HPC_Lab_Project/Trainingdata/clean_couette_test_combined_domain_3_0.csv'],
+        dataset_names=['_3_0'],
+        u_wall=[1]
+    )
+
     # clean_mamico_data('/home/lerdo/lerdo_HPC_Lab_Project/Trainingdata', 'couette_test_combined_domain_3_0.csv')
-    my_dataset = mamico_csv2dataset(
-        '/home/lerdo/lerdo_HPC_Lab_Project/Trainingdata/clean_couette_test_combined_domain_3_0.csv')
-    colorMap(my_dataset, 'visualization of mamico data x-vel')
