@@ -1,8 +1,8 @@
+from utils import clean_mamico_data, mamico_csv2dataset
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 mpl.use('Agg')
-from utils import clean_mamico_data, mamico_csv2dataset
 plt.style.use(['science'])
 np.set_printoptions(precision=2)
 
@@ -55,8 +55,8 @@ def colorMap(dataset, filename, v_component=0):
     fig.colorbar(sc, cax=cbar_ax)
     # fig.set_size_inches(3.5, 2)
     # fig.set_size_inches(6, 6)
-    plt.show()
-    # fig.savefig('Plots/Sample_Volume.png')
+    # plt.show()
+    fig.savefig('Testing_MaMiCo_Visualization.png')
 
 
 def visualizeMaMiCoDataset(_filename):
