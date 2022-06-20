@@ -17,10 +17,9 @@ def colorMap(dataset, filename, v_component=0):
     # dataset - contains the MaMiCoDataset [1000, 3, 26, 26, 26]
     # filename - the name of the file that the plot should be saved to
 
-    d, h, w = dataset[3].shape
-    v_step = 20 / (h-1)
-    v_steps = np.arange(0, 20 + v_step, v_step).tolist()
-    X, Y, Z = np.meshgrid(v_steps, v_steps, v_steps)
+    d, h, w = 26
+    steps = np.arange(0, 26).tolist()
+    X, Y, Z = np.meshgrid(steps, steps, steps)
     counter = 0
     t = [0, 25, 50, 100, 200, 400, 800, 999]
 
