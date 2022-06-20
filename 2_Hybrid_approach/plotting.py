@@ -37,9 +37,15 @@ def colorMap(dataset, dataset_name):
         ax.set_title(f't={t[counter]}', fontsize=10)
         sc = ax.scatter3D(X, Y, Z, c=dataset[t[counter], 0, :, :, :],
                           alpha=0.8, marker='.', s=0.25, vmin=-4, vmax=4, cmap=cm)
-        ax.set_xlabel("X", fontsize=7, fontweight='bold')
-        ax.set_ylabel("Y", fontsize=7, fontweight='bold')
-        ax.set_zlabel("Z", fontsize=7, fontweight='bold')
+
+        if counter == 4:
+            ax.set_xlabel("X", fontsize=7, fontweight='bold')
+            ax.set_ylabel("Y", fontsize=7, fontweight='bold')
+            ax.set_zlabel("Z", fontsize=7, fontweight='bold')
+            ax.xaxis.labelpad = -10
+            ax.yaxis.labelpad = -10
+            ax.zaxis.labelpad = -10
+
         ax.set_xticks([])
         ax.set_yticks([])
         ax.set_zticks([])
@@ -552,9 +558,10 @@ def main():
 
 if __name__ == "__main__":
     visualizeMaMiCoDataset(
-        filenames=['/home/lerdo/lerdo_HPC_Lab_Project/Trainingdata/clean_couette_test_combined_domain_3_0.csv'],
+        filenames=[
+            '/home/lerdo/lerdo_HPC_Lab_Project/Trainingdata/clean_couette_test_combined_domain_3_0.csv'],
         dataset_names=['_3_0'],
-        u_wall=[1]
+        u_wall=[3]
     )
 
     # clean_mamico_data('/home/lerdo/lerdo_HPC_Lab_Project/Trainingdata', 'couette_test_combined_domain_3_0.csv')
