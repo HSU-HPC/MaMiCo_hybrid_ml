@@ -35,11 +35,11 @@ def colorMap(dataset, filename, v_component=0):
     while counter < 8:
         ax = fig.add_subplot(4, 2, (counter+1), projection='3d')
         ax.set_title(f'Volume Sample at t={t[counter]}', fontsize=10)
-        sc = ax.scatter3D(Z, Y, X, c=dataset[t[counter], v_component, :, :, :],
+        sc = ax.scatter3D(X, Y, Z, c=dataset[t[counter], v_component, :, :, :],
                           alpha=0.8, marker='.', s=0.25, vmin=-4, vmax=4, cmap=cm)
-        # ax.set_xlabel("X", fontsize=7, fontweight='bold')
-        # ax.set_ylabel("Z", fontsize=7, fontweight='bold')
-        # ax.set_zlabel("Y", fontsize=7, fontweight='bold')
+        ax.set_xlabel("X", fontsize=7, fontweight='bold')
+        ax.set_ylabel("Y", fontsize=7, fontweight='bold')
+        ax.set_zlabel("Z", fontsize=7, fontweight='bold')
         # ax.xaxis.labelpad = -10
         # ax.yaxis.labelpad = -10
         # ax.zaxis.labelpad = -10
