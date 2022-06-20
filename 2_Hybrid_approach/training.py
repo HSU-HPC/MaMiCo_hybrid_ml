@@ -1,7 +1,6 @@
 import torch
 import sys
 import numpy as np
-from tqdm.auto import tqdm
 import matplotlib.pyplot as plt
 import torch.nn as nn
 import torch.optim as optim
@@ -35,9 +34,7 @@ def train_hybrid(loader, model, optimizer, criterion, scaler, current_epoch):
     time_buffer = 0
     # @time_buffer - used to track time at which max_loss occurs
 
-    for batch_idx, (data, targets) in enumerate(tqdm(loader, position=0, leave=True)):
-        print(" \n")
-
+    for batch_idx, (data, targets) in enumerate(loader):
         data = data.float().squeeze(1).to(device)
         targets = targets.float().to(device)
 
@@ -45,7 +42,6 @@ def train_hybrid(loader, model, optimizer, criterion, scaler, current_epoch):
         with torch.cuda.amp.autocast():
             scores = model(data)
             loss = criterion(scores, targets)
-            # print(f'Current loss: {loss} \n')
             losses.append(loss.item())
 
         # backward
@@ -58,6 +54,15 @@ def train_hybrid(loader, model, optimizer, criterion, scaler, current_epoch):
         if loss > max_loss:
             max_loss = loss
             time_buffer = counter
+
+        if counter < 10:
+            num = '000'
+        elif counter < 100:
+            num = '00'
+        elif counter < 1000:
+            num = '0'
+
+        print(f'Progress: {num}{counter}/1000     Error: {loss:.7f}')
 
     # Saving error values
     max_loss = max(losses)
