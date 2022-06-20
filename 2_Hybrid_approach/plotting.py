@@ -1,9 +1,76 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib as mpl
-from utils import losses2file
+from utils import clean_mamico_data, mamico_csv2dataset
 plt.style.use(['science'])
 np.set_printoptions(precision=2)
+
+
+def colorMap(dataset, filename, v_component=0):
+    # BRIEF: This function is used to visualize a dataset in a 3D
+    # scatterplot, aka color map. Here, the use case is tailored
+    # to simulation results containing 1000 timesteps in a 26x26x26
+    # spatial domain. To this end, 8 timesteps will be considered:
+    # [0, 25, 50, 100, 200, 400, 800, 999]
+    #
+    # PARAMETERS:
+    # dataset - contains the MaMiCoDataset [1000, 3, 26, 26, 26]
+    # filename - the name of the file that the plot should be saved to
+
+    d, h, w = dataset[3].shape
+    v_step = 20 / (h-1)
+    v_steps = np.arange(0, 20 + v_step, v_step).tolist()
+    X, Y, Z = np.meshgrid(v_steps, v_steps, v_steps)
+    counter = 0
+    t = [0, 25, 50, 100, 200, 400, 800, 999]
+
+    # Creating color map
+    cm = plt.cm.get_cmap('Spectral')
+
+    # Creating figure
+    fig = plt.figure()
+    # fig.suptitle('3D Analytical Couette Flow Sample of $u_x$ at $T=98$',
+    #             fontsize=10, fontweight='bold')
+
+    # Creating subplots
+    while counter < 8:
+        ax = fig.add_subplot(4, 2, (counter+1), projection='3d')
+        ax.set_title(f'Volume Sample at t={t[counter]}', fontsize=10)
+        sc = ax.scatter3D(Z, Y, X, c=dataset[t[counter], v_component, :, :, :],
+                          alpha=0.8, marker='.', s=0.25, vmin=-4, vmax=14, cmap=cm)
+        # ax.set_xlabel("X", fontsize=7, fontweight='bold')
+        # ax.set_ylabel("Z", fontsize=7, fontweight='bold')
+        # ax.set_zlabel("Y", fontsize=7, fontweight='bold')
+        # ax.xaxis.labelpad = -10
+        # ax.yaxis.labelpad = -10
+        # ax.zaxis.labelpad = -10
+        ax.set_xticks([])
+        ax.set_yticks([])
+        ax.set_zticks([])
+        ax.grid(False)
+        # Visualizing central cells
+        counter += 1
+
+    fig.subplots_adjust(right=0.8)
+    cbar_ax = fig.add_axes([0.85, 0.15, 0.05, 0.7])
+    fig.colorbar(sc, cax=cbar_ax)
+    # fig.set_size_inches(3.5, 2)
+    # fig.set_size_inches(6, 6)
+    plt.show()
+    # fig.savefig('Plots/Sample_Volume.png')
+
+
+def visualizeMaMiCoDataset(_filename):
+    # BRIEF: This function is used to visualize the MaMiCo generated simulation
+    # data. It loads the dataset from a csv file.
+    # Here, the use case is tailored to simulation results containing 1000
+    # timesteps in a 26 x 26 x 26 spatial domain. Hence the default values.
+    # PARAMETERS:
+    # _filename -  the name of the file of interest including file suffix,
+    # e.g. 'my_values.csv'
+    _dataset = mamico_csv2dataset(_filename)
+
+    pass
 
 
 def save3DArray2File(input_array, prediction):
@@ -491,51 +558,6 @@ def compareVelocityField(prediction_array, target_array, wall_height=20):
             fig.savefig(f'pred_vs_noisy_target_v_field_3e-1_{i}.svg')
 
 
-def colorMap(u_vector, titles):
-    len_u = len(u_vector)
-    d, h, w = u_vector[0].shape
-    v_step = 20 / (h-1)
-    v_steps = np.arange(0, 20 + v_step, v_step).tolist()
-    X, Y, Z = np.meshgrid(v_steps, v_steps, v_steps)
-    counter = 0
-    list_a = [1, 2, 1, 2]
-    list_b = [1, 1, 2, 2]
-    # Creating color map
-    cm = plt.cm.get_cmap('Spectral')
-
-    # Creating figure
-    fig = plt.figure()
-    # fig.suptitle('3D Analytical Couette Flow Sample of $u_x$ at $T=98$',
-    #             fontsize=10, fontweight='bold')
-
-    # Creating subplots
-    for u in u_vector:
-        ax = fig.add_subplot(2, 2, (counter+1), projection='3d')
-        ax.set_title(titles[counter], fontsize=10)
-        sc = ax.scatter3D(Z, Y, X, c=u, alpha=0.8, marker='.',
-                          s=0.25, vmin=-4, vmax=14, cmap=cm)
-        # ax.set_xlabel("X", fontsize=7, fontweight='bold')
-        # ax.set_ylabel("Z", fontsize=7, fontweight='bold')
-        # ax.set_zlabel("Y", fontsize=7, fontweight='bold')
-        # ax.xaxis.labelpad = -10
-        # ax.yaxis.labelpad = -10
-        # ax.zaxis.labelpad = -10
-        ax.set_xticks([])
-        ax.set_yticks([])
-        ax.set_zticks([])
-        ax.grid(False)
-        # Visualizing central cells
-        counter += 1
-
-    fig.subplots_adjust(right=0.8)
-    cbar_ax = fig.add_axes([0.85, 0.15, 0.05, 0.7])
-    fig.colorbar(sc, cax=cbar_ax)
-    # fig.set_size_inches(3.5, 2)
-    fig.set_size_inches(6, 6)
-    plt.show()
-    fig.savefig('Plots/Sample_Volume.png')
-
-
 def showSample():
     v_step = 20 / (31)
     v_steps = np.arange(0, 20 + v_step, v_step).tolist()
@@ -562,44 +584,46 @@ def showSample():
     fig.savefig('Plots/Sampling_of_Volume.png')
 
 
-'''
-def colorMap2():
-    t = 1000
-    u = 10
-    w = 20
-    n = 2
-    v = 31
-    sigma = 0.3
-    seed = 1
-    analytical = my3DCouetteSolver(desired_timesteps=t, u_wall=u, wall_height=w,
-                                   nu=n, vertical_resolution=v, sigma=sigma, my_seed=seed)
-    t, c, d, h2, w2 = analytical.shape
-    v_step = w / (h2-1)
-    v_steps = np.arange(0, w + v_step, v_step).tolist()
-    X, Y, Z = np.meshgrid(v_steps, v_steps, v_steps)
-    U = [analytical[1, 0, :, :, :], analytical[50, 0, :, :, :],
-         analytical[250, 0, :, :, :], analytical[999, 0, :, :, :]]
-    titles = ['T = 1', 'T = 50', 'T = 250', 'T = 999', ]
-    cm = plt.cm.get_cmap('Spectral')
-    # Creating figure
-    fig = plt.figure()
-    for i in range(len(U)):
-        ax = fig.add_subplot(2, 2, (i+1), projection='3d')
-        ax.set_title(titles[i], fontsize=10)
-        sc = ax.scatter3D(Z, Y, X, c=U[i],
-                          alpha=0.8, marker='.', s=0.25, vmin=-4, vmax=14, cmap=cm)
-        ax.set_xticks([])
-        ax.set_yticks([])
-        ax.set_zticks([])
-        ax.grid(False)
+def rubbish():
+    '''
+    def colorMap2():
+        t = 1000
+        u = 10
+        w = 20
+        n = 2
+        v = 31
+        sigma = 0.3
+        seed = 1
+        analytical = my3DCouetteSolver(desired_timesteps=t, u_wall=u, wall_height=w,
+                                       nu=n, vertical_resolution=v, sigma=sigma, my_seed=seed)
+        t, c, d, h2, w2 = analytical.shape
+        v_step = w / (h2-1)
+        v_steps = np.arange(0, w + v_step, v_step).tolist()
+        X, Y, Z = np.meshgrid(v_steps, v_steps, v_steps)
+        U = [analytical[1, 0, :, :, :], analytical[50, 0, :, :, :],
+             analytical[250, 0, :, :, :], analytical[999, 0, :, :, :]]
+        titles = ['T = 1', 'T = 50', 'T = 250', 'T = 999', ]
+        cm = plt.cm.get_cmap('Spectral')
+        # Creating figure
+        fig = plt.figure()
+        for i in range(len(U)):
+            ax = fig.add_subplot(2, 2, (i+1), projection='3d')
+            ax.set_title(titles[i], fontsize=10)
+            sc = ax.scatter3D(Z, Y, X, c=U[i],
+                              alpha=0.8, marker='.', s=0.25, vmin=-4, vmax=14, cmap=cm)
+            ax.set_xticks([])
+            ax.set_yticks([])
+            ax.set_zticks([])
+            ax.grid(False)
 
-    fig.subplots_adjust(right=0.8)
-    cbar_ax = fig.add_axes([0.85, 0.15, 0.05, 0.7])
-    fig.colorbar(sc, cax=cbar_ax)
+        fig.subplots_adjust(right=0.8)
+        cbar_ax = fig.add_axes([0.85, 0.15, 0.05, 0.7])
+        fig.colorbar(sc, cax=cbar_ax)
 
-    plt.show()
-    fig.savefig('Plots/Sample_Volume_Couette_Noisy.png')
-'''
+        plt.show()
+        fig.savefig('Plots/Sample_Volume_Couette_Noisy.png')
+    '''
+    pass
 
 
 def plotLoss(losses_MAE, losses_MSE, file_name):
@@ -664,4 +688,6 @@ def main():
 
 
 if __name__ == "__main__":
-    colorMap2()
+    clean_mamico_data('/home/lerdo/lerdo_HPC_Lab_Project/Trainingdata', 'couette_test_combined_domain_3_0.csv')
+    my_dataset = mamico_csv2dataset('/home/lerdo/lerdo_HPC_Lab_Project/Trainingdata/clean_couette_test_combined_domain_3_0.csv')
+    colorMap(dataset=my_dataset, 'visualization of mamico data x-vel')

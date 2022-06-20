@@ -15,16 +15,16 @@ def load_checkpoint(checkpoint, model):
     model.load_state_dict(checkpoint["state_dict"])
 
 
-def clean_mamico_data(filename):
+def clean_mamico_data(directory, filename):
     #
     # This function is used to clean the MaMiCo generated
     # csv file. In other words, to remove the comma delimiter
     # and ensure a semicolon delimiter.
     #
-    text = open(f"{filename}.csv", "r")
+    text = open(f"{directory}/{filename}.csv", "r")
     text = ''.join([i for i in text]) \
         .replace(",", ";")
-    x = open(f"clean_{filename}.csv", "w")
+    x = open(f"{directory}/clean_{filename}.csv", "w")
     x.writelines(text)
     x.close()
     pass
