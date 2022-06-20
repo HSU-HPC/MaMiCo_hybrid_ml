@@ -28,8 +28,6 @@ def colorMap(dataset, filename, v_component=0):
 
     # Creating figure
     fig = plt.figure()
-    # fig.suptitle('3D Analytical Couette Flow Sample of $u_x$ at $T=98$',
-    #             fontsize=10, fontweight='bold')
 
     # Creating subplots
     while counter < 8:
@@ -40,24 +38,19 @@ def colorMap(dataset, filename, v_component=0):
         ax.set_xlabel("X", fontsize=7, fontweight='bold')
         ax.set_ylabel("Y", fontsize=7, fontweight='bold')
         ax.set_zlabel("Z", fontsize=7, fontweight='bold')
-        # ax.xaxis.labelpad = -10
-        # ax.yaxis.labelpad = -10
-        # ax.zaxis.labelpad = -10
         ax.set_xticks([])
         ax.set_yticks([])
         ax.set_zticks([])
         ax.grid(False)
-        # Visualizing central cells
         counter += 1
 
     fig.subplots_adjust(right=0.8)
     cbar_ax = fig.add_axes([0.85, 0.15, 0.05, 0.7])
     fig.colorbar(sc, cax=cbar_ax)
     # fig.set_size_inches(3.5, 2)
-    # fig.set_size_inches(6, 6)
-    # plt.show()
     fig.savefig('Testing_MaMiCo_Visualization.png')
     fig.savefig('myfig.eps', format='eps')
+    plt.show()
 
 
 def visualizeMaMiCoDataset(_filename):
