@@ -17,7 +17,6 @@ def colorMap(dataset, filename, v_component=0):
     # dataset - contains the MaMiCoDataset [1000, 3, 26, 26, 26]
     # filename - the name of the file that the plot should be saved to
 
-    d, h, w = 26
     steps = np.arange(0, 26).tolist()
     X, Y, Z = np.meshgrid(steps, steps, steps)
     counter = 0
@@ -687,8 +686,7 @@ def main():
 
 
 if __name__ == "__main__":
-    clean_mamico_data('/home/lerdo/lerdo_HPC_Lab_Project/Trainingdata',
-                      'couette_test_combined_domain_3_0.csv')
+    # clean_mamico_data('/home/lerdo/lerdo_HPC_Lab_Project/Trainingdata', 'couette_test_combined_domain_3_0.csv')
     my_dataset = mamico_csv2dataset(
         '/home/lerdo/lerdo_HPC_Lab_Project/Trainingdata/clean_couette_test_combined_domain_3_0.csv')
     colorMap(my_dataset, 'visualization of mamico data x-vel')
