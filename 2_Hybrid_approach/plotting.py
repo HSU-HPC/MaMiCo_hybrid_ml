@@ -56,7 +56,7 @@ def colorMap(dataset, filename, v_component=0):
     # fig.set_size_inches(3.5, 2)
     # fig.set_size_inches(6, 6)
     # plt.show()
-    fig.savefig('/Testing_MaMiCo_Visualization.png')
+    fig.savefig('Testing_MaMiCo_Visualization.png')
 
 
 def visualizeMaMiCoDataset(_filename):
