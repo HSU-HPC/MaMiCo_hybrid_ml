@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib as mpl
+mpl.use('Agg')
 from utils import clean_mamico_data, mamico_csv2dataset
 plt.style.use(['science'])
 np.set_printoptions(precision=2)
