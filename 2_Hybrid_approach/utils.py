@@ -21,10 +21,10 @@ def clean_mamico_data(directory, filename):
     # csv file. In other words, to remove the comma delimiter
     # and ensure a semicolon delimiter.
     #
-    text = open(f"{directory}/{filename}.csv", "r")
+    text = open(f"{directory}/{filename}", "r")
     text = ''.join([i for i in text]) \
         .replace(",", ";")
-    x = open(f"{directory}/clean_{filename}.csv", "w")
+    x = open(f"{directory}/clean_{filename}", "w")
     x.writelines(text)
     x.close()
     pass
