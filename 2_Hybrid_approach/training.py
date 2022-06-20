@@ -1,12 +1,13 @@
-from utils import get_mamico_loaders, losses2file, userModelSpecs
-import time
-from model import Hybrid_MD_RNN_UNET, Hybrid_MD_GRU_UNET, Hybrid_MD_LSTM_UNET
-import torch.optim as optim
-import torch.nn as nn
-import matplotlib.pyplot as plt
-from tqdm.auto import tqdm
-import numpy as np
 import torch
+import sys
+import numpy as np
+from tqdm.auto import tqdm
+import matplotlib.pyplot as plt
+import torch.nn as nn
+import torch.optim as optim
+from model import Hybrid_MD_RNN_UNET, Hybrid_MD_GRU_UNET, Hybrid_MD_LSTM_UNET
+import time
+from utils import get_mamico_loaders, losses2file, checkUserModelSpecs
 
 plt.style.use(['science'])
 np.set_printoptions(precision=6)
@@ -44,7 +45,7 @@ def train_hybrid(loader, model, optimizer, criterion, scaler, current_epoch):
         with torch.cuda.amp.autocast():
             scores = model(data)
             loss = criterion(scores, targets)
-            print(f'Current loss: {loss} \n')
+            # print(f'Current loss: {loss} \n')
             losses.append(loss.item())
 
         # backward
@@ -64,7 +65,7 @@ def train_hybrid(loader, model, optimizer, criterion, scaler, current_epoch):
     final_loss = losses[-1]
     average_loss = sum(losses)/len(losses)
     print('------------------------------------------------------------')
-    print(f'Current epoch: {current_epoch}')
+    # print(f'Current epoch: {current_epoch}')
     print('Losses for the first 12 inputs:')
     print(f'[0]: {losses[0]:.7f}, [1]: {losses[1]:.7f}, [2]: {losses[2]:.7f}')
     print(f'[3]: {losses[3]:.7f}, [4]: {losses[4]:.7f}, [5]: {losses[5]:.7f}')
@@ -223,7 +224,40 @@ def model_performance(model_name, rnn_layer, hid_size, learning_rate, max_losses
 
 
 def main():
-    training_factory(userModelSpecs())
+    # BRIEF: This allows the user to use command line arguments to be used as
+    # arguments for the training process.
+    #
+    # PARAMETERS:
+    #
+    # _model_name, _rnn_layer, _hid_size, _learning_rate = user_input. Note that
+    # each argument must be an integer value between 1 and 3. The following list
+    # describes the corresponding meaning:
+    #
+    # _model_name -    1) Hybrid_MD_RNN_UNET
+    #                  2) Hybrid_MD_GRU_UNET
+    #                  3) Hybrid_MD_LSTM_UNET
+    #
+    # _rnn_layer -     1) 2
+    #                  2) 3
+    #                  3) 4
+    #
+    # _hid_size -      1) 256
+    #                  2) 512
+    #                  3) 768
+    #
+    # _learning_rate - 1) 0.0001
+    #                  2) 0.00005
+    #                  3) 0.00001
+
+    _user_input = sys.argv[1:]
+    _valid_input = checkUserModelSpecs(_user_input)
+
+    if(_valid_input):
+        print('Input is valid.')
+        # training_factory(_user_input)
+
+    else:
+        print('Input is invalid.')
 
 
 if __name__ == "__main__":

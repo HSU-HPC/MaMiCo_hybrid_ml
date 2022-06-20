@@ -93,126 +93,82 @@ def get_mamico_loaders(file_names=0, num_workers=4):
     return dataloaders
 
 
-def userModelSpecs():
-    '''
-    invalid = True
-    while invalid:
-        print("Please choose which hybrid model to train:")
-        print("1) Hybrid_MD_RNN_UNET")
-        print("2) Hybrid_MD_GRU_UNET")
-        print("3) Hybrid_MD_LSTM_UNET \n")
+def checkUserModelSpecs(user_input):
+    # BRIEF: This allows to verify that the user command line arguments are
+    # valid and adhere to the coding convention.
+    #
+    # PARAMETERS:
+    #
+    # _model_name, _rnn_layer, _hid_size, _learning_rate = user_input. Note that
+    # each argument must be an integer value between 1 and 3. The following list
+    # describes the corresponding meaning:
+    #
+    # _model_name -    1) Hybrid_MD_RNN_UNET
+    #                  2) Hybrid_MD_GRU_UNET
+    #                  3) Hybrid_MD_LSTM_UNET
+    #
+    # _rnn_layer -     1) 2
+    #                  2) 3
+    #                  3) 4
+    #
+    # _hid_size -      1) 256
+    #                  2) 512
+    #                  3) 768
+    #
+    # _learning_rate - 1) 0.0001
+    #                  2) 0.00005
+    #                  3) 0.00001
 
-        model_name = input()
+    _model_names = ['Hybrid_MD_RNN_UNET',
+                    'Hybrid_MD_GRU_UNET', 'Hybrid_MD_LSTM_UNET']
+    # @_model_names - model names as strings for later file naming
+    _rnn_layers = [2, 3, 4]
+    # @_rnn_layers - container to hold the number of rnn layers deemed worth testing
+    _hid_sizes = [256, 512, 768]
+    # @_hid_sizes - container to hold the number of nodes per hidden layer deemed worth testing
+    _learning_rates = [0.0001, 0.00005, 0.00001]
+    # @_learning_rates - container to hold the learning rates deemed worth testing
 
-        if(model_name == "1"):
-            print("You've chosen: Hybrid_MD_RNN_UNET \n")
-            _model_name = 'Hybrid_MD_RNN_UNET'
-            invalid = False
-        elif(model_name == "2"):
-            print("You've chosen: Hybrid_MD_GRU_UNET \n")
-            _model_name = 'Hybrid_MD_GRU_UNET'
-            invalid = False
-        elif(model_name == "3"):
-            print("You've chosen: Hybrid_MD_LSTM_UNET \n")
-            _model_name = 'Hybrid_MD_LSTM_UNET'
-            invalid = False
-        else:
-            print("Invalid input \n")
+    for i in range(len(user_input)):
+        user_input[i] = int(user_input[i])
 
-    invalid = True
-    while invalid:
-        print("Please choose how many RNN layers this model should contain:")
-        print("1) 2 ")
-        print("2) 3")
-        print("3) 4 \n")
+    if(len(user_input) < 4):
+        print("Not enough arguments. Four are required.")
+        return False
 
-        rnn_layers = input()
+    if(len(user_input) > 4):
+        print("Too many arguments. Four are required.")
+        return False
 
-        if(rnn_layers == "1"):
-            print("You've chosen: 2 layers. \n")
-            _rnn_layers = 2
-            invalid = False
-        elif(rnn_layers == "2"):
-            print("You've chosen: 3 layers. \n")
-            _rnn_layers = 3
-            invalid = False
-        elif(rnn_layers == "3"):
-            print("You've chosen: 4 layers. \n")
-            _rnn_layers = 4
-            invalid = False
-        else:
-            print("Invalid input \n")
+    _model_name, _rnn_layer, _hid_size, _learning_rate = user_input
+    _valid_input = True
 
-    invalid = True
-    while invalid:
-        print("Please choose the size of the RNN hidden layers:")
-        print("1) 256 ")
-        print("2) 512")
-        print("3) 768 \n")
+    if (_model_name < 1 or _model_name > 3):
+        print("You've chosen an invalid model.")
+        _valid_input = False
+    if (_rnn_layer < 1 or _rnn_layer > 3):
+        print("You've chosen an invalid amount of RNN layers.")
+        _valid_input = False
 
-        hid_size = input()
+    if (_hid_size < 1 or _hid_size > 3):
+        print("You've chosen an invalid amount of nodes per RNN layer.")
+        _valid_input = False
 
-        if(hid_size == "1"):
-            print("You've chosen: 256 nodes per hidden layer. \n")
-            _hid_size = 256
-            invalid = False
-        elif(hid_size == "2"):
-            print("You've chosen: 512 nodes per hidden layer. \n")
-            _hid_size = 512
-            invalid = False
-        elif(hid_size == "3"):
-            print("You've chosen: 768 nodes per hidden layer. \n")
-            _hid_size = 768
-            invalid = False
-        else:
-            print("Invalid input \n")
+    if (_learning_rate < 1 or _learning_rate > 3):
+        print("You've chosen an invalid learning rate.")
+        _valid_input = False
 
-    invalid = True
-    while invalid:
-        print("Please choose the learning rate:")
-        print("1) 0.0001 ")
-        print("2) 0.00005")
-        print("3) 0.00001 \n")
+    if(_valid_input):
+        print('------------------------------------------------------------')
+        print('                       Model Summary')
+        print('------------------------------------------------------------')
+        print(f'Model Name: {_model_names[_model_name-1]}')
+        print(f'RNN Layers: {_rnn_layers[_rnn_layer-1]}')
+        print(f'Size hidden Layer: {_hid_sizes[_hid_size-1]}')
+        print(f'Learning Rate: {_learning_rates[_learning_rate-1]}')
+        print('------------------------------------------------------------')
 
-        learning_rate = input()
-
-        if(learning_rate == "1"):
-            print("You've chosen: learning_rate = 0.0001. \n")
-            _learning_rate = 0.0001
-            invalid = False
-        elif(learning_rate == "2"):
-            print("You've chosen: learning_rate = 0.00005. \n")
-            _learning_rate = 0.00005
-            invalid = False
-        elif(learning_rate == "3"):
-            print("You've chosen: learning_rate = 0.00001. \n")
-            _learning_rate = 0.00001
-            invalid = False
-        else:
-            print("Invalid input \n")
-    '''
-
-    _model_name = "Hybrid_MD_GRU_UNET"
-    _rnn_layers = 2
-    _hid_size = 256
-    _learning_rate = 0.0001
-
-    model_name = 2
-    rnn_layers = 1
-    hid_size = 1
-    learning_rate = 1
-
-    print('------------------------------------------------------------')
-    print('                       Model Summary')
-    print('------------------------------------------------------------')
-    print(f'Model Name: {_model_name}')
-    print(f'RNN Layers: {_rnn_layers}')
-    print(f'Size hidden Layer: {_hid_size}')
-    print(f'Learning Rate: {_learning_rate}')
-    print('------------------------------------------------------------')
-
-    # Consider if returning a list or a dictionary is more beneficial
-    return [int(model_name)-1, int(rnn_layers)-1, int(hid_size)-1, int(learning_rate)-1]
+    return _valid_input
 
 
 def losses2file(losses, filename):
@@ -220,7 +176,4 @@ def losses2file(losses, filename):
 
 
 if __name__ == "__main__":
-    results = userModelSpecs()
-    for value in results:
-        print(f'{str(value)}')
     pass
