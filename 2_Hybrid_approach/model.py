@@ -627,13 +627,35 @@ class Hybrid_MD_LSTM_UNET(nn.Module):
         return x
 
 
+def resetPipeline(model):
+    model.sequence = torch.zeros(5, model.input_size)
+    return
+
+
 def test():
-    model = Hybrid_MD_GRU_UNET(device=device, in_channels=3, out_channels=3, features=[
-              4, 8, 16], activation=nn.ReLU(inplace=True), RNN_in_size=256, RNN_hid_size=512, RNN_lay=2)
-    x = torch.randn(1, 3, 24, 24, 24)
-    print('Test-Input shape: ', x.shape)
-    preds = model(x)
-    print('Test-Prediction shape: ', preds.size())
+    model = Hybrid_MD_GRU_UNET(
+        device=device,
+        in_channels=3,
+        out_channels=3,
+        features=[4, 8, 16],
+        activation=nn.ReLU(inplace=True),
+        RNN_in_size=256,
+        RNN_hid_size=512,
+        RNN_lay=2
+    )
+
+    print(model.sequence)
+
+    for i in range(10):
+        x = torch.randn(1, 3, 24, 24, 24)
+        print('Test-Input shape: ', x.shape)
+        preds = model(x)
+        print('Test-Prediction shape: ', preds.size())
+
+    print(model.sequence)
+    resetPipeline(model)
+    # model.sequence = torch.zeros(5, model.input_size)
+    print(model.sequence)
 
 
 if __name__ == "__main__":
