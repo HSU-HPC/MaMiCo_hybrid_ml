@@ -19,7 +19,7 @@ LOAD_MODEL = False
 
 
 def train_hybrid(loader, model, optimizer, criterion, scaler, current_epoch):
-    # BRIEF: The train function will complete one epoch of the training cycle.
+    # BRIEF: The train function completes one epoch of the training cycle.
     # PARAMETERS:
     # loader - object of PyTorch-type DataLoader to automatically feed dataset
     # model - the model to be trained
@@ -29,7 +29,8 @@ def train_hybrid(loader, model, optimizer, criterion, scaler, current_epoch):
     losses = []
     # @losses - container for each individually calculated loss
     counter = 0
-    # @counter - running counter to track number of batches in epoch
+    # @counter - running counter to track number of batches in epoch. This is
+    # essentially a way to track the timestep.
     max_loss = 0
     # @max_loss - stores the largest loss in this epoch
     time_buffer = 0
@@ -84,8 +85,66 @@ def train_hybrid(loader, model, optimizer, criterion, scaler, current_epoch):
     return (max_loss, min_loss, final_loss, average_loss)
 
 
-def valid_hybrid():
-    pass
+def valid_hybrid(loader, model, criterion, scaler):
+    # BRIEF: The valid function completes an epoch using the validation
+    # loader WITHOUT updating the model. It is used as a performance metric.
+    # PARAMETERS:
+    # loader - object of PyTorch-type DataLoader to automatically feed dataset
+    # model - the model to be validated
+    # criterion - the loss function applied to quantify the error
+    # scaler -
+
+    losses = []
+    # @losses - container for each individually calculated loss
+    counter = 0
+    # @counter - running counter to track number of batches in epoch. This is
+    # essentially a way to track the timestep
+    sample_times = [0, 25, 50, 100, 200, 400, 800, 998]
+    max_loss = 0
+    # @max_loss - stores the largest loss in this epoch
+    time_buffer = 0
+    # @time_buffer - used to track time at which max_loss occurs
+    model_preds = []
+    # @model_preds - container for specific predictions to be used for plotting
+    model_targs = []
+    # @model_targs - container for specific targets to be used for plotting
+
+    for batch_idx, (data, targets) in enumerate(loader):
+        data = data.float().squeeze(1).to(device)
+        targets = targets.float().to(device)
+
+        # forward
+        with torch.cuda.amp.autocast():
+            scores = model(data)
+            loss = criterion(scores, targets)
+            losses.append(loss.item())
+
+        if counter in sample_times:
+            model_preds.append(scores)
+            model_targs.append(targets)
+
+        # Check for max error
+        counter += 1
+        if loss > max_loss:
+            max_loss = loss
+            time_buffer = counter
+
+        if counter < 10:
+            num = '000'
+        elif counter < 100:
+            num = '00'
+        elif counter < 1000:
+            num = '0'
+
+        print(f'Progress: {num}{counter}/1000     Error: {loss:.7f}')
+
+    avg_error = sum(losses)/len(losses)
+    print('------------------------------------------------------------')
+    print('                         Validation')
+    print('------------------------------------------------------------')
+    print(
+        f'Average error: {avg_error:.7f}. Max error: {max(losses):.7f} at time: {time_buffer}')
+    return [model_preds, model_targs, avg_error]
 
 
 def test_hybrid():
@@ -117,7 +176,7 @@ def training_factory(user_input):
     # @_criterion - initializes the loss function to the well known Mean Absolute Error (MAE)
     # _batch_size = 1
     # @_batch_size - other batch sizes are not possible. Refer to model description for more intuition
-    _num_epochs = 15
+    _num_epochs = 1
     # @_num_epochs - the amount of times the model will train with each dataset
     _train_loaders = get_mamico_loaders()
     # @_train_loaders - container to hold the dataloaders for each dataset
