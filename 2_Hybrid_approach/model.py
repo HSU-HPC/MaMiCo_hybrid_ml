@@ -309,7 +309,7 @@ class Hybrid_MD_RNN_UNET(nn.Module):
             num_layers=self.num_layers,
             batch_first=True
         )
-        self.sequence = torch.zeros(5, self.input_size)
+        self.sequence = torch.zeros(25, self.input_size)
         self.fc = nn.Linear(self.hidden_size, self.input_size)
 
         # Down part of UNET
@@ -365,7 +365,7 @@ class Hybrid_MD_RNN_UNET(nn.Module):
             self.sequence, torch.reshape(x, (1, self.input_size)), self.device).to(self.device)
 
         x, _ = self.rnn(torch.reshape(
-            self.sequence, (1, 5, self.input_size)), h0)
+            self.sequence, (1, 25, self.input_size)), h0)
 
         # Decode the hidden state of the last time step
         x = x[:, -1, :]
