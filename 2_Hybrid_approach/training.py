@@ -260,7 +260,7 @@ def main():
 
     if(_valid_input):
         print('Input is valid.')
-        # training_factory(_user_input)
+        training_factory(_user_input)
 
     else:
         print('Input is invalid.')
