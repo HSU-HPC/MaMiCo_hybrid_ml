@@ -7,6 +7,7 @@ import torch.optim as optim
 from model import Hybrid_MD_RNN_UNET, Hybrid_MD_GRU_UNET, Hybrid_MD_LSTM_UNET, resetPipeline
 import time
 from utils import get_mamico_loaders, losses2file, checkUserModelSpecs
+from plotting import plotMinMaxAvgLoss
 
 plt.style.use(['science'])
 np.set_printoptions(precision=6)
@@ -101,9 +102,10 @@ def training_factory(user_input):
     # _model_names =['Hybrid_MD_RNN_UNET', 'Hybrid_MD_GRU_UNET', 'Hybrid_MD_LSTM_UNET']
 
     _model_name, _rnn_layer, _hid_size, _learning_rate = user_input
+
+    _file_suffix = f'{_model_name+1}_{_rnn_layer+1}_{_hid_size+1}_{_learning_rate+1}'
     # @above - unpacking user_input
-    _model_names = ['Hybrid_MD_RNN_UNET',
-                    'Hybrid_MD_GRU_UNET', 'Hybrid_MD_LSTM_UNET']
+    # _model_names = ['Hybrid_MD_RNN_UNET', 'Hybrid_MD_GRU_UNET', 'Hybrid_MD_LSTM_UNET']
     # @_model_names - model names as strings for later file naming
     _rnn_layers = [2, 3, 4]
     # @_rnn_layers - container to hold the number of rnn layers deemed worth testing
@@ -185,15 +187,22 @@ def training_factory(user_input):
             _min_losses.append(_interim_loss[1])
             _average_losses.append(_interim_loss[3])
 
-    losses2file(_average_losses,
-                f'{_model_names[_model_name]}_average_MAE_{_rnn_layer}_{_hid_size}_{_learning_rate}')
-    losses2file(
-        _max_losses, f'{_model_names[_model_name]}_max_MAE_{_rnn_layer}_{_hid_size}_{_learning_rate}')
-    losses2file(
-        _min_losses, f'{_model_names[_model_name]}_min_MAE_{_rnn_layer}_{_hid_size}_{_learning_rate}')
+    losses2file(_average_losses, f'Average_Error_per_Loader_{_file_suffix}')
+    losses2file(_max_losses, f'Maximum_Error_per_Loader_{_file_suffix}')
+    losses2file(_min_losses, f'Minimum_Error_per_Loader_{_file_suffix}')
     # @losses2file is used to evaluate the development of the models loss.
     # Here, not only the average loss is tracked, but also the min and max
     # losses in order to track the deviation from the average.
+
+    plotMinMaxAvgLoss(
+        min_losses=_min_losses,
+        avg_losses=_average_losses,
+        max_losses=_max_losses,
+        file_name=_file_suffix
+    )
+    # @plotMinMaxAvgLoss is used to automatically graph the learning
+    # process via losses. Refer to function definition for more details.
+
     model_performance(
         model_name=_model_name,
         rnn_layer=_rnn_layer,
@@ -203,10 +212,11 @@ def training_factory(user_input):
         min_losses=_min_losses,
         average_losses=_average_losses,
         epochs=_num_epochs)
-    return
+    # @model_performance is only used as a means of printing an easy to read
+    # performance overview to the terminal.
 
-    torch.save(_model.state_dict(
-    ), f'{_model_names[_model_name]}_{_rnn_layer}_{_hid_size}_{_learning_rate}')
+    torch.save(_model.state_dict(), f'Model_{_file_suffix}')
+    return
 
 
 def model_performance(model_name, rnn_layer, hid_size, learning_rate, max_losses=0, min_losses=0, average_losses=0, epochs=0):
