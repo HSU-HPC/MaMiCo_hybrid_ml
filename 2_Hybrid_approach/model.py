@@ -289,7 +289,15 @@ class Hybrid_MD_RNN_UNET(nn.Module):
         self.ups = nn.ModuleList()
         self.downs = nn.ModuleList()
         self.pool = nn.MaxPool3d(kernel_size=2, stride=2)
+        self.helper_down = nn.Conv3d(
+            in_channels=16, out_channels=16, kernel_size=2, stride=1, padding=0, bias=False)
         self.activation = nn.ReLU()
+        self.helper_up_1 = nn.ConvTranspose3d(
+            in_channels=32, out_channels=32, kernel_size=2, stride=1, padding=0, bias=False)
+        self.helper_up_2 = nn.Conv3d(
+            in_channels=4, out_channels=3, kernel_size=3, stride=1, padding=0, bias=False)
+        self.helper_up_3 = nn.Conv3d(
+            in_channels=3, out_channels=3, kernel_size=3, stride=1, padding=0, bias=False)
 
         # RNN building blocks
         self.input_size = RNN_in_size
@@ -334,14 +342,13 @@ class Hybrid_MD_RNN_UNET(nn.Module):
             x = self.pool(x)
 
         # This is the bottleneck
-        print("This is the bottleneck:")
-        print("Size of x before additional Conv3D: ", x.size())
-        x = nn.Conv3d(x.shape[1], x.shape[1], kernel_size=2,
-                      stride=1, padding=0, bias=False)(x)
-        print("Size of x after additional Conv3D: ", x.size())
+        # print("This is the bottleneck:")
+        # print("Size of x before additional Conv3D: ", x.size())
+        x = self.helper_down(x)
+        # print("Size of x after additional Conv3D: ", x.size())
         x = self.activation(x)
         x = self.bottleneck(x)
-        print("Size of x after bottleneck: ", x.size())
+        # print("Size of x after bottleneck: ", x.size())
         x = self.activation(x)
 
         # Create RNN-input from x and sanity check dimensions
@@ -370,8 +377,7 @@ class Hybrid_MD_RNN_UNET(nn.Module):
         # Merge output into CNN signal (->x) and sanity check dimensions
         x = torch.reshape(x, (1, (self.input_size/8), 2, 2, 2))
         # print('Class-4-CNN signal shape: ', x.size())
-        x = nn.ConvTranspose3d(
-            x.shape[1], x.shape[1], kernel_size=2, stride=1, padding=0, bias=False)(x)
+        x = self.helper_up_1(x)
         x = self.activation(x)
         skip_connections = skip_connections[::-1]
 
@@ -381,12 +387,13 @@ class Hybrid_MD_RNN_UNET(nn.Module):
             skip_connection = skip_connections[idx//2]
             concat_skip = torch.cat((skip_connection, x), dim=1)
             x = self.ups[idx+1](concat_skip)
+        # print("Size of x before downsizing to MD: ", x.size())
 
-        print("Size of x before downsizing to MD: ", x.size())
+        x = self.helper_up_2(x)
+        x = self.activation(x)
 
-        for i in range(3):
-            x = nn.Conv3d(x.shape[1], 3, kernel_size=3,
-                          stride=1, padding=0, bias=False)(x)
+        for i in range(2):
+            x = self.helper_up_3(x)
             x = self.activation(x)
 
         return x
@@ -524,6 +531,12 @@ class Hybrid_MD_LSTM_UNET(nn.Module):
         self.downs = nn.ModuleList()
         self.pool = nn.MaxPool3d(kernel_size=2, stride=2)
         self.activation = nn.ReLU()
+        self.helper_up_1 = nn.ConvTranspose3d(
+            in_channels=32, out_channels=32, kernel_size=2, stride=1, padding=0, bias=False)
+        self.helper_up_2 = nn.Conv3d(
+            in_channels=4, out_channels=3, kernel_size=3, stride=1, padding=0, bias=False)
+        self.helper_up_3 = nn.Conv3d(
+            in_channels=3, out_channels=3, kernel_size=3, stride=1, padding=0, bias=False)
 
         # RNN building blocks
         self.input_size = RNN_in_size
@@ -568,19 +581,17 @@ class Hybrid_MD_LSTM_UNET(nn.Module):
             x = self.pool(x)
 
         # This is the bottleneck
-        print("This is the bottleneck:")
-        print("Size of x before additional Conv3D: ", x.size())
-        x = nn.Conv3d(x.shape[1], x.shape[1], kernel_size=2,
-                      stride=1, padding=0, bias=False)(x)
-        print("Size of x after additional Conv3D: ", x.size())
+        # print("This is the bottleneck:")
+        # print("Size of x before additional Conv3D: ", x.size())
+        x = self.helper_down(x)
+        # print("Size of x after additional Conv3D: ", x.size())
         x = self.activation(x)
         x = self.bottleneck(x)
-        print("Size of x after bottleneck: ", x.size())
+        # print("Size of x after bottleneck: ", x.size())
         x = self.activation(x)
 
         # Create RNN-input from x and sanity check dimensions
-        # x = torch.reshape(x, (1, 512)).to(self.device)
-        # print('Class-2-SequenceInput shape: ', sequenceInput.size())
+        # x = torch.reshape(x, (1, self.input_size)).to(self.device)
 
         # Prepare LSTM: Set initial hidden states(for RNN, GRU, LSTM)
         h0 = torch.zeros(self.num_layers, x.size(
@@ -588,7 +599,7 @@ class Hybrid_MD_LSTM_UNET(nn.Module):
         c0 = torch.zeros(self.num_layers, x.size(
             0), self.hidden_size).to(self.device)
 
-        # Prepare RNN: Forward propagate RNN
+        # Prepare LSTM: Forward propagate RNN
         self.sequence = tensor_FIFO_pipe(
             self.sequence, torch.reshape(x, (1, self.input_size)), self.device).to(self.device)
 
@@ -606,8 +617,7 @@ class Hybrid_MD_LSTM_UNET(nn.Module):
         # Merge output into CNN signal (->x) and sanity check dimensions
         x = torch.reshape(x, (1, int((self.input_size/8)), 2, 2, 2))
         # print('Class-4-CNN signal shape: ', x.size())
-        x = nn.ConvTranspose3d(
-            x.shape[1], x.shape[1], kernel_size=2, stride=1, padding=0, bias=False)(x)
+        x = self.helper_up_1(x)
         x = self.activation(x)
         skip_connections = skip_connections[::-1]
 
@@ -617,11 +627,13 @@ class Hybrid_MD_LSTM_UNET(nn.Module):
             skip_connection = skip_connections[idx//2]
             concat_skip = torch.cat((skip_connection, x), dim=1)
             x = self.ups[idx+1](concat_skip)
-        print("Size of x before downsizing to MD: ", x.size())
+        # print("Size of x before downsizing to MD: ", x.size())
 
-        for i in range(3):
-            x = nn.Conv3d(x.shape[1], 3, kernel_size=3,
-                          stride=1, padding=0, bias=False)(x)
+        x = self.helper_up_2(x)
+        x = self.activation(x)
+
+        for i in range(2):
+            x = self.helper_up_3(x)
             x = self.activation(x)
 
         return x

@@ -128,8 +128,8 @@ def checkUserModelSpecs(user_input):
     _learning_rates = [0.0001, 0.00005, 0.00001]
     # @_learning_rates - container to hold the learning rates deemed worth testing
 
-    for i in range(len(user_input)):
-        user_input[i] = int(user_input[i])
+    for i in user_input:
+        i = int(i)
 
     if(len(user_input) < 4):
         print("Not enough arguments. Four are required.")

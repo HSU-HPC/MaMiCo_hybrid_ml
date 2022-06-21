@@ -154,7 +154,7 @@ def training_factory(user_input):
             RNN_lay=_rnn_layers[_rnn_layer]
         ).to(device)
 
-    # Hybrid_MD_GRU_UNET
+    # Hybrid_MD_LSTM_UNET
     if _model_name == 2:
         _model = Hybrid_MD_LSTM_UNET(
             device=device,
