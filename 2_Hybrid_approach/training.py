@@ -99,6 +99,11 @@ def training_factory(user_input):
     # the user to define the training hyperparameters. It consists of:
     # [model_name, rnn_layers, hid_size, learning_rate]
     # _model_names =['Hybrid_MD_RNN_UNET', 'Hybrid_MD_GRU_UNET', 'Hybrid_MD_LSTM_UNET']
+
+    for element in user_input:
+        element -= 1
+    # @above - turning user input into proper indices
+
     _model_name, _rnn_layer, _hid_size, _learning_rate = user_input
     # @above - unpacking user_input
     _model_names = ['Hybrid_MD_RNN_UNET',
