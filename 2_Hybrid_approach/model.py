@@ -1,7 +1,6 @@
-from ptflops import get_model_complexity_info
-from torchsummary import summary
-import torchvision.transforms.functional as TF
-from drawing_board import save3D_RGBArray2File
+# from ptflops import get_model_complexity_info
+# from torchsummary import summary
+# import torchvision.transforms.functional as TF
 import torch.nn as nn
 import torch
 
@@ -346,10 +345,10 @@ class Hybrid_MD_RNN_UNET(nn.Module):
         # print("This is the bottleneck:")
         # print("Size of x before additional Conv3D: ", x.size())
         x = self.helper_down(x)
-        # print("Size of x after additional Conv3D: ", x.size())
+        print("Size of x after additional Conv3D: ", x.size())
         x = self.activation(x)
         x = self.bottleneck(x)
-        # print("Size of x after bottleneck: ", x.size())
+        print("Size of x after bottleneck: ", x.size())
         x = self.activation(x)
 
         # Create RNN-input from x and sanity check dimensions
@@ -431,7 +430,7 @@ class Hybrid_MD_GRU_UNET(nn.Module):
             num_layers=self.num_layers,
             batch_first=True
         )
-        self.sequence = torch.zeros(5, self.input_size)
+        self.sequence = torch.zeros(25, self.input_size)
         self.fc = nn.Linear(self.hidden_size, self.input_size)
 
         # Down part of UNET
@@ -486,7 +485,7 @@ class Hybrid_MD_GRU_UNET(nn.Module):
             self.sequence, torch.reshape(x, (1, self.input_size)), self.device).to(self.device)
 
         x, _ = self.gru(torch.reshape(
-            self.sequence, (1, 5, self.input_size)), h0)
+            self.sequence, (1, 25, self.input_size)), h0)
 
         # Decode the hidden state of the last time step
         x = x[:, -1, :]
@@ -532,6 +531,8 @@ class Hybrid_MD_LSTM_UNET(nn.Module):
         self.ups = nn.ModuleList()
         self.downs = nn.ModuleList()
         self.pool = nn.MaxPool3d(kernel_size=2, stride=2)
+        self.helper_down = nn.Conv3d(
+            in_channels=16, out_channels=16, kernel_size=2, stride=1, padding=0, bias=False)
         self.activation = nn.ReLU()
         self.helper_up_1 = nn.ConvTranspose3d(
             in_channels=32, out_channels=32, kernel_size=2, stride=1, padding=0, bias=False)
@@ -550,7 +551,7 @@ class Hybrid_MD_LSTM_UNET(nn.Module):
             num_layers=self.num_layers,
             batch_first=True
         )
-        self.sequence = torch.zeros(5, self.input_size)
+        self.sequence = torch.zeros(25, self.input_size)
         self.fc = nn.Linear(self.hidden_size, self.input_size)
 
         # Down part of UNET
@@ -607,7 +608,7 @@ class Hybrid_MD_LSTM_UNET(nn.Module):
             self.sequence, torch.reshape(x, (1, self.input_size)), self.device).to(self.device)
 
         x, _ = self.lstm(torch.reshape(
-            self.sequence, (1, 5, self.input_size)), (h0, c0))
+            self.sequence, (1, 25, self.input_size)), (h0, c0))
 
         # Decode the hidden state of the last time step
         x = x[:, -1, :]
@@ -648,7 +649,7 @@ def resetPipeline(model):
 
 
 def test():
-    model = Hybrid_MD_GRU_UNET(
+    model = Hybrid_MD_LSTM_UNET(
         device=device,
         in_channels=3,
         out_channels=3,
@@ -659,13 +660,13 @@ def test():
         RNN_lay=2
     )
 
-    print(model.sequence)
+    print(model.sequence.size())
 
-    for i in range(10):
+    for i in range(30):
         x = torch.randn(1, 3, 24, 24, 24)
-        print('Test-Input shape: ', x.shape)
+        # print('Test-Input shape: ', x.shape)
         preds = model(x)
-        print('Test-Prediction shape: ', preds.size())
+        # print('Test-Prediction shape: ', preds.size())
 
     print(model.sequence)
     resetPipeline(model)
