@@ -376,7 +376,7 @@ class Hybrid_MD_RNN_UNET(nn.Module):
         # print('Class-3-rnnOutput shape: ', x.size())
 
         # Merge output into CNN signal (->x) and sanity check dimensions
-        x = torch.reshape(x, (1, (self.input_size/8), 2, 2, 2))
+        x = torch.reshape(x, (1, int((self.input_size/8)), 2, 2, 2))
         # print('Class-4-CNN signal shape: ', x.size())
         x = self.helper_up_1(x)
         x = self.activation(x)
