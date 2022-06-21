@@ -329,6 +329,7 @@ class Hybrid_MD_RNN_UNET(nn.Module):
         # This is the "deepest" part.
         # self.bottleneck = DoubleConv(features[-1], features[-1]*2, activation)
         self.bottleneck = DoubleConv(features[-1], features[-1]*2, activation)
+        print('Model initialized: Hybrid_MD_RNN_UNET')
 
     def forward(self, x):
 
@@ -450,6 +451,7 @@ class Hybrid_MD_GRU_UNET(nn.Module):
         # This is the "deepest" part.
         # self.bottleneck = DoubleConv(features[-1], features[-1]*2, activation)
         self.bottleneck = DoubleConv(features[-1], features[-1]*2, activation)
+        print('Model initialized: Hybrid_MD_GRU_UNET')
 
     def forward(self, x):
 
@@ -568,6 +570,7 @@ class Hybrid_MD_LSTM_UNET(nn.Module):
         # This is the "deepest" part.
         # self.bottleneck = DoubleConv(features[-1], features[-1]*2, activation)
         self.bottleneck = DoubleConv(features[-1], features[-1]*2, activation)
+        print('Model initialized: Hybrid_MD_LSTM_UNET')
 
     def forward(self, x):
 
