@@ -261,9 +261,12 @@ def main():
 
     if(_valid_input):
         print('Input is valid.')
-        for i in _user_input:
-            i -= 1
-        # @above - for loop to turn user input into proper indices
+        # for i in _user_input:
+        for i in range(len(_user_input)):
+            # print(f'before change to index: {_user_input[i]}')
+            _user_input[i] = _user_input[i] - 1
+            # print(f'after change to index: {_user_input[i]}')
+            # @above - for loop to turn user input into proper indices
 
         training_factory(_user_input)
 
