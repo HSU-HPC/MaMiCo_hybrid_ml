@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import torch.nn as nn
 import torch.optim as optim
-from model import Hybrid_MD_RNN_UNET, Hybrid_MD_GRU_UNET, Hybrid_MD_LSTM_UNET
+from model import Hybrid_MD_RNN_UNET, Hybrid_MD_GRU_UNET, Hybrid_MD_LSTM_UNET, resetPipeline
 import time
 from utils import get_mamico_loaders, losses2file, checkUserModelSpecs
 
@@ -171,6 +171,7 @@ def training_factory(user_input):
 
     for _epoch in range(_num_epochs):
         for _train_loader in _train_loaders:
+            resetPipeline(_model)
             _interim_loss = train_hybrid(
                 loader=_train_loader,
                 model=_model,
