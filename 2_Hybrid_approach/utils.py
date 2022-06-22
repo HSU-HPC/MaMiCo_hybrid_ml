@@ -175,4 +175,30 @@ def losses2file(losses, filename):
 
 
 if __name__ == "__main__":
-    pass
+    file_names = [
+        'couette_test_combined_domain_0_5_top',
+        'couette_test_combined_domain_0_5_middle',
+        'couette_test_combined_domain_0_5_bottom',
+        'couette_test_combined_domain_1_0_top',
+        'couette_test_combined_domain_1_0_middle',
+        'couette_test_combined_domain_1_0_bottom',
+        'couette_test_combined_domain_1_5_top',
+        'couette_test_combined_domain_1_5_middle',
+        'couette_test_combined_domain_1_5_bottom',
+        'couette_test_combined_domain_2_0_top',
+        'couette_test_combined_domain_2_0_middle',
+        'couette_test_combined_domain_2_0_bottom',
+        'couette_test_combined_domain_3_0_top',
+        'couette_test_combined_domain_3_0_middle',
+        'couette_test_combined_domain_3_0_bottom',
+        'couette_test_combined_domain_4_0_top',
+        'couette_test_combined_domain_4_0_middle',
+        'couette_test_combined_domain_4_0_bottom',
+        'couette_test_combined_domain_5_0_top',
+        'couette_test_combined_domain_5_0_middle',
+        'couette_test_combined_domain_5_0_bottom'
+    ]
+    _directory = '/home/lerdo/lerdo_HPC_Lab_Project/Trainingdata'
+    for name in file_names:
+        clean_mamico_data(_directory, filename=name)
+        pass

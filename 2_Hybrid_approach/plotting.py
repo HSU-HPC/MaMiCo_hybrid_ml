@@ -552,17 +552,75 @@ def rubbish():
 
 
 def test():
-    a = np.random.rand(95) + 3
-    b = np.random.rand(95) + 1
-    c = np.random.rand(95)
-    print(a)
-    plotMinMaxAvgLoss(
-        min_losses=c,
-        max_losses=a,
-        avg_losses=b,
-        file_name='testnow'
-    )
-    print(b)
+    file_names = [
+        'clean_couette_test_combined_domain_0_5_top',
+        'clean_couette_test_combined_domain_0_5_middle',
+        'clean_couette_test_combined_domain_0_5_bottom',
+        'clean_couette_test_combined_domain_1_0_top',
+        'clean_couette_test_combined_domain_1_0_middle',
+        'clean_couette_test_combined_domain_1_0_bottom',
+        'clean_couette_test_combined_domain_1_5_top',
+        'clean_couette_test_combined_domain_1_5_middle',
+        'clean_couette_test_combined_domain_1_5_bottom',
+        'clean_couette_test_combined_domain_2_0_top',
+        'clean_couette_test_combined_domain_2_0_middle',
+        'clean_couette_test_combined_domain_2_0_bottom',
+        'clean_couette_test_combined_domain_3_0_top',
+        'clean_couette_test_combined_domain_3_0_middle',
+        'clean_couette_test_combined_domain_3_0_bottom',
+        'clean_couette_test_combined_domain_4_0_top',
+        'clean_couette_test_combined_domain_4_0_middle',
+        'clean_couette_test_combined_domain_4_0_bottom',
+        'clean_couette_test_combined_domain_5_0_top',
+        'clean_couette_test_combined_domain_5_0_middle',
+        'clean_couette_test_combined_domain_5_0_bottom'
+    ]
+    dataset_names = [
+        '0_5_top',
+        '0_5_middle',
+        '0_5_bottom',
+        '1_0_top',
+        '1_0_middle',
+        '1_0_bottom',
+        '1_5_top',
+        '1_5_middle',
+        '1_5_bottom',
+        '2_0_top',
+        '2_0_middle',
+        '2_0_bottom',
+        '3_0_top',
+        '3_0_middle',
+        '3_0_bottom',
+        '4_0_top',
+        '4_0_middle',
+        '4_0_bottom',
+        '5_0_top',
+        '5_0_middle',
+        '5_0_bottom'
+    ]
+    u_wall = [
+        0.5,
+        0.5,
+        0.5,
+        1.0,
+        1.0,
+        1.0,
+        1.5,
+        1.5,
+        1.5,
+        2.0,
+        2.0,
+        2.0,
+        3.0,
+        3.0,
+        3.0,
+        4.0,
+        4.0,
+        4.0,
+        5.0,
+        5.0,
+        5.0
+    ]
 
 
 def main():
@@ -573,4 +631,4 @@ def main():
 if __name__ == "__main__":
     test()
 
-    # clean_mamico_data('/home/lerdo/lerdo_HPC_Lab_Project/Trainingdata', 'couette_test_combined_domain_3_0.csv')
+    # clean_mamico_data('/home/lerdo/lerdo_HPC_Lab_Project/Trainingdata', 'clean_couette_test_combined_domain_3_0.csv')
