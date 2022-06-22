@@ -650,7 +650,8 @@ class Hybrid_MD_LSTM_UNET(nn.Module):
 
 
 def resetPipeline(model):
-    model.sequence = torch.zeros(5, model.input_size)
+    shape = model.sequence.size()
+    model.sequence = torch.zeros(shape)
     return
 
 
