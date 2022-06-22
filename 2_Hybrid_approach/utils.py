@@ -55,7 +55,7 @@ def mamico_csv2dataset(file_name):
     return dataset
 
 
-def dataset2csv(dataset, model_descriptor, dataset_name, counter):
+def dataset2csv(dataset, dataset_name,  model_descriptor=0, counter=''):
     #
     # This function reads from a MaMiCo generatd csv file.
     # Currently, proper functionality is hardcoded for simulations
@@ -64,7 +64,10 @@ def dataset2csv(dataset, model_descriptor, dataset_name, counter):
     # 1) Convert 3D array to 2D array
     dataset_reshaped = dataset.reshape(dataset.shape[0], -1)
     # 2) Save 2D array to file
-    name = f'{dataset_name}_{counter}_model_{model_descriptor}'
+    if model_descriptor == 0:
+        name = f'{dataset_name}'
+    else:
+        name = f'{dataset_name}_{counter}_model_{model_descriptor}'
     np.savetxt(f'{name}.csv', dataset_reshaped)
 
 
@@ -278,19 +281,14 @@ def checkSaveLoad():
 
 
 if __name__ == "__main__":
-    checkSaveLoad()
 
-    '''
     file_names = [
-        #'couette_test_combined_domain_0_5_top.csv',
-        #'couette_test_combined_domain_0_5_middle.csv',
-        #'couette_test_combined_domain_0_5_bottom.csv',
-        #'couette_test_combined_domain_1_0_top.csv',
-        #'couette_test_combined_domain_1_0_middle.csv',
-        #'couette_test_combined_domain_1_0_bottom.csv',
-        #'couette_test_combined_domain_1_5_top.csv',
-        #'couette_test_combined_domain_1_5_middle.csv',
-        #'couette_test_combined_domain_1_5_bottom.csv',
+        'couette_test_combined_domain_0_5_top.csv',
+        'couette_test_combined_domain_0_5_middle.csv',
+        'couette_test_combined_domain_0_5_bottom.csv',
+        'couette_test_combined_domain_1_0_top.csv',
+        'couette_test_combined_domain_1_0_middle.csv',
+        'couette_test_combined_domain_1_0_bottom.csv',
         'couette_test_combined_domain_2_0_top.csv',
         'couette_test_combined_domain_2_0_middle.csv',
         'couette_test_combined_domain_2_0_bottom.csv',
@@ -304,8 +302,31 @@ if __name__ == "__main__":
         'couette_test_combined_domain_5_0_middle.csv',
         'couette_test_combined_domain_5_0_bottom.csv'
     ]
+    new_file_names = [
+        'clean_couette_dataset_0_5_top.csv',
+        'clean_couette_dataset_0_5_middle.csv',
+        'clean_couette_dataset_0_5_bottom.csv',
+        'clean_couette_dataset_1_0_top.csv',
+        'clean_couette_dataset_1_0_middle.csv',
+        'clean_couette_dataset_1_0_bottom.csv',
+        'clean_couette_dataset_2_0_top.csv',
+        'clean_couette_dataset_2_0_middle.csv',
+        'clean_couette_dataset_2_0_bottom.csv',
+        'clean_couette_dataset_3_0_top.csv',
+        'clean_couette_dataset_3_0_middle.csv',
+        'clean_couette_dataset_3_0_bottom.csv',
+        'clean_couette_dataset_4_0_top.csv',
+        'clean_couette_dataset_4_0_middle.csv',
+        'clean_couette_dataset_4_0_bottom.csv',
+        'clean_couette_dataset_5_0_top.csv',
+        'clean_couette_dataset_5_0_middle.csv',
+        'clean_couette_dataset_5_0_bottom.csv'
+    ]
     _directory = '/home/lerdo/lerdo_HPC_Lab_Project/Trainingdata'
-    for name in file_names:
-        clean_mamico_data(_directory, filename=name)
+    for i in range(len(file_names)):
+        _dataset = mamico_csv2dataset(file_names[i])
+        dataset2csv(
+            dataset=_dataset,
+            dataset_name=new_file_names[i])
         pass
         '''
