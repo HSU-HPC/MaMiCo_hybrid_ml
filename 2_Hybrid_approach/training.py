@@ -6,7 +6,7 @@ import torch.nn as nn
 import torch.optim as optim
 from model import Hybrid_MD_RNN_UNET, Hybrid_MD_GRU_UNET, Hybrid_MD_LSTM_UNET, resetPipeline
 import time
-from utils import get_mamico_loaders, losses2file, checkUserModelSpecs
+from utils import get_mamico_loaders, losses2file, checkUserModelSpecs, dataset2csv
 from plotting import plotMinMaxAvgLoss
 
 plt.style.use(['science'])
@@ -149,7 +149,7 @@ def valid_hybrid(loader, model, criterion, scaler):
     print(
         f'Average error: {avg_loss:.7f}. Max error: {max(losses):.7f} at time: {time_buffer}')
 
-    return [max_loss, min_loss, avg_loss, model_preds, model_targs]
+    return [max_loss, min_loss, avg_loss, np.stack(model_preds), np.stack(model_targs)]
 
 
 def test_hybrid():
@@ -251,9 +251,9 @@ def training_factory(user_input):
             _min_losses.append(_interim_loss[1])
             _average_losses.append(_interim_loss[3])
 
-    losses2file(_average_losses, f'Average_Error_per_Loader_{_file_suffix}')
-    losses2file(_max_losses, f'Maximum_Error_per_Loader_{_file_suffix}')
-    losses2file(_min_losses, f'Minimum_Error_per_Loader_{_file_suffix}')
+    losses2file(_average_losses, f'Avg_Error_Training_{_file_suffix}')
+    losses2file(_max_losses, f'Max_Error_Training_{_file_suffix}')
+    losses2file(_min_losses, f'Min_Error_Training_{_file_suffix}')
     # @losses2file is used to evaluate the development of the models loss.
     # Here, not only the average loss is tracked, but also the min and max
     # losses in order to track the deviation from the average.
@@ -270,8 +270,7 @@ def training_factory(user_input):
     _max_valid_losses = []
     _min_valid_losses = []
     _avg_valid_losses = []
-    _model_preds = []
-    _model_targs = []
+    _counter = 1
 
     # Validation
     for _valid_loader in _valid_loaders:
@@ -285,8 +284,21 @@ def training_factory(user_input):
         _max_valid_losses.append(_results[0])
         _min_valid_losses.append(_results[1])
         _avg_valid_losses.append(_results[2])
-        _model_preds.append(_results[3])
-        _model_targs.append(_results[4])
+        dataset2csv(
+            dataset=_results[3],
+            model_descriptor=_file_suffix,
+            dataset_name='preds',
+            counter=_counter)
+        dataset2csv(
+            dataset=_results[4],
+            model_descriptor=_file_suffix,
+            dataset_name='targs',
+            counter=_counter)
+        _counter += 1
+
+    losses2file(_max_valid_losses, f'Max_Error_Validation_{_file_suffix}')
+    losses2file(_min_valid_losses, f'Min_Error_Validation_{_file_suffix}')
+    losses2file(_avg_valid_losses, f'Avg_Error_Validation_{_file_suffix}')
 
     model_performance(
         model_name=_model_name,
@@ -398,4 +410,4 @@ def load_model():
 
 
 if __name__ == "__main__":
-    load_model()
+    main()

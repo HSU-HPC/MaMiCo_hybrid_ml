@@ -55,8 +55,7 @@ def mamico_csv2dataset(file_name):
     return dataset
 
 
-'''
-def dataset2csv(dataset, model_descriptor):
+def dataset2csv(dataset, model_descriptor, dataset_name, counter):
     #
     # This function reads from a MaMiCo generatd csv file.
     # Currently, proper functionality is hardcoded for simulations
@@ -65,30 +64,17 @@ def dataset2csv(dataset, model_descriptor):
     # 1) Convert 3D array to 2D array
     dataset_reshaped = dataset.reshape(dataset.shape[0], -1)
     # 2) Save 2D array to file
-    name = f'{string_file_name}_{t}_{c}_{d}_{h}_{w}'
-    np.savetxt(f'{name}.csv', input_reshaped)
+    name = f'{dataset_name}_{counter}_model_{model_descriptor}'
+    np.savetxt(f'{name}.csv', dataset_reshaped)
 
 
+def csv2dataset(filename, output_shape):
+    dataset = np.loadtxt(f'{filename}')
+    t, c, d, h, w = output_shape
 
-
-    _directory = '/home/lerdo/lerdo_HPC_Lab_Project/Trainingdata'
-    dataset = np.zeros((1000, 3, 26, 26, 26))
-
-    with open(f'{_directory}/{file_name}') as csvfile:
-        csv_reader = csv.reader(csvfile, delimiter=';')
-
-        for row in csv_reader:
-            a = row
-            if(len(a) > 7):
-                dataset[int(a[0])-1, 0, int(a[1])-1, int(a[2])
-                        - 1, int(a[3])-1] = float(a[4])
-                dataset[int(a[0])-1, 1, int(a[1])-1, int(a[2])
-                        - 1, int(a[3])-1] = float(a[5])
-                dataset[int(a[0])-1, 2, int(a[1])-1, int(a[2])
-                        - 1, int(a[3])-1] = float(a[6])
-
-    return dataset
-'''
+    # 4) Revert 2D array to 3D array
+    original_dataset = dataset.reshape(t, c, d, h, w)
+    return original_dataset
 
 
 def get_mamico_loaders(file_names=0, num_workers=4):
@@ -267,8 +253,33 @@ def losses2file(losses, filename):
     np.savetxt(f"Losses_{filename}.csv", losses, delimiter=", ", fmt='% s')
 
 
+def checkSaveLoad():
+    input_array = np.random.rand(8, 3, 18, 18, 18)
+
+    dataset2csv(
+        dataset=input_array,
+        model_descriptor='test_descriptor',
+        dataset_name='preds',
+        counter=1
+    )
+
+    loaded_array = csv2dataset(
+        filename='preds_1_model_test_descriptor.csv',
+        output_shape=(8, 3, 18, 18, 18)
+    )
+
+    print("shape of input array: ", input_array.shape)
+    print("shape of loaded array: ", loaded_array.shape)
+
+    if (input_array == loaded_array).all():
+        print("Yes, both the arrays are same")
+    else:
+        print("No, both the arrays are not same")
+
+
 if __name__ == "__main__":
-    get_mamico_loaders(file_names=2)
+    checkSaveLoad()
+
     '''
     file_names = [
         #'couette_test_combined_domain_0_5_top.csv',
