@@ -157,7 +157,7 @@ def get_mamico_loaders(file_names=0, num_workers=4):
     else:
         for i in range(5):
             print('Loading ---> RANDOM <--- training dataset as loader.')
-            dataset = torch.randn(25, 3, 24, 24, 24)
+            dataset = np.random.rand(25, 3, 24, 24, 24)
             # print("Utils.py - Sanity Check - Dimension of loaded dataset: ", dataset.shape)
             dataset = MyMamicoDataset(dataset)
             dataloader = DataLoader(
@@ -170,7 +170,7 @@ def get_mamico_loaders(file_names=0, num_workers=4):
             print('Completed loading ---> RANDOM <--- training dataset.')
         for i in range(3):
             print('Loading ---> RANDOM <--- validation dataset as loader.')
-            dataset = torch.randn(25, 3, 24, 24, 24)
+            dataset = np.random.rand(25, 3, 24, 24, 24)
             # print("Utils.py - Sanity Check - Dimension of loaded dataset: ", dataset.shape)
             dataset = MyMamicoDataset(dataset)
             dataloader = DataLoader(
