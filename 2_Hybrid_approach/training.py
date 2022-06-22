@@ -8,7 +8,6 @@ from model import Hybrid_MD_RNN_UNET, Hybrid_MD_GRU_UNET, Hybrid_MD_LSTM_UNET, r
 import time
 from utils import get_mamico_loaders, losses2file, checkUserModelSpecs, dataset2csv
 from plotting import plotMinMaxAvgLoss
-import concurrent.futures
 
 plt.style.use(['science'])
 np.set_printoptions(precision=6)
