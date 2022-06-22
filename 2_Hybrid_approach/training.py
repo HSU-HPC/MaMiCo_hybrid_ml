@@ -381,7 +381,7 @@ def load_model():
         RNN_lay=2
     ).to(device)
 
-    model.load_state_dict(torch.load('/Model_2_1_1_1'))
+    model.load_state_dict(torch.load('Model_2_1_1_1'))
     model.eval()
 
     _train_loaders, _valid_loaders = get_mamico_loaders(file_names=2)
