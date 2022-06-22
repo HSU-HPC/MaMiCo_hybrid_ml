@@ -309,7 +309,7 @@ class Hybrid_MD_RNN_UNET(nn.Module):
             batch_first=True
         )
         self.sequence = torch.zeros(25, self.input_size)
-        print('Size of self.sequence', self.sequence.size())
+        # print('Size of self.sequence', self.sequence.size())
         self.fc = nn.Linear(self.hidden_size, self.input_size)
 
         # Down part of UNET
@@ -346,10 +346,10 @@ class Hybrid_MD_RNN_UNET(nn.Module):
         # print("This is the bottleneck:")
         # print("Size of x before additional Conv3D: ", x.size())
         x = self.helper_down(x)
-        print("Size of x after additional Conv3D: ", x.size())
+        # print("Size of x after additional Conv3D: ", x.size())
         x = self.activation(x)
         x = self.bottleneck(x)
-        print("Size of x after bottleneck: ", x.size())
+        # print("Size of x after bottleneck: ", x.size())
         x = self.activation(x)
 
         # Create RNN-input from x and sanity check dimensions
@@ -360,12 +360,12 @@ class Hybrid_MD_RNN_UNET(nn.Module):
         h0 = torch.zeros(self.num_layers, x.size(
             0), self.hidden_size).to(self.device)
 
-        print('Size of self.sequence', self.sequence.size())
+        # print('Size of self.sequence', self.sequence.size())
         # Prepare RNN: Forward propagate RNN
         self.sequence = tensor_FIFO_pipe(
             self.sequence, torch.reshape(x, (1, self.input_size)), self.device).to(self.device)
 
-        print('Size of self.sequence', self.sequence.size())
+        # print('Size of self.sequence', self.sequence.size())
         x, _ = self.rnn(torch.reshape(
             self.sequence, (1, 25, self.input_size)), h0)
 
@@ -470,10 +470,10 @@ class Hybrid_MD_GRU_UNET(nn.Module):
         # print("This is the bottleneck:")
         # print("Size of x before additional Conv3D: ", x.size())
         x = self.helper_down(x)
-        print("Size of x after helper_down Conv3D: ", x.size())
+        # print("Size of x after helper_down Conv3D: ", x.size())
         x = self.activation(x)
         x = self.bottleneck(x)
-        print("Size of x after bottleneck: ", x.size())
+        # print("Size of x after bottleneck: ", x.size())
         x = self.activation(x)
 
         # Create RNN-input from x and sanity check dimensions
@@ -483,12 +483,12 @@ class Hybrid_MD_GRU_UNET(nn.Module):
         h0 = torch.zeros(self.num_layers, x.size(
             0), self.hidden_size).to(self.device)
 
-        print('Size of self.sequence', self.sequence.size())
+        # print('Size of self.sequence', self.sequence.size())
         # Prepare RNN: Forward propagate RNN
         self.sequence = tensor_FIFO_pipe(
             self.sequence, torch.reshape(x, (1, self.input_size)), self.device).to(self.device)
 
-        print('Size of self.sequence', self.sequence.size())
+        # print('Size of self.sequence', self.sequence.size())
 
         x, _ = self.gru(torch.reshape(
             self.sequence, (1, 25, self.input_size)), h0)
@@ -656,7 +656,7 @@ def resetPipeline(model):
 
 
 def test():
-    model = Hybrid_MD_GRU_UNET(
+    model = Hybrid_MD_RNN_UNET(
         device=device,
         in_channels=3,
         out_channels=3,
@@ -667,6 +667,7 @@ def test():
         RNN_lay=2
     )
 
+    resetPipeline(model)
     for i in range(30):
         x = torch.randn(1, 3, 24, 24, 24)
         # print('Test-Input shape: ', x.shape)
