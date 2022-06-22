@@ -120,8 +120,8 @@ def valid_hybrid(loader, model, criterion, scaler):
             losses.append(loss.item())
 
         if counter in sample_times:
-            model_preds.append(scores)
-            model_targs.append(targets)
+            model_preds.append(scores.cpu().detach().numpy())
+            model_targs.append(targets.cpu().detach().numpy())
 
         # Check for max error
         counter += 1
