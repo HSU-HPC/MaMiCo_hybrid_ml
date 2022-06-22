@@ -93,32 +93,32 @@ def get_mamico_loaders(file_names=0, num_workers=4):
     if file_names == 0:
         _directory = '/home/lerdo/lerdo_HPC_Lab_Project/Trainingdata'
         _train_files = [
-            'clean_couette_test_combined_domain_0_5_top.csv'
-            #'clean_couette_test_combined_domain_0_5_middle.csv',
-            #'clean_couette_test_combined_domain_0_5_bottom.csv',
-            #'clean_couette_test_combined_domain_1_0_top.csv',
-            #'clean_couette_test_combined_domain_1_0_middle.csv',
-            #'clean_couette_test_combined_domain_1_0_bottom.csv',
-            #'clean_couette_test_combined_domain_2_0_top.csv',
-            #'clean_couette_test_combined_domain_2_0_middle.csv',
-            #'clean_couette_test_combined_domain_2_0_bottom.csv',
-            #'clean_couette_test_combined_domain_4_0_top.csv',
-            #'clean_couette_test_combined_domain_4_0_middle.csv',
-            #'clean_couette_test_combined_domain_4_0_bottom.csv',
+            'clean_couette_dataset_0_5_top.csv',
+            'clean_couette_dataset_0_5_middle.csv',
+            'clean_couette_dataset_0_5_bottom.csv',
+            'clean_couette_dataset_1_0_top.csv',
+            'clean_couette_dataset_1_0_middle.csv',
+            'clean_couette_dataset_1_0_bottom.csv',
+            'clean_couette_dataset_2_0_top.csv',
+            'clean_couette_dataset_2_0_middle.csv',
+            'clean_couette_dataset_2_0_bottom.csv',
+            'clean_couette_dataset_4_0_top.csv',
+            'clean_couette_dataset_4_0_middle.csv',
+            'clean_couette_dataset_4_0_bottom.csv',
         ]
 
         _valid_files = [
-            'clean_couette_test_combined_domain_3_0_top.csv'
-            #'clean_couette_test_combined_domain_3_0_middle.csv',
-            #'clean_couette_test_combined_domain_3_0_bottom.csv',
-            #'clean_couette_test_combined_domain_5_0_top.csv',
-            #'clean_couette_test_combined_domain_5_0_middle.csv',
-            #'clean_couette_test_combined_domain_5_0_bottom.csv',
+        'clean_couette_dataset_3_0_top.csv',
+        'clean_couette_dataset_3_0_middle.csv',
+        'clean_couette_dataset_3_0_bottom.csv',
+        'clean_couette_dataset_5_0_top.csv',
+        'clean_couette_dataset_5_0_middle.csv',
+        'clean_couette_dataset_5_0_bottom.csv'
         ]
 
         for file_name in _valid_files:
             print(f'Loading validation dataset as loader: {file_name}')
-            dataset = mamico_csv2dataset(f'{file_name}')
+            dataset = csv2dataset(f'{file_name}', (1000, 3, 26, 26, 26))
             # print("Utils.py - Sanity Check - Dimension of loaded dataset: ", dataset.shape)
             dataset = MyMamicoDataset(dataset)
             dataloader = DataLoader(
@@ -132,7 +132,7 @@ def get_mamico_loaders(file_names=0, num_workers=4):
 
         for file_name in _train_files:
             print(f'Loading training dataset as loader: {file_name}')
-            dataset = mamico_csv2dataset(f'{file_name}')
+            dataset = csv2dataset(f'{file_name}', (1000, 3, 26, 26, 26))
             # print("Utils.py - Sanity Check - Dimension of loaded dataset: ", dataset.shape)
             dataset = MyMamicoDataset(dataset)
             dataloader = DataLoader(
