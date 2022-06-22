@@ -258,6 +258,15 @@ def training_factory(user_input):
     # Here, not only the average loss is tracked, but also the min and max
     # losses in order to track the deviation from the average.
 
+    plotMinMaxAvgLoss(
+        min_losses=_min_losses,
+        avg_losses=_average_losses,
+        max_losses=_max_losses,
+        file_name=_file_suffix
+    )
+    # @plotMinMaxAvgLoss is used to automatically graph the learning
+    # process via losses. Refer to function definition for more details.
+
     _max_valid_losses = []
     _min_valid_losses = []
     _avg_valid_losses = []
@@ -278,15 +287,6 @@ def training_factory(user_input):
         _avg_valid_losses.append(_results[2])
         _model_preds.append(_results[3])
         _model_targs.append(_results[4])
-
-    plotMinMaxAvgLoss(
-        min_losses=_min_losses,
-        avg_losses=_average_losses,
-        max_losses=_max_losses,
-        file_name=_file_suffix
-    )
-    # @plotMinMaxAvgLoss is used to automatically graph the learning
-    # process via losses. Refer to function definition for more details.
 
     model_performance(
         model_name=_model_name,
@@ -369,5 +369,33 @@ def main():
         print('Input is invalid.')
 
 
+def load_model():
+    model = Hybrid_MD_GRU_UNET(
+        device=device,
+        in_channels=3,
+        out_channels=3,
+        features=[4, 8, 16],
+        activation=nn.ReLU(inplace=True),
+        RNN_in_size=256,
+        RNN_hid_size=256,
+        RNN_lay=2
+    ).to(device)
+
+    model.load_state_dict(torch.load('/Model_2_1_1_1'))
+    model.eval()
+
+    _train_loaders, _valid_loaders = get_mamico_loaders(file_names=2)
+    for _valid_loader in _valid_loaders:
+        resetPipeline(model)
+        _results = valid_hybrid(
+            loader=_valid_loader,
+            model=model,
+            criterion=nn.L1Loss(),
+            scaler=torch.cuda.amp.GradScaler()
+        )
+
+    pass
+
+
 if __name__ == "__main__":
-    main()
+    load_model()
