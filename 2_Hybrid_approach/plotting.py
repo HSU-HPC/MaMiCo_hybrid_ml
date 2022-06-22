@@ -560,24 +560,24 @@ def rubbish():
 
 def test():
     _filenames = [
-        'clean_couette_test_combined_domain_0_5_top',
-        'clean_couette_test_combined_domain_0_5_middle',
-        'clean_couette_test_combined_domain_0_5_bottom',
-        'clean_couette_test_combined_domain_1_0_top',
-        'clean_couette_test_combined_domain_1_0_middle',
-        'clean_couette_test_combined_domain_1_0_bottom',
-        'clean_couette_test_combined_domain_2_0_top',
-        'clean_couette_test_combined_domain_2_0_middle',
-        'clean_couette_test_combined_domain_2_0_bottom',
-        'clean_couette_test_combined_domain_3_0_top',
-        'clean_couette_test_combined_domain_3_0_middle',
-        'clean_couette_test_combined_domain_3_0_bottom',
-        'clean_couette_test_combined_domain_4_0_top',
-        'clean_couette_test_combined_domain_4_0_middle',
-        'clean_couette_test_combined_domain_4_0_bottom',
-        'clean_couette_test_combined_domain_5_0_top',
-        'clean_couette_test_combined_domain_5_0_middle',
-        'clean_couette_test_combined_domain_5_0_bottom'
+        'clean_couette_test_combined_domain_0_5_top.csv',
+        'clean_couette_test_combined_domain_0_5_middle.csv',
+        'clean_couette_test_combined_domain_0_5_bottom.csv',
+        'clean_couette_test_combined_domain_1_0_top.csv',
+        'clean_couette_test_combined_domain_1_0_middle.csv',
+        'clean_couette_test_combined_domain_1_0_bottom.csv',
+        'clean_couette_test_combined_domain_2_0_top.csv',
+        'clean_couette_test_combined_domain_2_0_middle.csv',
+        'clean_couette_test_combined_domain_2_0_bottom.csv',
+        'clean_couette_test_combined_domain_3_0_top.csv',
+        'clean_couette_test_combined_domain_3_0_middle.csv',
+        'clean_couette_test_combined_domain_3_0_bottom.csv',
+        'clean_couette_test_combined_domain_4_0_top.csv',
+        'clean_couette_test_combined_domain_4_0_middle.csv',
+        'clean_couette_test_combined_domain_4_0_bottom.csv',
+        'clean_couette_test_combined_domain_5_0_top.csv',
+        'clean_couette_test_combined_domain_5_0_middle.csv',
+        'clean_couette_test_combined_domain_5_0_bottom.csv'
     ]
     _dataset_names = [
         '0_5_top',
