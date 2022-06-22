@@ -166,8 +166,8 @@ def plotMinMaxAvgLoss(min_losses, avg_losses, max_losses, file_name=0):
     # max_loss = max(max_losses)
 
     fig, (ax1) = plt.subplots(1, constrained_layout=True)
-    fig.supxlabel('Number of Epochs')
-    fig.supylabel('Error')
+    ax1.set_xlabel('Number of Epochs')
+    ax1.set_ylabel('Error')
     ax1.plot(x_axis, min_losses, ':', label='Minimum Loss')
     ax1.plot(x_axis, avg_losses, label='Average Loss')
     ax1.plot(x_axis, max_losses, ':', label='Maximum Loss')
@@ -178,7 +178,7 @@ def plotMinMaxAvgLoss(min_losses, avg_losses, max_losses, file_name=0):
     fig.set_size_inches(6, 3.5)
     # plt.show()
     if file_name != 0:
-        fig.savefig(f'Plots/Losses_{file_name}.svg')
+        fig.savefig(f'Losses_{file_name}.svg')
 
 
 def compareFlowProfile(title, file_name, prediction_array, prediction_array2, target_array, analytical=0, wall_height=20, u_wall=10, sigma=0.3):
@@ -552,12 +552,16 @@ def rubbish():
 
 
 def test():
-    b = [2, 4, 6, 8, 10]
-    a = 12
-    if a in b:
-        print('true')
-    else:
-        print('false')
+    a = np.random.rand(95) + 3
+    b = np.random.rand(95) + 1
+    c = np.random.rand(95)
+
+    plotMinMaxAvgLoss(
+        min_losses=c,
+        max_losses=a,
+        avg_losses=b,
+        file_name='testnow'
+    )
 
 
 def main():
