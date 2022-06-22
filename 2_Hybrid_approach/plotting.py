@@ -118,10 +118,17 @@ def visualizeMaMiCoDataset(filenames, dataset_names, u_wall):
 
     for i in range(len(filenames)):
         # Load dataset from csv
+        print('Loading Dataset.')
         _dataset = mamico_csv2dataset(filenames[i])
+        print('Complete.')
         # Create 3D scatterplot for meaningful timesteps.
+        print('Creating ColorMap.')
         colorMap(_dataset, dataset_names[i])
+        print('Complete.')
+
+        print('Creating flowProfile.')
         flowProfile(_dataset, dataset_names[i], u_wall[i])
+        print('Complete.')
     return
 
 
@@ -559,9 +566,6 @@ def test():
         'clean_couette_test_combined_domain_1_0_top',
         'clean_couette_test_combined_domain_1_0_middle',
         'clean_couette_test_combined_domain_1_0_bottom',
-        'clean_couette_test_combined_domain_1_5_top',
-        'clean_couette_test_combined_domain_1_5_middle',
-        'clean_couette_test_combined_domain_1_5_bottom',
         'clean_couette_test_combined_domain_2_0_top',
         'clean_couette_test_combined_domain_2_0_middle',
         'clean_couette_test_combined_domain_2_0_bottom',
@@ -582,9 +586,6 @@ def test():
         '1_0_top',
         '1_0_middle',
         '1_0_bottom',
-        '1_5_top',
-        '1_5_middle',
-        '1_5_bottom',
         '2_0_top',
         '2_0_middle',
         '2_0_bottom',
@@ -605,9 +606,6 @@ def test():
         1.0,
         1.0,
         1.0,
-        1.5,
-        1.5,
-        1.5,
         2.0,
         2.0,
         2.0,
