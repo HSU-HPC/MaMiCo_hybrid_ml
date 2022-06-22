@@ -182,9 +182,9 @@ def training_factory(user_input):
     # @_criterion - initializes the loss function to the well known Mean Absolute Error (MAE)
     # _batch_size = 1
     # @_batch_size - other batch sizes are not possible. Refer to model description for more intuition
-    _num_epochs = 15
+    _num_epochs = 1
     # @_num_epochs - the amount of times the model will train with each dataset
-    _train_loaders, _valid_loaders = get_mamico_loaders(file_names=2)
+    _train_loaders, _valid_loaders = get_mamico_loaders()
     # @_train_loaders - container to hold the dataloaders for each dataset
     _scaler = torch.cuda.amp.GradScaler()
     # @_scaler - @@@@@@@@@@@@
@@ -338,7 +338,7 @@ def model_performance(model_name, rnn_layer, hid_size, learning_rate, max_losses
     print('------------------------------------------------------------')
 
 
-def main(_user_input):
+def main():
     # BRIEF: This allows the user to use command line arguments to be used as
     # arguments for the training process.
     #
@@ -364,7 +364,7 @@ def main(_user_input):
     #                  2) 0.00005
     #                  3) 0.00001
 
-    # _user_input = sys.argv[1:]
+    _user_input = sys.argv[1:]
     _valid_input = checkUserModelSpecs(_user_input)
 
     if(_valid_input):
@@ -412,8 +412,4 @@ def load_model():
 
 if __name__ == "__main__":
 
-    with concurrent.futures.ProcessPoolExecutor() as executor:
-        arguments = [[2, 1, 1, 1], [2, 2, 1, 1], [2, 3, 1, 1]]
-        results = executor.map(main, arguments)
-
-    # main()
+    main()
