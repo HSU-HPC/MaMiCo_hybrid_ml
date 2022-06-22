@@ -250,7 +250,7 @@ def checkUserModelSpecs(user_input):
 
 
 def losses2file(losses, filename):
-    np.savetxt(f"Losses_{filename}.csv", losses, delimiter=", ", fmt='% s')
+    np.savetxt(f"{filename}.csv", losses, delimiter=", ", fmt='% s')
 
 
 def checkSaveLoad():
