@@ -82,7 +82,7 @@ def train_hybrid(loader, model, optimizer, criterion, scaler, current_epoch):
         f'Max loss at t={time_buffer}: {max_loss:.7f}, Min loss: {min_loss:.7f}')
     print(f'Final loss: {final_loss:.7f}, Average loss: {average_loss:.7f}.')
     print('------------------------------------------------------------')
-    return (max_loss, min_loss, final_loss, average_loss)
+    return [max_loss, min_loss, final_loss, average_loss]
 
 
 def valid_hybrid(loader, model, criterion, scaler):
@@ -138,13 +138,18 @@ def valid_hybrid(loader, model, criterion, scaler):
 
         print(f'Progress: {num}{counter}/1000     Error: {loss:.7f}')
 
-    avg_error = sum(losses)/len(losses)
+    # Saving error values
+    max_loss = max(losses)
+    min_loss = min(losses)
+    avg_loss = sum(losses)/len(losses)
+
     print('------------------------------------------------------------')
     print('                         Validation')
     print('------------------------------------------------------------')
     print(
-        f'Average error: {avg_error:.7f}. Max error: {max(losses):.7f} at time: {time_buffer}')
-    return [model_preds, model_targs, avg_error]
+        f'Average error: {avg_loss:.7f}. Max error: {max(losses):.7f} at time: {time_buffer}')
+
+    return [max_loss, min_loss, avg_loss, model_preds, model_targs]
 
 
 def test_hybrid():
@@ -176,9 +181,9 @@ def training_factory(user_input):
     # @_criterion - initializes the loss function to the well known Mean Absolute Error (MAE)
     # _batch_size = 1
     # @_batch_size - other batch sizes are not possible. Refer to model description for more intuition
-    _num_epochs = 1
+    _num_epochs = 15
     # @_num_epochs - the amount of times the model will train with each dataset
-    _train_loaders = get_mamico_loaders()
+    _train_loaders, _valid_loaders = get_mamico_loaders(file_names=2)
     # @_train_loaders - container to hold the dataloaders for each dataset
     _scaler = torch.cuda.amp.GradScaler()
     # @_scaler - @@@@@@@@@@@@
@@ -230,7 +235,7 @@ def training_factory(user_input):
 
     _optimizer = optim.Adam(_model.parameters(),
                             lr=_learning_rates[_learning_rate])
-
+    # Training
     for _epoch in range(_num_epochs):
         for _train_loader in _train_loaders:
             resetPipeline(_model)
@@ -252,6 +257,29 @@ def training_factory(user_input):
     # @losses2file is used to evaluate the development of the models loss.
     # Here, not only the average loss is tracked, but also the min and max
     # losses in order to track the deviation from the average.
+
+    _max_valid_losses = []
+    _min_valid_losses = []
+    _avg_valid_losses = []
+    _model_preds = []
+    _model_targs = []
+
+    # Validation
+    for _valid_loader in _valid_loaders:
+        resetPipeline(_model)
+        _results = valid_hybrid(
+            loader=_train_loader,
+            model=_model,
+            optimizer=_optimizer,
+            criterion=_criterion,
+            scaler=_scaler,
+            current_epoch=_epoch
+        )
+        _max_valid_losses.append(_results[0])
+        _min_valid_losses.append(_results[1])
+        _avg_valid_losses.append(_results[2])
+        _model_preds.append(_results[3])
+        _model_targs.append(_results[4])
 
     plotMinMaxAvgLoss(
         min_losses=_min_losses,

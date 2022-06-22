@@ -2,6 +2,7 @@ from utils import clean_mamico_data, mamico_csv2dataset
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib as mpl
+import torch
 mpl.use('Agg')
 # plt.style.use(['science'])
 np.set_printoptions(precision=2)
@@ -59,6 +60,7 @@ def colorMap(dataset, dataset_name):
     fig.savefig(f'Colormap_Visualization_Dataset_{dataset_name}.png')
     # fig.savefig('myfig.eps', format='eps')
     # plt.show()
+    plt.close()
 
 
 def flowProfile(dataset, dataset_name, u_wall=1):
@@ -105,6 +107,7 @@ def flowProfile(dataset, dataset_name, u_wall=1):
     plt.legend(ncol=4, fontsize=7)
 
     fig.savefig(f'Flowprofile_Visualization_Dataset_{dataset_name}.png')
+    plt.close()
 
 
 def visualizeMaMiCoDataset(filenames, dataset_names, u_wall):
@@ -187,8 +190,57 @@ def plotMinMaxAvgLoss(min_losses, avg_losses, max_losses, file_name=0):
     if file_name != 0:
         fig.savefig(f'Losses_{file_name}.svg')
 
+    plt.close()
 
-def compareFlowProfile(title, file_name, prediction_array, prediction_array2, target_array, analytical=0, wall_height=20, u_wall=10, sigma=0.3):
+
+def compareFlowProfile(preds, targs, model_descriptor):
+    # BRIEF:
+    #
+    # PARAMETERS:
+    # preds -
+    # targs -
+    # model_descriptor -
+
+    t, c, d, h, w = preds[0].size()
+    steps = np.arange(0, h).tolist()
+    samples = [0, 25, 50, 100, 200, 400, 800, 999]
+
+    mid = int(h/2)
+
+    fig, axs = plt.subplots(8, sharex=True, sharey=True)
+    fig.suptitle('Target and Prediction Comparison', fontsize=10)
+    plt.tick_params(labelcolor='none', which='both', top=False,
+                    bottom=False, left=False, right=False)
+    plt.xlabel("common X")
+    plt.ylabel("common Y")
+
+    axs = axs.ravel()
+    plt.yticks(range(-2, 7, 2))
+    plt.xticks([])
+
+    for i in range(8):
+        pred = preds[i]
+        targ = targs[i]
+        axs[i].plot(steps, pred[0, 0, :, mid, mid], label=f'Prediction')
+        axs[i].plot(steps, targ[0, 0, mid, :, mid], label=f'Target')
+        axs[i].set_title(f't={samples[i]}')
+
+    # plt.xlabel('Spatial Dimension')
+    plt.legend(ncol=2, fontsize=7)
+    plt.subplots_adjust(left=0.1,
+                        bottom=0.1,
+                        right=0.9,
+                        top=0.9,
+                        wspace=0.4,
+                        hspace=0.4)
+    fig.set_size_inches(6, 15)
+
+    fig.savefig(
+        f'CompareFlowprofile_Validation_Dataset_{model_descriptor}.svg')
+    plt.close()
+
+
+'''def compareFlowProfile(title, file_name, prediction_array, prediction_array2, target_array, analytical=0, wall_height=20, u_wall=10, sigma=0.3):
 
     if prediction_array.ndim == 1:
         h = prediction_array.shape[0]
@@ -339,6 +391,7 @@ def compareFlowProfile(title, file_name, prediction_array, prediction_array2, ta
     fig.set_size_inches(3.5, 6)
     plt.show()
     fig.savefig(f'Plots/{file_name}_Flow_Profile.png')
+'''
 
 
 def compareUxFlowProfile(title, file_name, prediction_array, prediction_array2, target_array, analytical=0, wall_height=20, u_wall=10, sigma=0.3):
@@ -632,6 +685,14 @@ def main():
 
 
 if __name__ == "__main__":
-    test()
+    # test()
+    _preds = []
+    _targs = []
+
+    for i in range(8):
+        _preds.append(torch.randn(1, 3, 18, 18, 18))
+        _targs.append(torch.randn(1, 3, 18, 18, 18))
+
+    compareFlowProfile(preds=_preds, targs=_targs, model_descriptor='1_1_1_1')
 
     # clean_mamico_data('/home/lerdo/lerdo_HPC_Lab_Project/Trainingdata', 'clean_couette_test_combined_domain_3_0.csv')
