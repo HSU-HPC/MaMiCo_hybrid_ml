@@ -555,13 +555,14 @@ def test():
     a = np.random.rand(95) + 3
     b = np.random.rand(95) + 1
     c = np.random.rand(95)
-
+    print(a)
     plotMinMaxAvgLoss(
         min_losses=c,
         max_losses=a,
         avg_losses=b,
         file_name='testnow'
     )
+    print(b)
 
 
 def main():
