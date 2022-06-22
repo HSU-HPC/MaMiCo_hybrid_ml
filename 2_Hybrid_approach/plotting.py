@@ -2,7 +2,7 @@ from utils import clean_mamico_data, mamico_csv2dataset
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib as mpl
-# mpl.use('Agg')
+mpl.use('Agg')
 # plt.style.use(['science'])
 np.set_printoptions(precision=2)
 
@@ -56,7 +56,7 @@ def colorMap(dataset, dataset_name):
     cbar_ax = fig.add_axes([0.85, 0.15, 0.05, 0.7])
     fig.colorbar(sc, cax=cbar_ax)
     # fig.set_size_inches(3.5, 2)
-    fig.savefig(f'Colormap_Visualization_{dataset_name}.png')
+    fig.savefig(f'Colormap_Visualization_Dataset_{dataset_name}.png')
     # fig.savefig('myfig.eps', format='eps')
     # plt.show()
 
@@ -104,7 +104,7 @@ def flowProfile(dataset, dataset_name, u_wall=1):
     # plt.xlabel('Spatial Dimension')
     plt.legend(ncol=4, fontsize=7)
 
-    fig.savefig(f'Flowprofile_Visualization_{dataset_name}.png')
+    fig.savefig(f'Flowprofile_Visualization_Dataset_{dataset_name}.png')
 
 
 def visualizeMaMiCoDataset(filenames, dataset_names, u_wall):
@@ -176,7 +176,7 @@ def plotMinMaxAvgLoss(min_losses, avg_losses, max_losses, file_name=0):
     ax1.legend(bbox_to_anchor=(0., 1.02, 1., .102), loc='lower left',
                ncol=2, mode="expand", borderaxespad=0.)
     fig.set_size_inches(6, 3.5)
-    plt.show()
+    # plt.show()
     if file_name != 0:
         fig.savefig(f'Plots/Losses_{file_name}.svg')
 
@@ -551,70 +551,13 @@ def rubbish():
     pass
 
 
-def plotLoss(losses_MAE, losses_MSE, file_name):
-    asymp_MAE = losses_MAE[-1] * np.ones((losses_MAE.shape))
-    asymp_MSE = losses_MSE[-1] * np.ones((losses_MSE.shape))
-    x_axis = range(1, (len(losses_MAE)+1), 1)
-
-    fig, (ax1, ax2) = plt.subplots(2, constrained_layout=True)
-    fig.supxlabel('Number of Epochs')
-    fig.supylabel('Average Error')
-    ax1.plot(x_axis, losses_MAE, label='MAE')
-    ax1.plot(x_axis, asymp_MAE, ':', label='Asymptote')
-    ax1.set_yticks([0, 1, 2, 3, 4])
-    ax1.set_xticks([10, 20, 30, 40])
-    ax1.legend(bbox_to_anchor=(0., 1.02, 1., .102), loc='lower left',
-               ncol=2, mode="expand", borderaxespad=0.)
-    ax2.plot(x_axis, losses_MSE, label='MSE')
-    ax2.plot(x_axis, asymp_MSE, ':', label='Asymptote')
-    ax2.set_yticks([0, 5, 10, 15, 20, 25])
-    ax2.set_xticks([10, 20, 30, 40])
-    # ax2.set_ylabel("Average Error")
-    # ax2.set_xlabel("Number of Epochs")
-    ax2.legend(bbox_to_anchor=(0., 1.02, 1., .102), loc='lower left',
-               ncol=2, mode="expand", borderaxespad=0.)
-    fig.set_size_inches(3.5, 3)
-    plt.show()
-    fig.savefig(f'Plots/Losses_Trial_{file_name}.svg')
-
-
-def plotLoss34(losses_MAE_1, losses_MAE_2, losses_MSE_1, losses_MSE_2, labels, file_name):
-    asymp_MAE = losses_MAE_2[-1] * np.ones((losses_MAE_1.shape))
-    asymp_MSE = losses_MSE_2[-1] * np.ones((losses_MSE_1.shape))
-    x_axis_1 = range(1, (len(losses_MAE_1)+1), 1)
-    x_axis_2 = range(1, (len(losses_MAE_2)+1), 1)
-    fig, (ax1, ax2) = plt.subplots(2, constrained_layout=True)
-    fig.supxlabel('Number of Epochs')
-    fig.supylabel('Average Error')
-    ax1.plot(x_axis_1, losses_MAE_1, label=f'{labels[0]} {labels[1]}')
-    ax1.plot(x_axis_2, losses_MAE_2, label=f'{labels[2]} {labels[3]}')
-    ax1.plot(x_axis_1, asymp_MAE, ':', label='Asymptote')
-    ax1.set_yticks([0, 1, 2, 3, 4])
-    ax1.set_xticks([10, 20, 30, 40])
-    ax1.legend(bbox_to_anchor=(0., 1.02, 1., .102), loc='lower left',
-               ncol=2, mode="expand", borderaxespad=0.)
-    ax2.plot(x_axis_1, losses_MSE_1, label=f'{labels[4]} {labels[5]}')
-    ax2.plot(x_axis_2, losses_MSE_2, label=f'{labels[6]} {labels[7]}')
-    ax2.plot(x_axis_1, asymp_MSE, ':', label='Asymptote')
-    ax2.set_yticks([0, 5, 10, 15, 20, 25])
-    ax2.set_xticks([10, 20, 30, 40])
-    # ax2.set_ylabel("Average Error")
-    # ax2.set_xlabel("Number of Epochs")
-    ax2.legend(bbox_to_anchor=(0., 1.02, 1., .102), loc='lower left',
-               ncol=2, mode="expand", borderaxespad=0.)
-    fig.set_size_inches(3.5, 3.5)
-    plt.show()
-    fig.savefig(f'Plots/Losses_Trial_{file_name}.svg')
-
-
 def test():
-    max = np.random.rand(96) + 2
-    print(max.shape)
-    min = np.random.rand(96)
-    avg = np.random.rand(96) + 1
-    plotMinMaxAvgLoss(min_losses=min, avg_losses=avg, max_losses=max)
-
-    pass
+    b = [2, 4, 6, 8, 10]
+    a = 12
+    if a in b:
+        print('true')
+    else:
+        print('false')
 
 
 def main():
