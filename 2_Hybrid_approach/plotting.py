@@ -559,7 +559,7 @@ def rubbish():
 
 
 def test():
-    file_names = [
+    _filenames = [
         'clean_couette_test_combined_domain_0_5_top',
         'clean_couette_test_combined_domain_0_5_middle',
         'clean_couette_test_combined_domain_0_5_bottom',
@@ -579,7 +579,7 @@ def test():
         'clean_couette_test_combined_domain_5_0_middle',
         'clean_couette_test_combined_domain_5_0_bottom'
     ]
-    dataset_names = [
+    _dataset_names = [
         '0_5_top',
         '0_5_middle',
         '0_5_bottom',
@@ -599,7 +599,7 @@ def test():
         '5_0_middle',
         '5_0_bottom'
     ]
-    u_wall = [
+    _u_wall = [
         0.5,
         0.5,
         0.5,
@@ -619,6 +619,11 @@ def test():
         5.0,
         5.0
     ]
+    visualizeMaMiCoDataset(
+        filenames=_filenames,
+        dataset_names=_dataset_names,
+        u_wall=_u_wall
+    )
 
 
 def main():
