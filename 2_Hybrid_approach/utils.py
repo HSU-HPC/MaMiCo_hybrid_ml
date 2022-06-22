@@ -36,10 +36,10 @@ def mamico_csv2dataset(file_name):
     # Currently, proper functionality is hardcoded for simulations
     # containing 1000 timesteps.
     #
-
+    _directory = '/home/lerdo/lerdo_HPC_Lab_Project/Trainingdata'
     dataset = np.zeros((1000, 3, 26, 26, 26))
 
-    with open(f'{file_name}') as csvfile:
+    with open(f'{_directory}/{file_name}') as csvfile:
         csv_reader = csv.reader(csvfile, delimiter=';')
 
         for row in csv_reader:
