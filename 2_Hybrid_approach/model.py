@@ -467,10 +467,10 @@ class Hybrid_MD_GRU_UNET(nn.Module):
         # print("This is the bottleneck:")
         # print("Size of x before additional Conv3D: ", x.size())
         x = self.helper_down(x)
-        # print("Size of x after additional Conv3D: ", x.size())
+        print("Size of x after helper_down Conv3D: ", x.size())
         x = self.activation(x)
         x = self.bottleneck(x)
-        # print("Size of x after bottleneck: ", x.size())
+        print("Size of x after bottleneck: ", x.size())
         x = self.activation(x)
 
         # Create RNN-input from x and sanity check dimensions
@@ -480,9 +480,12 @@ class Hybrid_MD_GRU_UNET(nn.Module):
         h0 = torch.zeros(self.num_layers, x.size(
             0), self.hidden_size).to(self.device)
 
+        print('Size of self.sequence', self.sequence.size())
         # Prepare RNN: Forward propagate RNN
         self.sequence = tensor_FIFO_pipe(
             self.sequence, torch.reshape(x, (1, self.input_size)), self.device).to(self.device)
+
+        print('Size of self.sequence', self.sequence.size())
 
         x, _ = self.gru(torch.reshape(
             self.sequence, (1, 25, self.input_size)), h0)
@@ -649,29 +652,22 @@ def resetPipeline(model):
 
 
 def test():
-    model = Hybrid_MD_LSTM_UNET(
+    model = Hybrid_MD_GRU_UNET(
         device=device,
         in_channels=3,
         out_channels=3,
         features=[4, 8, 16],
         activation=nn.ReLU(inplace=True),
         RNN_in_size=256,
-        RNN_hid_size=512,
+        RNN_hid_size=256,
         RNN_lay=2
     )
-
-    print(model.sequence.size())
 
     for i in range(30):
         x = torch.randn(1, 3, 24, 24, 24)
         # print('Test-Input shape: ', x.shape)
         preds = model(x)
         # print('Test-Prediction shape: ', preds.size())
-
-    print(model.sequence)
-    resetPipeline(model)
-    # model.sequence = torch.zeros(5, model.input_size)
-    print(model.sequence)
 
 
 if __name__ == "__main__":
