@@ -413,7 +413,7 @@ def load_model():
 if __name__ == "__main__":
 
     with concurrent.futures.ProcessPoolExecutor() as executor:
-        arguments = [[1, 0, 0, 0], [1, 1, 0, 0], [1, 2, 0, 0]]
+        arguments = [[2, 1, 1, 1], [2, 2, 1, 1], [2, 3, 1, 1]]
         results = executor.map(main, arguments)
 
     # main()
