@@ -338,7 +338,7 @@ def model_performance(model_name, rnn_layer, hid_size, learning_rate, max_losses
     print('------------------------------------------------------------')
 
 
-def main():
+def main(_user_input):
     # BRIEF: This allows the user to use command line arguments to be used as
     # arguments for the training process.
     #
@@ -364,7 +364,7 @@ def main():
     #                  2) 0.00005
     #                  3) 0.00001
 
-    _user_input = sys.argv[1:]
+    # _user_input = sys.argv[1:]
     _valid_input = checkUserModelSpecs(_user_input)
 
     if(_valid_input):
@@ -414,6 +414,6 @@ if __name__ == "__main__":
 
     with concurrent.futures.ProcessPoolExecutor() as executor:
         arguments = [[1, 0, 0, 0], [1, 1, 0, 0], [1, 2, 0, 0]]
-        results = executor.map(training_factory, arguments)
-        
+        results = executor.map(main, arguments)
+
     # main()
