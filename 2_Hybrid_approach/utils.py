@@ -328,5 +328,3 @@ if __name__ == "__main__":
         dataset2csv(
             dataset=_dataset,
             dataset_name=new_file_names[i])
-        pass
-        '''
