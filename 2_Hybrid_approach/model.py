@@ -154,7 +154,7 @@ class RNN(nn.Module):
         self.hidden_size = hidden_size
         self.num_layers = num_layers
         self.device = device
-        self.sequence = torch.zeros(5, 512)
+        self.sequence = torch.zeros(25, 256)
         self.rnn = nn.RNN(
             input_size=input_size,
             hidden_size=hidden_size,
@@ -309,6 +309,7 @@ class Hybrid_MD_RNN_UNET(nn.Module):
             batch_first=True
         )
         self.sequence = torch.zeros(25, self.input_size)
+        print('Size of self.sequence', self.sequence.size())
         self.fc = nn.Linear(self.hidden_size, self.input_size)
 
         # Down part of UNET
@@ -359,10 +360,12 @@ class Hybrid_MD_RNN_UNET(nn.Module):
         h0 = torch.zeros(self.num_layers, x.size(
             0), self.hidden_size).to(self.device)
 
+        print('Size of self.sequence', self.sequence.size())
         # Prepare RNN: Forward propagate RNN
         self.sequence = tensor_FIFO_pipe(
             self.sequence, torch.reshape(x, (1, self.input_size)), self.device).to(self.device)
 
+        print('Size of self.sequence', self.sequence.size())
         x, _ = self.rnn(torch.reshape(
             self.sequence, (1, 25, self.input_size)), h0)
 
