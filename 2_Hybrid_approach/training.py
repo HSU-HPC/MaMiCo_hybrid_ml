@@ -268,12 +268,10 @@ def training_factory(user_input):
     for _valid_loader in _valid_loaders:
         resetPipeline(_model)
         _results = valid_hybrid(
-            loader=_train_loader,
+            loader=_valid_loader,
             model=_model,
-            optimizer=_optimizer,
             criterion=_criterion,
-            scaler=_scaler,
-            current_epoch=_epoch
+            scaler=_scaler
         )
         _max_valid_losses.append(_results[0])
         _min_valid_losses.append(_results[1])
