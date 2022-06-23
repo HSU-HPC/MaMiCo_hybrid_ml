@@ -105,47 +105,49 @@ def valid_AE(loader, model, criterion, scaler, current_epoch):
     return avg_loss
 
 
-def trial_1():
-    _model = UNET_AE(
-        device=device,
-        in_channels=3,
-        out_channels=3,
-        features=[4, 8, 16],
-        activation=nn.ReLU(inplace=True)
-    ).to(device)
-
-    _alpha = 0.002
-    _alpha_string = '0_002'
-    _optimizer = optim.Adam(_model.parameters(), lr=_alpha)
+def trial_1_():
+    _alphas = [0.01, 0.005]  # ], 0.001, 0.0005, 0.0001, 0.00005]
+    _alpha_strings = ['0_01', '0_005']  # , '0_001', '0_0005', '0_0001', '0_00005']
     _criterion = nn.L1Loss()
-    _scaler = torch.cuda.amp.GradScaler()
     _train_loader, _valid_loader = get_UNET_AE_loaders(file_names=1)
-    _epoch_losses = []
-    for epoch in range(20):
-        avg_loss = train_AE(
-            loader=_train_loader,
+    for i in range(2):
+        _model = UNET_AE(
+            device=device,
+            in_channels=3,
+            out_channels=3,
+            features=[4, 8, 16],
+            activation=nn.ReLU(inplace=True)
+        ).to(device)
+        _scaler = torch.cuda.amp.GradScaler()
+        _optimizer = optim.Adam(_model.parameters(), lr=_alphas[i])
+        _epoch_losses = []
+        for epoch in range(5):
+            avg_loss = train_AE(
+                loader=_train_loader,
+                model=_model,
+                optimizer=_optimizer,
+                criterion=_criterion,
+                scaler=_scaler,
+                current_epoch=epoch+1
+            )
+            _epoch_losses.append(avg_loss)
+
+        _valid_loss = valid_AE(
+            loader=_valid_loader,
             model=_model,
-            optimizer=_optimizer,
             criterion=_criterion,
             scaler=_scaler,
-            current_epoch=epoch+1
+            current_epoch=0
         )
-        _epoch_losses.append(avg_loss)
+        _epoch_losses.append(_valid_loss)
+        losses2file(losses=_epoch_losses,
+                    filename=f'Losses_UNET_AE_{_alpha_strings[i]}')
 
-    _valid_loss = valid_AE(
-        loader=_valid_loader,
-        model=_model,
-        criterion=_criterion,
-        scaler=_scaler,
-        current_epoch=0
-    )
-    _epoch_losses.append(_valid_loss)
-    losses2file(losses=_epoch_losses,
-                filename=f'Losses_UNET_AE_{_alpha_string}')
-
-    plotAvgLoss(avg_losses=_epoch_losses, file_name=f'UNET_AE_{_alpha_string}')
+        plotAvgLoss(avg_losses=_epoch_losses, file_name=f'UNET_AE_{_alpha_strings[i]}')
+        torch.save(_model.state_dict(), f'Model_UNET_AE_{_alpha_strings[i]}')
     return
 
 
 if __name__ == "__main__":
+
     trial_1()
