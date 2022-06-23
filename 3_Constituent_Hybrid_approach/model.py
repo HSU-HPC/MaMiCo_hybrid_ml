@@ -111,32 +111,32 @@ class UNET_AE(nn.Module):
 
     def forward(self, x, y=0, skip_connections=0):
         if y == 0 or y == 'get_bottleneck':
-            print('Size of x: ', x.size())
+            # print('Size of x: ', x.size())
             skip_connections = []
             # The following for-loop describes the entire (left) contracting side,
             # including storing the skip-connections:
             for down in self.downs:
                 x = down(x)
-                print('Size of x: ', x.size())
+                # print('Size of x: ', x.size())
                 skip_connections.append(x)
                 x = self.pool(x)
-                print('Size of x: ', x.size())
+                # print('Size of x: ', x.size())
 
             # This is the bottleneck
             # print("This is the bottleneck:")
             # print("Size of x before additional Conv3D: ", x.size())
             x = self.helper_down(x)
-            print("Size of x after additional Conv3D: ", x.size())
+            # print("Size of x after additional Conv3D: ", x.size())
             x = self.activation(x)
             x = self.bottleneck(x)
-            print("Size of x after bottleneck: ", x.size())
+            # print("Size of x after bottleneck: ", x.size())
             x = self.activation(x)
 
             if y == 'get_bottleneck':
                 return x, skip_connections
 
             x = self.helper_up_1(x)
-            print("Size of x after helper_up_1: ", x.size())
+            # print("Size of x after helper_up_1: ", x.size())
             x = self.activation(x)
             skip_connections = skip_connections[::-1]
 
@@ -147,10 +147,10 @@ class UNET_AE(nn.Module):
                 concat_skip = torch.cat((skip_connection, x), dim=1)
                 x = self.ups[idx+1](concat_skip)
             # print("Size of x before downsizing to MD: ", x.size())
-            print("Size of x after expanding path: ", x.size())
+            # print("Size of x after expanding path: ", x.size())
 
             x = self.helper_up_2(x)
-            print("Size of x after helper_up2: ", x.size())
+            # print("Size of x after helper_up2: ", x.size())
             # x = self.activation(x)
 
             # for i in range(2):
@@ -160,7 +160,7 @@ class UNET_AE(nn.Module):
 
         if y == 'get_MD_output':
             x = self.helper_up_1(x)
-            print("Size of x after helper_up_1: ", x.size())
+            # print("Size of x after helper_up_1: ", x.size())
             x = self.activation(x)
             skip_connections = skip_connections[::-1]
 
@@ -171,10 +171,10 @@ class UNET_AE(nn.Module):
                 concat_skip = torch.cat((skip_connection, x), dim=1)
                 x = self.ups[idx+1](concat_skip)
             # print("Size of x before downsizing to MD: ", x.size())
-            print("Size of x after expanding path: ", x.size())
+            # print("Size of x after expanding path: ", x.size())
 
             x = self.helper_up_2(x)
-            print("Size of x after helper_up2: ", x.size())
+            # print("Size of x after helper_up2: ", x.size())
             # x = self.activation(x)
 
             # for i in range(2):
