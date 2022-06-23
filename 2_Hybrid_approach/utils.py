@@ -119,7 +119,7 @@ def get_mamico_loaders(file_names=0, num_workers=4):
         for file_name in _valid_files:
             print(f'Loading validation dataset as loader: {file_name}')
             # dataset = csv2dataset(f'{_directory}/{file_name}', (1000, 3, 26, 26, 26))
-            dataset = mamico_csv2dataset(f'{_directory}/{file_name}')
+            dataset = mamico_csv2dataset(f'{file_name}')
             # print("Utils.py - Sanity Check - Dimension of loaded dataset: ", dataset.shape)
             dataset = MyMamicoDataset(dataset)
             dataloader = DataLoader(
@@ -134,7 +134,7 @@ def get_mamico_loaders(file_names=0, num_workers=4):
         for file_name in _train_files:
             print(f'Loading training dataset as loader: {file_name}')
             # dataset = csv2dataset(f'{_directory}/{file_name}', (1000, 3, 26, 26, 26))
-            dataset = mamico_csv2dataset(f'{_directory}/{file_name}')
+            dataset = mamico_csv2dataset(f'{file_name}')
             # print("Utils.py - Sanity Check - Dimension of loaded dataset: ", dataset.shape)
             dataset = MyMamicoDataset(dataset)
             dataloader = DataLoader(
