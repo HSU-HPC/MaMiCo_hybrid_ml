@@ -106,13 +106,12 @@ def valid_AE(loader, model, criterion, scaler, current_epoch):
 
 
 def trial_1():
-    _alphas = [0.01, 0.005]  # ], 0.001, 0.0005, 0.0001, 0.00005]
-    # , '0_001', '0_0005', '0_0001', '0_00005']
-    _alpha_strings = ['0_01', '0_005']
+    _alphas = [0.01, 0.005, 0.001, 0.0005, 0.0001, 0.00005]
+    _alpha_strings = ['0_01', '0_005', '0_001', '0_0005', '0_0001', '0_00005']
     _criterion = nn.L1Loss()
-    _train_loader, _valid_loader = get_UNET_AE_loaders(file_names=1)
+    _train_loader, _valid_loader = get_UNET_AE_loaders(file_names=0)
     _file_prefix = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/'
-    for i in range(2):
+    for i in range(6):
         _model = UNET_AE(
             device=device,
             in_channels=3,
@@ -123,7 +122,7 @@ def trial_1():
         _scaler = torch.cuda.amp.GradScaler()
         _optimizer = optim.Adam(_model.parameters(), lr=_alphas[i])
         _epoch_losses = []
-        for epoch in range(5):
+        for epoch in range(25):
             avg_loss = train_AE(
                 loader=_train_loader,
                 model=_model,
