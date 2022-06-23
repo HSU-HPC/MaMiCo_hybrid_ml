@@ -1,5 +1,6 @@
 import torch
 import numpy as np
+import time
 import csv
 from dataset import MyMamicoDataset
 from torch.utils.data import DataLoader
@@ -117,6 +118,7 @@ def get_mamico_loaders(file_names=0, num_workers=4):
         ]
 
         for file_name in _valid_files:
+            start_time = time.time()
             print(f'Loading validation dataset as loader: {file_name}')
             # dataset = csv2dataset(f'{_directory}/{file_name}', (1000, 3, 26, 26, 26))
             dataset = mamico_csv2dataset(f'{file_name}')
@@ -129,7 +131,9 @@ def get_mamico_loaders(file_names=0, num_workers=4):
                 num_workers=num_workers
                 )
             dataloaders_valid.append(dataloader)
-            print('Completed loading validation dataset.')
+            duration = time.time() - start_time
+            print(
+                f'Completed loading validation dataset. Duration: {duration:.3f}')
 
         for file_name in _train_files:
             print(f'Loading training dataset as loader: {file_name}')

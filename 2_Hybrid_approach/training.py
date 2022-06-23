@@ -152,7 +152,7 @@ def valid_hybrid(loader, model, criterion, scaler):
     print(
         f'Average error: {avg_loss:.7f}. Max error: {max(losses):.7f} at time: {time_buffer}')
 
-    return [max_loss, min_loss, avg_loss, np.stack(model_preds), np.stack(model_targs)]
+    return [max_loss, min_loss, avg_loss, np.vstack(model_preds), np.vstack(model_targs)]
 
 
 def test_hybrid():

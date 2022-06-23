@@ -3,6 +3,8 @@
 # import torchvision.transforms.functional as TF
 import torch.nn as nn
 import torch
+import numpy as np
+from plotting import compareFlowProfile
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 use_cuda = torch.cuda.is_available()
@@ -667,12 +669,24 @@ def test():
         RNN_lay=2
     )
 
-    resetPipeline(model)
-    for i in range(30):
+    model_preds = []
+    model_targs = []
+
+    for i in range(8):
+        x = torch.ones(1, 3, 24, 24, 24)
+        x = x * i
+        model_preds.append(x)
+
+    for i in range(8):
         x = torch.randn(1, 3, 24, 24, 24)
-        # print('Test-Input shape: ', x.shape)
-        preds = model(x)
-        # print('Test-Prediction shape: ', preds.size())
+        model_targs.append(x)
+
+    model_preds_np = np.vstack(model_preds)
+    model_targs_np = np.vstack(model_preds)
+
+    print(model_preds_np.shape)
+    compareFlowProfile(preds=model_preds_np, targs=model_targs_np,
+                       model_descriptor='test_random_and_time')
 
 
 if __name__ == "__main__":
