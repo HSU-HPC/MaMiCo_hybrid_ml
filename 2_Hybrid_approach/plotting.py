@@ -188,7 +188,7 @@ def plotMinMaxAvgLoss(min_losses, avg_losses, max_losses, file_name=0):
     fig.set_size_inches(6, 3.5)
     # plt.show()
     if file_name != 0:
-        fig.savefig(f'Losses_{file_name}.svg')
+        fig.savefig(f'MinMaxAvgLosses_{file_name}.svg')
 
     plt.close()
 
