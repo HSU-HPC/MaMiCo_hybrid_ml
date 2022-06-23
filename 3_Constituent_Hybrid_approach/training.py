@@ -53,9 +53,11 @@ def train_AE(loader, model, optimizer, criterion, scaler, current_epoch):
         optimizer.zero_grad()
 
         loop.set_postfix(loss=loss.item())
-
+    avg_loss = epoch_loss/counter
     duration = time.time() - start_time
     print('------------------------------------------------------------')
+    print('                         Training')
+    print(f'                      Avg Loss: {avg_loss:.3f}')
     print(f'                      Duration: {duration:.3f}')
     print('------------------------------------------------------------')
     pass
@@ -91,8 +93,11 @@ def valid_AE(loader, model, criterion, scaler, current_epoch):
 
         loop.set_postfix(loss=loss.item())
 
+    avg_loss = epoch_loss/counter
     duration = time.time() - start_time
     print('------------------------------------------------------------')
+    print('                        Validation')
+    print(f'                      Avg Loss: {avg_loss:.3f}')
     print(f'                      Duration: {duration:.3f}')
     print('------------------------------------------------------------')
     pass
@@ -511,7 +516,7 @@ def trial_1():
     _criterion = nn.L1Loss()
     _scaler = torch.cuda.amp.GradScaler()
     _current_epoch = 1
-    _train_loaders, _valid_loaders = get_UNET_AE_loaders(file_names=1)
+    _train_loaders, _valid_loaders = get_UNET_AE_loaders(file_names=0)
 
     for _train_loader in _train_loaders:
         _ = train_AE(
