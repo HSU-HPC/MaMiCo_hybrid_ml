@@ -95,26 +95,26 @@ def get_UNET_AE_loaders(file_names=0, num_workers=4):
         _directory = '/home/lerdo/lerdo_HPC_Lab_Project/Trainingdata'
         _train_files = [
             'clean_couette_test_combined_domain_0_5_top.csv',
-            #'clean_couette_test_combined_domain_0_5_middle.csv',
-            #'clean_couette_test_combined_domain_0_5_bottom.csv',
-            #'clean_couette_test_combined_domain_1_0_top.csv',
-            #'clean_couette_test_combined_domain_1_0_middle.csv',
-            #'clean_couette_test_combined_domain_1_0_bottom.csv',
-            #'clean_couette_test_combined_domain_2_0_top.csv',
-            #'clean_couette_test_combined_domain_2_0_middle.csv',
-            #'clean_couette_test_combined_domain_2_0_bottom.csv',
-            #'clean_couette_test_combined_domain_4_0_top.csv',
-            #'clean_couette_test_combined_domain_4_0_middle.csv',
-            #'clean_couette_test_combined_domain_4_0_bottom.csv',
+            'clean_couette_test_combined_domain_0_5_middle.csv',
+            'clean_couette_test_combined_domain_0_5_bottom.csv',
+            'clean_couette_test_combined_domain_1_0_top.csv',
+            'clean_couette_test_combined_domain_1_0_middle.csv',
+            'clean_couette_test_combined_domain_1_0_bottom.csv',
+            'clean_couette_test_combined_domain_2_0_top.csv',
+            'clean_couette_test_combined_domain_2_0_middle.csv',
+            'clean_couette_test_combined_domain_2_0_bottom.csv',
+            'clean_couette_test_combined_domain_4_0_top.csv',
+            'clean_couette_test_combined_domain_4_0_middle.csv',
+            'clean_couette_test_combined_domain_4_0_bottom.csv',
         ]
 
         _valid_files = [
             'clean_couette_test_combined_domain_3_0_top.csv',
-            #'clean_couette_test_combined_domain_3_0_middle.csv',
-            #'clean_couette_test_combined_domain_3_0_bottom.csv',
-            #'clean_couette_test_combined_domain_5_0_top.csv',
-            #'clean_couette_test_combined_domain_5_0_middle.csv',
-            #'clean_couette_test_combined_domain_5_0_bottom.csv'
+            'clean_couette_test_combined_domain_3_0_middle.csv',
+            'clean_couette_test_combined_domain_3_0_bottom.csv',
+            'clean_couette_test_combined_domain_5_0_top.csv',
+            'clean_couette_test_combined_domain_5_0_middle.csv',
+            'clean_couette_test_combined_domain_5_0_bottom.csv'
         ]
 
         for file_name in _valid_files:
@@ -127,7 +127,7 @@ def get_UNET_AE_loaders(file_names=0, num_workers=4):
             dataloader = DataLoader(
                 dataset=dataset,
                 batch_size=32,
-                shuffle=True,
+                shuffle=False,
                 num_workers=num_workers
                 )
             dataloaders_valid.append(dataloader)
@@ -144,7 +144,7 @@ def get_UNET_AE_loaders(file_names=0, num_workers=4):
             dataloader = DataLoader(
                 dataset=dataset,
                 batch_size=1,
-                shuffle=False,
+                shuffle=True,
                 num_workers=num_workers
                 )
             dataloaders_train.append(dataloader)
