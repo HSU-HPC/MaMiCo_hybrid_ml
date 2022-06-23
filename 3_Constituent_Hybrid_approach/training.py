@@ -485,6 +485,7 @@ def trial_1():
             current_epoch=_current_epoch
         )
         _current_epoch += 1
+
     pass
 
 
