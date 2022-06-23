@@ -1,4 +1,4 @@
-from utils import clean_mamico_data, mamico_csv2dataset
+from utils import mamico_csv2dataset
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib as mpl
@@ -201,29 +201,29 @@ def compareFlowProfile(preds, targs, model_descriptor):
     # targs -
     # model_descriptor -
 
-    t, c, d, h, w = preds[0].size()
+    t, c, d, h, w = preds.shape
     steps = np.arange(0, h).tolist()
     samples = [0, 25, 50, 100, 200, 400, 800, 999]
-
+    time_list = [0, 4, 1, 5, 2, 6, 3, 7]
     mid = int(h/2)
 
-    fig, axs = plt.subplots(8, sharex=True, sharey=True)
+    fig, axs = plt.subplots(4, 2, sharex=True, sharey=True)
     fig.suptitle('Target and Prediction Comparison', fontsize=10)
     plt.tick_params(labelcolor='none', which='both', top=False,
                     bottom=False, left=False, right=False)
-    plt.xlabel("common X")
-    plt.ylabel("common Y")
+    fig.supxlabel('z-axis')
+    fig.supylabel('u_x')
 
     axs = axs.ravel()
     plt.yticks(range(-2, 7, 2))
     plt.xticks([])
 
     for i in range(8):
-        pred = preds[i]
-        targ = targs[i]
-        axs[i].plot(steps, pred[0, 0, :, mid, mid], label=f'Prediction')
-        axs[i].plot(steps, targ[0, 0, mid, :, mid], label=f'Target')
-        axs[i].set_title(f't={samples[i]}')
+        axs[i].plot(steps, preds[time_list[i], 0, :,
+                    mid, mid], label=f'Prediction')
+        axs[i].plot(steps, targs[time_list[i], 0,
+                    mid, :, mid], label=f'Target')
+        axs[i].set_title(f't={samples[time_list[i]]}')
 
     # plt.xlabel('Spatial Dimension')
     plt.legend(ncol=2, fontsize=7)
@@ -233,314 +233,11 @@ def compareFlowProfile(preds, targs, model_descriptor):
                         top=0.9,
                         wspace=0.4,
                         hspace=0.4)
-    fig.set_size_inches(6, 15)
+    fig.set_size_inches(12, 9)
 
     fig.savefig(
         f'CompareFlowprofile_Validation_Dataset_{model_descriptor}.svg')
     plt.close()
-
-
-'''def compareFlowProfile(title, file_name, prediction_array, prediction_array2, target_array, analytical=0, wall_height=20, u_wall=10, sigma=0.3):
-
-    if prediction_array.ndim == 1:
-        h = prediction_array.shape[0]
-        v_step = wall_height / (h-1)
-        v_steps = np.arange(0, wall_height + v_step, v_step).tolist()
-
-        fig, ax1 = plt.subplots(constrained_layout=True)
-        ax1.set_title('Flow Profile in Y-Direction')
-        ax1.plot(v_steps, prediction_array, label='prediction')
-        ax1.plot(v_steps, target_array,  label='target')
-
-        plt.yticks(range(int(-u_wall), int(u_wall*(2)+1), 10))
-        plt.xlabel('Spatial Dimension')
-        plt.ylabel('Velocity $u$')
-        plt.legend(loc="best", ncol=2, fontsize=7)
-        # fig.tight_layout()
-
-    if prediction_array.ndim == 2:
-        h, w = prediction_array.shape
-        v_step = wall_height / (w-1)
-        v_steps = np.arange(0, wall_height + v_step, v_step).tolist()
-
-        # , sharex=True, sharey=True)
-        fig, (ax1, ax2) = plt.subplots(2, sharey=True, constrained_layout=True)
-
-        ax1.set_title('Flow Profile in X-Direction', fontsize=10)
-        ax1.plot(v_steps, prediction_array[int(h/2), :], label='prediction')
-        ax1.plot(v_steps, target_array[int(h/2), :], label='target')
-
-        ax2.set_title('Flow Profile in Y-Direction', fontsize=10)
-        ax2.plot(v_steps, prediction_array[:, int(h/2)], label='prediction')
-        ax2.plot(v_steps, target_array[:, int(h/2)], label='target')
-
-        plt.yticks(range(int(-u_wall), int(u_wall*(2)+1), 10))
-        plt.xlabel('Spatial Dimension')
-        plt.ylabel('Velocity $u$')
-        plt.legend(loc="best", ncol=2, fontsize=7)
-        # fig.tight_layout()
-
-    if prediction_array.ndim == 3:
-        d, h, w = prediction_array.shape
-        v_step = wall_height / (w-1)
-        v_steps = np.arange(0, wall_height + v_step, v_step).tolist()
-
-        # , sharex=True, sharey=True)
-        fig, (ax1, ax2, ax3) = plt.subplots(
-            3, sharey=True, constrained_layout=True)  # sharex=True
-        # plt.ylabel('Velocity $u$')
-
-        ax1.set_title('Flow Profile in X-Direction', fontsize=10)
-        ax1.plot(v_steps, prediction_array[int(
-            h/2), int(h/2), :], label='prediction')
-        ax1.plot(v_steps, target_array[int(h/2), int(h/2), :], label='target')
-
-        ax2.set_title('Flow Profile in Y-Direction', fontsize=10)
-        ax2.set_ylabel('Velocity $u$')
-        ax2.plot(v_steps, prediction_array[int(
-            h/2), :, int(h/2)], label='prediction')
-        ax2.plot(v_steps, target_array[int(h/2), :, int(h/2)], label='target')
-
-        ax3.set_title('Flow Profile in Z-Direction', fontsize=10)
-        ax3.plot(v_steps, prediction_array[:, int(
-            h/2), int(h/2)], label='prediction')
-        ax3.plot(v_steps, target_array[:, int(h/2), int(h/2)], label='target')
-
-        # fig.legend(loc='lower center', ncol=4)
-        # fig.tight_layout()
-        plt.yticks(range(int(-u_wall), int(u_wall*(2)+1), 10))
-        plt.xlabel('Spatial Dimension')
-        plt.legend(loc="best", ncol=2, fontsize=7)
-        # fig.tight_layout()
-
-    if prediction_array.ndim == 4:
-        c, d, h, w = prediction_array.shape
-        v_step = wall_height / (w-1)
-        v_steps = np.arange(0, wall_height + v_step, v_step).tolist()
-
-        # , sharex=True, sharey=True)
-        switch = True
-        if switch == True:
-            fig, (ax1, ax2, ax3, ax4, ax5) = plt.subplots(
-                5, sharey=True, constrained_layout=True)  # sharex=True
-
-            ax1.set_xlabel("X")
-            ax1.set_ylabel("$u_x$")
-            ax1.plot(v_steps, prediction_array[int(0), int(
-                h/2), int(h/2), :], ".r", markersize=0.5, label='MAE prediction')
-            ax1.plot(v_steps, prediction_array2[int(0), int(
-                h/2), int(h/2), :], ".y", markersize=0.5, label='MSE prediction')
-            ax1.plot(v_steps, target_array[0, int(
-                h/2), int(h/2), :], label='target')
-
-            ax2.set_xlabel("Y")
-            ax2.set_ylabel("$u_x$")
-            ax2.plot(v_steps, prediction_array[0, int(
-                h/2), :, int(h/2)], ".r", markersize=0.5, label='MAE prediction')
-            ax2.plot(v_steps, prediction_array2[0, int(
-                h/2), :, int(h/2)], ".y", markersize=0.5, label='MSE prediction')
-            ax2.plot(v_steps, target_array[0, int(
-                h/2), :, int(h/2)], label='target')
-
-            ax3.set_xlabel("Z")
-            ax3.set_ylabel("$u_x$")
-            ax3.plot(v_steps, prediction_array[0, :, int(
-                h/2), int(h/2)], ".r", markersize=0.5, label='MAE prediction')
-            ax3.plot(v_steps, prediction_array2[0, :, int(
-                h/2), int(h/2)], ".y", markersize=0.5, label='MSE prediction')
-            ax3.plot(v_steps, target_array[0, :, int(
-                h/2), int(h/2)], label='target')
-
-            ax4.set_xlabel("X")
-            ax4.set_ylabel("$u_y$")
-            ax4.plot(v_steps, prediction_array[1, :, int(
-                h/2), int(h/2)], ".r", markersize=0.5, label='MAE prediction')
-            ax4.plot(v_steps, prediction_array2[1, :, int(
-                h/2), int(h/2)], ".y", markersize=0.5, label='MSE prediction')
-            ax4.plot(v_steps, target_array[1, :, int(
-                h/2), int(h/2)], label='target')
-
-            ax5.set_xlabel("X")
-            ax5.set_ylabel("$u_z$")
-            ax5.plot(v_steps, prediction_array[2, :, int(
-                h/2), int(h/2)], ".r", markersize=0.5, label='MAE prediction')
-            ax5.plot(v_steps, prediction_array2[2, :, int(
-                h/2), int(h/2)], ".y", markersize=0.5, label='MSE prediction')
-            ax5.plot(v_steps, target_array[2, :, int(
-                h/2), int(h/2)], label='target')
-
-    if isinstance(analytical, np.ndarray):
-        ax1.plot(v_steps, analytical[0, int(
-            h/2), int(h/2), :], label='analytical')
-
-        ax2.plot(v_steps, analytical[0, int(
-            h/2), :, int(h/2)], label='analytical')
-
-        ax3.plot(v_steps, analytical[0, :, int(
-            h/2), int(h/2)], label='analytical')
-
-        ax4.plot(v_steps, analytical[1, :, int(
-            h/2), int(h/2)], label='analytical')
-
-        ax5.plot(v_steps, analytical[2, :, int(
-            h/2), int(h/2)], label='analytical')
-
-    ax1.legend(bbox_to_anchor=(0., 1.02, 1., .102),
-               loc='lower left', ncol=2, mode="expand", borderaxespad=0.)
-    plt.yticks(range(int(-u_wall), int(u_wall*(2)+6), 10))
-    fig.set_size_inches(3.5, 6)
-    plt.show()
-    fig.savefig(f'Plots/{file_name}_Flow_Profile.png')
-'''
-
-
-def compareUxFlowProfile(title, file_name, prediction_array, prediction_array2, target_array, analytical=0, wall_height=20, u_wall=10, sigma=0.3):
-
-    c, d, h, w = prediction_array.shape
-    v_step = wall_height / (w-1)
-    v_steps = np.arange(0, wall_height + v_step, v_step).tolist()
-
-    fig, ax1 = plt.subplots(
-        1, sharey=True, constrained_layout=True)  # sharex=True
-
-    ax1.set_xlabel("Y")
-    ax1.set_ylabel("$u_x$")
-    ax1.plot(v_steps, prediction_array[0, int(
-        h/2), :, int(h/2)], ".r", markersize=0.5, label='MAE prediction')
-    ax1.plot(v_steps, prediction_array2[0, int(
-        h/2), :, int(h/2)], ".y", markersize=0.5, label='MSE prediction')
-    ax1.plot(v_steps, target_array[0, int(
-        h/2), :, int(h/2)], label='target')
-    ax1.plot(v_steps, analytical[0, int(
-        h/2), :, int(h/2)], label='analytical')
-    ax1.legend(bbox_to_anchor=(0., 1.02, 1., .102),
-               loc='lower left', ncol=2, mode="expand", borderaxespad=0.)
-    plt.yticks(range(int(-u_wall), int(u_wall*(2)+6), 10))
-    fig.set_size_inches(3.5, (0.3+6/5))
-    plt.show()
-    fig.savefig(f'Plots/{file_name}_Ux_Flow_Profile.svg')
-
-
-def plotVelocityField(input_array, wall_height=20):
-    if input_array.ndim == 2:
-        h, w = input_array.shape
-        v_step = wall_height / (h-1)
-        v_steps = np.arange(0, wall_height + v_step, v_step).tolist()
-
-        X1, Y1 = np.meshgrid(v_steps, v_steps)
-        u = input_array
-        v = np.zeros(shape=u.shape)
-
-        # set color field for better visualisation
-        n = -2
-        color = np.sqrt(((v-n)/2)*2 + ((u-n)/2)*2)
-
-        # set plot parameters
-        # u - velocity component in x-direction
-        # v - velocity component in y-direction
-        fig, ax = plt.subplots()
-        ax.quiver(X1, Y1, u, v, color, alpha=0.75)
-
-        plt.ylabel('Height $z$')
-        plt.xlabel('Depth $x$')
-        plt.title('The Startup Couette Velocity Field (Cross-Section)')
-        plt.show()
-
-    if input_array.ndim == 3:
-        d, h, w = input_array.shape
-        v_step = wall_height / (h-1)
-        v_steps = np.arange(0, wall_height + v_step, v_step).tolist()
-
-        X1, Y1 = np.meshgrid(v_steps, v_steps)
-        u = input_array[int(0.5*d)]
-        v = np.zeros(shape=u.shape)
-
-        # set color field for better visualisation
-        n = -2
-        color = np.sqrt(((v-n)/2)*2 + ((u-n)/2)*2)
-
-        # set plot parameters
-        # u - velocity component in x-direction
-        # v - velocity component in y-direction
-        fig, ax = plt.subplots()
-        ax.quiver(X1, Y1, u, v, color, alpha=0.75)
-
-        plt.ylabel('Height $z$')
-        plt.xlabel('Depth $x$')
-        plt.title('The Startup Couette Velocity Field (Cross-Section)')
-        plt.show()
-
-
-def compareVelocityField(prediction_array, target_array, wall_height=20):
-    if prediction_array.ndim == 3:
-        t, h, w = prediction_array.shape
-        v_step = wall_height / (h-1)
-        v_steps = np.arange(0, wall_height + v_step, v_step).tolist()
-
-        X1, Y1 = np.meshgrid(v_steps, v_steps)
-
-        for i in range(t):
-            # set plot parameters
-            # u - velocity component in x-direction
-            # v - velocity component in y-direction
-            u_pred = prediction_array[i]
-            u_targ = target_array[i]
-            v = np.zeros(shape=u_pred.shape)
-
-            # set color field for better visualisation
-            n = -2
-            color = np.sqrt(((v-n)/2)*2 + ((u_pred-n)/2)*2)
-
-            fig, (ax1, ax2) = plt.subplots(1, 2)
-
-            ax1.quiver(X1, Y1, u_pred, v, color, alpha=0.75)
-            ax1.set_aspect('equal')
-            ax1.set_title('predicted')
-            ax1.set_xlabel('Depth $x$')
-            ax1.set_ylabel('Height $z$')
-
-            ax2.quiver(X1, Y1, u_targ, v, color, alpha=0.75)
-            ax2.set_aspect('equal')
-            ax2.set_title('noisy analytical')
-            ax2.set_xlabel('Depth $x$')
-            fig.suptitle('The Startup Couette Velocity Field (Cross-Section)')
-            plt.show()
-            fig.savefig(f'pred_vs_noisy_target_v_field_3e-1_{i}.svg')
-
-    if prediction_array.ndim == 4:
-        t, d, h, w = prediction_array.shape
-        v_step = wall_height / (h-1)
-        v_steps = np.arange(0, wall_height + v_step, v_step).tolist()
-
-        X1, Y1 = np.meshgrid(v_steps, v_steps)
-
-        for i in range(t):
-            # set plot parameters
-            # u - velocity component in x-direction
-            # v - velocity component in y-direction
-            u_pred = prediction_array[i]
-            u_targ = target_array[i]
-            v = np.zeros(shape=u_pred.shape)
-
-            # set color field for better visualisation
-            n = -2
-            color = np.sqrt(((v-n)/2)*2 + ((u_pred-n)/2)*2)
-
-            fig, (ax1, ax2) = plt.subplots(1, 2)
-
-            ax1.quiver(X1, Y1, u_pred, v, color, alpha=0.75)
-            ax1.set_aspect('equal')
-            ax1.set_title('predicted')
-            ax1.set_xlabel('Depth $x$')
-            ax1.set_ylabel('Height $z$')
-
-            ax2.quiver(X1, Y1, u_targ, v, color, alpha=0.75)
-            ax2.set_aspect('equal')
-            ax2.set_title('noisy analytical')
-            ax2.set_xlabel('Depth $x$')
-            fig.suptitle('The Startup Couette Velocity Field (Cross-Section)')
-            plt.show()
-            fig.savefig(f'pred_vs_noisy_target_v_field_3e-1_{i}.svg')
 
 
 def showSample():
@@ -686,13 +383,7 @@ def main():
 
 if __name__ == "__main__":
     # test()
-    _preds = []
-    _targs = []
-
-    for i in range(8):
-        _preds.append(torch.randn(1, 3, 18, 18, 18))
-        _targs.append(torch.randn(1, 3, 18, 18, 18))
+    _preds = torch.randn(8, 3, 18, 18, 18) + 1
+    _targs = torch.randn(8, 3, 18, 18, 18) + 3
 
     compareFlowProfile(preds=_preds, targs=_targs, model_descriptor='1_1_1_1')
-
-    # clean_mamico_data('/home/lerdo/lerdo_HPC_Lab_Project/Trainingdata', 'clean_couette_test_combined_domain_3_0.csv')
