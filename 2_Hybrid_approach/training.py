@@ -37,6 +37,7 @@ def train_hybrid(loader, model, optimizer, criterion, scaler, current_epoch):
     # @time_buffer - used to track time at which max_loss occurs
 
     for batch_idx, (data, targets) in enumerate(loader):
+        start_time = time.time()
         data = data.float().squeeze(1).to(device)
         targets = targets.float().to(device)
 
@@ -63,8 +64,9 @@ def train_hybrid(loader, model, optimizer, criterion, scaler, current_epoch):
             num = '00'
         elif counter < 1000:
             num = '0'
+        duration = time.time() - start_time
 
-        print(f'Progress: {num}{counter}/1000     Error: {loss:.7f}')
+        print(f'Progress: {num}{counter}/1000     Error: {loss:.7f}     Duration: {duration:.3f}')
 
     # Saving error values
     max_loss = max(losses)
