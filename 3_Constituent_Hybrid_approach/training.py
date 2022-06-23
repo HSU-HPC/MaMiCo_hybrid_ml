@@ -131,9 +131,6 @@ def trial_1():
             current_epoch=epoch+1
         )
         _epoch_losses.append(avg_loss)
-        print(f'                          Epoch {epoch}')
-        print(f'                      Avg Loss: {avg_loss:.3f}')
-        print('------------------------------------------------------------')
 
     _valid_loss = valid_AE(
         loader=_valid_loader,
