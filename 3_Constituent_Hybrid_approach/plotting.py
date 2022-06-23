@@ -135,42 +135,38 @@ def visualizeMaMiCoDataset(filenames, dataset_names, u_wall):
     return
 
 
-def plotMinMaxAvgLoss(min_losses, avg_losses, max_losses, file_name=0):
+def plotAvgLoss(avg_losses, file_name=0):
     # BRIEF: This function is used to visualize the losses, in other words
-    # chart model learning. Note that this does not consider epochs, but
-    # but rather individual loading cycles. e.g. 1 epoch = n * loading cycles
-    # where n is the number of loaders.
+    # chart model learning.
     # PARAMETERS:
-    # min_losses - list containing the minimum loss from each loading cycle
-    # avg_losses - list containing the maximum loss from each loading cycle
-    # max_losses - list containing the average loss from each loading cycle
+    # avg_losses - list containing the average loss from each loading cycle
     # file_name - designated name to save file
 
-    x_axis = range(1, (len(min_losses)+1), 1)
+    x_axis = range(1, (len(avg_losses)+1), 1)
 
     x_ticks = [1]
 
-    if len(min_losses) % 10 == 0:
-        for i in range(int(len(min_losses)/10) + 1):
+    if len(avg_losses) % 10 == 0:
+        for i in range(int(len(avg_losses)/10) + 1):
             x_ticks.append(10*i)
     else:
-        for i in range(int(len(min_losses)/10) + 2):
+        for i in range(int(len(avg_losses)/10) + 2):
             x_ticks.append(10*i)
 
     y_ticks = []
-    if max(max_losses) > 5:
+    if max(avg_losses) > 5:
         y_ticks = np.arange(0, 6.01, 1)
-    elif max(max_losses) > 4:
+    elif max(avg_losses) > 4:
         y_ticks = np.arange(0, 5.01, 1)
-    elif max(max_losses) > 3:
+    elif max(avg_losses) > 3:
         y_ticks = np.arange(0, 4.01, 0.5)
-    elif max(max_losses) > 2:
+    elif max(avg_losses) > 2:
         y_ticks = np.arange(0, 3.01, 0.5)
-    elif max(max_losses) > 1:
+    elif max(avg_losses) > 1:
         y_ticks = np.arange(0, 2.01, 0.25)
-    elif max(max_losses) > 0.5:
+    elif max(avg_losses) > 0.5:
         y_ticks = np.arange(0, 1.01, 0.1)
-    elif max(max_losses) > 0.3:
+    elif max(avg_losses) > 0.3:
         y_ticks = np.arange(0, 0.51, 0.05)
     # max_x = len(min_losses)
     # max_loss = max(max_losses)
@@ -178,17 +174,13 @@ def plotMinMaxAvgLoss(min_losses, avg_losses, max_losses, file_name=0):
     fig, (ax1) = plt.subplots(1, constrained_layout=True)
     ax1.set_xlabel('Number of Epochs')
     ax1.set_ylabel('Error')
-    ax1.plot(x_axis, min_losses, ':', label='Minimum Loss')
     ax1.plot(x_axis, avg_losses, label='Average Loss')
-    ax1.plot(x_axis, max_losses, ':', label='Maximum Loss')
     ax1.set_yticks(y_ticks)
     ax1.set_xticks(x_ticks)
-    ax1.legend(bbox_to_anchor=(0., 1.02, 1., .102), loc='lower left',
-               ncol=2, mode="expand", borderaxespad=0.)
     fig.set_size_inches(6, 3.5)
     # plt.show()
     if file_name != 0:
-        fig.savefig(f'MinMaxAvgLosses_{file_name}.svg')
+        fig.savefig(f'Plot_Avg_Losses_{file_name}.svg')
 
     plt.close()
 
@@ -383,7 +375,5 @@ def main():
 
 if __name__ == "__main__":
     # test()
-    _preds = torch.randn(8, 3, 18, 18, 18) + 1
-    _targs = torch.randn(8, 3, 18, 18, 18) + 3
-
-    compareFlowProfile(preds=_preds, targs=_targs, model_descriptor='1_1_1_1')
+    a = 0
+    print(max(a))

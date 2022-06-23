@@ -6,31 +6,6 @@ from dataset import MyMamicoDataset, MyMamicoDataset_UNET_AE
 from torch.utils.data import DataLoader
 
 
-def save_checkpoint(state, filename="my_checkpoint.pth.tar"):
-    print("=> Saving checkpoint")
-    torch.save(state, filename)
-
-
-def load_checkpoint(checkpoint, model):
-    print("=> Loading checkpoint")
-    model.load_state_dict(checkpoint["state_dict"])
-
-
-def clean_mamico_data(directory, filename):
-    #
-    # This function is used to clean the MaMiCo generated
-    # csv file. In other words, to remove the comma delimiter
-    # and ensure a semicolon delimiter.
-    #
-    text = open(f"{directory}/{filename}", "r")
-    text = ''.join([i for i in text]) \
-        .replace(",", ";")
-    x = open(f"{directory}/clean_{filename}", "w")
-    x.writelines(text)
-    x.close()
-    pass
-
-
 def mamico_csv2dataset(file_name):
     #
     # This function reads from a MaMiCo generatd csv file.
@@ -88,8 +63,8 @@ def get_UNET_AE_loaders(file_names=0, num_workers=4):
     # this function vields a dataloader for each specified mamico generated
     # csv file. As for num_workers, the rule of thumb is = 4 * num_GPU.
     #
-    dataloaders_train = []
-    dataloaders_valid = []
+    data_train = []
+    data_valid = []
 
     if file_names == 0:
         _directory = '/home/lerdo/lerdo_HPC_Lab_Project/Trainingdata'
@@ -119,65 +94,60 @@ def get_UNET_AE_loaders(file_names=0, num_workers=4):
 
         for file_name in _valid_files:
             start_time = time.time()
-            print(f'Loading validation dataset as loader: {file_name}')
+            print(f'Loading validation data: {file_name}')
             # dataset = csv2dataset(f'{_directory}/{file_name}', (1000, 3, 26, 26, 26))
-            dataset = mamico_csv2dataset(f'{file_name}')
+            data = mamico_csv2dataset(f'{file_name}')
             # print("Utils.py - Sanity Check - Dimension of loaded dataset: ", dataset.shape)
-            dataset = MyMamicoDataset_UNET_AE(dataset)
-            dataloader = DataLoader(
-                dataset=dataset,
-                batch_size=32,
-                shuffle=False,
-                num_workers=num_workers
-                )
-            dataloaders_valid.append(dataloader)
+            data_valid.append(data)
             duration = time.time() - start_time
             print(
-                f'Completed loading validation dataset. Duration: {duration:.3f}')
+                f'Completed loading validation data. Duration: {duration:.3f}')
 
         for file_name in _train_files:
-            print(f'Loading training dataset as loader: {file_name}')
+            start_time = time.time()
+            print(f'Loading training data: {file_name}')
             # dataset = csv2dataset(f'{_directory}/{file_name}', (1000, 3, 26, 26, 26))
-            dataset = mamico_csv2dataset(f'{file_name}')
+            data = mamico_csv2dataset(f'{file_name}')
             # print("Utils.py - Sanity Check - Dimension of loaded dataset: ", dataset.shape)
-            dataset = MyMamicoDataset_UNET_AE(dataset)
-            dataloader = DataLoader(
-                dataset=dataset,
-                batch_size=1,
-                shuffle=True,
-                num_workers=num_workers
-                )
-            dataloaders_train.append(dataloader)
-            print('Completed loading training dataset.')
+            data_train.append(data)
+            duration = time.time() - start_time
+            print(
+                f'Completed loading training data. Duration: {duration:.3f}')
+
     else:
         for i in range(5):
             print('Loading ---> RANDOM <--- training dataset as loader.')
-            dataset = np.random.rand(320, 3, 26, 26, 26)
+            data = np.random.rand(320, 3, 26, 26, 26)
             # print("Utils.py - Sanity Check - Dimension of loaded dataset: ", dataset.shape)
-            dataset = MyMamicoDataset_UNET_AE(dataset)
-            dataloader = DataLoader(
-                dataset=dataset,
-                batch_size=32,
-                shuffle=True,
-                num_workers=num_workers
-                )
-            dataloaders_train.append(dataloader)
+            data_train.append(data)
             print('Completed loading ---> RANDOM <--- training dataset.')
+
         for i in range(3):
             print('Loading ---> RANDOM <--- validation dataset as loader.')
-            dataset = np.random.rand(320, 3, 26, 26, 26)
+            data = np.random.rand(320, 3, 26, 26, 26)
             # print("Utils.py - Sanity Check - Dimension of loaded dataset: ", dataset.shape)
-            dataset = MyMamicoDataset_UNET_AE(dataset)
-            dataloader = DataLoader(
-                dataset=dataset,
-                batch_size=32,
-                shuffle=True,
-                num_workers=num_workers
-                )
-            dataloaders_valid.append(dataloader)
+            data_valid.append(data)
             print('Completed loading ---> RANDOM <--- validation dataset.')
 
-    return dataloaders_train, dataloaders_valid
+    data_valid_stack = np.vstack(data_valid)
+    dataset_valid = MyMamicoDataset_UNET_AE(data_valid_stack)
+    dataloader_valid = DataLoader(
+        dataset=dataset_valid,
+        batch_size=32,
+        shuffle=False,
+        num_workers=num_workers
+        )
+
+    data_train_stack = np.vstack(data_train)
+    dataset_train = MyMamicoDataset_UNET_AE(data_train_stack)
+    dataloader_train = DataLoader(
+        dataset=dataset_train,
+        batch_size=32,
+        shuffle=True,
+        num_workers=num_workers
+        )
+
+    return dataloader_train, dataloader_valid
 
 
 def get_mamico_loaders(file_names=0, num_workers=4):
@@ -386,50 +356,4 @@ def checkSaveLoad():
 
 
 if __name__ == "__main__":
-
-    file_names = [
-        'couette_test_combined_domain_0_5_top.csv',
-        'couette_test_combined_domain_0_5_middle.csv',
-        'couette_test_combined_domain_0_5_bottom.csv',
-        'couette_test_combined_domain_1_0_top.csv',
-        'couette_test_combined_domain_1_0_middle.csv',
-        'couette_test_combined_domain_1_0_bottom.csv',
-        'couette_test_combined_domain_2_0_top.csv',
-        'couette_test_combined_domain_2_0_middle.csv',
-        'couette_test_combined_domain_2_0_bottom.csv',
-        'couette_test_combined_domain_3_0_top.csv',
-        'couette_test_combined_domain_3_0_middle.csv',
-        'couette_test_combined_domain_3_0_bottom.csv',
-        'couette_test_combined_domain_4_0_top.csv',
-        'couette_test_combined_domain_4_0_middle.csv',
-        'couette_test_combined_domain_4_0_bottom.csv',
-        'couette_test_combined_domain_5_0_top.csv',
-        'couette_test_combined_domain_5_0_middle.csv',
-        'couette_test_combined_domain_5_0_bottom.csv'
-    ]
-    new_file_names = [
-        'clean_couette_dataset_0_5_top.csv',
-        'clean_couette_dataset_0_5_middle.csv',
-        'clean_couette_dataset_0_5_bottom.csv',
-        'clean_couette_dataset_1_0_top.csv',
-        'clean_couette_dataset_1_0_middle.csv',
-        'clean_couette_dataset_1_0_bottom.csv',
-        'clean_couette_dataset_2_0_top.csv',
-        'clean_couette_dataset_2_0_middle.csv',
-        'clean_couette_dataset_2_0_bottom.csv',
-        'clean_couette_dataset_3_0_top.csv',
-        'clean_couette_dataset_3_0_middle.csv',
-        'clean_couette_dataset_3_0_bottom.csv',
-        'clean_couette_dataset_4_0_top.csv',
-        'clean_couette_dataset_4_0_middle.csv',
-        'clean_couette_dataset_4_0_bottom.csv',
-        'clean_couette_dataset_5_0_top.csv',
-        'clean_couette_dataset_5_0_middle.csv',
-        'clean_couette_dataset_5_0_bottom.csv'
-    ]
-    _directory = '/home/lerdo/lerdo_HPC_Lab_Project/Trainingdata'
-    for i in range(len(file_names)):
-        _dataset = mamico_csv2dataset(file_names[i])
-        dataset2csv(
-            dataset=_dataset,
-            dataset_name=new_file_names[i])
+    pass
