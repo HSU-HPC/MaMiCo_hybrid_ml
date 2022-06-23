@@ -107,9 +107,11 @@ def valid_AE(loader, model, criterion, scaler, current_epoch):
 
 def trial_1_():
     _alphas = [0.01, 0.005]  # ], 0.001, 0.0005, 0.0001, 0.00005]
-    _alpha_strings = ['0_01', '0_005']  # , '0_001', '0_0005', '0_0001', '0_00005']
+    # , '0_001', '0_0005', '0_0001', '0_00005']
+    _alpha_strings = ['0_01', '0_005']
     _criterion = nn.L1Loss()
     _train_loader, _valid_loader = get_UNET_AE_loaders(file_names=1)
+    _file_prefix = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/'
     for i in range(2):
         _model = UNET_AE(
             device=device,
@@ -141,10 +143,11 @@ def trial_1_():
         )
         _epoch_losses.append(_valid_loss)
         losses2file(losses=_epoch_losses,
-                    filename=f'Losses_UNET_AE_{_alpha_strings[i]}')
+                    filename=f'{_file_prefix}Losses_UNET_AE_{_alpha_strings[i]}')
 
-        plotAvgLoss(avg_losses=_epoch_losses, file_name=f'UNET_AE_{_alpha_strings[i]}')
-        torch.save(_model.state_dict(), f'Model_UNET_AE_{_alpha_strings[i]}')
+        plotAvgLoss(avg_losses=_epoch_losses,
+                    file_name=f'{_file_prefix}UNET_AE_{_alpha_strings[i]}')
+        torch.save(_model.state_dict(), f'{_file_prefix}Model_UNET_AE_{_alpha_strings[i]}')
     return
 
 
