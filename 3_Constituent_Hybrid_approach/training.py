@@ -468,6 +468,7 @@ def trial_1():
         features=[4, 8, 16],
         activation=nn.ReLU(inplace=True)
     ).to(device)
+
     _alpha = 0.002
     _optimizer = optim.Adam(_model.parameters(), lr=_alpha)
     _criterion = nn.L1Loss()
@@ -485,8 +486,7 @@ def trial_1():
             current_epoch=_current_epoch
         )
         _current_epoch += 1
-
-    pass
+    return
 
 
 if __name__ == "__main__":
