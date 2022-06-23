@@ -142,11 +142,16 @@ def trial_1():
             current_epoch=0
         )
         _epoch_losses.append(_valid_loss)
-        losses2file(losses=_epoch_losses,
-                    filename=f'{_file_prefix}Losses_UNET_AE_{_alpha_strings[i]}')
+        losses2file(
+            losses=_epoch_losses,
+            filename=f'{_file_prefix}Losses_UNET_AE_{_alpha_strings[i]}'
+        )
 
-        plotAvgLoss(avg_losses=_epoch_losses,
-                    file_name=f'{_file_prefix}UNET_AE_{_alpha_strings[i]}')
+        plotAvgLoss(
+            avg_losses=_epoch_losses,
+            file_prefix=_file_prefix,
+            file_name=f'UNET_AE_{_alpha_strings[i]}
+        )
         torch.save(_model.state_dict(),
                    f'{_file_prefix}Model_UNET_AE_{_alpha_strings[i]}')
     return

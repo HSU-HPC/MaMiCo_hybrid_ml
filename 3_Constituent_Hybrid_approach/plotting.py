@@ -135,7 +135,7 @@ def visualizeMaMiCoDataset(filenames, dataset_names, u_wall):
     return
 
 
-def plotAvgLoss(avg_losses, file_name=0):
+def plotAvgLoss(avg_losses, file_prefix=0, file_name=0):
     # BRIEF: This function is used to visualize the losses, in other words
     # chart model learning.
     # PARAMETERS:
@@ -166,7 +166,7 @@ def plotAvgLoss(avg_losses, file_name=0):
     fig.set_size_inches(6, 3.5)
     # plt.show()
     if file_name != 0:
-        fig.savefig(f'Plot_Avg_Losses_{file_name}.svg')
+        fig.savefig(f'{file_prefix}Plot_Avg_Losses_{file_name}.svg')
 
     plt.close()
 
