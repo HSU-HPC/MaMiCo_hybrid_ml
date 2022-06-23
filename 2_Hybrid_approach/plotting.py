@@ -3,8 +3,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 import torch
-mpl.use('Agg')
-# plt.style.use(['science'])
+# mpl.use('Agg')
+plt.style.use(['science'])
 np.set_printoptions(precision=2)
 
 
@@ -208,11 +208,11 @@ def compareFlowProfile(preds, targs, model_descriptor):
     mid = int(h/2)
 
     fig, axs = plt.subplots(4, 2, sharex=True, sharey=True)
-    fig.suptitle('Target and Prediction Comparison', fontsize=10)
+    fig.suptitle('Target and Prediction Comparison', fontsize=16)
     plt.tick_params(labelcolor='none', which='both', top=False,
                     bottom=False, left=False, right=False)
-    fig.supxlabel('z-axis')
-    fig.supylabel('u_x')
+    plt.setp(axs[-1, :], xlabel='Z-Direction')
+    plt.setp(axs[:, 0], ylabel='$u_x$')
 
     axs = axs.ravel()
     plt.yticks(range(-2, 7, 2))
@@ -223,7 +223,7 @@ def compareFlowProfile(preds, targs, model_descriptor):
                     mid, mid], label=f'Prediction')
         axs[i].plot(steps, targs[time_list[i], 0,
                     mid, :, mid], label=f'Target')
-        axs[i].set_title(f't={samples[time_list[i]]}')
+        axs[i].set_title(f't={samples[time_list[i]]}', fontsize=12)
 
     # plt.xlabel('Spatial Dimension')
     plt.legend(ncol=2, fontsize=7)
