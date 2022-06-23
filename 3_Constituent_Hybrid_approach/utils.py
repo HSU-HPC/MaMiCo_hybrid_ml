@@ -152,7 +152,7 @@ def get_UNET_AE_loaders(file_names=0, num_workers=4):
     else:
         for i in range(5):
             print('Loading ---> RANDOM <--- training dataset as loader.')
-            dataset = np.random.rand(25, 3, 26, 26, 26)
+            dataset = np.random.rand(320, 3, 26, 26, 26)
             # print("Utils.py - Sanity Check - Dimension of loaded dataset: ", dataset.shape)
             dataset = MyMamicoDataset_UNET_AE(dataset)
             dataloader = DataLoader(
@@ -165,7 +165,7 @@ def get_UNET_AE_loaders(file_names=0, num_workers=4):
             print('Completed loading ---> RANDOM <--- training dataset.')
         for i in range(3):
             print('Loading ---> RANDOM <--- validation dataset as loader.')
-            dataset = np.random.rand(25, 3, 26, 26, 26)
+            dataset = np.random.rand(320, 3, 26, 26, 26)
             # print("Utils.py - Sanity Check - Dimension of loaded dataset: ", dataset.shape)
             dataset = MyMamicoDataset_UNET_AE(dataset)
             dataloader = DataLoader(

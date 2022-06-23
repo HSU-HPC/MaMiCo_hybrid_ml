@@ -56,7 +56,7 @@ def train_AE(loader, model, optimizer, criterion, scaler, current_epoch):
 
     duration = time.time() - start_time
     print('------------------------------------------------------------')
-    print(f'                      Duration: {duration:.f}')
+    print(f'                      Duration: {duration:.3f}')
     print('------------------------------------------------------------')
     pass
 
