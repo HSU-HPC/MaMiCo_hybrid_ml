@@ -474,7 +474,7 @@ def trial_1():
     _criterion = nn.L1Loss()
     _scaler = torch.cuda.amp.GradScaler()
     _current_epoch = 1
-    _train_loaders, _valid_loaders = get_UNET_AE_loaders(file=1)
+    _train_loaders, _valid_loaders = get_UNET_AE_loaders(file_names=1)
 
     for _train_loader in _train_loaders:
         _ = train_AE(
