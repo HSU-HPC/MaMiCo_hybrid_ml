@@ -61,6 +61,43 @@ def train_AE(loader, model, optimizer, criterion, scaler, current_epoch):
     pass
 
 
+def valid_AE(loader, model, criterion, scaler, current_epoch):
+    # BRIEF: The train function completes one epoch of the training cycle.
+    # PARAMETERS:
+    # loader - object of PyTorch-type DataLoader to automatically feed dataset
+    # model - the model to be trained
+    # optimizer - the optimization algorithm applied during training
+    # criterion - the loss function applied to quantify the error
+    # scaler -
+    start_time = time.time()
+
+    loop = tqdm(loader)
+    # The tqdm module allows to display a smart progress meter for iterables
+    # using tqdm(iterable).
+
+    epoch_loss = 0
+    counter = 0
+
+    for batch_idx, (data, targets) in enumerate(loop):
+        data = data.float().to(device=device)
+        targets = targets.float().to(device=device)
+
+        with torch.cuda.amp.autocast():
+            predictions = model(data)
+            loss = criterion(predictions.float(), targets.float())
+            print('Current batch loss: ', loss.item())
+            epoch_loss += loss.item()
+            counter += 1
+
+        loop.set_postfix(loss=loss.item())
+
+    duration = time.time() - start_time
+    print('------------------------------------------------------------')
+    print(f'                      Duration: {duration:.3f}')
+    print('------------------------------------------------------------')
+    pass
+
+
 def train_hybrid(loader, model, optimizer, criterion, scaler, current_epoch):
     # BRIEF: The train function completes one epoch of the training cycle.
     # PARAMETERS:
@@ -486,6 +523,17 @@ def trial_1():
             current_epoch=_current_epoch
         )
         _current_epoch += 1
+
+    for _valid_loader in _valid_loaders:
+        _ = valid_AE(
+            loader=_train_loader,
+            model=_model,
+            criterion=_criterion,
+            scaler=_scaler,
+            current_epoch=_current_epoch
+        )
+        _current_epoch += 1
+
     return
 
 
