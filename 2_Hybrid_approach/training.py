@@ -7,7 +7,7 @@ import torch.optim as optim
 from model import Hybrid_MD_RNN_UNET, Hybrid_MD_GRU_UNET, Hybrid_MD_LSTM_UNET, resetPipeline
 import time
 from utils import get_mamico_loaders, losses2file, checkUserModelSpecs, dataset2csv
-from plotting import plotMinMaxAvgLoss
+from plotting import plotMinMaxAvgLoss, compareFlowProfile
 
 plt.style.use(['science'])
 np.set_printoptions(precision=6)
@@ -295,6 +295,11 @@ def training_factory(user_input):
             dataset_name='targs',
             counter=_counter)
         _counter += 1
+        compareFlowProfile(
+            preds=_results[3],
+            targs=_results[4],
+            model_descriptor=_file_suffix
+        )
 
     losses2file(_max_valid_losses, f'Max_Error_Validation_{_file_suffix}')
     losses2file(_min_valid_losses, f'Min_Error_Validation_{_file_suffix}')
