@@ -105,7 +105,7 @@ def valid_AE(loader, model, criterion, scaler, current_epoch):
     return avg_loss
 
 
-def trial_1_():
+def trial_1():
     _alphas = [0.01, 0.005]  # ], 0.001, 0.0005, 0.0001, 0.00005]
     # , '0_001', '0_0005', '0_0001', '0_00005']
     _alpha_strings = ['0_01', '0_005']
@@ -147,10 +147,10 @@ def trial_1_():
 
         plotAvgLoss(avg_losses=_epoch_losses,
                     file_name=f'{_file_prefix}UNET_AE_{_alpha_strings[i]}')
-        torch.save(_model.state_dict(), f'{_file_prefix}Model_UNET_AE_{_alpha_strings[i]}')
+        torch.save(_model.state_dict(),
+                   f'{_file_prefix}Model_UNET_AE_{_alpha_strings[i]}')
     return
 
 
 if __name__ == "__main__":
-
     trial_1()
