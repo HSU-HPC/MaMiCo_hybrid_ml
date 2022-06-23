@@ -726,3 +726,4 @@ def test_forward_overloading():
 
 
 if __name__ == "__main__":
+    pass
