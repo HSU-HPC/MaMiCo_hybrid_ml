@@ -150,7 +150,7 @@ def trial_1():
         plotAvgLoss(
             avg_losses=_epoch_losses,
             file_prefix=_file_prefix,
-            file_name=f'UNET_AE_{_alpha_strings[i]}
+            file_name=f'UNET_AE_{_alpha_strings[i]}'
         )
         torch.save(_model.state_dict(),
                    f'{_file_prefix}Model_UNET_AE_{_alpha_strings[i]}')
