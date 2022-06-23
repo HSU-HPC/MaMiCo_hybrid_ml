@@ -29,7 +29,7 @@ def train_AE(loader, model, optimizer, criterion, scaler, current_epoch):
     # scaler -
     start_time = time.time()
 
-    loop = tqdm(loader)
+    # loop = tqdm(loader)
     # The tqdm module allows to display a smart progress meter for iterables
     # using tqdm(iterable).
 
@@ -37,7 +37,7 @@ def train_AE(loader, model, optimizer, criterion, scaler, current_epoch):
     counter = 0
     optimizer.zero_grad()
 
-    for batch_idx, (data, targets) in enumerate(loop):
+    for batch_idx, (data, targets) in enumerate(loader):
         data = data.float().to(device=device)
         targets = targets.float().to(device=device)
 
@@ -52,7 +52,7 @@ def train_AE(loader, model, optimizer, criterion, scaler, current_epoch):
         optimizer.step()
         optimizer.zero_grad()
 
-        loop.set_postfix(loss=loss.item())
+        # loop.set_postfix(loss=loss.item())
     avg_loss = epoch_loss/counter
     duration = time.time() - start_time
     print('------------------------------------------------------------')
@@ -516,7 +516,7 @@ def trial_1():
     _criterion = nn.L1Loss()
     _scaler = torch.cuda.amp.GradScaler()
     _current_epoch = 1
-    _train_loaders, _valid_loaders = get_UNET_AE_loaders(file_names=1)
+    _train_loaders, _valid_loaders = get_UNET_AE_loaders(file_names=0)
     _num_train_loaders = len(_train_loaders)
     for epoch in range(20):
         _epoch_loss = 0
