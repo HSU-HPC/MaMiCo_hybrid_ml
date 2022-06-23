@@ -154,15 +154,15 @@ def plotAvgLoss(avg_losses, file_name=0):
             x_ticks.append(10*i)
 
     y_ticks = []
-    if max(avg_losses) > 5:
+    if max(avg_losses) > 5.0:
         y_ticks = np.arange(0, 6.01, 1)
-    elif max(avg_losses) > 4:
+    elif max(avg_losses) > 4.0:
         y_ticks = np.arange(0, 5.01, 1)
-    elif max(avg_losses) > 3:
+    elif max(avg_losses) > 3.0:
         y_ticks = np.arange(0, 4.01, 0.5)
-    elif max(avg_losses) > 2:
+    elif max(avg_losses) > 2.0:
         y_ticks = np.arange(0, 3.01, 0.5)
-    elif max(avg_losses) > 1:
+    elif max(avg_losses) > 1.0:
         y_ticks = np.arange(0, 2.01, 0.25)
     elif max(avg_losses) > 0.5:
         y_ticks = np.arange(0, 1.01, 0.1)

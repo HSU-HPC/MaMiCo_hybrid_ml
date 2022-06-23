@@ -57,6 +57,8 @@ def train_AE(loader, model, optimizer, criterion, scaler, current_epoch):
     duration = time.time() - start_time
     print('------------------------------------------------------------')
     print('                         Training')
+    print('   ')
+    print(f'                         Epoch: {current_epoch}')
     print(f'                      Avg Loss: {avg_loss:.3f}')
     print(f'                      Duration: {duration:.3f}')
     print('------------------------------------------------------------')
@@ -87,7 +89,7 @@ def valid_AE(loader, model, criterion, scaler, current_epoch):
         with torch.cuda.amp.autocast():
             predictions = model(data)
             loss = criterion(predictions.float(), targets.float())
-            print('Current batch loss: ', loss.item())
+            # print('Current batch loss: ', loss.item())
             epoch_loss += loss.item()
             counter += 1
 
@@ -100,7 +102,7 @@ def valid_AE(loader, model, criterion, scaler, current_epoch):
     print(f'                      Avg Loss: {avg_loss:.3f}')
     print(f'                      Duration: {duration:.3f}')
     print('------------------------------------------------------------')
-    pass
+    return avg_loss
 
 
 def trial_1():
@@ -117,7 +119,6 @@ def trial_1():
     _optimizer = optim.Adam(_model.parameters(), lr=_alpha)
     _criterion = nn.L1Loss()
     _scaler = torch.cuda.amp.GradScaler()
-    _current_epoch = 1
     _train_loader, _valid_loader = get_UNET_AE_loaders(file_names=1)
     _epoch_losses = []
     for epoch in range(20):
@@ -127,10 +128,9 @@ def trial_1():
             optimizer=_optimizer,
             criterion=_criterion,
             scaler=_scaler,
-            current_epoch=_current_epoch
+            current_epoch=epoch+1
         )
         _epoch_losses.append(avg_loss)
-        print('------------------------------------------------------------')
         print(f'                          Epoch {epoch}')
         print(f'                      Avg Loss: {avg_loss:.3f}')
         print('------------------------------------------------------------')
@@ -140,7 +140,7 @@ def trial_1():
         model=_model,
         criterion=_criterion,
         scaler=_scaler,
-        current_epoch=_current_epoch
+        current_epoch=0
     )
     _epoch_losses.append(_valid_loss)
     losses2file(losses=_epoch_losses,
