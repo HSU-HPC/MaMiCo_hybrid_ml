@@ -66,7 +66,8 @@ def train_hybrid(loader, model, optimizer, criterion, scaler, current_epoch):
             num = '0'
         duration = time.time() - start_time
 
-        print(f'Progress: {num}{counter}/1000     Error: {loss:.7f}     Duration: {duration:.3f}')
+        print(
+            f'Progress: {num}{counter}/1000     Error: {loss:.7f}     Duration: {duration:.3f}')
 
     # Saving error values
     max_loss = max(losses)

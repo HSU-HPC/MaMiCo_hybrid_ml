@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 import torch
-# mpl.use('Agg')
+mpl.use('Agg')
 plt.style.use(['science'])
 np.set_printoptions(precision=2)
 
