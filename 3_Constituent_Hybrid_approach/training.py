@@ -60,7 +60,7 @@ def train_AE(loader, model, optimizer, criterion, scaler, current_epoch):
     print(f'                      Avg Loss: {avg_loss:.3f}')
     print(f'                      Duration: {duration:.3f}')
     print('------------------------------------------------------------')
-    pass
+    return avg_loss
 
 
 def valid_AE(loader, model, criterion, scaler, current_epoch):
@@ -516,18 +516,26 @@ def trial_1():
     _criterion = nn.L1Loss()
     _scaler = torch.cuda.amp.GradScaler()
     _current_epoch = 1
-    _train_loaders, _valid_loaders = get_UNET_AE_loaders(file_names=0)
+    _train_loaders, _valid_loaders = get_UNET_AE_loaders(file_names=1)
+    _num_train_loaders = len(_train_loaders)
+    for epoch in range(20):
+        _epoch_loss = 0
+        for _train_loader in _train_loaders:
+            _ = train_AE(
+                loader=_train_loader,
+                model=_model,
+                optimizer=_optimizer,
+                criterion=_criterion,
+                scaler=_scaler,
+                current_epoch=_current_epoch
+            )
+            _current_epoch += 1
+        avg_loss = _epoch_loss/_num_train_loaders
 
-    for _train_loader in _train_loaders:
-        _ = train_AE(
-            loader=_train_loader,
-            model=_model,
-            optimizer=_optimizer,
-            criterion=_criterion,
-            scaler=_scaler,
-            current_epoch=_current_epoch
-        )
-        _current_epoch += 1
+        print('------------------------------------------------------------')
+        print(f'                          Epoch {epoch}')
+        print(f'                      Avg Loss: {avg_loss:.3f}')
+        print('------------------------------------------------------------')
 
     for _valid_loader in _valid_loaders:
         _ = valid_AE(
