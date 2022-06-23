@@ -110,7 +110,8 @@ def trial_1():
     _alpha_strings = ['0_01', '0_005', '0_001', '0_0005', '0_0001', '0_00005']
     _criterion = nn.L1Loss()
     _train_loader, _valid_loader = get_UNET_AE_loaders(file_names=0)
-    _file_prefix = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/'
+    _file_prefix = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/0_UNET_AE'
+
     for i in range(6):
         _model = UNET_AE(
             device=device,
@@ -122,6 +123,7 @@ def trial_1():
         _scaler = torch.cuda.amp.GradScaler()
         _optimizer = optim.Adam(_model.parameters(), lr=_alphas[i])
         _epoch_losses = []
+
         for epoch in range(25):
             avg_loss = train_AE(
                 loader=_train_loader,
