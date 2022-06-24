@@ -116,7 +116,10 @@ def get_latentspace_AE(loader, model, out_file_name):
             latentspace.append(bottleneck.cpu().detach().numpy())
 
     np_latentspace = np.vstack(latentspace)
-    dataset2csv(f'{out_file_name}', np_latentspace)
+    dataset2csv(
+        dataset=np_latentspace,
+        dataset_name=f'{out_file_name}'
+    )
     return
 
 
