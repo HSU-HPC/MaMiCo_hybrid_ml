@@ -171,7 +171,7 @@ def trial_1_multiprocess():
 
     processes = []
 
-    for i in range(len(6)):
+    for i in range(6):
         p = mp.Process(
             target=trial_1_UNET_AE,
             args=(_alphas[i], _alpha_strings[i], _train_loader, _valid_loader,)
