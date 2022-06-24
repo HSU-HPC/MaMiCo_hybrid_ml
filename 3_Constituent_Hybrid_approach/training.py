@@ -160,6 +160,7 @@ def trial_1_UNET_AE(_alpha, _alpha_string, _train_loader, _valid_loader):
         )
         torch.save(_model.state_dict(),
                    f'{_file_prefix}Model_UNET_AE_{_alpha_string}')
+
     return
 
 
@@ -170,16 +171,20 @@ def trial_1_multiprocess():
 
     processes = []
 
-    for i in range(len(_alphas)):
+    for i in range(len(6)):
         p = mp.Process(
             target=trial_1_UNET_AE,
             args=(_alphas[i], _alpha_strings[i], _train_loader, _valid_loader,)
         )
         p.start()
         processes.append(p)
+        print('Creating Process')
 
     for process in processes:
         process.join()
+        print('Joining Process')
+
+    return
 
 
 if __name__ == "__main__":
