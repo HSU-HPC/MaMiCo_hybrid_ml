@@ -7,7 +7,7 @@ import torch.optim as optim
 import torch.nn as nn
 import numpy as np
 from model import UNET_AE, Hybrid_MD_RNN_UNET, Hybrid_MD_GRU_UNET, Hybrid_MD_LSTM_UNET, resetPipeline
-from utils import get_UNET_AE_loaders, get_mamico_loaders, losses2file, checkUserModelSpecs, dataset2csv
+from utils import get_UNET_AE_loaders, get_mamico_loaders, losses2file, dataset2csv
 from plotting import plotAvgLoss, compareFlowProfile
 from tqdm import tqdm
 
