@@ -100,6 +100,26 @@ def valid_AE(loader, model, criterion, scaler, alpha, current_epoch):
     return avg_loss
 
 
+def get_latentspace_AE(loader, model, out_file_name):
+
+    # The tqdm module allows to display a smart progress meter for iterables
+    # using tqdm(iterable).
+
+    latentspace = []
+
+    for batch_idx, (data, targets) in enumerate(loader):
+        data = data.float().to(device=device)
+        targets = targets.float().to(device=device)
+
+        with torch.cuda.amp.autocast():
+            bottleneck, _ = model(data,  y='get_bottleneck')
+            latentspace.append(bottleneck.cpu().detach().numpy())
+
+    np_latentspace = np.vstack(latentspace)
+    dataset2csv(f'{out_file_name}', np_latentspace)
+    return
+
+
 def train_RNN():
     pass
 
@@ -193,5 +213,25 @@ def trial_1_multiprocess():
 
 
 if __name__ == "__main__":
-    trial_1_multiprocess()
+    _model = UNET_AE(
+        device=device,
+        in_channels=3,
+        out_channels=3,
+        features=[4, 8, 16],
+        activation=torch.nn.ReLU(inplace=True)
+    ).to(device)
+
+    #TO DO - Check proper model to load
+    _model.load_state_dict(torch.load(
+        '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/0_UNET_AE/Model_UNET_AE_0_001'))
+    _model.eval()
+
+    _loader_1, _loader_2 = get_mamico_loaders()
+    _out_directory = '/home/lerdo/lerdo_HPC_Lab_Project/Trainingdata'
+    for _loader in _loader_1:
+        get_latentspace_AE(
+            loader=_loader,
+            model=_model,
+            out_file_name=f'{_out_directory}Latentspace_Dataset_0_5_T'
+        )
     pass
