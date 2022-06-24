@@ -38,8 +38,9 @@ def trial_1_plots():
             preds = []
             targs = []
             for batch_idx, (data, targets) in enumerate(loader):
-                preds.append(_model(data).cpu().detach().numpy())
-                targs.append(targets.cpu().detach().numpy())
+                with torch.cuda.amp.autocast():
+                    preds.append(_model(data).cpu().detach().numpy())
+                    targs.append(targets.cpu().detach().numpy())
             preds = np.vstack(preds)
             print('Shape of preds: ', preds.shape)
             targs = np.vstack(targs)
