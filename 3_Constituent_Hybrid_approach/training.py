@@ -81,14 +81,13 @@ def valid_AE(loader, model, criterion, scaler, alpha, current_epoch):
     # scaler -
     start_time = time.time()
 
-    loop = tqdm(loader)
     # The tqdm module allows to display a smart progress meter for iterables
     # using tqdm(iterable).
 
     epoch_loss = 0
     counter = 0
 
-    for batch_idx, (data, targets) in enumerate(loop):
+    for batch_idx, (data, targets) in enumerate(loader):
         data = data.float().to(device=device)
         targets = targets.float().to(device=device)
 
@@ -98,8 +97,6 @@ def valid_AE(loader, model, criterion, scaler, alpha, current_epoch):
             # print('Current batch loss: ', loss.item())
             epoch_loss += loss.item()
             counter += 1
-
-        loop.set_postfix(loss=loss.item())
 
     avg_loss = epoch_loss/counter
     duration = time.time() - start_time
