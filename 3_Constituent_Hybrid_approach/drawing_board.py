@@ -49,13 +49,5 @@ def trial_1_plots():
 
 
 if __name__ == "__main__":
-    array_a = np.random.rand(500, 3, 26, 26, 26)
-    array_b = np.stack((array_a[0], array_a[249], array_a[-1]))
-    print('Shape of array_b: ', array_b.shape)
-    if np.array_equal(array_a[0], array_b[0]):
-        print('First element equal.')
-    if np.array_equal(array_a[249], array_b[1]):
-        print('Second element equal.')
-    if np.array_equal(array_a[-1], array_b[-1]):
-        print('Third element equal.')
+    trial_1_plots()
     pass
