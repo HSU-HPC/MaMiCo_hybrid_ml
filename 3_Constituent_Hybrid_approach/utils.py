@@ -314,7 +314,7 @@ def get_UNET_AE_bottleneck():
 
     train_loader, _ = get_mamico_loaders()
 
-    '''
+    
     for i in range(18):
         _start_time = time.time()
         print(f'Loading dataset: {_in_file_names[i]}')
@@ -368,5 +368,4 @@ def checkSaveLoad():
 
 
 if __name__ == "__main__":
-    get_UNET_AE_bottleneck()
     pass
