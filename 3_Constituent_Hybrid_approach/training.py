@@ -232,13 +232,33 @@ if __name__ == "__main__":
         '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/0_UNET_AE/Model_UNET_AE_0_001'))
     _model.eval()
 
-    _loader_1, _loader_2 = get_mamico_loaders()
-    _out_directory = '/home/lerdo/lerdo_HPC_Lab_Project/Trainingdata/'
-    for _loader in _loader_1:
+    _loader_1, _ = get_mamico_loaders()
+    _out_directory = '/home/lerdo/lerdo_HPC_Lab_Project/Trainingdata/Latentspace_Dataset'
+    _out_file_names = [
+        '_0_5_T',
+        '_0_5_M',
+        '_0_5_B',
+        '_1_0_T',
+        '_1_0_M',
+        '_1_0_B',
+        '_2_0_T',
+        '_2_0_M',
+        '_2_0_B',
+        '_4_0_T',
+        '_4_0_M',
+        '_4_0_B',
+        '_3_0_T',
+        '_3_0_M',
+        '_3_0_B',
+        '_5_0_T',
+        '_5_0_M',
+        '_5_0_B',
+    ]
+    for i in range(18):
         get_latentspace_AE(
-            loader=_loader,
+            loader=_loader_1[i],
             model=_model,
-            out_file_name=f'{_out_directory}Latentspace_Dataset_0_5_T'
+            out_file_name=f'{_out_directory}{_out_file_names[i]}'
         )
 
     pass
