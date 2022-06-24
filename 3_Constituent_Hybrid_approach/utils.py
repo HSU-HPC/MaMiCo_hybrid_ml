@@ -122,7 +122,6 @@ def get_UNET_AE_loaders(file_names=0, num_workers=4):
             data_train.append(data)
         print('Completed loading ---> RANDOM <--- training datasets.')
 
-
         print('Loading ---> RANDOM <--- validation datasets as loader.')
         for i in range(3):
             data = np.random.rand(320, 3, 26, 26, 26)
