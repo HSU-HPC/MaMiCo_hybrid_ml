@@ -2,6 +2,7 @@ import torch
 import numpy as np
 import time
 import csv
+import concurrent.futures
 from dataset import MyMamicoDataset, MyMamicoDataset_UNET_AE
 from torch.utils.data import DataLoader
 from model import UNET_AE
@@ -32,6 +33,22 @@ def mamico_csv2dataset(file_name):
                         - 1, int(a[3])-1] = float(a[6])
 
     return dataset
+
+
+def mamico_csv2dataset_mp(file_names):
+    #
+    # This function reads from a MaMiCo generatd csv file.
+    # Currently, proper functionality is hardcoded for simulations
+    # containing 1000 timesteps.
+    #
+    start = time.time()
+
+    with concurrent.futures.ProcessPoolExecutor() as executor:
+        results = executor.map(mamico_csv2dataset, file_names)
+
+    duration = time.time()
+    print(f'Loading Data via Multiprocessing takes: {duration:.3f} secs')
+    return results
 
 
 def dataset2csv(dataset, dataset_name,  model_descriptor=0, counter=''):
@@ -373,4 +390,26 @@ def checkSaveLoad():
 
 
 if __name__ == "__main__":
+    file_names = [
+        'clean_couette_test_combined_domain_0_5_top.csv',
+        'clean_couette_test_combined_domain_0_5_middle.csv',
+        'clean_couette_test_combined_domain_0_5_bottom.csv',
+        'clean_couette_test_combined_domain_1_0_top.csv',
+        'clean_couette_test_combined_domain_1_0_middle.csv',
+        'clean_couette_test_combined_domain_1_0_bottom.csv',
+        'clean_couette_test_combined_domain_2_0_top.csv',
+        'clean_couette_test_combined_domain_2_0_middle.csv',
+        'clean_couette_test_combined_domain_2_0_bottom.csv',
+        'clean_couette_test_combined_domain_3_0_top.csv',
+        'clean_couette_test_combined_domain_3_0_middle.csv',
+        'clean_couette_test_combined_domain_3_0_bottom.csv',
+        'clean_couette_test_combined_domain_4_0_top.csv',
+        'clean_couette_test_combined_domain_4_0_middle.csv',
+        'clean_couette_test_combined_domain_4_0_bottom.csv',
+        'clean_couette_test_combined_domain_5_0_top.csv',
+        'clean_couette_test_combined_domain_5_0_middle.csv',
+        'clean_couette_test_combined_domain_5_0_bottom.csv'
+    ]
+
+    _ = mamico_csv2dataset_mp(file_names)
     pass
