@@ -1,6 +1,7 @@
 import torch
 import time
 import sys
+import multiprocessing
 import matplotlib.pyplot as plt
 import torch.optim as optim
 import torch.nn as nn
@@ -105,12 +106,12 @@ def valid_AE(loader, model, criterion, scaler, current_epoch):
     return avg_loss
 
 
-def trial_1():
-    _alphas = [0.01, 0.005, 0.001, 0.0005, 0.0001, 0.00005]
-    _alpha_strings = ['0_01', '0_005', '0_001', '0_0005', '0_0001', '0_00005']
+def trial_1_UNET_AE(_alpha, _alpha_string, _train_loader, _valid_loader):
+    # _alphas = [0.01, 0.005, 0.001, 0.0005, 0.0001, 0.00005]
+    # _alpha_strings = ['0_01', '0_005', '0_001', '0_0005', '0_0001', '0_00005']
     _criterion = nn.L1Loss()
-    _train_loader, _valid_loader = get_UNET_AE_loaders(file_names=0)
-    _file_prefix = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/0_UNET_AE'
+    # _train_loader, _valid_loader = get_UNET_AE_loaders(file_names=0)
+    _file_prefix = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/0_UNET_AE/'
 
     for i in range(6):
         _model = UNET_AE(
@@ -121,7 +122,7 @@ def trial_1():
             activation=nn.ReLU(inplace=True)
         ).to(device)
         _scaler = torch.cuda.amp.GradScaler()
-        _optimizer = optim.Adam(_model.parameters(), lr=_alphas[i])
+        _optimizer = optim.Adam(_model.parameters(), lr=_alpha)
         _epoch_losses = []
 
         for epoch in range(25):
@@ -145,18 +146,33 @@ def trial_1():
         _epoch_losses.append(_valid_loss)
         losses2file(
             losses=_epoch_losses,
-            filename=f'{_file_prefix}Losses_UNET_AE_{_alpha_strings[i]}'
+            filename=f'{_file_prefix}Losses_UNET_AE_{_alpha_string}'
         )
 
         plotAvgLoss(
             avg_losses=_epoch_losses,
             file_prefix=_file_prefix,
-            file_name=f'UNET_AE_{_alpha_strings[i]}'
+            file_name=f'UNET_AE_{_alpha_string}'
         )
         torch.save(_model.state_dict(),
-                   f'{_file_prefix}Model_UNET_AE_{_alpha_strings[i]}')
+                   f'{_file_prefix}Model_UNET_AE_{_alpha_string}')
     return
 
 
 if __name__ == "__main__":
-    trial_1()
+    _alphas = [0.01, 0.005, 0.001, 0.0005, 0.0001, 0.00005]
+    _alpha_strings = ['0_01', '0_005', '0_001', '0_0005', '0_0001', '0_00005']
+    _train_loader, _valid_loader = get_UNET_AE_loaders(file_names=0)
+
+    processes = []
+
+    for i in range(len(_alphas)):
+        p = multiprocessing.Process(
+            target=trial_1_UNET_AE,
+            args=(_alphas[i], _alpha_strings[i], _train_loader, _valid_loader,)
+        )
+        p.start()
+        processes.append(p)
+
+    for process in processes:
+        process.join()
