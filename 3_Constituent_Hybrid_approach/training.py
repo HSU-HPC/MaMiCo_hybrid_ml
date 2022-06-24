@@ -1,7 +1,7 @@
 import torch
 import time
 import sys
-import multiprocessing
+import torch.multiprocessing as mp
 import matplotlib.pyplot as plt
 import torch.optim as optim
 import torch.nn as nn
@@ -167,7 +167,7 @@ if __name__ == "__main__":
     processes = []
 
     for i in range(len(_alphas)):
-        p = multiprocessing.Process(
+        p = mp.Process(
             target=trial_1_UNET_AE,
             args=(_alphas[i], _alpha_strings[i], _train_loader, _valid_loader,)
         )
