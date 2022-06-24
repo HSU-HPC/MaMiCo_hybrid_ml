@@ -215,7 +215,51 @@ def compareAvgLoss(loss_files, loss_labels, file_prefix=0, file_name=0):
     plt.close()
 
 
-def compareColorMap(preds, targs, out_file_name):
+def compareColorMap(preds, targs, model_name, dataset_name):
+    t, c, d, h, w = preds.shape
+    steps = np.arange(0, h).tolist()
+    X, Y, Z = np.meshgrid(steps, steps, steps)
+    t_samples = [60, 125, 250, 500, 999]
+
+    # Creating color map
+    cm = plt.cm.get_cmap('Spectral')
+
+    # Creating figure
+    fig = plt.figure()
+    fig.suptitle('Visualization of Target vs Prediction', fontsize=16)
+
+    counter = 1
+
+    # Creating subplots
+    for counter in range(1, 6):
+        ax_pred = fig.add_subplot(5, 2, (2*counter-1), projection='3d')
+        ax_pred.set_title(
+            f'Prediction for t={t_samples[counter-1]}', fontsize=10)
+        sc = ax_pred.scatter3D(X, Y, Z, c=preds[[counter-1], 0, :, :, :],
+                               alpha=0.8, marker='.', s=0.25, vmin=-2, vmax=6, cmap=cm)
+        ax_pred.set_xticks([])
+        ax_pred.set_yticks([])
+        ax_pred.set_zticks([])
+        ax_pred.grid(False)
+
+        ax_targ = fig.add_subplot(5, 2, (2*counter), projection='3d')
+        ax_targ.set_title(f'Target for t={t_samples[counter-1]}', fontsize=10)
+        sc = ax_targ.scatter3D(X, Y, Z, c=targs[[counter-1], 0, :, :, :],
+                               alpha=0.8, marker='.', s=0.25, vmin=-2, vmax=6, cmap=cm)
+        ax_targ.set_xticks([])
+        ax_targ.set_yticks([])
+        ax_targ.set_zticks([])
+        ax_targ.grid(False)
+
+    fig.subplots_adjust(right=0.8)
+    cbar_ax = fig.add_axes([0.85, 0.15, 0.05, 0.7])
+    fig.colorbar(sc, cax=cbar_ax)
+    fig.set_size_inches(6, 10.5)
+    fig.savefig(f'Colormap_Comparison_{model_name}_{dataset_name}.png')
+    # fig.savefig('myfig.eps', format='eps')
+    # plt.show()
+    plt.close()
+
     pass
 
 
@@ -298,27 +342,9 @@ def main():
 
 
 if __name__ == "__main__":
-    # test()
-    _prefix = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/0_UNET_AE'
-    _loss_files = [
-        f'{_prefix}_Losses_UNET_AE_0_01.csv',
-        f'{_prefix}_Losses_UNET_AE_0_005.csv',
-        f'{_prefix}_Losses_UNET_AE_0_001.csv',
-        f'{_prefix}_Losses_UNET_AE_0_0005.csv',
-        f'{_prefix}_Losses_UNET_AE_0_0001.csv',
-        f'{_prefix}_Losses_UNET_AE_0_00005.csv',
-    ]
-    _loss_labels = [
-        'alpha = 0.01',
-        'alpha = 0.005',
-        'alpha = 0.001',
-        'alpha = 0.0005',
-        'alpha = 0.0001',
-        'alpha = 0.00005',
-    ]
-    compareAvgLoss(
-        loss_files=_loss_files,
-        loss_labels=_loss_labels,
-        file_prefix='',
-        file_name='UNET_AE'
-    )
+    array_a = np.random.rand(1000, 3, 24, 24, 24)
+    print('Shape of array_a: ', array_a.shape)
+    array_b = np.array([array_a[75], array_a[125], array_a[250],
+                        array_a[500], array_a[-1]])
+    print('Shape of array_b: ', array_b.shape)
+    pass
