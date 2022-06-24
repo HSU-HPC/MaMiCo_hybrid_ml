@@ -4,7 +4,6 @@
 import torch.nn as nn
 import torch
 import numpy as np
-from plotting import compareFlowProfile
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 use_cuda = torch.cuda.is_available()
@@ -711,7 +710,7 @@ def test_forward_overloading():
         activation=nn.ReLU(inplace=True)
     )
 
-    _x_in = torch.ones(10, 3, 24, 24, 24)
+    _x_in = torch.ones(1000, 3, 24, 24, 24)
     _x_out_1 = model(x=_x_in)
 
     _x_bottleneck, _skips = model(x=_x_in, y='get_bottleneck')
@@ -726,4 +725,5 @@ def test_forward_overloading():
 
 
 if __name__ == "__main__":
+    test_forward_overloading()
     pass
