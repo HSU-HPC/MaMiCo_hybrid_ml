@@ -41,8 +41,10 @@ def trial_1_plots():
                 data = data.float().to(device=device)
                 targets = targets.float().to(device=device)
                 with torch.cuda.amp.autocast():
-                    preds.append(_model(data).cpu().detach().numpy())
-                    targs.append(targets.cpu().detach().numpy())
+                    data_pred = _model(data)
+                    data_targ = targets
+                    preds.append(data_pred.cpu().detach().numpy())
+                    targs.append(data_targ.cpu().detach().numpy())
             preds = np.vstack(preds)
             print('Shape of preds: ', preds.shape)
             targs = np.vstack(targs)
