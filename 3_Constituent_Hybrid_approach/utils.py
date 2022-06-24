@@ -318,12 +318,13 @@ def get_UNET_AE_bottleneck():
         # dataset = csv2dataset(f'{_directory}/{file_name}', (1000, 3, 26, 26, 26))
         _dataset = mamico_csv2dataset(f'{_in_file_names[i]}')
         # print("Utils.py - Sanity Check - Dimension of loaded dataset: ", dataset.shape)
+        _torch_dataset = torch.from_numpy(_dataset)
         _duration = time.time() - _start_time
         print(f'Completed loading dataset. Duration: {_duration:.3f}')
 
         _start_time = time.time()
         print(f'Loading bottleneck: {_in_file_names[i]}')
-        bottleneck, _ = _model(_dataset, y='get_bottleneck')
+        bottleneck, _ = _model(_torch_dataset, y='get_bottleneck')
         latent_space = bottleneck.cpu().detach().numpy()
         _duration = time.time() - _start_time
         print(f'Completed loading bottleneck. Duration: {_duration:.3f}')
