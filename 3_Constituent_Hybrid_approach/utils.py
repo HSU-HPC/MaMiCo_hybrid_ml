@@ -47,8 +47,12 @@ def dataset2csv(dataset, dataset_name,  model_descriptor=0, counter=''):
     np.savetxt(f'{name}.csv', dataset_reshaped)
 
 
-def csv2dataset(filename, output_shape):
+def csv2dataset(filename, output_shape=0):
     dataset = np.loadtxt(f'{filename}')
+
+    if output_shape == 0:
+        return dataset
+
     t, c, d, h, w = output_shape
 
     # 4) Revert 2D array to 3D array
@@ -117,14 +121,14 @@ def get_UNET_AE_loaders(file_names=0, num_workers=4):
     else:
         print('Loading ---> RANDOM <--- training datasets as loader.')
         for i in range(5):
-            data = np.random.rand(320, 3, 26, 26, 26)
+            data = np.random.rand(32, 3, 26, 26, 26)
             # print("Utils.py - Sanity Check - Dimension of loaded dataset: ", dataset.shape)
             data_train.append(data)
         print('Completed loading ---> RANDOM <--- training datasets.')
 
         print('Loading ---> RANDOM <--- validation datasets as loader.')
         for i in range(3):
-            data = np.random.rand(320, 3, 26, 26, 26)
+            data = np.random.rand(32, 3, 26, 26, 26)
             # print("Utils.py - Sanity Check - Dimension of loaded dataset: ", dataset.shape)
             data_valid.append(data)
         print('Completed loading ---> RANDOM <--- validation datasets.')
