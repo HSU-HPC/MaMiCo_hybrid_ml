@@ -126,7 +126,7 @@ def trial_1_UNET_AE(_alpha, _alpha_string, _train_loader, _valid_loader):
     _optimizer = optim.Adam(_model.parameters(), lr=_alpha)
     _epoch_losses = []
 
-    for epoch in range(5):
+    for epoch in range(30):
         avg_loss = train_AE(
             loader=_train_loader,
             model=_model,
@@ -166,7 +166,7 @@ def trial_1_UNET_AE(_alpha, _alpha_string, _train_loader, _valid_loader):
 def trial_1_multiprocess():
     _alphas = [0.01, 0.005, 0.001, 0.0005, 0.0001, 0.00005]
     _alpha_strings = ['0_01', '0_005', '0_001', '0_0005', '0_0001', '0_00005']
-    _train_loader, _valid_loader = get_UNET_AE_loaders(file_names=1)
+    _train_loader, _valid_loader = get_UNET_AE_loaders(file_names=0)
 
     processes = []
     counter = 1
