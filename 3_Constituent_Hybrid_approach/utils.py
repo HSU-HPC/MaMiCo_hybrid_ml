@@ -4,6 +4,9 @@ import time
 import csv
 from dataset import MyMamicoDataset, MyMamicoDataset_UNET_AE
 from torch.utils.data import DataLoader
+from model import UNET_AE
+
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 
 def mamico_csv2dataset(file_name):
@@ -60,7 +63,7 @@ def csv2dataset(filename, output_shape=0):
     return original_dataset
 
 
-def get_UNET_AE_loaders(file_names=0, num_workers=4):
+def get_UNET_AE_loaders(file_names=0, bottleneck=False, num_workers=4):
     #
     # This function creates the dataloaders needed to automatically
     # feed the neural networks with the input dataset. In particular,
@@ -253,82 +256,83 @@ def get_mamico_loaders(file_names=0, num_workers=4):
     return dataloaders_train, dataloaders_valid
 
 
-def checkUserModelSpecs(user_input):
-    # BRIEF: This allows to verify that the user command line arguments are
-    # valid and adhere to the coding convention.
-    #
-    # PARAMETERS:
-    #
-    # _model_name, _rnn_layer, _hid_size, _learning_rate = user_input. Note that
-    # each argument must be an integer value between 1 and 3. The following list
-    # describes the corresponding meaning:
-    #
-    # _model_name -    1) Hybrid_MD_RNN_UNET
-    #                  2) Hybrid_MD_GRU_UNET
-    #                  3) Hybrid_MD_LSTM_UNET
-    #
-    # _rnn_layer -     1) 2
-    #                  2) 3
-    #                  3) 4
-    #
-    # _hid_size -      1) 256
-    #                  2) 512
-    #                  3) 768
-    #
-    # _learning_rate - 1) 0.0001
-    #                  2) 0.00005
-    #                  3) 0.00001
+def get_UNET_AE_bottleneck():
+    _model = UNET_AE(
+        device=device,
+        in_channels=3,
+        out_channels=3,
+        features=[4, 8, 16],
+        activation=torch.nn.ReLU(inplace=True)
+    ).to(device)
 
-    _model_names = ['Hybrid_MD_RNN_UNET',
-                    'Hybrid_MD_GRU_UNET', 'Hybrid_MD_LSTM_UNET']
-    # @_model_names - model names as strings for later file naming
-    _rnn_layers = [2, 3, 4]
-    # @_rnn_layers - container to hold the number of rnn layers deemed worth testing
-    _hid_sizes = [256, 512, 768]
-    # @_hid_sizes - container to hold the number of nodes per hidden layer deemed worth testing
-    _learning_rates = [0.0001, 0.00005, 0.00001]
-    # @_learning_rates - container to hold the learning rates deemed worth testing
+    #TO DO - Check proper model to load
+    _model.load_state_dict(torch.load(
+        '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/0_UNET_AE/Model_UNET_AE_0_001'))
+    _model.eval()
+    _file_prefix = 'Bottleneck_Dataset'
+    _out_file_names = [
+        '_0_5_T',
+        '_0_5_M',
+        '_0_5_B',
+        '_1_0_T',
+        '_1_0_M',
+        '_1_0_B',
+        '_2_0_T',
+        '_2_0_M',
+        '_2_0_B',
+        '_4_0_T',
+        '_4_0_M',
+        '_4_0_B',
+        '_3_0_T',
+        '_3_0_M',
+        '_3_0_B',
+        '_5_0_T',
+        '_5_0_M',
+        '_5_0_B',
+    ]
+    _directory = '/home/lerdo/lerdo_HPC_Lab_Project/Trainingdata'
+    _in_file_names = [
+        'clean_couette_test_combined_domain_0_5_top.csv',
+        'clean_couette_test_combined_domain_0_5_middle.csv',
+        'clean_couette_test_combined_domain_0_5_bottom.csv',
+        'clean_couette_test_combined_domain_1_0_top.csv',
+        'clean_couette_test_combined_domain_1_0_middle.csv',
+        'clean_couette_test_combined_domain_1_0_bottom.csv',
+        'clean_couette_test_combined_domain_2_0_top.csv',
+        'clean_couette_test_combined_domain_2_0_middle.csv',
+        'clean_couette_test_combined_domain_2_0_bottom.csv',
+        'clean_couette_test_combined_domain_4_0_top.csv',
+        'clean_couette_test_combined_domain_4_0_middle.csv',
+        'clean_couette_test_combined_domain_4_0_bottom.csv',
+        'clean_couette_test_combined_domain_3_0_top.csv',
+        'clean_couette_test_combined_domain_3_0_middle.csv',
+        'clean_couette_test_combined_domain_3_0_bottom.csv',
+        'clean_couette_test_combined_domain_5_0_top.csv',
+        'clean_couette_test_combined_domain_5_0_middle.csv',
+        'clean_couette_test_combined_domain_5_0_bottom.csv'
+    ]
 
-    for i in range(len(user_input)):
-        user_input[i] = int(user_input[i])
+    for i in range(18):
+        _start_time = time.time()
+        print(f'Loading dataset: {_in_file_names[i]}')
+        # dataset = csv2dataset(f'{_directory}/{file_name}', (1000, 3, 26, 26, 26))
+        _dataset = mamico_csv2dataset(f'{_in_file_names[i]}')
+        # print("Utils.py - Sanity Check - Dimension of loaded dataset: ", dataset.shape)
+        _duration = time.time() - _start_time
+        print(f'Completed loading dataset. Duration: {_duration:.3f}')
 
-    if(len(user_input) < 4):
-        print("Not enough arguments. Four are required.")
-        return False
-
-    if(len(user_input) > 4):
-        print("Too many arguments. Four are required.")
-        return False
-
-    _model_name, _rnn_layer, _hid_size, _learning_rate = user_input
-    _valid_input = True
-
-    if (_model_name < 1 or _model_name > 3):
-        print("You've chosen an invalid model.")
-        _valid_input = False
-    if (_rnn_layer < 1 or _rnn_layer > 3):
-        print("You've chosen an invalid amount of RNN layers.")
-        _valid_input = False
-
-    if (_hid_size < 1 or _hid_size > 3):
-        print("You've chosen an invalid amount of nodes per RNN layer.")
-        _valid_input = False
-
-    if (_learning_rate < 1 or _learning_rate > 3):
-        print("You've chosen an invalid learning rate.")
-        _valid_input = False
-
-    if(_valid_input):
-        print('------------------------------------------------------------')
-        print('                       Model Summary')
-        print('------------------------------------------------------------')
-        print(f'Model Name: {_model_names[_model_name-1]}')
-        print(f'RNN Layers: {_rnn_layers[_rnn_layer-1]}')
-        print(f'Size hidden Layer: {_hid_sizes[_hid_size-1]}')
-        print(f'Learning Rate: {_learning_rates[_learning_rate-1]}')
-        print('------------------------------------------------------------')
-
-    return _valid_input
+        _start_time = time.time()
+        print(f'Loading bottleneck: {_in_file_names[i]}')
+        bottleneck, _ = _model(_dataset, y='get_bottleneck')
+        latent_space = bottleneck.cpu().detach().numpy()
+        _duration = time.time() - _start_time
+        print(f'Completed loading bottleneck. Duration: {_duration:.3f}')
+        print('Shape of latent space: ', latent_space.shape)
+        _start_time = time.time()
+        print(f'Saving latent space: {_file_prefix}{_out_file_names[i]}')
+        dataset2csv(f'{_file_prefix}{_out_file_names[i]}', latent_space)
+        _duration = time.time() - _start_time
+        print(f'Completed loading bottleneck. Duration: {_duration:.3f}')
 
 
 def losses2file(losses, filename):
@@ -360,11 +364,5 @@ def checkSaveLoad():
 
 
 if __name__ == "__main__":
-    alpha = 0.00005
-    current_epoch = 30
-    avg_loss = 0.596482
-    duration = 153.15648
-    print('------------------------------------------------------------')
-    print(f'{alpha} Training -> Epoch: {current_epoch}, Loss: {avg_loss:.3f}, Duration: {duration:.3f}')
-
+    get_UNET_AE_bottleneck()
     pass
