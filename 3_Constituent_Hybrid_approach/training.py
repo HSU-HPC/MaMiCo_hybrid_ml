@@ -219,7 +219,6 @@ if __name__ == "__main__":
 
     # trial_1_multiprocess()
 
-
     _model = UNET_AE(
         device=device,
         in_channels=3,
@@ -234,12 +233,12 @@ if __name__ == "__main__":
     _model.eval()
 
     _loader_1, _loader_2 = get_mamico_loaders()
-    _out_directory = '/home/lerdo/lerdo_HPC_Lab_Project/Trainingdata'
+    _out_directory = '/home/lerdo/lerdo_HPC_Lab_Project/Trainingdata/'
     for _loader in _loader_1:
         get_latentspace_AE(
             loader=_loader,
             model=_model,
             out_file_name=f'{_out_directory}Latentspace_Dataset_0_5_T'
         )
-    
+
     pass
