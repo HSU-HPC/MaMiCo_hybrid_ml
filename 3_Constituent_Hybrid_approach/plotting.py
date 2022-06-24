@@ -227,6 +227,7 @@ def compareColorMap(preds, targs, model_name, dataset_name):
     # Creating figure
     fig = plt.figure()
     fig.suptitle('Visualization of Target vs Prediction', fontsize=16)
+    directory = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/0_UNET_AE/'
 
     counter = 1
 
@@ -255,7 +256,7 @@ def compareColorMap(preds, targs, model_name, dataset_name):
     cbar_ax = fig.add_axes([0.85, 0.15, 0.05, 0.7])
     fig.colorbar(sc, cax=cbar_ax)
     fig.set_size_inches(6, 10.5)
-    fig.savefig(f'Colormap_Comparison_{model_name}_{dataset_name}.png')
+    fig.savefig(f'{directory}Colormap_Comparison_{model_name}_{dataset_name}.png')
     # fig.savefig('myfig.eps', format='eps')
     # plt.show()
     plt.close()
