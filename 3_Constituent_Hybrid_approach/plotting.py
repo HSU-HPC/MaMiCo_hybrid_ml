@@ -215,6 +215,10 @@ def compareAvgLoss(loss_files, loss_labels, file_prefix=0, file_name=0):
     plt.close()
 
 
+def compareColorMap(preds, targs, out_file_name):
+    pass
+
+
 def compareFlowProfile(preds, targs, model_descriptor):
     # BRIEF:
     #

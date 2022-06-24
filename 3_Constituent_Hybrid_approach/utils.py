@@ -80,42 +80,59 @@ def csv2dataset(filename, output_shape=0):
     return original_dataset
 
 
-def get_UNET_AE_loaders(file_names=0, bottleneck=False, num_workers=4):
+def get_UNET_AE_loaders(file_names=0, num_workers=4):
     #
     # This function creates the dataloaders needed to automatically
     # feed the neural networks with the input dataset. In particular,
     # this function vields a dataloader for each specified mamico generated
     # csv file. As for num_workers, the rule of thumb is = 4 * num_GPU.
-    #
+    # Note that the variable file_names acts as a flag such that
+    # if == 0 : load data via mp and return one train and valid loader
+    # if == -1: load data via mp and return multiple train and valid loaders
+    # else: load random data for testing
+
     data_train = []
     data_valid = []
+    _directory = '/home/lerdo/lerdo_HPC_Lab_Project/Trainingdata'
+    _train_files = [
+        'clean_couette_test_combined_domain_0_5_top.csv',
+        'clean_couette_test_combined_domain_0_5_middle.csv',
+        'clean_couette_test_combined_domain_0_5_bottom.csv',
+        'clean_couette_test_combined_domain_1_0_top.csv',
+        'clean_couette_test_combined_domain_1_0_middle.csv',
+        'clean_couette_test_combined_domain_1_0_bottom.csv',
+        'clean_couette_test_combined_domain_2_0_top.csv',
+        'clean_couette_test_combined_domain_2_0_middle.csv',
+        'clean_couette_test_combined_domain_2_0_bottom.csv',
+        'clean_couette_test_combined_domain_4_0_top.csv',
+        'clean_couette_test_combined_domain_4_0_middle.csv',
+        'clean_couette_test_combined_domain_4_0_bottom.csv',
+    ]
 
-    if file_names == 0:
-        _directory = '/home/lerdo/lerdo_HPC_Lab_Project/Trainingdata'
-        _train_files = [
-            'clean_couette_test_combined_domain_0_5_top.csv',
-            'clean_couette_test_combined_domain_0_5_middle.csv',
-            'clean_couette_test_combined_domain_0_5_bottom.csv',
-            'clean_couette_test_combined_domain_1_0_top.csv',
-            'clean_couette_test_combined_domain_1_0_middle.csv',
-            'clean_couette_test_combined_domain_1_0_bottom.csv',
-            'clean_couette_test_combined_domain_2_0_top.csv',
-            'clean_couette_test_combined_domain_2_0_middle.csv',
-            'clean_couette_test_combined_domain_2_0_bottom.csv',
-            'clean_couette_test_combined_domain_4_0_top.csv',
-            'clean_couette_test_combined_domain_4_0_middle.csv',
-            'clean_couette_test_combined_domain_4_0_bottom.csv',
-        ]
+    _valid_files = [
+        'clean_couette_test_combined_domain_3_0_top.csv',
+        'clean_couette_test_combined_domain_3_0_middle.csv',
+        'clean_couette_test_combined_domain_3_0_bottom.csv',
+        'clean_couette_test_combined_domain_5_0_top.csv',
+        'clean_couette_test_combined_domain_5_0_middle.csv',
+        'clean_couette_test_combined_domain_5_0_bottom.csv'
+    ]
 
-        _valid_files = [
-            'clean_couette_test_combined_domain_3_0_top.csv',
-            'clean_couette_test_combined_domain_3_0_middle.csv',
-            'clean_couette_test_combined_domain_3_0_bottom.csv',
-            'clean_couette_test_combined_domain_5_0_top.csv',
-            'clean_couette_test_combined_domain_5_0_middle.csv',
-            'clean_couette_test_combined_domain_5_0_bottom.csv'
-        ]
+    if file_names == 0 or file_names == -1:
+        start_time = time.time()
+        print('Loading training data.')
+        data_train = mamico_csv2dataset_mp(_train_files)
+        duration = time.time() - start_time
+        print(
+            f'Completed loading training data. Duration: {duration:.3f}')
 
+        start_time = time.time()
+        print('Loading validation data.')
+        data_valid = mamico_csv2dataset_mp(_valid_files)
+        duration = time.time() - start_time
+        print(
+            f'Completed loading validation data. Duration: {duration:.3f}')
+        '''
         for file_name in _valid_files:
             start_time = time.time()
             print(f'Loading validation data: {file_name}')
@@ -137,45 +154,32 @@ def get_UNET_AE_loaders(file_names=0, bottleneck=False, num_workers=4):
             duration = time.time() - start_time
             print(
                 f'Completed loading training data. Duration: {duration:.3f}')
+        '''
 
-    elif file_names == -1:
-        _directory = '/home/lerdo/lerdo_HPC_Lab_Project/Trainingdata'
-        _train_files = [
-            'clean_couette_test_combined_domain_0_5_top.csv',
-            'clean_couette_test_combined_domain_0_5_middle.csv',
-            'clean_couette_test_combined_domain_0_5_bottom.csv',
-            'clean_couette_test_combined_domain_1_0_top.csv',
-            'clean_couette_test_combined_domain_1_0_middle.csv',
-            'clean_couette_test_combined_domain_1_0_bottom.csv',
-            'clean_couette_test_combined_domain_2_0_top.csv',
-            'clean_couette_test_combined_domain_2_0_middle.csv',
-            'clean_couette_test_combined_domain_2_0_bottom.csv',
-            'clean_couette_test_combined_domain_4_0_top.csv',
-            'clean_couette_test_combined_domain_4_0_middle.csv',
-            'clean_couette_test_combined_domain_4_0_bottom.csv',
-        ]
-        _valid_files = [
-            'clean_couette_test_combined_domain_3_0_top.csv',
-            'clean_couette_test_combined_domain_3_0_middle.csv',
-            'clean_couette_test_combined_domain_3_0_bottom.csv',
-            'clean_couette_test_combined_domain_5_0_top.csv',
-            'clean_couette_test_combined_domain_5_0_middle.csv',
-            'clean_couette_test_combined_domain_5_0_bottom.csv'
-        ]
+        if file_names == -1:
+            dataloaders_train = []
+            dataloaders_valid = []
 
-        start_time = time.time()
-        print('Loading training data.')
-        data_train = mamico_csv2dataset_mp(_train_files)
-        duration = time.time() - start_time
-        print(
-            f'Completed loading training data. Duration: {duration:.3f}')
+            for dataset in data_train:
+                dataset = MyMamicoDataset_UNET_AE(dataset)
+                dataloader = DataLoader(
+                    dataset=dataset,
+                    batch_size=32,
+                    shuffle=True,
+                    num_workers=num_workers
+                    )
+                dataloaders_train.append(dataloader)
 
-        start_time = time.time()
-        print('Loading validation data.')
-        data_valid = mamico_csv2dataset_mp(_valid_files)
-        duration = time.time() - start_time
-        print(
-            f'Completed loading validation data. Duration: {duration:.3f}')
+            for dataset in data_valid:
+                dataset = MyMamicoDataset_UNET_AE(dataset)
+                dataloader = DataLoader(
+                    dataset=dataset,
+                    batch_size=32,
+                    shuffle=False,
+                    num_workers=num_workers
+                    )
+                dataloaders_valid.append(dataloader)
+            return dataloaders_train, dataloaders_valid
     else:
         print('Loading ---> RANDOM <--- training datasets as loader.')
         for i in range(5):
@@ -428,28 +432,4 @@ def checkSaveLoad():
 
 
 if __name__ == "__main__":
-    file_names = [
-        'clean_couette_test_combined_domain_0_5_top.csv',
-        'clean_couette_test_combined_domain_0_5_middle.csv',
-        'clean_couette_test_combined_domain_0_5_bottom.csv',
-        'clean_couette_test_combined_domain_1_0_top.csv',
-        'clean_couette_test_combined_domain_1_0_middle.csv',
-        'clean_couette_test_combined_domain_1_0_bottom.csv',
-        'clean_couette_test_combined_domain_2_0_top.csv',
-        'clean_couette_test_combined_domain_2_0_middle.csv',
-        'clean_couette_test_combined_domain_2_0_bottom.csv',
-        'clean_couette_test_combined_domain_3_0_top.csv',
-        'clean_couette_test_combined_domain_3_0_middle.csv',
-        'clean_couette_test_combined_domain_3_0_bottom.csv',
-        'clean_couette_test_combined_domain_4_0_top.csv',
-        'clean_couette_test_combined_domain_4_0_middle.csv',
-        'clean_couette_test_combined_domain_4_0_bottom.csv',
-        'clean_couette_test_combined_domain_5_0_top.csv',
-        'clean_couette_test_combined_domain_5_0_middle.csv',
-        'clean_couette_test_combined_domain_5_0_bottom.csv'
-    ]
-
-    _ = mamico_csv2dataset_mp(file_names)
-
-
     pass
