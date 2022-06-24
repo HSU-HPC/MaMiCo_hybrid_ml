@@ -25,7 +25,7 @@ PIN_MEMORY = True
 LOAD_MODEL = False
 
 
-def train_AE(loader, model, optimizer, criterion, scaler, current_epoch):
+def train_AE(loader, model, optimizer, criterion, scaler, alpha, current_epoch):
     # BRIEF: The train function completes one epoch of the training cycle.
     # PARAMETERS:
     # loader - object of PyTorch-type DataLoader to automatically feed dataset
@@ -62,7 +62,7 @@ def train_AE(loader, model, optimizer, criterion, scaler, current_epoch):
     avg_loss = epoch_loss/counter
     duration = time.time() - start_time
     print('------------------------------------------------------------')
-    print('                         Training')
+    print(f'                       Training {alpha}')
     print('   ')
     print(f'                         Epoch: {current_epoch}')
     print(f'                      Avg Loss: {avg_loss:.3f}')
@@ -71,7 +71,7 @@ def train_AE(loader, model, optimizer, criterion, scaler, current_epoch):
     return avg_loss
 
 
-def valid_AE(loader, model, criterion, scaler, current_epoch):
+def valid_AE(loader, model, criterion, scaler, alpha, current_epoch):
     # BRIEF: The train function completes one epoch of the training cycle.
     # PARAMETERS:
     # loader - object of PyTorch-type DataLoader to automatically feed dataset
@@ -104,7 +104,7 @@ def valid_AE(loader, model, criterion, scaler, current_epoch):
     avg_loss = epoch_loss/counter
     duration = time.time() - start_time
     print('------------------------------------------------------------')
-    print('                        Validation')
+    print(f'                     Validation {alpha}')
     print(f'                      Avg Loss: {avg_loss:.3f}')
     print(f'                      Duration: {duration:.3f}')
     print('------------------------------------------------------------')
@@ -137,6 +137,7 @@ def trial_1_UNET_AE(_alpha, _alpha_string, _train_loader, _valid_loader):
                 optimizer=_optimizer,
                 criterion=_criterion,
                 scaler=_scaler,
+                alpha=_alpha,
                 current_epoch=epoch+1
             )
             _epoch_losses.append(avg_loss)
@@ -146,6 +147,7 @@ def trial_1_UNET_AE(_alpha, _alpha_string, _train_loader, _valid_loader):
             model=_model,
             criterion=_criterion,
             scaler=_scaler,
+            alpha=_alpha,
             current_epoch=0
         )
         _epoch_losses.append(_valid_loss)
@@ -164,10 +166,10 @@ def trial_1_UNET_AE(_alpha, _alpha_string, _train_loader, _valid_loader):
     return
 
 
-if __name__ == "__main__":
+def trial_1_multiprocess():
     _alphas = [0.01, 0.005, 0.001, 0.0005, 0.0001, 0.00005]
     _alpha_strings = ['0_01', '0_005', '0_001', '0_0005', '0_0001', '0_00005']
-    _train_loader, _valid_loader = get_UNET_AE_loaders(file_names=1)
+    _train_loader, _valid_loader = get_UNET_AE_loaders(file_names=0)
 
     processes = []
 
@@ -181,3 +183,8 @@ if __name__ == "__main__":
 
     for process in processes:
         process.join()
+
+
+if __name__ == "__main__":
+    trial_1_multiprocess()
+    pass
