@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 import torch
+from utils import csv2dataset
 mpl.use('Agg')
 plt.style.use(['science'])
 np.set_printoptions(precision=2)
@@ -170,42 +171,49 @@ def plotAvgLoss(avg_losses, file_prefix=0, file_name=0):
 
     plt.close()
 
-'''
+
 def compareAvgLoss(loss_files, loss_labels, file_prefix=0, file_name=0):
     # BRIEF:
     # PARAMETERS:
     losses = []
     for file in loss_files:
+        losses.append(csv2dataset(file))
 
+    num_epoch = losses[0].shape[0]
 
-    x_axis = range(1, (len(avg_losses)+1), 1)
-
+    x_axis = range(1, (num_epoch + 1), 1)
+    '''
     x_ticks = [1]
 
-    if len(avg_losses) % 10 == 0:
-        for i in range(int(len(avg_losses)/10) + 1):
+    if ((num_epoch % 10) == 0):
+        for i in range(int(num_epoch/10) + 1):
             x_ticks.append(10*i)
     else:
-        for i in range(int(len(avg_losses)/10) + 2):
+        for i in range(int(num_epoch/10) + 2):
             x_ticks.append(10*i)
-
-    y_ticks = np.arange(0, 0.31, 0.05)
+            '''
+    # y_ticks = np.arange(0, 0.31, 0.05)
     # max_x = len(min_losses)
     # max_loss = max(max_losses)
 
+    print('Where difficulties?')
     fig, (ax1) = plt.subplots(1, constrained_layout=True)
     ax1.set_xlabel('Number of Epochs')
     ax1.set_ylabel('Error')
-    ax1.plot(x_axis, avg_losses, label='Average Loss')
-    ax1.set_yticks(y_ticks)
-    ax1.set_xticks(x_ticks)
+
+    for i in range(len(losses)):
+        ax1.plot(x_axis, losses[i], label=loss_labels[i])
+
+    # ax1.set_yticks(y_ticks)
+    # ax1.set_xticks(x_ticks)
+    plt.legend(ncol=2, fontsize=7)
     fig.set_size_inches(6, 3.5)
     # plt.show()
     if file_name != 0:
         fig.savefig(f'{file_prefix}Plot_Avg_Losses_{file_name}.svg')
 
     plt.close()
-'''
+
 
 def compareFlowProfile(preds, targs, model_descriptor):
     # BRIEF:
@@ -287,5 +295,26 @@ def main():
 
 if __name__ == "__main__":
     # test()
-    a = 0
-    print(max(a))
+    _prefix = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/0_UNET_AE'
+    _loss_files = [
+        f'{_prefix}_Losses_UNET_AE_0_01.csv',
+        f'{_prefix}_Losses_UNET_AE_0_005.csv',
+        f'{_prefix}_Losses_UNET_AE_0_001.csv',
+        f'{_prefix}_Losses_UNET_AE_0_0005.csv',
+        f'{_prefix}_Losses_UNET_AE_0_0001.csv',
+        f'{_prefix}_Losses_UNET_AE_0_00005.csv',
+    ]
+    _loss_labels = [
+        'alpha = 0.01',
+        'alpha = 0.005',
+        'alpha = 0.001',
+        'alpha = 0.0005',
+        'alpha = 0.0001',
+        'alpha = 0.00005',
+    ]
+    compareAvgLoss(
+        loss_files=_loss_files,
+        loss_labels=_loss_labels,
+        file_prefix='/',
+        file_name='UNET_AE'
+    )
