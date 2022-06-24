@@ -127,7 +127,7 @@ def trial_1_UNET_AE(_alpha, _alpha_string, _train_loader, _valid_loader):
         _optimizer = optim.Adam(_model.parameters(), lr=_alpha)
         _epoch_losses = []
 
-        for epoch in range(25):
+        for epoch in range(5):
             avg_loss = train_AE(
                 loader=_train_loader,
                 model=_model,
@@ -170,6 +170,7 @@ def trial_1_multiprocess():
     _train_loader, _valid_loader = get_UNET_AE_loaders(file_names=1)
 
     processes = []
+    counter = 1
 
     for i in range(6):
         p = mp.Process(
@@ -178,7 +179,8 @@ def trial_1_multiprocess():
         )
         p.start()
         processes.append(p)
-        print('Creating Process')
+        print(f'Creating Process Number: {counter}')
+        counter +=1
 
     for process in processes:
         process.join()
