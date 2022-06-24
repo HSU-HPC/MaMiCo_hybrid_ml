@@ -315,6 +315,6 @@ if __name__ == "__main__":
     compareAvgLoss(
         loss_files=_loss_files,
         loss_labels=_loss_labels,
-        file_prefix='/',
+        file_prefix='',
         file_name='UNET_AE'
     )
