@@ -62,12 +62,7 @@ def train_AE(loader, model, optimizer, criterion, scaler, alpha, current_epoch):
     avg_loss = epoch_loss/counter
     duration = time.time() - start_time
     print('------------------------------------------------------------')
-    print(f'                       Training {alpha}')
-    print('   ')
-    print(f'                         Epoch: {current_epoch}')
-    print(f'                      Avg Loss: {avg_loss:.3f}')
-    print(f'                      Duration: {duration:.3f}')
-    print('------------------------------------------------------------')
+    print(f'{alpha} Training -> Epoch: {current_epoch}, Loss: {avg_loss:.3f}, Duration: {duration:.3f}')
     return avg_loss
 
 
@@ -101,10 +96,7 @@ def valid_AE(loader, model, criterion, scaler, alpha, current_epoch):
     avg_loss = epoch_loss/counter
     duration = time.time() - start_time
     print('------------------------------------------------------------')
-    print(f'                     Validation {alpha}')
-    print(f'                      Avg Loss: {avg_loss:.3f}')
-    print(f'                      Duration: {duration:.3f}')
-    print('------------------------------------------------------------')
+    print(f'{alpha} Validation -> Loss: {avg_loss:.3f}, Duration: {duration:.3f}')
     return avg_loss
 
 
@@ -133,7 +125,7 @@ def trial_1_UNET_AE(_alpha, _alpha_string, _train_loader, _valid_loader):
             optimizer=_optimizer,
             criterion=_criterion,
             scaler=_scaler,
-            alpha=_alpha,
+            alpha=_alpha_string,
             current_epoch=epoch+1
         )
         _epoch_losses.append(avg_loss)
@@ -143,7 +135,7 @@ def trial_1_UNET_AE(_alpha, _alpha_string, _train_loader, _valid_loader):
         model=_model,
         criterion=_criterion,
         scaler=_scaler,
-        alpha=_alpha,
+        alpha=_alpha_string,
         current_epoch=0
     )
     _epoch_losses.append(_valid_loss)
@@ -157,8 +149,10 @@ def trial_1_UNET_AE(_alpha, _alpha_string, _train_loader, _valid_loader):
         file_prefix=_file_prefix,
         file_name=f'UNET_AE_{_alpha_string}'
     )
-    torch.save(_model.state_dict(),
-               f'{_file_prefix}Model_UNET_AE_{_alpha_string}')
+    torch.save(
+        _model.state_dict(),
+        f'{_file_prefix}Model_UNET_AE_{_alpha_string}'
+    )
 
     return
 

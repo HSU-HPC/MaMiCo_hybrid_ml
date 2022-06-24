@@ -360,6 +360,11 @@ def checkSaveLoad():
 
 
 if __name__ == "__main__":
-    data = csv2dataset(filename='test_data1.csv')
-    print(data.shape)
+    alpha = 0.00005
+    current_epoch = 30
+    avg_loss = 0.596482
+    duration = 153.15648
+    print('------------------------------------------------------------')
+    print(f'{alpha} Training -> Epoch: {current_epoch}, Loss: {avg_loss:.3f}, Duration: {duration:.3f}')
+
     pass
