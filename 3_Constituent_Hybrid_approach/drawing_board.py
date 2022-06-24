@@ -29,7 +29,7 @@ def trial_1_plots():
             out_channels=3,
             features=[4, 8, 16],
             activation=nn.ReLU(inplace=True)
-        )
+        ).to(device)
         _model.load_state_dict(torch.load(
             f'{model_directory}{model_name}'))
         _model.eval()
