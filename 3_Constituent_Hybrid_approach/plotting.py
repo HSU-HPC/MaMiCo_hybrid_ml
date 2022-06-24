@@ -153,7 +153,7 @@ def plotAvgLoss(avg_losses, file_prefix=0, file_name=0):
         for i in range(int(len(avg_losses)/10) + 2):
             x_ticks.append(10*i)
 
-    y_ticks = np.arange(0, 0.31, 0.05)
+    y_ticks = np.arange(0, 0.176, 0.025)
     # max_x = len(min_losses)
     # max_loss = max(max_losses)
 
@@ -170,6 +170,42 @@ def plotAvgLoss(avg_losses, file_prefix=0, file_name=0):
 
     plt.close()
 
+'''
+def compareAvgLoss(loss_files, loss_labels, file_prefix=0, file_name=0):
+    # BRIEF:
+    # PARAMETERS:
+    losses = []
+    for file in loss_files:
+
+
+    x_axis = range(1, (len(avg_losses)+1), 1)
+
+    x_ticks = [1]
+
+    if len(avg_losses) % 10 == 0:
+        for i in range(int(len(avg_losses)/10) + 1):
+            x_ticks.append(10*i)
+    else:
+        for i in range(int(len(avg_losses)/10) + 2):
+            x_ticks.append(10*i)
+
+    y_ticks = np.arange(0, 0.31, 0.05)
+    # max_x = len(min_losses)
+    # max_loss = max(max_losses)
+
+    fig, (ax1) = plt.subplots(1, constrained_layout=True)
+    ax1.set_xlabel('Number of Epochs')
+    ax1.set_ylabel('Error')
+    ax1.plot(x_axis, avg_losses, label='Average Loss')
+    ax1.set_yticks(y_ticks)
+    ax1.set_xticks(x_ticks)
+    fig.set_size_inches(6, 3.5)
+    # plt.show()
+    if file_name != 0:
+        fig.savefig(f'{file_prefix}Plot_Avg_Losses_{file_name}.svg')
+
+    plt.close()
+'''
 
 def compareFlowProfile(preds, targs, model_descriptor):
     # BRIEF:
@@ -242,116 +278,6 @@ def showSample():
 
     plt.show()
     fig.savefig('Plots/Sampling_of_Volume.png')
-
-
-def rubbish():
-    '''
-    def colorMap2():
-        t = 1000
-        u = 10
-        w = 20
-        n = 2
-        v = 31
-        sigma = 0.3
-        seed = 1
-        analytical = my3DCouetteSolver(desired_timesteps=t, u_wall=u, wall_height=w,
-                                       nu=n, vertical_resolution=v, sigma=sigma, my_seed=seed)
-        t, c, d, h2, w2 = analytical.shape
-        v_step = w / (h2-1)
-        v_steps = np.arange(0, w + v_step, v_step).tolist()
-        X, Y, Z = np.meshgrid(v_steps, v_steps, v_steps)
-        U = [analytical[1, 0, :, :, :], analytical[50, 0, :, :, :],
-             analytical[250, 0, :, :, :], analytical[999, 0, :, :, :]]
-        titles = ['T = 1', 'T = 50', 'T = 250', 'T = 999', ]
-        cm = plt.cm.get_cmap('Spectral')
-        # Creating figure
-        fig = plt.figure()
-        for i in range(len(U)):
-            ax = fig.add_subplot(2, 2, (i+1), projection='3d')
-            ax.set_title(titles[i], fontsize=10)
-            sc = ax.scatter3D(Z, Y, X, c=U[i],
-                              alpha=0.8, marker='.', s=0.25, vmin=-4, vmax=14, cmap=cm)
-            ax.set_xticks([])
-            ax.set_yticks([])
-            ax.set_zticks([])
-            ax.grid(False)
-
-        fig.subplots_adjust(right=0.8)
-        cbar_ax = fig.add_axes([0.85, 0.15, 0.05, 0.7])
-        fig.colorbar(sc, cax=cbar_ax)
-
-        plt.show()
-        fig.savefig('Plots/Sample_Volume_Couette_Noisy.png')
-    '''
-    pass
-
-
-def test():
-    _filenames = [
-        'clean_couette_test_combined_domain_0_5_top.csv',
-        'clean_couette_test_combined_domain_0_5_middle.csv',
-        'clean_couette_test_combined_domain_0_5_bottom.csv',
-        'clean_couette_test_combined_domain_1_0_top.csv',
-        'clean_couette_test_combined_domain_1_0_middle.csv',
-        'clean_couette_test_combined_domain_1_0_bottom.csv',
-        'clean_couette_test_combined_domain_2_0_top.csv',
-        'clean_couette_test_combined_domain_2_0_middle.csv',
-        'clean_couette_test_combined_domain_2_0_bottom.csv',
-        'clean_couette_test_combined_domain_3_0_top.csv',
-        'clean_couette_test_combined_domain_3_0_middle.csv',
-        'clean_couette_test_combined_domain_3_0_bottom.csv',
-        'clean_couette_test_combined_domain_4_0_top.csv',
-        'clean_couette_test_combined_domain_4_0_middle.csv',
-        'clean_couette_test_combined_domain_4_0_bottom.csv',
-        'clean_couette_test_combined_domain_5_0_top.csv',
-        'clean_couette_test_combined_domain_5_0_middle.csv',
-        'clean_couette_test_combined_domain_5_0_bottom.csv'
-    ]
-    _dataset_names = [
-        '0_5_top',
-        '0_5_middle',
-        '0_5_bottom',
-        '1_0_top',
-        '1_0_middle',
-        '1_0_bottom',
-        '2_0_top',
-        '2_0_middle',
-        '2_0_bottom',
-        '3_0_top',
-        '3_0_middle',
-        '3_0_bottom',
-        '4_0_top',
-        '4_0_middle',
-        '4_0_bottom',
-        '5_0_top',
-        '5_0_middle',
-        '5_0_bottom'
-    ]
-    _u_wall = [
-        0.5,
-        0.5,
-        0.5,
-        1.0,
-        1.0,
-        1.0,
-        2.0,
-        2.0,
-        2.0,
-        3.0,
-        3.0,
-        3.0,
-        4.0,
-        4.0,
-        4.0,
-        5.0,
-        5.0,
-        5.0
-    ]
-    visualizeMaMiCoDataset(
-        filenames=_filenames,
-        dataset_names=_dataset_names,
-        u_wall=_u_wall
-    )
 
 
 def main():

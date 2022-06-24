@@ -360,4 +360,6 @@ def checkSaveLoad():
 
 
 if __name__ == "__main__":
+    data = csv2dataset(filename='test_data1.csv')
+    print(data.shape)
     pass
