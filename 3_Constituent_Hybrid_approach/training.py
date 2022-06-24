@@ -246,7 +246,7 @@ def trial_1_mp():
     # _alpha_strings = ['0_01', '0_005', '0_001', '0_0005', '0_0001', '0_00005']
     _alphas = [0.01]
     _alpha_strings = ['0_01']
-    _train_loader, _valid_loader = get_UNET_AE_loaders(file_names=1)
+    _train_loader, _valid_loader = get_UNET_AE_loaders(file_names=-1)
 
     trial_1_UNET_AE(_alphas[0], _alpha_strings[0],
                     _train_loader, _valid_loader)
