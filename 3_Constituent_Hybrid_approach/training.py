@@ -11,6 +11,11 @@ from utils import get_UNET_AE_loaders, get_mamico_loaders, losses2file, checkUse
 from plotting import plotAvgLoss, compareFlowProfile
 from tqdm import tqdm
 
+try:
+    mp.set_start_method('spawn')
+except RuntimeError:
+    pass
+
 plt.style.use(['science'])
 np.set_printoptions(precision=6)
 
