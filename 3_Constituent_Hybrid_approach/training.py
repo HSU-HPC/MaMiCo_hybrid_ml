@@ -216,6 +216,10 @@ def trial_1_multiprocess():
 
 
 if __name__ == "__main__":
+
+    trial_1_multiprocess()
+
+    '''
     _model = UNET_AE(
         device=device,
         in_channels=3,
@@ -237,4 +241,5 @@ if __name__ == "__main__":
             model=_model,
             out_file_name=f'{_out_directory}Latentspace_Dataset_0_5_T'
         )
+    '''
     pass
