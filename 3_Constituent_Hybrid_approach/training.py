@@ -123,6 +123,51 @@ def get_latentspace_AE(loader, model, out_file_name):
     return
 
 
+def get_latentspace_AE_helper():
+    _model = UNET_AE(
+        device=device,
+        in_channels=3,
+        out_channels=3,
+        features=[4, 8, 16],
+        activation=torch.nn.ReLU(inplace=True)
+    ).to(device)
+
+    #TO DO - Check proper model to load
+    _model.load_state_dict(torch.load(
+        '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/0_UNET_AE/Model_UNET_AE_0_001'))
+    _model.eval()
+
+    _loader_1, _ = get_mamico_loaders()
+    _out_directory = '/home/lerdo/lerdo_HPC_Lab_Project/Trainingdata/Latentspace_Dataset'
+    _out_file_names = [
+        '_0_5_T',
+        '_0_5_M',
+        '_0_5_B',
+        '_1_0_T',
+        '_1_0_M',
+        '_1_0_B',
+        '_2_0_T',
+        '_2_0_M',
+        '_2_0_B',
+        '_4_0_T',
+        '_4_0_M',
+        '_4_0_B',
+        '_3_0_T',
+        '_3_0_M',
+        '_3_0_B',
+        '_5_0_T',
+        '_5_0_M',
+        '_5_0_B',
+    ]
+    for i in range(18):
+        get_latentspace_AE(
+            loader=_loader_1[i],
+            model=_model,
+            out_file_name=f'{_out_directory}{_out_file_names[i]}'
+        )
+    pass
+
+
 def train_RNN():
     pass
 
@@ -191,10 +236,13 @@ def trial_1_UNET_AE(_alpha, _alpha_string, _train_loader, _valid_loader):
 def trial_1_multiprocess():
     # _alphas = [0.01, 0.005, 0.001, 0.0005, 0.0001, 0.00005]
     # _alpha_strings = ['0_01', '0_005', '0_001', '0_0005', '0_0001', '0_00005']
-    _alphas = [0.0005, 0.0001, 0.00005]
-    _alpha_strings = ['0_0005', '0_0001', '0_00005']
+    _alphas = [0.01]
+    _alpha_strings = ['0_01']
     _train_loader, _valid_loader = get_UNET_AE_loaders(file_names=0)
 
+    trial_1_UNET_AE(_alphas[0], _alpha_strings[0],
+                    _train_loader, _valid_loader)
+    '''
     processes = []
     counter = 1
 
@@ -211,54 +259,12 @@ def trial_1_multiprocess():
     for process in processes:
         process.join()
         print('Joining Process')
-
+    '''
     return
 
 
 if __name__ == "__main__":
 
-    # trial_1_multiprocess()
-
-    _model = UNET_AE(
-        device=device,
-        in_channels=3,
-        out_channels=3,
-        features=[4, 8, 16],
-        activation=torch.nn.ReLU(inplace=True)
-    ).to(device)
-
-    #TO DO - Check proper model to load
-    _model.load_state_dict(torch.load(
-        '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/0_UNET_AE/Model_UNET_AE_0_001'))
-    _model.eval()
-
-    _loader_1, _ = get_mamico_loaders()
-    _out_directory = '/home/lerdo/lerdo_HPC_Lab_Project/Trainingdata/Latentspace_Dataset'
-    _out_file_names = [
-        '_0_5_T',
-        '_0_5_M',
-        '_0_5_B',
-        '_1_0_T',
-        '_1_0_M',
-        '_1_0_B',
-        '_2_0_T',
-        '_2_0_M',
-        '_2_0_B',
-        '_4_0_T',
-        '_4_0_M',
-        '_4_0_B',
-        '_3_0_T',
-        '_3_0_M',
-        '_3_0_B',
-        '_5_0_T',
-        '_5_0_M',
-        '_5_0_B',
-    ]
-    for i in range(18):
-        get_latentspace_AE(
-            loader=_loader_1[i],
-            model=_model,
-            out_file_name=f'{_out_directory}{_out_file_names[i]}'
-        )
+    trial_1_multiprocess()
 
     pass
