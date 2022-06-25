@@ -350,6 +350,7 @@ def trial_2_RNN(_seq_length, _num_layers, _alpha, _alpha_string, _train_loader, 
     _model = RNN(
         input_size=256,
         hidden_size=256,
+        seq_size=_seq_length,
         num_layers=_num_layers,
         device=device
     ).to(device)
@@ -400,6 +401,8 @@ def trial_2_RNN(_seq_length, _num_layers, _alpha, _alpha_string, _train_loader, 
 if __name__ == "__main__":
     _alphas = [0.01, 0.005, 0.001, 0.0005, 0.0001, 0.00005]
     _alpha_strings = ['0_01', '0_005', '0_001', '0_0005', '0_0001', '0_00005']
+    _alphas.reverse()
+    _alpha_strings.reverse()
     _rnn_depths = [2, 3, 4]
     _t_loader_05, _v_loader_05 = get_RNN_loaders(
         file_names=0, sequence_length=5)

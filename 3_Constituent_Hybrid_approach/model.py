@@ -185,10 +185,11 @@ class UNET_AE(nn.Module):
 class RNN(nn.Module):
     # input.shape = (batch_size, num_seq, input_size)
     # output.shape = (batch_size, 1, input_size)
-    def __init__(self, input_size, hidden_size, num_layers, device):
+    def __init__(self, input_size, hidden_size, seq_size, num_layers, device):
         super(RNN, self).__init__()
         self.input_size = input_size
         self.hidden_size = hidden_size
+        self.seq_size = seq_size
         self.num_layers = num_layers
         self.device = device
         self.rnn = nn.RNN(
@@ -197,7 +198,7 @@ class RNN(nn.Module):
             num_layers=num_layers,
             batch_first=True
         )
-        self.fc = nn.Linear(self.hidden_size*15, self.input_size)
+        self.fc = nn.Linear(self.hidden_size*self.seq_size, self.input_size)
 
     def forward(self, x):
         # Set initial hidden states(for RNN, GRU, LSTM)
