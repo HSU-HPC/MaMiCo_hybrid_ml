@@ -2,6 +2,7 @@ import torch
 import time
 import sys
 import concurrent.futures
+import torch.multiprocessing as mp
 import matplotlib.pyplot as plt
 import torch.optim as optim
 import torch.nn as nn
@@ -10,6 +11,11 @@ from model import UNET_AE, Hybrid_MD_RNN_UNET, Hybrid_MD_GRU_UNET, Hybrid_MD_LST
 from utils import get_UNET_AE_loaders, get_mamico_loaders, losses2file, dataset2csv
 from plotting import plotAvgLoss, compareFlowProfile
 from itertools import repeat
+
+try:
+    mp.set_start_method('spawn')
+except RuntimeError:
+    pass
 
 plt.style.use(['science'])
 np.set_printoptions(precision=6)
@@ -259,7 +265,7 @@ def trial_1_UNET_AE(_alpha, _alpha_string, _train_loader, _valid_loader):
         out_channels=3,
         features=[4, 8, 16],
         activation=nn.ReLU(inplace=True)
-    ) # .to(device)
+    ).to(device)
 
     print('Initializing training parameters.')
     _scaler = torch.cuda.amp.GradScaler()
@@ -307,17 +313,33 @@ def trial_1_UNET_AE(_alpha, _alpha_string, _train_loader, _valid_loader):
 
 
 def trial_1_mp():
-    # _alphas = [0.01, 0.005, 0.001, 0.0005, 0.0001, 0.00005]
-    # _alpha_strings = ['0_01', '0_005', '0_001', '0_0005', '0_0001', '0_00005']
-    _alphas = [0.01, 0.001, 0.0001]
-    _alphas_strings = ['test1', 'test2', 'test3']
+    _alphas = [0.01, 0.005, 0.001, 0.0005, 0.0001, 0.00005]
+    _alpha_strings = ['0_01', '0_005', '0_001', '0_0005', '0_0001', '0_00005']
+    # _alphas = [0.01, 0.001, 0.0001]
+    # _alphas_strings = ['test1', 'test2', 'test3']
     _train_loader, _valid_loader = get_UNET_AE_loaders(file_names=1)
-
+    '''
     with concurrent.futures.ProcessPoolExecutor() as executor:
         results = executor.map(trial_1_UNET_AE, _alphas, _alphas_strings, repeat(
             _train_loader), repeat(_valid_loader))
+    '''
+    processes = []
+    counter = 1
 
-    return
+    for i in range(3):
+        p = mp.Process(
+            target=trial_1_UNET_AE,
+            args=(_alphas[i], _alpha_strings[i], _train_loader, _valid_loader,)
+        )
+        p.start()
+        processes.append(p)
+        print(f'Creating Process Number: {counter}')
+        counter += 1
+
+    for process in processes:
+        process.join()
+        print('Joining Process')
+        return
 
 
 def trial_2_RNN():
