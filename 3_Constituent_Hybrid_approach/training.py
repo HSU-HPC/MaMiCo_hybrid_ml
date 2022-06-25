@@ -259,7 +259,7 @@ def trial_1_UNET_AE(_alpha, _alpha_string, _train_loader, _valid_loader):
         out_channels=3,
         features=[4, 8, 16],
         activation=nn.ReLU(inplace=True)
-    ).to(device)
+    ) # .to(device)
 
     print('Initializing training parameters.')
     _scaler = torch.cuda.amp.GradScaler()
