@@ -197,7 +197,7 @@ class RNN(nn.Module):
             num_layers=num_layers,
             batch_first=True
         )
-        self.fc = nn.Linear(self.hidden_size, self.input_size)
+        self.fc = nn.Linear(self.hidden_size*15, self.input_size)
 
     def forward(self, x):
         # Set initial hidden states(for RNN, GRU, LSTM)

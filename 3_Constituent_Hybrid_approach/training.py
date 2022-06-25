@@ -400,16 +400,16 @@ def trial_2_RNN(_seq_length, _num_layers, _alpha, _alpha_string, _train_loader, 
 if __name__ == "__main__":
     _alphas = [0.01, 0.005, 0.001, 0.0005, 0.0001, 0.00005]
     _alpha_strings = ['0_01', '0_005', '0_001', '0_0005', '0_0001', '0_00005']
-    _train_loader, _valid_loader = get_RNN_loaders(file_names=0, sequence_length=15)
+    _t_loader, _v_loader = get_RNN_loaders(
+        file_names=0, sequence_length=15)
     i = 0
     trial_2_RNN(
         _seq_length=15,
         _num_layers=2,
         _alpha=_alphas[i],
         _alpha_string=_alpha_strings[i],
-        _train_loader=_train_loader,
-        _valid_loader=_valid_loader
+        _train_loader=_t_loader,
+        _valid_loader=_v_loader
     )
-
 
     pass
