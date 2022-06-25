@@ -202,7 +202,7 @@ def compareAvgLoss(loss_files, loss_labels, file_prefix=0, file_name=0):
     ax1.set_ylabel('Error')
 
     for i in range(len(losses)):
-        ax1.plot(x_axis, losses[i], label=loss_labels[i])
+        ax1.plot(x_axis, losses[i, :-1], label=loss_labels[i])
 
     # ax1.set_yticks(y_ticks)
     # ax1.set_xticks(x_ticks)
