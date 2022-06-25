@@ -210,7 +210,7 @@ def compareAvgLoss(loss_files, loss_labels, file_prefix=0, file_name=0):
     fig.set_size_inches(6, 3.5)
     # plt.show()
     if file_name != 0:
-        fig.savefig(f'{file_prefix}Plot_Avg_Losses_{file_name}.svg')
+        fig.savefig(f'{file_prefix}Compare_Avg_Losses_{file_name}.svg')
 
     plt.close()
 
@@ -256,7 +256,8 @@ def compareColorMap(preds, targs, model_name, dataset_name):
     cbar_ax = fig.add_axes([0.85, 0.15, 0.05, 0.7])
     fig.colorbar(sc, cax=cbar_ax)
     fig.set_size_inches(6, 10.5)
-    fig.savefig(f'{directory}Colormap_Comparison_{model_name}_{dataset_name}.png')
+    fig.savefig(
+        f'{directory}Colormap_Comparison_{model_name}_{dataset_name}.png')
     # fig.savefig('myfig.eps', format='eps')
     # plt.show()
     plt.close()
@@ -343,9 +344,31 @@ def main():
 
 
 if __name__ == "__main__":
-    array_a = np.random.rand(1000, 3, 24, 24, 24)
-    print('Shape of array_a: ', array_a.shape)
-    array_b = np.array([array_a[75], array_a[125], array_a[250],
-                        array_a[500], array_a[-1]])
-    print('Shape of array_b: ', array_b.shape)
+    _file_prefix = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/0_UNET_AE/'
+    _loss_files = [
+        f'{_file_prefix}Losses_UNET_AE_0_00005.csv',
+        f'{_file_prefix}Losses_UNET_AE_0_0001.csv',
+        f'{_file_prefix}Losses_UNET_AE_0_0005.csv',
+        f'{_file_prefix}Losses_UNET_AE_0_001.csv',
+        f'{_file_prefix}Losses_UNET_AE_0_005.csv',
+        f'{_file_prefix}Losses_UNET_AE_0_01.csv'
+    ]
+
+    _labels = [
+        'Learning Rate 0.00005',
+        'Learning Rate 0.0001',
+        'Learning Rate 0.0005',
+        'Learning Rate 0.001',
+        'Learning Rate 0.005',
+        'Learning Rate 0.01'
+    ]
+
+    _file_out = 'UNET_AE'
+
+    compareAvgLoss(
+        loss_files=_loss_files,
+        loss_labels=_labels,
+        file_prefix=_file_prefix,
+        file_name=_file_out,
+    )
     pass
