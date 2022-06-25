@@ -372,7 +372,7 @@ def trial_2_RNN(_seq_length, _num_layers, _alpha, _alpha_string, _train_loader, 
         )
         _epoch_losses.append(avg_loss)
 
-    _valid_loss = valid_AE(
+    _valid_loss = valid_RNN(
         loader=_valid_loader,
         model=_model,
         criterion=_criterion,
@@ -402,7 +402,7 @@ if __name__ == "__main__":
     _alpha_strings = ['0_01', '0_005', '0_001', '0_0005', '0_0001', '0_00005']
     _t_loader, _v_loader = get_RNN_loaders(
         file_names=0, sequence_length=15)
-    i = 0
+    i = 2
     trial_2_RNN(
         _seq_length=15,
         _num_layers=2,
