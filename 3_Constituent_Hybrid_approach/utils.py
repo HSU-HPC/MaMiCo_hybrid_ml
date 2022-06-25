@@ -3,7 +3,7 @@ import numpy as np
 import time
 import csv
 import concurrent.futures
-from dataset import MyMamicoDataset, MyMamicoDataset_UNET_AE
+from dataset import MyMamicoDataset, MyMamicoDataset_UNET_AE, MyMamicoDataset_RNN
 from torch.utils.data import DataLoader
 from model import UNET_AE
 
@@ -46,7 +46,7 @@ def mamico_csv2dataset_mp(file_names):
     with concurrent.futures.ProcessPoolExecutor() as executor:
         results = executor.map(mamico_csv2dataset, file_names)
 
-    duration = time.time()
+    duration = time.time() - start
     print(f'Loading Data via Multiprocessing takes: {duration:.3f} secs')
     return results
 
@@ -69,6 +69,7 @@ def dataset2csv(dataset, dataset_name,  model_descriptor=0, counter=''):
 
 def csv2dataset(filename, output_shape=0):
     dataset = np.loadtxt(f'{filename}')
+    print('Shape of dataset: ', dataset.shape)
 
     if output_shape == 0:
         return dataset
@@ -78,6 +79,17 @@ def csv2dataset(filename, output_shape=0):
     # 4) Revert 2D array to 3D array
     original_dataset = dataset.reshape(t, c, d, h, w)
     return original_dataset
+
+
+def csv2dataset_mp(filenames, output_shape=0):
+    start = time.time()
+
+    with concurrent.futures.ProcessPoolExecutor() as executor:
+        results = executor.map(csv2dataset, filenames)
+
+    duration = time.time() - start
+    print(f'Loading Data via Multiprocessing takes: {duration:.3f} secs')
+    return results
 
 
 def get_UNET_AE_loaders(file_names=0, num_workers=4):
@@ -206,6 +218,94 @@ def get_UNET_AE_loaders(file_names=0, num_workers=4):
 
     data_train_stack = np.vstack(data_train)
     dataset_train = MyMamicoDataset_UNET_AE(data_train_stack)
+    dataloader_train = DataLoader(
+        dataset=dataset_train,
+        batch_size=32,
+        shuffle=True,
+        num_workers=num_workers
+        )
+
+    return dataloader_train, dataloader_valid
+
+
+def get_RNN_loaders(file_names=0, num_workers=4):
+    #
+    # This function creates the dataloaders needed to automatically
+    # feed the neural networks with the input dataset. In particular,
+    # this function vields a dataloader for each specified mamico generated
+    # csv file. As for num_workers, the rule of thumb is = 4 * num_GPU.
+    # Note that the variable file_names acts as a flag such that
+    # if == 0 : load data via mp and return one train and valid loader
+    # if == -1: load data via mp and return multiple train and valid loaders
+    # else: load random data for testing
+
+    data_train = []
+    data_valid = []
+    _directory = '/home/lerdo/lerdo_HPC_Lab_Project/Trainingdata'
+    _train_files = [
+        'Latentspace_Dataset_0_5_B.csv',
+        'Latentspace_Dataset_0_5_M.csv',
+        'Latentspace_Dataset_0_5_T.csv',
+        'Latentspace_Dataset_1_0_B.csv',
+        'Latentspace_Dataset_1_0_M.csv',
+        'Latentspace_Dataset_1_0_T.csv',
+        'Latentspace_Dataset_2_0_B.csv',
+        'Latentspace_Dataset_2_0_M.csv',
+        'Latentspace_Dataset_2_0_T.csv',
+        'Latentspace_Dataset_4_0_B.csv',
+        'Latentspace_Dataset_4_0_M.csv',
+        'Latentspace_Dataset_4_0_T.csv',
+    ]
+
+    _valid_files = [
+        'Latentspace_Dataset_3_0_B.csv',
+        'Latentspace_Dataset_3_0_M.csv',
+        'Latentspace_Dataset_3_0_T.csv',
+        'Latentspace_Dataset_5_0_B.csv',
+        'Latentspace_Dataset_5_0_M.csv',
+        'Latentspace_Dataset_5_0_T.csv',
+    ]
+
+    if file_names == 0:
+        start_time = time.time()
+        print('Loading training data.')
+        data_train = csv2dataset_mp(_train_files)
+        duration = time.time() - start_time
+        print(
+            f'Completed loading training data. Duration: {duration:.3f}')
+
+        start_time = time.time()
+        print('Loading validation data.')
+        data_valid = csv2dataset_mp(_valid_files)
+        duration = time.time() - start_time
+        print(f'Completed loading validation data. Duration: {duration:.3f}')
+
+    else:
+        print('Loading ---> RANDOM <--- training datasets as loader.')
+        for i in range(5):
+            data = np.random.rand(1000, 256)
+            # print("Utils.py - Sanity Check - Dimension of loaded dataset: ", dataset.shape)
+            data_train.append(data)
+        print('Completed loading ---> RANDOM <--- training datasets.')
+
+        print('Loading ---> RANDOM <--- validation datasets as loader.')
+        for i in range(3):
+            data = np.random.rand(1000, 256)
+            # print("Utils.py - Sanity Check - Dimension of loaded dataset: ", dataset.shape)
+            data_valid.append(data)
+        print('Completed loading ---> RANDOM <--- validation datasets.')
+
+    data_valid_stack = np.vstack(data_valid)
+    dataset_valid = MyMamicoDataset_RNN(data_valid_stack)
+    dataloader_valid = DataLoader(
+        dataset=dataset_valid,
+        batch_size=32,
+        shuffle=False,
+        num_workers=num_workers
+        )
+
+    data_train_stack = np.vstack(data_train)
+    dataset_train = MyMamicoDataset_RNN(data_train_stack)
     dataloader_train = DataLoader(
         dataset=dataset_train,
         batch_size=32,
@@ -432,4 +532,23 @@ def checkSaveLoad():
 
 
 if __name__ == "__main__":
+
+    dataset = torch.rand(1000, 256)
+    print(dataset.shape)
+
+    sequence_length = 5
+
+    my_masks = dataset[sequence_length+1:]
+    print(my_masks.shape)
+
+    rnn_images = torch.zeros(
+        len(dataset)-sequence_length-1, sequence_length, 256)
+    print(rnn_images.shape)
+    for i in range(len(rnn_images)):
+        rnn_images[i] = dataset[i:sequence_length+i]
+
+    if torch.equal(rnn_images[5], dataset[5:sequence_length+5]):
+        print('Inputs are equal.')
+
+    pass
     pass
