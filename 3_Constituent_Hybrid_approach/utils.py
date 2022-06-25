@@ -309,7 +309,7 @@ def get_RNN_loaders(file_names=0, sequence_length=15, num_workers=4):
     dataloader_train = DataLoader(
         dataset=dataset_train,
         batch_size=32,
-        shuffle=True,
+        shuffle=False,
         num_workers=num_workers
         )
 

@@ -402,7 +402,7 @@ if __name__ == "__main__":
     _alpha_strings = ['0_01', '0_005', '0_001', '0_0005', '0_0001', '0_00005']
     _t_loader, _v_loader = get_RNN_loaders(
         file_names=0, sequence_length=15)
-    i = 2
+    i = 3
     trial_2_RNN(
         _seq_length=15,
         _num_layers=2,
