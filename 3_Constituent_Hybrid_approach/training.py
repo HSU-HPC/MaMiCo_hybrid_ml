@@ -252,7 +252,7 @@ def trial_1_UNET_AE(_alpha, _alpha_string, _train_loader, _valid_loader):
     _criterion = nn.L1Loss()
     # _train_loader, _valid_loader = get_UNET_AE_loaders(file_names=0)
     _file_prefix = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/0_UNET_AE/'
-
+    print('Initializing model.')
     _model = UNET_AE(
         device=device,
         in_channels=3,
