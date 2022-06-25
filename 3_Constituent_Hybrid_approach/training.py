@@ -400,16 +400,36 @@ def trial_2_RNN(_seq_length, _num_layers, _alpha, _alpha_string, _train_loader, 
 if __name__ == "__main__":
     _alphas = [0.01, 0.005, 0.001, 0.0005, 0.0001, 0.00005]
     _alpha_strings = ['0_01', '0_005', '0_001', '0_0005', '0_0001', '0_00005']
-    _t_loader, _v_loader = get_RNN_loaders(
+    _rnn_depths = [2, 3, 4]
+    _t_loader_05, _v_loader_05 = get_RNN_loaders(
+        file_names=0, sequence_length=5)
+    _t_loader_15, _v_loader_15 = get_RNN_loaders(
         file_names=0, sequence_length=15)
-    i = 3
-    trial_2_RNN(
-        _seq_length=15,
-        _num_layers=2,
-        _alpha=_alphas[i],
-        _alpha_string=_alpha_strings[i],
-        _train_loader=_t_loader,
-        _valid_loader=_v_loader
-    )
+    _t_loader_25, _v_loader_25 = get_RNN_loaders(
+        file_names=0, sequence_length=25)
+    _t_loaders = [_t_loader_05, _t_loader_15, _t_loader_25]
+    _v_loaders = [_v_loader_05, _v_loader_15, _v_loader_25]
+    _seq_lengths = [5, 15, 25]
+
+    for idx, _lr in enumerate(_alphas):
+        for _rnn_depth in _rnn_depths:
+
+            processes = []
+            counter = 1
+
+            for i in range(3):
+                p = mp.Process(
+                    target=trial_2_RNN,
+                    args=(_seq_lengths[i], _rnn_depth, _lr,
+                          _alpha_strings[idx], _t_loaders[i], _v_loaders[i],)
+                )
+                p.start()
+                processes.append(p)
+                print(f'Creating Process Number: {counter}')
+                counter += 1
+
+            for process in processes:
+                process.join()
+                print('Joining Process')
 
     pass
