@@ -260,10 +260,13 @@ def trial_1_UNET_AE(_alpha, _alpha_string, _train_loader, _valid_loader):
         features=[4, 8, 16],
         activation=nn.ReLU(inplace=True)
     ).to(device)
+
+    print('Initializing training parameters.')
     _scaler = torch.cuda.amp.GradScaler()
     _optimizer = optim.Adam(_model.parameters(), lr=_alpha)
     _epoch_losses = []
 
+    print('Beginning training.')
     for epoch in range(30):
         avg_loss = train_AE(
             loader=_train_loader,
