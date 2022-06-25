@@ -1,7 +1,7 @@
 import torch
 import time
 import sys
-import torch.multiprocessing as mp
+import concurrent.futures
 import matplotlib.pyplot as plt
 import torch.optim as optim
 import torch.nn as nn
@@ -9,12 +9,7 @@ import numpy as np
 from model import UNET_AE, Hybrid_MD_RNN_UNET, Hybrid_MD_GRU_UNET, Hybrid_MD_LSTM_UNET, resetPipeline
 from utils import get_UNET_AE_loaders, get_mamico_loaders, losses2file, dataset2csv
 from plotting import plotAvgLoss, compareFlowProfile
-from tqdm import tqdm
-
-try:
-    mp.set_start_method('spawn')
-except RuntimeError:
-    pass
+from itertools import repeat
 
 plt.style.use(['science'])
 np.set_printoptions(precision=6)
@@ -168,12 +163,79 @@ def get_latentspace_AE_helper():
     pass
 
 
-def train_RNN():
-    pass
+def train_RNN(loader, model, optimizer, criterion, scaler, identifier='', current_epoch=''):
+    # BRIEF: The train function completes one epoch of the training cycle.
+    # PARAMETERS:
+    # loader - object of PyTorch-type DataLoader to automatically feed dataset
+    # model - the model to be trained
+    # optimizer - the optimization algorithm applied during training
+    # criterion - the loss function applied to quantify the error
+    # scaler -
+    start_time = time.time()
+
+    # loop = tqdm(loader)
+    # The tqdm module allows to display a smart progress meter for iterables
+    # using tqdm(iterable).
+
+    epoch_loss = 0
+    counter = 0
+    optimizer.zero_grad()
+
+    for batch_idx, (data, targets) in enumerate(loader):
+        data = data.float().to(device=device)
+        targets = targets.float().to(device=device)
+
+        with torch.cuda.amp.autocast():
+            predictions = model(data)
+            loss = criterion(predictions.float(), targets.float())
+            # print('Current batch loss: ', loss.item())
+            epoch_loss += loss.item()
+            counter += 1
+
+        loss.backward(retain_graph=True)
+        optimizer.step()
+        optimizer.zero_grad()
+
+        # loop.set_postfix(loss=loss.item())
+    avg_loss = epoch_loss/counter
+    duration = time.time() - start_time
+    print('------------------------------------------------------------')
+    print(f'{identifier} Training -> Epoch: {current_epoch}, Loss: {avg_loss:.3f}, Duration: {duration:.3f}')
+    return avg_loss
 
 
-def valid_RNN():
-    pass
+def valid_RNN(loader, model, criterion, scaler, identifier='', current_epoch=''):
+    # BRIEF: The train function completes one epoch of the training cycle.
+    # PARAMETERS:
+    # loader - object of PyTorch-type DataLoader to automatically feed dataset
+    # model - the model to be trained
+    # optimizer - the optimization algorithm applied during training
+    # criterion - the loss function applied to quantify the error
+    # scaler -
+    start_time = time.time()
+
+    # The tqdm module allows to display a smart progress meter for iterables
+    # using tqdm(iterable).
+
+    epoch_loss = 0
+    counter = 0
+
+    for batch_idx, (data, targets) in enumerate(loader):
+        data = data.float().to(device=device)
+        targets = targets.float().to(device=device)
+
+        with torch.cuda.amp.autocast():
+            predictions = model(data)
+            loss = criterion(predictions.float(), targets.float())
+            # print('Current batch loss: ', loss.item())
+            epoch_loss += loss.item()
+            counter += 1
+
+    avg_loss = epoch_loss/counter
+    duration = time.time() - start_time
+    print('------------------------------------------------------------')
+    print(f'{identifier} Validation -> Loss: {avg_loss:.3f}, Duration: {duration:.3f}')
+    return avg_loss
 
 
 def train_HYBRID():
@@ -244,31 +306,19 @@ def trial_1_UNET_AE(_alpha, _alpha_string, _train_loader, _valid_loader):
 def trial_1_mp():
     # _alphas = [0.01, 0.005, 0.001, 0.0005, 0.0001, 0.00005]
     # _alpha_strings = ['0_01', '0_005', '0_001', '0_0005', '0_0001', '0_00005']
-    _alphas = [0.01]
-    _alpha_strings = ['0_01']
-    _train_loader, _valid_loader = get_UNET_AE_loaders(file_names=-1)
+    _alphas = [0.01, 0.001, 0.0001]
+    _alphas_strings = ['test1', 'test2', 'test3']
+    _train_loader, _valid_loader = get_UNET_AE_loaders(file_names=1)
 
-    trial_1_UNET_AE(_alphas[0], _alpha_strings[0],
-                    _train_loader, _valid_loader)
-    '''
-    processes = []
-    counter = 1
+    with concurrent.futures.ProcessPoolExecutor() as executor:
+        results = executor.map(trial_1_UNET_AE, _alphas, _alphas_strings, repeat(
+            _train_loader), repeat(_valid_loader))
 
-    for i in range(3):
-        p = mp.Process(
-            target=trial_1_UNET_AE,
-            args=(_alphas[i], _alpha_strings[i], _train_loader, _valid_loader,)
-        )
-        p.start()
-        processes.append(p)
-        print(f'Creating Process Number: {counter}')
-        counter += 1
-
-    for process in processes:
-        process.join()
-        print('Joining Process')
-    '''
     return
+
+
+def trial_2_RNN():
+    pass
 
 
 if __name__ == "__main__":
