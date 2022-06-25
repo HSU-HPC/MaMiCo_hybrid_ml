@@ -228,7 +228,7 @@ def get_UNET_AE_loaders(file_names=0, num_workers=4):
     return dataloader_train, dataloader_valid
 
 
-def get_RNN_loaders(file_names=0, num_workers=4):
+def get_RNN_loaders(file_names=0, sequence_length=15, num_workers=4):
     #
     # This function creates the dataloaders needed to automatically
     # feed the neural networks with the input dataset. In particular,
@@ -296,7 +296,7 @@ def get_RNN_loaders(file_names=0, num_workers=4):
         print('Completed loading ---> RANDOM <--- validation datasets.')
 
     data_valid_stack = np.vstack(data_valid)
-    dataset_valid = MyMamicoDataset_RNN(data_valid_stack)
+    dataset_valid = MyMamicoDataset_RNN(data_valid_stack, sequence_length)
     dataloader_valid = DataLoader(
         dataset=dataset_valid,
         batch_size=32,
@@ -305,7 +305,7 @@ def get_RNN_loaders(file_names=0, num_workers=4):
         )
 
     data_train_stack = np.vstack(data_train)
-    dataset_train = MyMamicoDataset_RNN(data_train_stack)
+    dataset_train = MyMamicoDataset_RNN(data_train_stack, sequence_length)
     dataloader_train = DataLoader(
         dataset=dataset_train,
         batch_size=32,

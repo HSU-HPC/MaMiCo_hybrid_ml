@@ -7,8 +7,8 @@ import matplotlib.pyplot as plt
 import torch.optim as optim
 import torch.nn as nn
 import numpy as np
-from model import UNET_AE, Hybrid_MD_RNN_UNET, Hybrid_MD_GRU_UNET, Hybrid_MD_LSTM_UNET, resetPipeline
-from utils import get_UNET_AE_loaders, get_mamico_loaders, losses2file, dataset2csv
+from model import UNET_AE, RNN
+from utils import get_UNET_AE_loaders, get_RNN_loaders, get_mamico_loaders, losses2file, dataset2csv
 from plotting import plotAvgLoss, compareFlowProfile
 from itertools import repeat
 
@@ -342,12 +342,74 @@ def trial_1_mp():
         return
 
 
-def trial_2_RNN():
-    pass
+def trial_2_RNN(_seq_length, _num_layers, _alpha, _alpha_string, _train_loader, _valid_loader):
+    _criterion = nn.L1Loss()
+    _file_prefix = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/1_RNN/'
+    _model_identifier = f'{_seq_length}_{_num_layers}_{_alpha_string}'
+    print('Initializing model.')
+    _model = RNN(
+        input_size=256,
+        hidden_size=256,
+        num_layers=_num_layers,
+        device=device
+    ).to(device)
+
+    print('Initializing training parameters.')
+    _scaler = torch.cuda.amp.GradScaler()
+    _optimizer = optim.Adam(_model.parameters(), lr=_alpha)
+    _epoch_losses = []
+
+    print('Beginning training.')
+    for epoch in range(30):
+        avg_loss = train_RNN(
+            loader=_train_loader,
+            model=_model,
+            optimizer=_optimizer,
+            criterion=_criterion,
+            scaler=_scaler,
+            identifier=_model_identifier,
+            current_epoch=epoch+1
+        )
+        _epoch_losses.append(avg_loss)
+
+    _valid_loss = valid_AE(
+        loader=_valid_loader,
+        model=_model,
+        criterion=_criterion,
+        scaler=_scaler,
+        identifier=_model_identifier,
+        current_epoch=0
+    )
+    _epoch_losses.append(_valid_loss)
+    losses2file(
+        losses=_epoch_losses,
+        filename=f'{_file_prefix}Losses_RNN_{_model_identifier}'
+    )
+
+    plotAvgLoss(
+        avg_losses=_epoch_losses,
+        file_prefix=_file_prefix,
+        file_name=f'RNN_{_model_identifier}'
+    )
+    torch.save(
+        _model.state_dict(),
+        f'{_file_prefix}Model_RNN_{_model_identifier}'
+    )
 
 
 if __name__ == "__main__":
+    _alphas = [0.01, 0.005, 0.001, 0.0005, 0.0001, 0.00005]
+    _alpha_strings = ['0_01', '0_005', '0_001', '0_0005', '0_0001', '0_00005']
+    _train_loader, _valid_loader = get_RNN_loaders(file_names=0, sequence_length=15)
+    i = 0
+    trial_2_RNN(
+        _seq_length=15,
+        _num_layers=2,
+        _alpha=_alphas[i],
+        _alpha_string=_alpha_strings[i],
+        _train_loader=_train_loader,
+        _valid_loader=_valid_loader
+    )
 
-    trial_1_mp()
 
     pass
