@@ -75,8 +75,8 @@ class MyMamicoDataset_RNN(Dataset):
     def __init__(self, my_images, seq_length=15):
         self.sample_masks = my_images[seq_length+1:]
         # print("Dataset.py - Sanity Check - Shape of sample_masks: ", self.sample_masks.shape)
-        self.sample_images = torch.zeros(
-            len(my_images)-seq_length-1, seq_length, 256)
+        self.sample_images = np.zeros((
+            len(my_images)-seq_length-1, seq_length, 256))
 
         for i in range(len(self.sample_images)):
             self.sample_images[i] = my_images[i:seq_length+i]
