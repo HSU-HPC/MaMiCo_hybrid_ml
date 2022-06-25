@@ -191,7 +191,6 @@ class RNN(nn.Module):
         self.hidden_size = hidden_size
         self.num_layers = num_layers
         self.device = device
-        self.sequence = torch.zeros(25, 256)
         self.rnn = nn.RNN(
             input_size=input_size,
             hidden_size=hidden_size,
@@ -205,15 +204,6 @@ class RNN(nn.Module):
         h0 = torch.zeros(self.num_layers, x.size(
             0), self.hidden_size).to(self.device)
 
-        # Set initial cell states (for LSTM)
-        # c0 = torch.zeros(self.num_layers, x.size(0), self.hidden_size).to(device)
-        # c0.shape =
-
-        # Forward propagate RNN
-        # print("Checking dimension of input data: ", x.shape)
-        self.sequence = tensor_FIFO_pipe(
-            self.sequence, x, self.device).to(self.device)
-        x = torch.reshape(self.sequence, (1, 5, 512))
         out, _ = self.rnn(x, h0)
 
         # Decode the hidden state of the last time step
