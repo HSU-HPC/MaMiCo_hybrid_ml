@@ -661,5 +661,5 @@ def trial_3_LSTM_mp():
 
 
 if __name__ == "__main__":
-    trial_2_GRU_mp()
+    trial_3_LSTM_mp()
     pass
