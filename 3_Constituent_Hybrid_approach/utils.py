@@ -295,25 +295,29 @@ def get_RNN_loaders(file_names=0, sequence_length=15, num_workers=4):
             data_valid.append(data)
         print('Completed loading ---> RANDOM <--- validation datasets.')
 
-    data_valid_stack = np.vstack(data_valid)
-    dataset_valid = MyMamicoDataset_RNN(data_valid_stack, sequence_length)
-    dataloader_valid = DataLoader(
-        dataset=dataset_valid,
-        batch_size=32,
-        shuffle=False,
-        num_workers=num_workers
-        )
+    dataloaders_train, dataloaders_valid = []
 
-    data_train_stack = np.vstack(data_train)
-    dataset_train = MyMamicoDataset_RNN(data_train_stack, sequence_length)
-    dataloader_train = DataLoader(
-        dataset=dataset_train,
-        batch_size=32,
-        shuffle=False,
-        num_workers=num_workers
+    for data in data_train:
+        _dataset = MyMamicoDataset_RNN(data, sequence_length)
+        _dataloader = DataLoader(
+            dataset=_dataset,
+            batch_size=32,
+            shuffle=False,
+            num_workers=num_workers
         )
+        dataloaders_train.append(_dataloader)
 
-    return dataloader_train, dataloader_valid
+    for data in data_valid:
+        _dataset = MyMamicoDataset_RNN(data, sequence_length)
+        _dataloader = DataLoader(
+            dataset=_dataset,
+            batch_size=32,
+            shuffle=False,
+            num_workers=num_workers
+        )
+        dataloaders_valid.append(_dataloader)
+
+    return dataloaders_train, dataloaders_valid
 
 
 def get_mamico_loaders(file_names=0, num_workers=4):

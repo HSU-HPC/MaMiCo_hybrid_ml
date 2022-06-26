@@ -342,7 +342,7 @@ def trial_1_mp():
         return
 
 
-def trial_2_RNN(_seq_length, _num_layers, _alpha, _alpha_string, _train_loader, _valid_loader):
+def trial_2_RNN(_seq_length, _num_layers, _alpha, _alpha_string, _train_loaders, _valid_loaders):
     _criterion = nn.L1Loss()
     _file_prefix = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/1_RNN/'
     _model_identifier = f'{_seq_length}_{_num_layers}_{_alpha_string}'
@@ -362,26 +362,31 @@ def trial_2_RNN(_seq_length, _num_layers, _alpha, _alpha_string, _train_loader, 
 
     print('Beginning training.')
     for epoch in range(30):
-        avg_loss = train_RNN(
-            loader=_train_loader,
+        avg_loss = 0
+        for _train_loader in _train_loaders:
+            avg_loss += train_RNN(
+                loader=_train_loader,
+                model=_model,
+                optimizer=_optimizer,
+                criterion=_criterion,
+                scaler=_scaler,
+                identifier=_model_identifier,
+                current_epoch=epoch+1
+            )
+        _epoch_losses.append(avg_loss/len(_train_loaders))
+
+    _valid_loss = 0
+    for _valid_loader in _valid_loaders:
+        _valid_loss += valid_RNN(
+            loader=_valid_loader,
             model=_model,
-            optimizer=_optimizer,
             criterion=_criterion,
             scaler=_scaler,
             identifier=_model_identifier,
-            current_epoch=epoch+1
+            current_epoch=0
         )
-        _epoch_losses.append(avg_loss)
+    _epoch_losses.append(_valid_loss/len(_valid_loaders))
 
-    _valid_loss = valid_RNN(
-        loader=_valid_loader,
-        model=_model,
-        criterion=_criterion,
-        scaler=_scaler,
-        identifier=_model_identifier,
-        current_epoch=0
-    )
-    _epoch_losses.append(_valid_loss)
     losses2file(
         losses=_epoch_losses,
         filename=f'{_file_prefix}Losses_RNN_{_model_identifier}'
