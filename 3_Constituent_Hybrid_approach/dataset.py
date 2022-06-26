@@ -73,7 +73,7 @@ class MyMamicoDataset_RNN(Dataset):
     # timestep, RGB-channel (=x/y/z velocity), x-pos, y-pos, z-pos
     #
     def __init__(self, my_images, seq_length=15):
-        self.sample_masks = my_images[seq_length+1:]
+        self.sample_masks = my_images[seq_length:]
         # print("Dataset.py - Sanity Check - Shape of sample_masks: ", self.sample_masks.shape)
         self.sample_images = np.zeros((
             len(my_images)-seq_length-1, seq_length, 256))

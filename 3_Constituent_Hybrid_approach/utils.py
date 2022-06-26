@@ -536,14 +536,20 @@ def checkSaveLoad():
         print("No, both the arrays are not same")
 
 
-if __name__ == "__main__":
-
-    dataset = torch.rand(1000, 256)
+def check_RNN_dataset_approach():
+    dataset = torch.ones(1000, 256)
     print(dataset.shape)
 
-    sequence_length = 5
+    for i in range(1000):
+        dataset[i] = dataset[i] * i
 
-    my_masks = dataset[sequence_length+1:]
+    print(dataset[0, 0])
+    print(dataset[100, 0])
+    print(dataset[-1, 0])
+
+    sequence_length = 25
+
+    my_masks = dataset[sequence_length:]
     print(my_masks.shape)
 
     rnn_images = torch.zeros(
@@ -554,6 +560,11 @@ if __name__ == "__main__":
 
     if torch.equal(rnn_images[5], dataset[5:sequence_length+5]):
         print('Inputs are equal.')
+        print('Dataset:', dataset[5:sequence_length+5, 0])
+        print('Images:', rnn_images[5, :, 0])
+        print('Masks:', my_masks[5, 0])
 
-    pass
+
+if __name__ == "__main__":
+
     pass
