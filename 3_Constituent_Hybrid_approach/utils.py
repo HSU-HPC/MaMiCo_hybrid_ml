@@ -295,7 +295,8 @@ def get_RNN_loaders(file_names=0, sequence_length=15, num_workers=4):
             data_valid.append(data)
         print('Completed loading ---> RANDOM <--- validation datasets.')
 
-    dataloaders_train, dataloaders_valid = []
+    dataloaders_train = []
+    dataloaders_valid = []
 
     for data in data_train:
         _dataset = MyMamicoDataset_RNN(data, sequence_length)
