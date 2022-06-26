@@ -218,10 +218,11 @@ class RNN(nn.Module):
 class GRU(nn.Module):
     # input.shape = (batch_size, num_seq, input_size)
     # output.shape = (batch_size, 1, input_size)
-    def __init__(self, input_size, hidden_size, num_layers, device):
+    def __init__(self, input_size, hidden_size, seq_size, num_layers, device):
         super(GRU, self).__init__()
         self.input_size = input_size
         self.hidden_size = hidden_size
+        self.seq_size = seq_size
         self.num_layers = num_layers
         self.device = device
         self.gru = nn.GRU(
@@ -230,29 +231,20 @@ class GRU(nn.Module):
             num_layers=num_layers,
             batch_first=True
         )
-        self.fc = nn.Linear(self.hidden_size, self.input_size)
+        self.fc = nn.Linear(self.hidden_size*self.seq_size, self.input_size)
 
     def forward(self, x):
         # Set initial hidden states(for RNN, GRU, LSTM)
         h0 = torch.zeros(self.num_layers, x.size(
             0), self.hidden_size).to(self.device)
-        # h0.shape =
 
-        # Set initial cell states (for LSTM)
-        # c0 = torch.zeros(self.num_layers, x.size(0), self.hidden_size).to(device)
-        # c0.shape =
-
-        # Forward propagate RNN
         out, _ = self.gru(x, h0)
-        # out.shape =
 
         # Decode the hidden state of the last time step
-        out = out[:, -1, :]
-        # out.shape =
+        out = out.reshape(out.shape[0], -1)
 
         # Apply linear regressor to the last time step
         out = self.fc(out)
-        # out.shape =
         return out
 
 
