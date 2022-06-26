@@ -205,8 +205,8 @@ def train_RNN(loader, model, optimizer, criterion, scaler, identifier='', curren
         # loop.set_postfix(loss=loss.item())
     avg_loss = epoch_loss/counter
     duration = time.time() - start_time
-    print('------------------------------------------------------------')
-    print(f'{identifier} Training -> Epoch: {current_epoch}, Loss: {avg_loss:.3f}, Duration: {duration:.3f}')
+    # print('------------------------------------------------------------')
+    # print(f'{identifier} Training -> Epoch: {current_epoch}, Loss: {avg_loss:.3f}, Duration: {duration:.3f}')
     return avg_loss
 
 
@@ -239,8 +239,8 @@ def valid_RNN(loader, model, criterion, scaler, identifier='', current_epoch='')
 
     avg_loss = epoch_loss/counter
     duration = time.time() - start_time
-    print('------------------------------------------------------------')
-    print(f'{identifier} Validation -> Loss: {avg_loss:.3f}, Duration: {duration:.3f}')
+    # print('------------------------------------------------------------')
+    # print(f'{identifier} Validation -> Loss: {avg_loss:.3f}, Duration: {duration:.3f}')
     return avg_loss
 
 
@@ -375,7 +375,7 @@ def trial_2_RNN(_seq_length, _num_layers, _alpha, _alpha_string, _train_loaders,
             )
         print('------------------------------------------------------------')
         print(
-            f'{_model_identifier} Training -> Averaged Loader Loss: {avg_loss/len(_train_loaders):.3f}')
+            f'{_model_identifier} Training Epoch: {epoch+1}-> Averaged Loader Loss: {avg_loss/len(_train_loaders):.3f}')
         _epoch_losses.append(avg_loss/len(_train_loaders))
 
     _valid_loss = 0
