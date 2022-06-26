@@ -373,6 +373,9 @@ def trial_2_RNN(_seq_length, _num_layers, _alpha, _alpha_string, _train_loaders,
                 identifier=_model_identifier,
                 current_epoch=epoch+1
             )
+        print('------------------------------------------------------------')
+        print(
+            f'{_model_identifier} Training -> Averaged Loader Loss: {avg_loss/len(_train_loaders):.3f}')
         _epoch_losses.append(avg_loss/len(_train_loaders))
 
     _valid_loss = 0
@@ -385,6 +388,8 @@ def trial_2_RNN(_seq_length, _num_layers, _alpha, _alpha_string, _train_loaders,
             identifier=_model_identifier,
             current_epoch=0
         )
+    print('------------------------------------------------------------')
+    print(f'{_model_identifier} Validation -> Averaged Loader Loss: {_valid_loss/len(_valid_loaders):.3f}')
     _epoch_losses.append(_valid_loss/len(_valid_loaders))
 
     losses2file(
@@ -408,7 +413,7 @@ if __name__ == "__main__":
     _alpha_strings = ['0_01', '0_005', '0_001', '0_0005', '0_0001', '0_00005']
     _alphas.reverse()
     _alpha_strings.reverse()
-    _rnn_depths = [2, 3, 4]
+    _rnn_depths = [1, 2, 3, 4]
     _t_loader_05, _v_loader_05 = get_RNN_loaders(
         file_names=0, sequence_length=5)
     _t_loader_15, _v_loader_15 = get_RNN_loaders(
