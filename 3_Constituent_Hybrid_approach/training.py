@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import torch.optim as optim
 import torch.nn as nn
 import numpy as np
-from model import UNET_AE, RNN, GRU
+from model import UNET_AE, RNN, GRU, LSTM
 from utils import get_UNET_AE_loaders, get_RNN_loaders, get_mamico_loaders, losses2file, dataset2csv
 from plotting import plotAvgLoss, compareFlowProfile
 from itertools import repeat
@@ -515,18 +515,21 @@ def trial_2_GRU(_seq_length, _num_layers, _alpha, _alpha_string, _train_loaders,
 def trial_2_GRU_mp():
     _alphas = [0.01, 0.005, 0.001, 0.0005, 0.0001, 0.00005]
     _alpha_strings = ['0_01', '0_005', '0_001', '0_0005', '0_0001', '0_00005']
+    _rnn_depths = [1, 2, 3, 4]
+    _seq_lengths = [5, 15, 25]
+
     _alphas.reverse()
     _alpha_strings.reverse()
-    _rnn_depths = [1, 2, 3, 4]
+
     _t_loader_05, _v_loader_05 = get_RNN_loaders(
         file_names=0, sequence_length=5)
     _t_loader_15, _v_loader_15 = get_RNN_loaders(
         file_names=0, sequence_length=15)
     _t_loader_25, _v_loader_25 = get_RNN_loaders(
         file_names=0, sequence_length=25)
+
     _t_loaders = [_t_loader_05, _t_loader_15, _t_loader_25]
     _v_loaders = [_v_loader_05, _v_loader_15, _v_loader_25]
-    _seq_lengths = [5, 15, 25]
 
     for idx, _lr in enumerate(_alphas):
         for _rnn_depth in _rnn_depths:
@@ -550,6 +553,113 @@ def trial_2_GRU_mp():
                 print('Joining Process')
 
 
+def trial_3_LSTM(_seq_length, _num_layers, _alpha, _alpha_string, _train_loaders, _valid_loaders):
+    _criterion = nn.L1Loss()
+    _file_prefix = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/3_LSTM/'
+    _model_identifier = f'{_seq_length}_{_num_layers}_{_alpha_string}'
+    print('Initializing model.')
+    _model = LSTM(
+        input_size=256,
+        hidden_size=256,
+        seq_size=_seq_length,
+        num_layers=_num_layers,
+        device=device
+    ).to(device)
+
+    print('Initializing training parameters.')
+    _scaler = torch.cuda.amp.GradScaler()
+    _optimizer = optim.Adam(_model.parameters(), lr=_alpha)
+    _epoch_losses = []
+
+    print('Beginning training.')
+    for epoch in range(30):
+        avg_loss = 0
+        for _train_loader in _train_loaders:
+            avg_loss += train_RNN(
+                loader=_train_loader,
+                model=_model,
+                optimizer=_optimizer,
+                criterion=_criterion,
+                scaler=_scaler,
+                identifier=_model_identifier,
+                current_epoch=epoch+1
+            )
+        print('------------------------------------------------------------')
+        print(
+            f'{_model_identifier} Training Epoch: {epoch+1}-> Averaged Loader Loss: {avg_loss/len(_train_loaders):.3f}')
+        _epoch_losses.append(avg_loss/len(_train_loaders))
+
+    _valid_loss = 0
+    for _valid_loader in _valid_loaders:
+        _valid_loss += valid_RNN(
+            loader=_valid_loader,
+            model=_model,
+            criterion=_criterion,
+            scaler=_scaler,
+            identifier=_model_identifier,
+            current_epoch=0
+        )
+    print('------------------------------------------------------------')
+    print(f'{_model_identifier} Validation -> Averaged Loader Loss: {_valid_loss/len(_valid_loaders):.3f}')
+    _epoch_losses.append(_valid_loss/len(_valid_loaders))
+
+    losses2file(
+        losses=_epoch_losses,
+        filename=f'{_file_prefix}Losses_LSTM_{_model_identifier}'
+    )
+
+    plotAvgLoss(
+        avg_losses=_epoch_losses,
+        file_prefix=_file_prefix,
+        file_name=f'LSTM_{_model_identifier}'
+    )
+    torch.save(
+        _model.state_dict(),
+        f'{_file_prefix}Model_LSTM_{_model_identifier}'
+    )
+
+
+def trial_3_LSTM_mp():
+    _alphas = [0.01, 0.005, 0.001, 0.0005, 0.0001, 0.00005]
+    _alpha_strings = ['0_01', '0_005', '0_001', '0_0005', '0_0001', '0_00005']
+    _rnn_depths = [1, 2, 3, 4]
+    _seq_lengths = [5, 15, 25]
+
+    _alphas.reverse()
+    _alpha_strings.reverse()
+
+    _t_loader_05, _v_loader_05 = get_RNN_loaders(
+        file_names=0, sequence_length=5)
+    _t_loader_15, _v_loader_15 = get_RNN_loaders(
+        file_names=0, sequence_length=15)
+    _t_loader_25, _v_loader_25 = get_RNN_loaders(
+        file_names=0, sequence_length=25)
+
+    _t_loaders = [_t_loader_05, _t_loader_15, _t_loader_25]
+    _v_loaders = [_v_loader_05, _v_loader_15, _v_loader_25]
+
+    for idx, _lr in enumerate(_alphas):
+        for _rnn_depth in _rnn_depths:
+
+            processes = []
+            counter = 1
+
+            for i in range(3):
+                p = mp.Process(
+                    target=trial_3_LSTM,
+                    args=(_seq_lengths[i], _rnn_depth, _lr,
+                          _alpha_strings[idx], _t_loaders[i], _v_loaders[i],)
+                )
+                p.start()
+                processes.append(p)
+                print(f'Creating Process Number: {counter}')
+                counter += 1
+
+            for process in processes:
+                process.join()
+                print('Joining Process')
+
+
 if __name__ == "__main__":
-    trial_2_GRU_mp()
+    trial_3_LSTM_mp()
     pass
