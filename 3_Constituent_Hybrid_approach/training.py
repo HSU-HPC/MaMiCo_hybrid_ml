@@ -345,7 +345,7 @@ def trial_0_mp():
 def trial_1_RNN(_seq_length, _num_layers, _alpha, _alpha_string, _train_loaders, _valid_loaders):
     _criterion = nn.L1Loss()
     _file_prefix = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/1_RNN/'
-    _model_identifier = f'{_seq_length}_{_num_layers}_{_alpha_string}'
+    _model_identifier = f'Seq{_seq_length}_Lay{_num_layers}_LR{_alpha_string}'
     print('Initializing model.')
     _model = RNN(
         input_size=256,
@@ -449,7 +449,7 @@ def trial_1_RNN_mp():
 def trial_2_GRU(_seq_length, _num_layers, _alpha, _alpha_string, _train_loaders, _valid_loaders):
     _criterion = nn.L1Loss()
     _file_prefix = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/2_GRU/'
-    _model_identifier = f'{_seq_length}_{_num_layers}_{_alpha_string}'
+    _model_identifier = f'Seq{_seq_length}_Lay{_num_layers}_LR{_alpha_string}'
     print('Initializing model.')
     _model = GRU(
         input_size=256,
@@ -556,7 +556,7 @@ def trial_2_GRU_mp():
 def trial_3_LSTM(_seq_length, _num_layers, _alpha, _alpha_string, _train_loaders, _valid_loaders):
     _criterion = nn.L1Loss()
     _file_prefix = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/3_LSTM/'
-    _model_identifier = f'{_seq_length}_{_num_layers}_{_alpha_string}'
+    _model_identifier = f'Seq{_seq_length}_Lay{_num_layers}_LR{_alpha_string}'
     print('Initializing model.')
     _model = LSTM(
         input_size=256,
@@ -661,5 +661,5 @@ def trial_3_LSTM_mp():
 
 
 if __name__ == "__main__":
-    trial_3_LSTM_mp()
+    trial_1_RNN_mp()
     pass
