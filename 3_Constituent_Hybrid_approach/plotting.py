@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 import torch
-from utils import csv2dataset
+from utils import csv2dataset, csv2dataset_mp
 mpl.use('Agg')
 plt.style.use(['science'])
 np.set_printoptions(precision=2)
@@ -175,13 +175,11 @@ def plotAvgLoss(avg_losses, file_prefix=0, file_name=0):
 def compareAvgLoss(loss_files, loss_labels, file_prefix=0, file_name=0):
     # BRIEF:
     # PARAMETERS:
-    losses = []
-    for file in loss_files:
-        losses.append(csv2dataset(file)[:-1])
+    losses = csv2dataset_mp(loss_files)
 
     num_epoch = losses[0].shape[0]
 
-    x_axis = range(1, (num_epoch + 1), 1)
+    x_axis = range(1, (num_epoch), 1)
     '''
     x_ticks = [1]
 

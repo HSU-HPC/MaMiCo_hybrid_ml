@@ -68,8 +68,8 @@ def dataset2csv(dataset, dataset_name,  model_descriptor=0, counter=''):
 
 
 def csv2dataset(filename, output_shape=0):
-    directory = '/home/lerdo/lerdo_HPC_Lab_Project/Trainingdata'
-    dataset = np.loadtxt(f'{directory}/{filename}')
+    # directory = '/home/lerdo/lerdo_HPC_Lab_Project/Trainingdata'
+    dataset = np.loadtxt(f'{filename}')
     print('Shape of dataset: ', dataset.shape)
 
     if output_shape == 0:
