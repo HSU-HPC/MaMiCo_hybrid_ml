@@ -102,6 +102,32 @@ def trial_1_RNN_plots():
 
 
 def trial_2_GRU_plots():
+    _alpha_strings = ['0_01', '0_005', '0_001', '0_0005', '0_0001', '0_00005']
+    _alphas = [0.01, 0.005, 0.001, 0.0005, 0.0001, 0.00005]
+    _rnn_depths = [1, 2, 3, 4]
+    _seq_lengths = [5, 15, 25]
+    _directory = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/2_GRU/'
+
+    _list_of_list_f = []
+    _list_of_list_l = []
+    for idx, _alpha in enumerate(_alphas):
+        files = []
+        labels = []
+        for _rnn_depth in _rnn_depths:
+            for _seq_length in _seq_lengths:
+                files.append(
+                    f'{_directory}Losses_GRU_Seq{_seq_length}_Lay{_rnn_depth}_LR{_alpha_strings[idx]}.csv')
+                labels.append(
+                    f'Seq:{_seq_length} Lay:{_rnn_depth} LR:{_alpha}')
+        _list_of_list_f.append(files)
+        _list_of_list_l.append(labels)
+
+    compareAvgLossRNN(
+        l_of_l_files=_list_of_list_f,
+        l_of_l_labels=_list_of_list_l,
+        file_prefix=_directory,
+        file_name='GRU'
+    )
     pass
 
 
@@ -136,5 +162,5 @@ def trial_3_LSTM_plots():
 
 
 if __name__ == "__main__":
-    trial_3_LSTM_plots()
+    trial_2_GRU_plots()
     pass
