@@ -291,7 +291,7 @@ class Hybrid_MD_RNN_UNET(nn.Module):
         self.unet = UNET_Model
         self.rnn = RNN_Model
         self.seq_length = seq_length
-        self.sequence = torch.zeros(self.seq_length, 256)
+        self.sequence = torch.zeros(1, self.seq_length, 256)
         print('Model initialized: Hybrid_MD_RNN_UNET')
 
     def forward(self, x):
