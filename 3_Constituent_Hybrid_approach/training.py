@@ -1,4 +1,5 @@
 import torch
+import random
 import time
 import torch.multiprocessing as mp
 import matplotlib.pyplot as plt
@@ -8,6 +9,9 @@ import numpy as np
 from model import UNET_AE, RNN, GRU, LSTM
 from utils import get_UNET_AE_loaders, get_RNN_loaders, get_mamico_loaders, losses2file, dataset2csv
 from plotting import plotAvgLoss, compareAvgLoss
+
+torch.manual_seed(0)
+random.seed(0)
 
 try:
     mp.set_start_method('spawn')
@@ -342,7 +346,7 @@ def trial_0_mp():
 def trial_1_RNN(_seq_length, _num_layers, _alpha, _alpha_string, _train_loaders, _valid_loaders):
     _criterion = nn.L1Loss()
     _file_prefix = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/1_RNN/'
-    _model_identifier = f'Seq{_seq_length}_Lay{_num_layers}_LR{_alpha_string}'
+    _model_identifier = f'LR{_alpha_string}_Lay{_num_layers}_Seq{_seq_length}'
     print('Initializing model.')
     _model = RNN(
         input_size=256,
@@ -402,8 +406,8 @@ def trial_1_RNN(_seq_length, _num_layers, _alpha, _alpha_string, _train_loaders,
 
     compareAvgLoss(
         loss_files=[
-            f'{_file_prefix}Losses_RNN_{_model_identifier}',
-            f'{_file_prefix}Valids_RNN_{_model_identifier}'
+            f'{_file_prefix}Losses_RNN_{_model_identifier}.csv',
+            f'{_file_prefix}Valids_RNN_{_model_identifier}.csv'
         ],
         loss_labels=['Training', 'Validation'],
         file_prefix=_file_prefix,
@@ -416,11 +420,13 @@ def trial_1_RNN(_seq_length, _num_layers, _alpha, _alpha_string, _train_loaders,
 
 
 def trial_1_RNN_mp():
-    _alphas = [0.01, 0.005, 0.001, 0.0005, 0.0001, 0.00005]
-    _alpha_strings = ['0_01', '0_005', '0_001', '0_0005', '0_0001', '0_00005']
+    _alphas = [0.01]  # , 0.005, 0.001, 0.0005, 0.0001, 0.00005]
+    # , '0_005', '0_001', '0_0005', '0_0001', '0_00005']
+    _alpha_strings = ['0_01']
     _alphas.reverse()
     _alpha_strings.reverse()
-    _rnn_depths = [1, 2, 3, 4]
+    _rnn_depths = [1]  # , 2, 3, 4]
+    _seq_lengths = [5, 15, 25]
     _t_loader_05, _v_loader_05 = get_RNN_loaders(
         file_names=0, sequence_length=5)
     _t_loader_15, _v_loader_15 = get_RNN_loaders(
@@ -429,7 +435,6 @@ def trial_1_RNN_mp():
         file_names=0, sequence_length=25)
     _t_loaders = [_t_loader_05, _t_loader_15, _t_loader_25]
     _v_loaders = [_v_loader_05, _v_loader_15, _v_loader_25]
-    _seq_lengths = [5, 15, 25]
 
     for idx, _lr in enumerate(_alphas):
         for _rnn_depth in _rnn_depths:
@@ -665,6 +670,10 @@ def trial_3_LSTM_mp():
             for process in processes:
                 process.join()
                 print('Joining Process')
+
+
+def trial_4_Hybrid():
+    pass
 
 
 if __name__ == "__main__":
