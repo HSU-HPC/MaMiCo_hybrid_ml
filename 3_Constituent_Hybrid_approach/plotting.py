@@ -210,7 +210,7 @@ def compareAvgLoss(loss_files, loss_labels, file_prefix=0, file_name=0):
 
     # ax1.set_yticks(y_ticks)
     # ax1.set_xticks(x_ticks)
-    ax1.legend(ncol=2, fontsize=7)
+    ax1.legend(bbox_to_anchor=(1.04, 1), ncol=1, fontsize=7)
     # fig.set_size_inches(6, 3.5)
     # plt.show()
     if file_name != 0:
