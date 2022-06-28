@@ -182,14 +182,16 @@ def compareAvgLoss(loss_files, loss_labels, file_prefix=0, file_name=0):
     # BRIEF:
     # PARAMETERS:
     losses = csv2dataset_mp(loss_files)
-    print('number of labels:', len(loss_labels))
-    num_epoch = 31
+    # print('number of labels:', len(loss_labels))
+    num_epoch = 30
 
     # for i, loss in enumerate(losses):
     #     num_epoch = loss.shape[0]
     #     print(i)
+    for loss in losses:
+        loss = loss[:-1]
 
-    x_axis = range(1, (num_epoch + 1), 1)
+    x_axis = range(1, (num_epoch), 1)
 
     # y_ticks = np.arange(0, 0.31, 0.05)
     # max_x = len(min_losses)
