@@ -1,7 +1,5 @@
 import torch
 import time
-import sys
-import concurrent.futures
 import torch.multiprocessing as mp
 import matplotlib.pyplot as plt
 import torch.optim as optim
@@ -9,8 +7,7 @@ import torch.nn as nn
 import numpy as np
 from model import UNET_AE, RNN, GRU, LSTM
 from utils import get_UNET_AE_loaders, get_RNN_loaders, get_mamico_loaders, losses2file, dataset2csv
-from plotting import plotAvgLoss, compareFlowProfile
-from itertools import repeat
+from plotting import plotAvgLoss  # compareFlowProfile
 
 try:
     mp.set_start_method('spawn')
