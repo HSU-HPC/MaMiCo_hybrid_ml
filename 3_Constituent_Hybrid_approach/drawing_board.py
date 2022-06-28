@@ -92,8 +92,8 @@ def trial_1_RNN_plots():
         _list_of_list_l.append(labels)
 
     compareAvgLossRNN(
-        loss_files=files,
-        loss_labels=labels,
+        l_of_l_files=files,
+        l_of_l_labels=labels,
         file_prefix=_directory,
         file_name=f'LR{_alpha_strings[idx]}'
     )
