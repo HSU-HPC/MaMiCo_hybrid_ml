@@ -783,8 +783,8 @@ def trial_4_Hybrid(_train_loaders, _valid_loaders):
     for epoch in range(30):
         avg_loss = 0
         for _train_loader in _train_loaders:
-            avg_loss +=  valid_RNN(
-                loader=_valid_loader,
+            avg_loss += valid_RNN(
+                loader=_train_loader,
                 model=_model_hybrid,
                 criterion=_criterion,
                 scaler=_scaler,
