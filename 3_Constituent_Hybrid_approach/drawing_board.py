@@ -2,14 +2,14 @@ import numpy as np
 import csv
 import torch
 import torch.nn as nn
-from plotting import compareColorMap
+from plotting import compareColorMap, compareAvgLoss
 from model import UNET_AE
-from utils import get_UNET_AE_loaders
+from utils import get_UNET_AE_loaders, csv2dataset
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 
-def trial_1_plots():
+def trial_0_UNET_AE_plots():
     _, valid_loaders = get_UNET_AE_loaders(file_names=-1)
     model_names = [
         'Model_UNET_AE_0_01',
@@ -70,6 +70,40 @@ def trial_1_plots():
     pass
 
 
+def trial_1_RNN_plots():
+    _alpha_strings = ['0_01', '0_005', '0_001', '0_0005', '0_0001', '0_00005']
+    _rnn_depths = [1, 2, 3, 4]
+    _seq_lengths = [5, 15, 25]
+    _directory = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/1_RNN/'
+
+    for _alpha in _alpha_strings:
+        files = []
+        labels = []
+        for _rnn_depth in _rnn_depths:
+            for _seq_length in _seq_lengths:
+                files.append(
+                    f'{_directory}Losses_RNN_Seq{_seq_length}_Lay{_rnn_depth}_LR{_alpha}.csv')
+                labels.append(
+                    f'Seq:{_seq_length} Lay:{_rnn_depth} LR:{_alpha}')
+
+        compareAvgLoss(
+            loss_files=files,
+            loss_labels=labels,
+            file_prefix=_directory,
+            file_name=f'LR{_alpha}'
+        )
+
+    pass
+
+
+def trial_2_GRU_plots():
+    pass
+
+
+def trial_3_LSTM_plots():
+    pass
+
+
 if __name__ == "__main__":
-    trial_1_plots()
+    trial_1_RNN_plots()
     pass
