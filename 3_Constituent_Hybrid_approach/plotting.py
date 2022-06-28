@@ -179,7 +179,7 @@ def compareAvgLoss(loss_files, loss_labels, file_prefix=0, file_name=0):
     num_epoch = 0
 
     for loss in losses:
-        num_epoch = loss.shape[0] - 1
+        num_epoch = loss.shape[0]
         break
 
     x_axis = range(1, (num_epoch), 1)
