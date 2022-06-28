@@ -189,7 +189,7 @@ def compareAvgLoss(loss_files, loss_labels, file_prefix=0, file_name=0):
     #     num_epoch = loss.shape[0]
     #     print(i)
 
-    x_axis = range(1, (num_epoch), 1)
+    x_axis = range(1, (num_epoch + 1), 1)
 
     # y_ticks = np.arange(0, 0.31, 0.05)
     # max_x = len(min_losses)
