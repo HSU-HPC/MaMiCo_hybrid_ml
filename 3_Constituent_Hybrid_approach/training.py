@@ -753,7 +753,7 @@ def trial_4_Hybrid(_train_loaders, _valid_loaders):
         out_channels=3,
         features=[4, 8, 16],
         activation=nn.ReLU(inplace=True)
-    ).to(device)
+    )
     _model_unet.load_state_dict(torch.load(
         '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/0_UNET_AE/Model_UNET_AE_0_001'))
 
@@ -763,7 +763,7 @@ def trial_4_Hybrid(_train_loaders, _valid_loaders):
         seq_size=15,
         num_layers=1,
         device=device
-    ).to(device)
+    )
     _model_rnn.load_state_dict(torch.load(
         '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/3_LSTM/Model_LSTM_Seq15_Lay1_LR0_00005'))
 
@@ -772,7 +772,7 @@ def trial_4_Hybrid(_train_loaders, _valid_loaders):
         UNET_Model=_model_unet,
         RNN_Model=_model_rnn,
         seq_length=15
-    )
+    ).to(device)
 
     print('Initializing training parameters.')
     _scaler = torch.cuda.amp.GradScaler()

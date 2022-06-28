@@ -1,10 +1,9 @@
 import numpy as np
-import csv
 import torch
 import torch.nn as nn
-from plotting import compareColorMap, compareAvgLoss, compareAvgLossRNN
-from model import UNET_AE
-from utils import get_UNET_AE_loaders, csv2dataset
+from plotting import compareColorMap, compareAvgLossRNN
+from model import UNET_AE, LSTM, Hybrid_MD_RNN_UNET
+from utils import get_UNET_AE_loaders, get_Hybrid_loaders
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
@@ -163,6 +162,80 @@ def trial_3_LSTM_plots():
     pass
 
 
+def trial_4_Hybrid_plots():
+    _, valid_loaders = get_Hybrid_loaders(file_names=-1)
+    # _train_loader, _valid_loader = get_UNET_AE_loaders(file_names=0)
+    _file_prefix = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/4_Hybrid_RNN_UNET/'
+    _model_identifier = 'LSTM_Seq15_Lay1_LR0_00005'
+    print('Initializing model.')
+
+    _model_unet = UNET_AE(
+        device=device,
+        in_channels=3,
+        out_channels=3,
+        features=[4, 8, 16],
+        activation=nn.ReLU(inplace=True)
+    )
+    _model_unet.load_state_dict(torch.load(
+        '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/0_UNET_AE/Model_UNET_AE_0_001'))
+
+    _model_rnn = LSTM(
+        input_size=256,
+        hidden_size=256,
+        seq_size=15,
+        num_layers=1,
+        device=device
+    )
+    _model_rnn.load_state_dict(torch.load(
+        '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/3_LSTM/Model_LSTM_Seq15_Lay1_LR0_00005'))
+
+    _model_hybrid = Hybrid_MD_RNN_UNET(
+        device=device,
+        UNET_Model=_model_unet,
+        RNN_Model=_model_rnn,
+        seq_length=15
+    ).to(device)
+
+    _model_hybrid.eval()
+
+    dataset_names = [
+        'C_3_0_T',
+        'C_3_0_M',
+        'C_3_0_B',
+        'C_5_0_T',
+        'C_5_0_M',
+        'C_5_0_B'
+    ]
+
+    for j in range(len(valid_loaders)):
+        _preds = []
+        _targs = []
+        for batch_idx, (data, targets) in enumerate(valid_loaders[j]):
+            data = data.float().to(device=device)
+            targets = targets.float().to(device=device)
+            with torch.cuda.amp.autocast():
+                data_pred = _model_hybrid(data)
+                data_targ = targets
+                _preds.append(data_pred.cpu().detach().numpy())
+                _targs.append(data_targ.cpu().detach().numpy())
+        _preds = np.vstack(_preds)
+        # print('Shape of preds: ', preds.shape)
+        _targs = np.vstack(_targs)
+        # print('Shape of targs: ', targs.shape)
+        _preds = np.array(
+            [_preds[60], _preds[125], _preds[250], _preds[500], _preds[-1]])
+        _targs = np.array(
+            [_targs[60], _targs[125], _targs[250], _targs[500], _targs[-1]])
+        compareColorMap(
+            preds=_preds,
+            targs=_targs,
+            model_name='Hybrid_LSTM_Seq15_Lay1_LR0_00005',
+            dataset_name=dataset_names[j]
+        )
+
+    pass
+
+
 if __name__ == "__main__":
-    trial_2_GRU_plots()
+    trial_4_Hybrid_plots()
     pass
