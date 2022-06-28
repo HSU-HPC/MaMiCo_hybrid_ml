@@ -18,7 +18,7 @@ class MyMamicoDataset(Dataset):
     def __init__(self, my_images):
         self.sample_images = my_images[:-1, :, 1:-1, 1:-1, 1:-1]
         # print("Dataset.py - Sanity Check - Shape of sample_images: ", self.sample_images.shape)
-        self.sample_masks = my_images[1:, :, 4:22, 4:22, 4:22]
+        self.sample_masks = my_images[1:, :, 1:-1, 1:-1, 1:-1]
         # print("Dataset.py - Sanity Check - Shape of sample_masks: ", self.sample_masks.shape)
 
     def __len__(self):

@@ -6,8 +6,8 @@ import matplotlib.pyplot as plt
 import torch.optim as optim
 import torch.nn as nn
 import numpy as np
-from model import UNET_AE, RNN, GRU, LSTM
-from utils import get_UNET_AE_loaders, get_RNN_loaders, get_mamico_loaders, losses2file, dataset2csv
+from model import UNET_AE, RNN, GRU, LSTM, Hybrid_MD_RNN_UNET
+from utils import get_UNET_AE_loaders, get_RNN_loaders, get_mamico_loaders, losses2file, dataset2csv, get_Hybrid_loaders
 from plotting import plotAvgLoss, compareAvgLoss
 
 torch.manual_seed(0)
@@ -738,13 +738,15 @@ def trial_3_LSTM_mp():
                 print('Joining Process')
 
 
-def trial_4_Hybrid(_alpha, _alpha_string, _train_loader, _valid_loader):
+def trial_4_Hybrid(_train_loaders, _valid_loaders):
     # _alphas = [0.01, 0.005, 0.001, 0.0005, 0.0001, 0.00005]
     # _alpha_strings = ['0_01', '0_005', '0_001', '0_0005', '0_0001', '0_00005']
     _criterion = nn.L1Loss()
     # _train_loader, _valid_loader = get_UNET_AE_loaders(file_names=0)
     _file_prefix = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/4_Hybrid_RNN_UNET/'
+    _model_identifier = 'LSTM_Seq15_Lay1_LR0_00005'
     print('Initializing model.')
+
     _model_unet = UNET_AE(
         device=device,
         in_channels=3,
@@ -752,6 +754,8 @@ def trial_4_Hybrid(_alpha, _alpha_string, _train_loader, _valid_loader):
         features=[4, 8, 16],
         activation=nn.ReLU(inplace=True)
     ).to(device)
+    _model_unet.load_state_dict(torch.load(
+        '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/0_UNET_AE/Model_UNET_AE_0_001'))
 
     _model_rnn = LSTM(
         input_size=256,
@@ -760,54 +764,79 @@ def trial_4_Hybrid(_alpha, _alpha_string, _train_loader, _valid_loader):
         num_layers=1,
         device=device
     ).to(device)
+    _model_rnn.load_state_dict(torch.load(
+        '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/3_LSTM/Model_LSTM_Seq15_Lay1_LR0_00005'))
 
-
+    _model_hybrid = Hybrid_MD_RNN_UNET(
+        device=device,
+        UNET_Model=_model_unet,
+        RNN_Model=_model_rnn,
+        seq_length=15
+    )
 
     print('Initializing training parameters.')
     _scaler = torch.cuda.amp.GradScaler()
-    _optimizer = optim.Adam(_model.parameters(), lr=_alpha)
+    _optimizer = optim.Adam(_model_hybrid.parameters(), lr=0.001)
     _epoch_losses = []
 
     print('Beginning training.')
     for epoch in range(30):
-        avg_loss = train_AE(
-            loader=_train_loader,
-            model=_model,
-            optimizer=_optimizer,
+        avg_loss = 0
+        for _train_loader in _train_loaders:
+            avg_loss += train_RNN(
+                loader=_train_loader,
+                model=_model_hybrid,
+                optimizer=_optimizer,
+                criterion=_criterion,
+                scaler=_scaler,
+                identifier=_model_identifier,
+                current_epoch=epoch+1
+            )
+        print('------------------------------------------------------------')
+        print(
+            f'{_model_identifier} Training Epoch: {epoch+1}-> Averaged Loader Loss: {avg_loss/len(_train_loaders):.3f}')
+        _epoch_losses.append(avg_loss/len(_train_loaders))
+
+    _valid_loss = 0
+    for _valid_loader in _valid_loaders:
+        _valid_loss += valid_RNN(
+            loader=_valid_loader,
+            model=_model_hybrid,
             criterion=_criterion,
             scaler=_scaler,
-            alpha=_alpha_string,
-            current_epoch=epoch+1
+            identifier=_model_identifier,
+            current_epoch=0
         )
-        _epoch_losses.append(avg_loss)
+    print('------------------------------------------------------------')
+    print(f'{_model_identifier} Validation -> Averaged Loader Loss: {_valid_loss/len(_valid_loaders):.3f}')
+    _epoch_losses.append(_valid_loss/len(_valid_loaders))
 
-    _valid_loss = valid_AE(
-        loader=_valid_loader,
-        model=_model,
-        criterion=_criterion,
-        scaler=_scaler,
-        alpha=_alpha_string,
-        current_epoch=0
-    )
-    _epoch_losses.append(_valid_loss)
     losses2file(
         losses=_epoch_losses,
-        filename=f'{_file_prefix}Losses_UNET_AE_{_alpha_string}'
+        filename=f'{_file_prefix}Losses_Hybrid_{_model_identifier}'
     )
 
     plotAvgLoss(
         avg_losses=_epoch_losses,
         file_prefix=_file_prefix,
-        file_name=f'UNET_AE_{_alpha_string}'
+        file_name=f'Hybrid_{_model_identifier}'
     )
+
     torch.save(
-        _model.state_dict(),
-        f'{_file_prefix}Model_UNET_AE_{_alpha_string}'
+        _model_hybrid.state_dict(),
+        f'{_file_prefix}Model_Hybrid_{_model_identifier}'
     )
 
     pass
 
 
+def trial_4_Hybrid_mp():
+    _train_loaders, _valid_loaders = get_Hybrid_loaders(file_names=-1)
+    trial_4_Hybrid(_train_loaders, _valid_loaders)
+
+    pass
+
+
 if __name__ == "__main__":
-    trial_1_RNN_mp()
+    trial_4_Hybrid_mp()
     pass

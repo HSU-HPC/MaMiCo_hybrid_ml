@@ -145,29 +145,6 @@ def get_UNET_AE_loaders(file_names=0, num_workers=4):
         duration = time.time() - start_time
         print(
             f'Completed loading validation data. Duration: {duration:.3f}')
-        '''
-        for file_name in _valid_files:
-            start_time = time.time()
-            print(f'Loading validation data: {file_name}')
-            # dataset = csv2dataset(f'{_directory}/{file_name}', (1000, 3, 26, 26, 26))
-            data = mamico_csv2dataset(f'{file_name}')
-            # print("Utils.py - Sanity Check - Dimension of loaded dataset: ", dataset.shape)
-            data_valid.append(data)
-            duration = time.time() - start_time
-            print(
-                f'Completed loading validation data. Duration: {duration:.3f}')
-
-        for file_name in _train_files:
-            start_time = time.time()
-            print(f'Loading training data: {file_name}')
-            # dataset = csv2dataset(f'{_directory}/{file_name}', (1000, 3, 26, 26, 26))
-            data = mamico_csv2dataset(f'{file_name}')
-            # print("Utils.py - Sanity Check - Dimension of loaded dataset: ", dataset.shape)
-            data_train.append(data)
-            duration = time.time() - start_time
-            print(
-                f'Completed loading training data. Duration: {duration:.3f}')
-        '''
 
         if file_names == -1:
             dataloaders_train = []
@@ -178,7 +155,7 @@ def get_UNET_AE_loaders(file_names=0, num_workers=4):
                 dataloader = DataLoader(
                     dataset=dataset,
                     batch_size=32,
-                    shuffle=True,
+                    shuffle=False,
                     num_workers=num_workers
                     )
                 dataloaders_train.append(dataloader)
@@ -320,6 +297,118 @@ def get_RNN_loaders(file_names=0, sequence_length=15, num_workers=4):
         dataloaders_valid.append(_dataloader)
 
     return dataloaders_train, dataloaders_valid
+
+
+def get_Hybrid_loaders(file_names=0, num_workers=4):
+    #
+    # This function creates the dataloaders needed to automatically
+    # feed the neural networks with the input dataset. In particular,
+    # this function vields a dataloader for each specified mamico generated
+    # csv file. As for num_workers, the rule of thumb is = 4 * num_GPU.
+    # Note that the variable file_names acts as a flag such that
+    # if == 0 : load data via mp and return one train and valid loader
+    # if == -1: load data via mp and return multiple train and valid loaders
+    # else: load random data for testing
+
+    data_train = []
+    data_valid = []
+    _train_files = [
+        'clean_couette_test_combined_domain_0_5_top.csv',
+        'clean_couette_test_combined_domain_0_5_middle.csv',
+        'clean_couette_test_combined_domain_0_5_bottom.csv',
+        'clean_couette_test_combined_domain_1_0_top.csv',
+        'clean_couette_test_combined_domain_1_0_middle.csv',
+        'clean_couette_test_combined_domain_1_0_bottom.csv',
+        'clean_couette_test_combined_domain_2_0_top.csv',
+        'clean_couette_test_combined_domain_2_0_middle.csv',
+        'clean_couette_test_combined_domain_2_0_bottom.csv',
+        'clean_couette_test_combined_domain_4_0_top.csv',
+        'clean_couette_test_combined_domain_4_0_middle.csv',
+        'clean_couette_test_combined_domain_4_0_bottom.csv',
+    ]
+
+    _valid_files = [
+        'clean_couette_test_combined_domain_3_0_top.csv',
+        'clean_couette_test_combined_domain_3_0_middle.csv',
+        'clean_couette_test_combined_domain_3_0_bottom.csv',
+        'clean_couette_test_combined_domain_5_0_top.csv',
+        'clean_couette_test_combined_domain_5_0_middle.csv',
+        'clean_couette_test_combined_domain_5_0_bottom.csv'
+    ]
+
+    if file_names == 0 or file_names == -1:
+        start_time = time.time()
+        print('Loading training data.')
+        data_train = mamico_csv2dataset_mp(_train_files)
+        duration = time.time() - start_time
+        print(
+            f'Completed loading training data. Duration: {duration:.3f}')
+
+        start_time = time.time()
+        print('Loading validation data.')
+        data_valid = mamico_csv2dataset_mp(_valid_files)
+        duration = time.time() - start_time
+        print(
+            f'Completed loading validation data. Duration: {duration:.3f}')
+
+        if file_names == -1:
+            dataloaders_train = []
+            dataloaders_valid = []
+
+            for dataset in data_train:
+                dataset = MyMamicoDataset(dataset)
+                dataloader = DataLoader(
+                    dataset=dataset,
+                    batch_size=32,
+                    shuffle=False,
+                    num_workers=num_workers
+                    )
+                dataloaders_train.append(dataloader)
+
+            for dataset in data_valid:
+                dataset = MyMamicoDataset(dataset)
+                dataloader = DataLoader(
+                    dataset=dataset,
+                    batch_size=32,
+                    shuffle=False,
+                    num_workers=num_workers
+                    )
+                dataloaders_valid.append(dataloader)
+            return dataloaders_train, dataloaders_valid
+    else:
+        print('Loading ---> RANDOM <--- training datasets as loader.')
+        for i in range(5):
+            data = np.random.rand(32, 3, 26, 26, 26)
+            # print("Utils.py - Sanity Check - Dimension of loaded dataset: ", dataset.shape)
+            data_train.append(data)
+        print('Completed loading ---> RANDOM <--- training datasets.')
+
+        print('Loading ---> RANDOM <--- validation datasets as loader.')
+        for i in range(3):
+            data = np.random.rand(32, 3, 26, 26, 26)
+            # print("Utils.py - Sanity Check - Dimension of loaded dataset: ", dataset.shape)
+            data_valid.append(data)
+        print('Completed loading ---> RANDOM <--- validation datasets.')
+
+    data_valid_stack = np.vstack(data_valid)
+    dataset_valid = MyMamicoDataset(data_valid_stack)
+    dataloader_valid = DataLoader(
+        dataset=dataset_valid,
+        batch_size=32,
+        shuffle=False,
+        num_workers=num_workers
+        )
+
+    data_train_stack = np.vstack(data_train)
+    dataset_train = MyMamicoDataset(data_train_stack)
+    dataloader_train = DataLoader(
+        dataset=dataset_train,
+        batch_size=32,
+        shuffle=False,
+        num_workers=num_workers
+        )
+
+    return dataloader_train, dataloader_valid
 
 
 def get_mamico_loaders(file_names=0, num_workers=4):
