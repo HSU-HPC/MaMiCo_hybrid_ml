@@ -190,7 +190,7 @@ def compareAvgLoss(loss_files, loss_labels, file_prefix=0, file_name=0):
     #     print(i)
     loss_list = []
     for loss in losses:
-        loss_list.append(loss[:-1])
+        loss_list.append(loss)
 
     x_axis = range(1, (num_epoch+1), 1)
 

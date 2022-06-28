@@ -7,7 +7,7 @@ import torch.nn as nn
 import numpy as np
 from model import UNET_AE, RNN, GRU, LSTM
 from utils import get_UNET_AE_loaders, get_RNN_loaders, get_mamico_loaders, losses2file, dataset2csv
-from plotting import plotAvgLoss  # compareFlowProfile
+from plotting import plotAvgLoss, compareAvgLoss
 
 try:
     mp.set_start_method('spawn')
@@ -356,6 +356,7 @@ def trial_1_RNN(_seq_length, _num_layers, _alpha, _alpha_string, _train_loaders,
     _scaler = torch.cuda.amp.GradScaler()
     _optimizer = optim.Adam(_model.parameters(), lr=_alpha)
     _epoch_losses = []
+    _epoch_valids = []
 
     print('Beginning training.')
     for epoch in range(30):
@@ -373,31 +374,40 @@ def trial_1_RNN(_seq_length, _num_layers, _alpha, _alpha_string, _train_loaders,
         print('------------------------------------------------------------')
         print(
             f'{_model_identifier} Training Epoch: {epoch+1}-> Averaged Loader Loss: {avg_loss/len(_train_loaders):.3f}')
+
         _epoch_losses.append(avg_loss/len(_train_loaders))
 
-    _valid_loss = 0
-    for _valid_loader in _valid_loaders:
-        _valid_loss += valid_RNN(
-            loader=_valid_loader,
-            model=_model,
-            criterion=_criterion,
-            scaler=_scaler,
-            identifier=_model_identifier,
-            current_epoch=0
-        )
-    print('------------------------------------------------------------')
-    print(f'{_model_identifier} Validation -> Averaged Loader Loss: {_valid_loss/len(_valid_loaders):.3f}')
-    _epoch_losses.append(_valid_loss/len(_valid_loaders))
+        avg_valid = 0
+        for _valid_loader in _valid_loaders:
+            avg_valid += valid_RNN(
+                loader=_valid_loader,
+                model=_model,
+                criterion=_criterion,
+                scaler=_scaler,
+                identifier=_model_identifier,
+                current_epoch=0
+            )
+        print('------------------------------------------------------------')
+        print(f'{_model_identifier} Validation -> Averaged Loader Loss: {avg_valid/len(_valid_loaders):.3f}')
+        _epoch_valids.append(avg_valid/len(_valid_loaders))
 
     losses2file(
         losses=_epoch_losses,
         filename=f'{_file_prefix}Losses_RNN_{_model_identifier}'
     )
+    losses2file(
+        losses=_epoch_valids,
+        filename=f'{_file_prefix}Valids_RNN_{_model_identifier}'
+    )
 
-    plotAvgLoss(
-        avg_losses=_epoch_losses,
+    compareAvgLoss(
+        loss_files=[
+            f'{_file_prefix}Losses_RNN_{_model_identifier}',
+            f'{_file_prefix}Valids_RNN_{_model_identifier}'
+        ],
+        loss_labels=['Training', 'Validation'],
         file_prefix=_file_prefix,
-        file_name=f'RNN_{_model_identifier}'
+        file_name=f'And_Valids_RNN_{_model_identifier}'
     )
     torch.save(
         _model.state_dict(),
@@ -658,5 +668,5 @@ def trial_3_LSTM_mp():
 
 
 if __name__ == "__main__":
-    trial_3_LSTM_mp()
+    trial_1_RNN_mp()
     pass
