@@ -209,7 +209,9 @@ def compareAvgLoss(loss_files, loss_labels, file_prefix=0, file_name=0):
     ax1.set_ylabel('Error')
 
     for idx, loss in enumerate(losses):
-        ax1.plot(x_axis, loss[:-1], color=getColor(c='tab20',N=12,idx=idx), label=loss_labels[idx])
+        ax1.plot(x_axis, loss[:-1], color=getColor(c='tab20',
+                 N=12, idx=idx), label=loss_labels[idx])
+        print(idx)
 
     # ax1.set_yticks(y_ticks)
     # ax1.set_xticks(x_ticks)
