@@ -247,7 +247,7 @@ def compareAvgLossRNN(l_of_l_files, l_of_l_labels, file_prefix=0, file_name=0):
         axs[i].set_ylabel('Error')
         axs[i].legend(ncol=2, fontsize=7)
 
-    fig.set_size_inches(14, 7)
+    fig.set_size_inches(7, 14)
     if file_name != 0:
         fig.savefig(f'{file_prefix}Compare_Avg_Losses_{file_name}.svg')
 
