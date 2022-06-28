@@ -177,7 +177,8 @@ def compareAvgLoss(loss_files, loss_labels, file_prefix=0, file_name=0):
     # PARAMETERS:
     losses = csv2dataset_mp(loss_files)
     print(type(losses))
-    print(type(losses[0]))
+    for loss in losses:
+        print(type(loss))
 
     num_epoch = losses[0].shape[0]
 
