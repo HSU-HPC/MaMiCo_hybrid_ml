@@ -182,6 +182,7 @@ def compareAvgLoss(loss_files, loss_labels, file_prefix=0, file_name=0):
     # BRIEF:
     # PARAMETERS:
     losses = csv2dataset_mp(loss_files)
+    print('number of labels:', len(loss_labels))
     num_epoch = 0
 
     for i, loss in enumerate(losses):
@@ -215,8 +216,8 @@ def compareAvgLoss(loss_files, loss_labels, file_prefix=0, file_name=0):
 
     # ax1.set_yticks(y_ticks)
     # ax1.set_xticks(x_ticks)
-    plt.legend(ncol=2, fontsize=7)
-    fig.set_size_inches(6, 3.5)
+    ax1.legend(ncol=2, fontsize=7)
+    # fig.set_size_inches(6, 3.5)
     # plt.show()
     if file_name != 0:
         fig.savefig(f'{file_prefix}Compare_Avg_Losses_{file_name}.svg')
