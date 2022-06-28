@@ -363,7 +363,7 @@ def trial_1_RNN(_seq_length, _num_layers, _alpha, _alpha_string, _train_loaders,
     _epoch_valids = []
 
     print('Beginning training.')
-    for epoch in range(30):
+    for epoch in range(7):
         avg_loss = 0
         for _train_loader in _train_loaders:
             avg_loss += train_RNN(
