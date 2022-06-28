@@ -242,28 +242,29 @@ def get_RNN_loaders(file_names=0, sequence_length=15, num_workers=4):
 
     data_train = []
     data_valid = []
+    _directory = '/home/lerdo/lerdo_HPC_Lab_Project/Trainingdata/'
     _train_files = [
-        'Latentspace_Dataset_0_5_B.csv',
-        'Latentspace_Dataset_0_5_M.csv',
-        'Latentspace_Dataset_0_5_T.csv',
-        'Latentspace_Dataset_1_0_B.csv',
-        'Latentspace_Dataset_1_0_M.csv',
-        'Latentspace_Dataset_1_0_T.csv',
-        'Latentspace_Dataset_2_0_B.csv',
-        'Latentspace_Dataset_2_0_M.csv',
-        'Latentspace_Dataset_2_0_T.csv',
-        'Latentspace_Dataset_4_0_B.csv',
-        'Latentspace_Dataset_4_0_M.csv',
-        'Latentspace_Dataset_4_0_T.csv',
+        f'{_directory}Latentspace_Dataset_0_5_B.csv',
+        f'{_directory}Latentspace_Dataset_0_5_M.csv',
+        f'{_directory}Latentspace_Dataset_0_5_T.csv',
+        f'{_directory}Latentspace_Dataset_1_0_B.csv',
+        f'{_directory}Latentspace_Dataset_1_0_M.csv',
+        f'{_directory}Latentspace_Dataset_1_0_T.csv',
+        f'{_directory}Latentspace_Dataset_2_0_B.csv',
+        f'{_directory}Latentspace_Dataset_2_0_M.csv',
+        f'{_directory}Latentspace_Dataset_2_0_T.csv',
+        f'{_directory}Latentspace_Dataset_4_0_B.csv',
+        f'{_directory}Latentspace_Dataset_4_0_M.csv',
+        f'{_directory}Latentspace_Dataset_4_0_T.csv',
     ]
 
     _valid_files = [
-        'Latentspace_Dataset_3_0_B.csv',
-        'Latentspace_Dataset_3_0_M.csv',
-        'Latentspace_Dataset_3_0_T.csv',
-        'Latentspace_Dataset_5_0_B.csv',
-        'Latentspace_Dataset_5_0_M.csv',
-        'Latentspace_Dataset_5_0_T.csv',
+        f'{_directory}Latentspace_Dataset_3_0_B.csv',
+        f'{_directory}Latentspace_Dataset_3_0_M.csv',
+        f'{_directory}Latentspace_Dataset_3_0_T.csv',
+        f'{_directory}Latentspace_Dataset_5_0_B.csv',
+        f'{_directory}Latentspace_Dataset_5_0_M.csv',
+        f'{_directory}Latentspace_Dataset_5_0_T.csv',
     ]
 
     if file_names == 0:
