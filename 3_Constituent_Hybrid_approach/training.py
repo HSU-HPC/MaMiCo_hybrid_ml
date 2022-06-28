@@ -245,12 +245,79 @@ def valid_RNN(loader, model, criterion, scaler, identifier='', current_epoch='')
     return avg_loss
 
 
-def train_HYBRID():
-    pass
+def train_HYBRID(loader, model, optimizer, criterion, scaler, alpha, current_epoch):
+    # BRIEF: The train function completes one epoch of the training cycle.
+    # PARAMETERS:
+    # loader - object of PyTorch-type DataLoader to automatically feed dataset
+    # model - the model to be trained
+    # optimizer - the optimization algorithm applied during training
+    # criterion - the loss function applied to quantify the error
+    # scaler -
+    start_time = time.time()
+
+    # loop = tqdm(loader)
+    # The tqdm module allows to display a smart progress meter for iterables
+    # using tqdm(iterable).
+
+    epoch_loss = 0
+    counter = 0
+    optimizer.zero_grad()
+
+    for batch_idx, (data, targets) in enumerate(loader):
+        data = data.float().to(device=device)
+        targets = targets.float().to(device=device)
+
+        with torch.cuda.amp.autocast():
+            predictions = model(data)
+            loss = criterion(predictions.float(), targets.float())
+            # print('Current batch loss: ', loss.item())
+            epoch_loss += loss.item()
+            counter += 1
+
+        loss.backward(retain_graph=True)
+        optimizer.step()
+        optimizer.zero_grad()
+
+        # loop.set_postfix(loss=loss.item())
+    avg_loss = epoch_loss/counter
+    duration = time.time() - start_time
+    print('------------------------------------------------------------')
+    print(f'{alpha} Training -> Epoch: {current_epoch}, Loss: {avg_loss:.3f}, Duration: {duration:.3f}')
+    return avg_loss
 
 
-def valid_HYBRID():
-    pass
+def valid_HYBRID(loader, model, criterion, scaler, alpha, current_epoch):
+    # BRIEF: The train function completes one epoch of the training cycle.
+    # PARAMETERS:
+    # loader - object of PyTorch-type DataLoader to automatically feed dataset
+    # model - the model to be trained
+    # optimizer - the optimization algorithm applied during training
+    # criterion - the loss function applied to quantify the error
+    # scaler -
+    start_time = time.time()
+
+    # The tqdm module allows to display a smart progress meter for iterables
+    # using tqdm(iterable).
+
+    epoch_loss = 0
+    counter = 0
+
+    for batch_idx, (data, targets) in enumerate(loader):
+        data = data.float().to(device=device)
+        targets = targets.float().to(device=device)
+
+        with torch.cuda.amp.autocast():
+            predictions = model(data)
+            loss = criterion(predictions.float(), targets.float())
+            # print('Current batch loss: ', loss.item())
+            epoch_loss += loss.item()
+            counter += 1
+
+    avg_loss = epoch_loss/counter
+    duration = time.time() - start_time
+    print('------------------------------------------------------------')
+    print(f'{alpha} Validation -> Loss: {avg_loss:.3f}, Duration: {duration:.3f}')
+    return avg_loss
 
 
 def trial_0_UNET_AE(_alpha, _alpha_string, _train_loader, _valid_loader):
@@ -363,7 +430,7 @@ def trial_1_RNN(_seq_length, _num_layers, _alpha, _alpha_string, _train_loaders,
     _epoch_valids = []
 
     print('Beginning training.')
-    for epoch in range(3):
+    for epoch in range(30):
         avg_loss = 0
         for _train_loader in _train_loaders:
             avg_loss += train_RNN(
@@ -420,12 +487,11 @@ def trial_1_RNN(_seq_length, _num_layers, _alpha, _alpha_string, _train_loaders,
 
 
 def trial_1_RNN_mp():
-    _alphas = [0.01]  # , 0.005, 0.001, 0.0005, 0.0001, 0.00005]
-    # , '0_005', '0_001', '0_0005', '0_0001', '0_00005']
-    _alpha_strings = ['0_01']
+    _alphas = [0.01, 0.005, 0.001, 0.0005, 0.0001, 0.00005]
+    _alpha_strings = ['0_01', '0_005', '0_001', '0_0005', '0_0001', '0_00005']
     _alphas.reverse()
     _alpha_strings.reverse()
-    _rnn_depths = [1]  # , 2, 3, 4]
+    _rnn_depths = [1, 2, 3, 4]
     _seq_lengths = [5, 15, 25]
     _t_loader_05, _v_loader_05 = get_RNN_loaders(
         file_names=0, sequence_length=5)
@@ -672,7 +738,73 @@ def trial_3_LSTM_mp():
                 print('Joining Process')
 
 
-def trial_4_Hybrid():
+def trial_4_Hybrid(_alpha, _alpha_string, _train_loader, _valid_loader):
+    # _alphas = [0.01, 0.005, 0.001, 0.0005, 0.0001, 0.00005]
+    # _alpha_strings = ['0_01', '0_005', '0_001', '0_0005', '0_0001', '0_00005']
+    _criterion = nn.L1Loss()
+    # _train_loader, _valid_loader = get_UNET_AE_loaders(file_names=0)
+    _file_prefix = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/4_Hybrid_RNN_UNET/'
+    print('Initializing model.')
+    _model_unet = UNET_AE(
+        device=device,
+        in_channels=3,
+        out_channels=3,
+        features=[4, 8, 16],
+        activation=nn.ReLU(inplace=True)
+    ).to(device)
+
+    _model_rnn = LSTM(
+        input_size=256,
+        hidden_size=256,
+        seq_size=15,
+        num_layers=1,
+        device=device
+    ).to(device)
+
+
+
+    print('Initializing training parameters.')
+    _scaler = torch.cuda.amp.GradScaler()
+    _optimizer = optim.Adam(_model.parameters(), lr=_alpha)
+    _epoch_losses = []
+
+    print('Beginning training.')
+    for epoch in range(30):
+        avg_loss = train_AE(
+            loader=_train_loader,
+            model=_model,
+            optimizer=_optimizer,
+            criterion=_criterion,
+            scaler=_scaler,
+            alpha=_alpha_string,
+            current_epoch=epoch+1
+        )
+        _epoch_losses.append(avg_loss)
+
+    _valid_loss = valid_AE(
+        loader=_valid_loader,
+        model=_model,
+        criterion=_criterion,
+        scaler=_scaler,
+        alpha=_alpha_string,
+        current_epoch=0
+    )
+    _epoch_losses.append(_valid_loss)
+    losses2file(
+        losses=_epoch_losses,
+        filename=f'{_file_prefix}Losses_UNET_AE_{_alpha_string}'
+    )
+
+    plotAvgLoss(
+        avg_losses=_epoch_losses,
+        file_prefix=_file_prefix,
+        file_name=f'UNET_AE_{_alpha_string}'
+    )
+    torch.save(
+        _model.state_dict(),
+        f'{_file_prefix}Model_UNET_AE_{_alpha_string}'
+    )
+
     pass
 
 
