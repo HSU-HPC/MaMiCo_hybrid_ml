@@ -179,6 +179,8 @@ def compareAvgLoss(loss_files, loss_labels, file_prefix=0, file_name=0):
     print(type(losses))
     for loss in losses:
         print(type(loss))
+        num_epoch = loss.shape[0]
+        print(num_epoch)
 
     num_epoch = losses[0].shape[0]
 
