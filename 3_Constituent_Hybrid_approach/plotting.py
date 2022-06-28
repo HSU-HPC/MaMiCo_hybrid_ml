@@ -184,9 +184,9 @@ def compareAvgLoss(loss_files, loss_labels, file_prefix=0, file_name=0):
     losses = csv2dataset_mp(loss_files)
     num_epoch = 0
 
-    for loss in losses:
+    for i, loss in enumerate(losses):
         num_epoch = loss.shape[0]
-        break
+        print(i)
 
     x_axis = range(1, (num_epoch), 1)
     '''
