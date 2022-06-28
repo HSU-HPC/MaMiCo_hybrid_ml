@@ -95,7 +95,7 @@ def trial_1_RNN_plots():
         l_of_l_files=_list_of_list_f,
         l_of_l_labels=_list_of_list_l,
         file_prefix=_directory,
-        file_name=f'LR{_alpha_strings[idx]}'
+        file_name='RNN'
     )
 
     pass
