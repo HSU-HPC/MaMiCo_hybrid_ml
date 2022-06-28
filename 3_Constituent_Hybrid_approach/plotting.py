@@ -211,12 +211,12 @@ def compareAvgLoss(loss_files, loss_labels, file_prefix=0, file_name=0):
 
     for idx, loss in enumerate(losses):
         ax1.plot(x_axis, loss[:-1], color=getColor(c='tab20',
-                 N=12, idx=idx), label=loss_labels[idx])
+                 N=12, idx=idx))
         print(idx)
 
     # ax1.set_yticks(y_ticks)
     # ax1.set_xticks(x_ticks)
-    ax1.legend(ncol=2, fontsize=7)
+    ax1.legend(labels=loss_labels, ncol=2, fontsize=7)
     # fig.set_size_inches(6, 3.5)
     # plt.show()
     if file_name != 0:
