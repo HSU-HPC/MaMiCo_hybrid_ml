@@ -303,7 +303,7 @@ class Hybrid_MD_RNN_UNET(nn.Module):
         x_shape = x.shape
         self.sequence = tensor_FIFO_pipe(
             tensor=self.sequence,
-            x=torch.reshape(x, (1, 256)),
+            x=torch.reshape(x, (1, 1, 256)),
             device=self.device).to(self.device)
         print('Size of self.sequence: ', self.sequence.size())
 
