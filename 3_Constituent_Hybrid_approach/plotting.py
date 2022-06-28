@@ -208,6 +208,7 @@ def compareAvgLoss(loss_files, loss_labels, file_prefix=0, file_name=0):
     for idx, loss in enumerate(loss_list):
         ax1.plot(x_axis, loss, color=getColor(c='tab20',
                  N=12, idx=idx), label=loss_labels[idx])
+        ax1.legend(ncol=2, fontsize=7)
         print(idx)
 
     # ax1.set_yticks(y_ticks)
@@ -385,26 +386,19 @@ def main():
 
 
 if __name__ == "__main__":
-    _file_prefix = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/0_UNET_AE/'
+
+    _file_prefix = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/1_RNN/'
     _loss_files = [
-        f'{_file_prefix}Losses_UNET_AE_0_00005.csv',
-        f'{_file_prefix}Losses_UNET_AE_0_0001.csv',
-        f'{_file_prefix}Losses_UNET_AE_0_0005.csv',
-        f'{_file_prefix}Losses_UNET_AE_0_001.csv',
-        f'{_file_prefix}Losses_UNET_AE_0_005.csv',
-        f'{_file_prefix}Losses_UNET_AE_0_01.csv'
+        f'{_file_prefix}Losses_RNN_LR0_01_Lay1_Seq5.csv',
+        f'{_file_prefix}Valids_RNN_LR0_01_Lay1_Seq5.csv',
     ]
 
     _labels = [
-        'Learning Rate 0.00005',
-        'Learning Rate 0.0001',
-        'Learning Rate 0.0005',
-        'Learning Rate 0.001',
-        'Learning Rate 0.005',
-        'Learning Rate 0.01'
+        'Training',
+        'Validation'
     ]
 
-    _file_out = 'UNET_AE'
+    _file_out = f'And_Valids_RNN_LR0_01_Lay1_Seq5'
 
     compareAvgLoss(
         loss_files=_loss_files,
