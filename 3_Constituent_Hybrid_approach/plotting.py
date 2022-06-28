@@ -9,6 +9,12 @@ plt.style.use(['science'])
 np.set_printoptions(precision=2)
 
 
+def getColor(c, N, idx):
+    cmap = mpl.cm.get_cmap(c)
+    norm = mpl.colors.Normalize(vmin=0.0, vmax=N - 1)
+    return cmap(norm(idx))
+
+
 def colorMap(dataset, dataset_name):
     # BRIEF: This function is used to visualize a dataset in a 3D
     # scatterplot, aka color map. Here, the use case is tailored
@@ -203,7 +209,7 @@ def compareAvgLoss(loss_files, loss_labels, file_prefix=0, file_name=0):
     ax1.set_ylabel('Error')
 
     for idx, loss in enumerate(losses):
-        ax1.plot(x_axis, loss[:-1], label=loss_labels[idx])
+        ax1.plot(x_axis, loss[:-1], color=getColor(c='tab20',N=12,idx=idx), label=loss_labels[idx])
 
     # ax1.set_yticks(y_ticks)
     # ax1.set_xticks(x_ticks)
