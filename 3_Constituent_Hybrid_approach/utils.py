@@ -359,7 +359,7 @@ def get_Hybrid_loaders(file_names=0, num_workers=4):
                 dataset = MyMamicoDataset(dataset)
                 dataloader = DataLoader(
                     dataset=dataset,
-                    batch_size=32,
+                    batch_size=1,
                     shuffle=False,
                     num_workers=num_workers
                     )
@@ -369,7 +369,7 @@ def get_Hybrid_loaders(file_names=0, num_workers=4):
                 dataset = MyMamicoDataset(dataset)
                 dataloader = DataLoader(
                     dataset=dataset,
-                    batch_size=32,
+                    batch_size=1,
                     shuffle=False,
                     num_workers=num_workers
                     )
