@@ -83,7 +83,7 @@ def trial_1_RNN_plots():
         for _rnn_depth in _rnn_depths:
             for _seq_length in _seq_lengths:
                 files.append(
-                    f'{_directory}Losses_RNN_Seq{_seq_length}_Lay{_rnn_depth}_LR{_alpha}.csv')
+                    f'{_directory}Losses_RNN_Seq{_seq_length}_Lay{_rnn_depth}_LR{_alpha_strings[idx]}.csv')
                 labels.append(
                     f'Seq:{_seq_length} Lay:{_rnn_depth} LR:{_alpha}')
 
