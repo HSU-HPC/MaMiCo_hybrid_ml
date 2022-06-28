@@ -237,8 +237,6 @@ def compareAvgLossRNN(l_of_l_files, l_of_l_labels, file_prefix=0, file_name=0):
     x_axis = range(1, (num_epoch+1), 1)
 
     fig, axs = plt.subplots(6, constrained_layout=True)
-    axs.set_xlabel('Number of Epochs')
-    axs.set_ylabel('Error')
 
     for i, list_of_loss in enumerate(list_of_list_l):
         for j, loss in enumerate(list_of_loss):
