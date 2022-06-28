@@ -291,7 +291,7 @@ class Hybrid_MD_RNN_UNET(nn.Module):
         self.unet = UNET_Model
         self.rnn = RNN_Model
         self.seq_length = seq_length
-        self.sequence = torch.zeros(1, self.seq_length, 256)
+        self.sequence = torch.zeros(self.seq_length, 256)
         print('Model initialized: Hybrid_MD_RNN_UNET')
 
     def forward(self, x):
@@ -303,7 +303,7 @@ class Hybrid_MD_RNN_UNET(nn.Module):
         x_shape = x.shape
         self.sequence = tensor_FIFO_pipe(
             tensor=self.sequence,
-            x=torch.reshape(x, (1, 1, 256)),
+            x=torch.reshape(x, (1, 256)),
             device=self.device).to(self.device)
         print('Size of self.sequence: ', self.sequence.size())
 
