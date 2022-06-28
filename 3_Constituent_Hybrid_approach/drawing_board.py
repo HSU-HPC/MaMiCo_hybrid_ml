@@ -2,7 +2,7 @@ import numpy as np
 import csv
 import torch
 import torch.nn as nn
-from plotting import compareColorMap, compareAvgLoss
+from plotting import compareColorMap, compareAvgLoss, compareAvgLossRNN
 from model import UNET_AE
 from utils import get_UNET_AE_loaders, csv2dataset
 
@@ -77,6 +77,8 @@ def trial_1_RNN_plots():
     _seq_lengths = [5, 15, 25]
     _directory = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/1_RNN/'
 
+    _list_of_list_f = []
+    _list_of_list_l = []
     for idx, _alpha in enumerate(_alphas):
         files = []
         labels = []
@@ -86,13 +88,15 @@ def trial_1_RNN_plots():
                     f'{_directory}Losses_RNN_Seq{_seq_length}_Lay{_rnn_depth}_LR{_alpha_strings[idx]}.csv')
                 labels.append(
                     f'Seq:{_seq_length} Lay:{_rnn_depth} LR:{_alpha}')
+        _list_of_list_f.append(files)
+        _list_of_list_l.append(labels)
 
-        compareAvgLoss(
-            loss_files=files,
-            loss_labels=labels,
-            file_prefix=_directory,
-            file_name=f'LR{_alpha_strings[idx]}'
-        )
+    compareAvgLossRNN(
+        loss_files=files,
+        loss_labels=labels,
+        file_prefix=_directory,
+        file_name=f'LR{_alpha_strings[idx]}'
+    )
 
     pass
 

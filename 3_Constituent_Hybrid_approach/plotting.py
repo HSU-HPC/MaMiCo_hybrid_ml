@@ -210,9 +210,46 @@ def compareAvgLoss(loss_files, loss_labels, file_prefix=0, file_name=0):
 
     # ax1.set_yticks(y_ticks)
     # ax1.set_xticks(x_ticks)
-    ax1.legend(bbox_to_anchor=(1.04, 1), ncol=1, fontsize=7)
     # fig.set_size_inches(6, 3.5)
     # plt.show()
+    if file_name != 0:
+        fig.savefig(f'{file_prefix}Compare_Avg_Losses_{file_name}.svg')
+
+    plt.close()
+
+
+def compareAvgLossRNN(l_of_l_files, l_of_l_labels, file_prefix=0, file_name=0):
+    # BRIEF:
+    # PARAMETERS:
+    list_of_list_l = []
+
+    for list in l_of_l_files:
+        losses = csv2dataset_mp(list)
+        list_l = []
+
+        for loss in losses:
+            list_l.append(loss)
+
+        list_of_list_l.append(list_l)
+
+    num_epoch = 30
+
+    x_axis = range(1, (num_epoch+1), 1)
+
+    fig, axs = plt.subplots(6, constrained_layout=True)
+    axs.set_xlabel('Number of Epochs')
+    axs.set_ylabel('Error')
+
+    for i, list_of_loss in enumerate(list_of_list_l):
+        for j, loss in enumerate(list_of_loss):
+            axs[i].plot(x_axis, loss, color=getColor(
+                c='tab20', N=12, idx=j), label=l_of_l_labels[i][j])
+
+        axs[i].set_xlabel('Number of Epochs')
+        axs[i].set_ylabel('Error')
+        axs[i].legend(ncol=2, fontsize=7)
+
+    fig.set_size_inches(12, 9)
     if file_name != 0:
         fig.savefig(f'{file_prefix}Compare_Avg_Losses_{file_name}.svg')
 
