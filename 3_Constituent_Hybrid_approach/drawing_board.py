@@ -72,11 +72,12 @@ def trial_0_UNET_AE_plots():
 
 def trial_1_RNN_plots():
     _alpha_strings = ['0_01', '0_005', '0_001', '0_0005', '0_0001', '0_00005']
+    _alphas = [0.01, 0.005, 0.001, 0.0005, 0.0001, 0.00005]
     _rnn_depths = [1, 2, 3, 4]
     _seq_lengths = [5, 15, 25]
     _directory = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/1_RNN/'
 
-    for _alpha in _alpha_strings:
+    for idx, _alpha in enumerate(_alphas):
         files = []
         labels = []
         for _rnn_depth in _rnn_depths:
@@ -90,7 +91,7 @@ def trial_1_RNN_plots():
             loss_files=files,
             loss_labels=labels,
             file_prefix=_directory,
-            file_name=f'LR{_alpha}'
+            file_name=f'LR{_alpha_strings[idx]}'
         )
 
     pass
