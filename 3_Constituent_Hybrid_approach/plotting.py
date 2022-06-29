@@ -387,4 +387,5 @@ def main():
 
 if __name__ == "__main__":
 
-    visualizeMaMiCoDataset(filenames=['kvs_test_combined_domain.csv'], dataset_names=['KVS_test'])
+    visualizeMaMiCoDataset(
+        filenames=['kvs_test_combined_domain.csv'], dataset_names=['KVS_test'], u_wall=0)
