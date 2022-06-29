@@ -84,9 +84,9 @@ def trial_1_RNN_plots():
         for _rnn_depth in _rnn_depths:
             for _seq_length in _seq_lengths:
                 files.append(
-                    f'{_directory}Losses_RNN_Seq{_seq_length}_Lay{_rnn_depth}_LR{_alpha_strings[idx]}.csv')
+                    f'{_directory}Losses_RNN_LR{_alpha_strings[idx]}_Lay{_rnn_depth}_Seq{_seq_length}.csv')
                 labels.append(
-                    f'Seq:{_seq_length} Lay:{_rnn_depth} LR:{_alpha}')
+                    f'LR:{_alpha} Lay:{_rnn_depth} Seq:{_seq_length}')
         _list_of_list_f.append(files)
         _list_of_list_l.append(labels)
 
@@ -237,5 +237,5 @@ def trial_4_Hybrid_plots():
 
 
 if __name__ == "__main__":
-    trial_4_Hybrid_plots()
-    pass
+        trial_1_RNN_plots()
+        pass
