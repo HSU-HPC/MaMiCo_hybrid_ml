@@ -43,8 +43,8 @@ def colorMap(dataset, dataset_name):
     while counter < 9:
         ax = fig.add_subplot(3, 3, (counter+1), projection='3d')
         ax.set_title(f't={t[counter]}', fontsize=10)
-        sc = ax.scatter3D(X, Y, Z, c=dataset[t[counter], 1, :, :, :],
-                          alpha=0.8, marker='.', s=0.25, vmin=-2, vmax=2, cmap=cm)
+        sc = ax.scatter3D(X, Y, Z, c=dataset[t[counter], 0, :, :, :],
+                          alpha=0.8, marker='.', s=0.25, vmin=-2, vmax=6, cmap=cm)
 
         if counter == 4:
             ax.set_xlabel("X", fontsize=7, fontweight='bold')
@@ -388,4 +388,4 @@ def main():
 if __name__ == "__main__":
 
     visualizeMaMiCoDataset(
-        filenames=['kvs_test_combined_domain.csv'], dataset_names=['KVS test'], u_wall=[0])
+        filenames=['couette_test_combined_domain_5_0_bottom.csv'], dataset_names=['couette test'], u_wall=[0])
