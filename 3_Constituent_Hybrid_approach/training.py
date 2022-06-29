@@ -855,5 +855,5 @@ def trial_4_Hybrid_mp():
 
 
 if __name__ == "__main__":
-    trial_3_LSTM_mp()
+    trial_2_GRU_mp()
     pass
