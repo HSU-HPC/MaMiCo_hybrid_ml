@@ -231,7 +231,7 @@ def compareAvgLossRNN(l_of_l_files, l_of_l_labels, file_prefix=0, file_name=0):
         list_l = []
 
         for loss in losses:
-            list_l.append(loss[:-1])
+            list_l.append(loss)
 
         list_of_list_l.append(list_l)
 
