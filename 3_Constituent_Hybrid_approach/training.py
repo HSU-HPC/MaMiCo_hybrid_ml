@@ -414,7 +414,7 @@ def trial_1_RNN(_seq_length, _num_layers, _alpha, _alpha_string, _train_loaders,
     _criterion = nn.L1Loss()
     _file_prefix = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/1_RNN/'
     _model_identifier = f'LR{_alpha_string}_Lay{_num_layers}_Seq{_seq_length}'
-    print('Initializing model.')
+    print('Initializing RNN model.')
     _model = RNN(
         input_size=256,
         hidden_size=256,
@@ -527,8 +527,8 @@ def trial_1_RNN_mp():
 def trial_2_GRU(_seq_length, _num_layers, _alpha, _alpha_string, _train_loaders, _valid_loaders):
     _criterion = nn.L1Loss()
     _file_prefix = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/2_GRU/'
-    _model_identifier = f'Seq{_seq_length}_Lay{_num_layers}_LR{_alpha_string}'
-    print('Initializing model.')
+    _model_identifier = f'LR{_alpha_string}_Lay{_num_layers}_Seq{_seq_length}'
+    print('Initializing GRU model.')
     _model = GRU(
         input_size=256,
         hidden_size=256,
@@ -541,6 +541,7 @@ def trial_2_GRU(_seq_length, _num_layers, _alpha, _alpha_string, _train_loaders,
     _scaler = torch.cuda.amp.GradScaler()
     _optimizer = optim.Adam(_model.parameters(), lr=_alpha)
     _epoch_losses = []
+    _epoch_valids = []
 
     print('Beginning training.')
     for epoch in range(30):
@@ -560,29 +561,37 @@ def trial_2_GRU(_seq_length, _num_layers, _alpha, _alpha_string, _train_loaders,
             f'{_model_identifier} Training Epoch: {epoch+1}-> Averaged Loader Loss: {avg_loss/len(_train_loaders):.3f}')
         _epoch_losses.append(avg_loss/len(_train_loaders))
 
-    _valid_loss = 0
-    for _valid_loader in _valid_loaders:
-        _valid_loss += valid_RNN(
-            loader=_valid_loader,
-            model=_model,
-            criterion=_criterion,
-            scaler=_scaler,
-            identifier=_model_identifier,
-            current_epoch=0
-        )
-    print('------------------------------------------------------------')
-    print(f'{_model_identifier} Validation -> Averaged Loader Loss: {_valid_loss/len(_valid_loaders):.3f}')
-    _epoch_losses.append(_valid_loss/len(_valid_loaders))
+        avg_valid = 0
+        for _valid_loader in _valid_loaders:
+            avg_valid += valid_RNN(
+                loader=_valid_loader,
+                model=_model,
+                criterion=_criterion,
+                scaler=_scaler,
+                identifier=_model_identifier,
+                current_epoch=0
+            )
+        print('------------------------------------------------------------')
+        print(f'{_model_identifier} Validation -> Averaged Loader Loss: {avg_valid/len(_valid_loaders):.3f}')
+        _epoch_valids.append(avg_valid/len(_valid_loaders))
 
     losses2file(
         losses=_epoch_losses,
         filename=f'{_file_prefix}Losses_GRU_{_model_identifier}'
     )
+    losses2file(
+        losses=_epoch_valids,
+        filename=f'{_file_prefix}Valids_GRU_{_model_identifier}'
+    )
 
-    plotAvgLoss(
-        avg_losses=_epoch_losses,
+    compareAvgLoss(
+        loss_files=[
+            f'{_file_prefix}Losses_GRU_{_model_identifier}.csv',
+            f'{_file_prefix}Valids_GRU_{_model_identifier}.csv'
+        ],
+        loss_labels=['Training', 'Validation'],
         file_prefix=_file_prefix,
-        file_name=f'GRU_{_model_identifier}'
+        file_name=f'And_Valids_GRU_{_model_identifier}'
     )
     torch.save(
         _model.state_dict(),
@@ -837,5 +846,5 @@ def trial_4_Hybrid_mp():
 
 
 if __name__ == "__main__":
-    trial_4_Hybrid_mp()
+    trial_2_GRU_mp()
     pass
