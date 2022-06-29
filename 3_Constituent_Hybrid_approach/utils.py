@@ -10,6 +10,21 @@ from model import UNET_AE
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 
+def clean_mamico_data(directory, filename):
+    #
+    # This function is used to clean the MaMiCo generated
+    # csv file. In other words, to remove the comma delimiter
+    # and ensure a semicolon delimiter.
+    #
+    text = open(f"{directory}/{filename}", "r")
+    text = ''.join([i for i in text]) \
+        .replace(",", ";")
+    x = open(f"{directory}/clean_{filename}", "w")
+    x.writelines(text)
+    x.close()
+    pass
+
+
 def mamico_csv2dataset(file_name):
     #
     # This function reads from a MaMiCo generatd csv file.
@@ -656,5 +671,8 @@ def check_RNN_dataset_approach():
 
 
 if __name__ == "__main__":
+    _directory = '/home/lerdo/lerdo_HPC_Lab_Project/Trainingdata'
+    _filename = 'kvs_test_combined_domain.csv'
 
+    clean_mamico_data(directory=_directory, filename=_filename)
     pass

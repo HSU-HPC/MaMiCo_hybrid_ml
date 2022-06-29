@@ -388,4 +388,4 @@ def main():
 if __name__ == "__main__":
 
     visualizeMaMiCoDataset(
-        filenames=['kvs_test_combined_domain.csv'], dataset_names=['kvs test'], u_wall=[0])
+        filenames=['clean_kvs_test_combined_domain.csv'], dataset_names=['kvs test'], u_wall=[0])
