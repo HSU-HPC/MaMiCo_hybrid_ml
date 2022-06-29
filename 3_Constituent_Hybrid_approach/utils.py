@@ -24,7 +24,7 @@ def mamico_csv2dataset(file_name):
 
         for row in csv_reader:
             a = row
-            if(len(a) > 7):
+            if(len(a) > 6):
                 dataset[int(a[0])-1, 0, int(a[1])-1, int(a[2])
                         - 1, int(a[3])-1] = float(a[4])
                 dataset[int(a[0])-1, 1, int(a[1])-1, int(a[2])
