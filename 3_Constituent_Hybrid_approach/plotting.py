@@ -387,23 +387,4 @@ def main():
 
 if __name__ == "__main__":
 
-    _file_prefix = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/1_RNN/'
-    _loss_files = [
-        f'{_file_prefix}Losses_RNN_LR0_01_Lay1_Seq5.csv',
-        f'{_file_prefix}Valids_RNN_LR0_01_Lay1_Seq5.csv',
-    ]
-
-    _labels = [
-        'Training',
-        'Validation'
-    ]
-
-    _file_out = f'And_Valids_RNN_LR0_01_Lay1_Seq5'
-
-    compareAvgLoss(
-        loss_files=_loss_files,
-        loss_labels=_labels,
-        file_prefix=_file_prefix,
-        file_name=_file_out,
-    )
-    pass
+    visualizeMaMiCoDataset(filenames=['kvs_test_combined_domain.csv'], dataset_names=['KVS_test'])
