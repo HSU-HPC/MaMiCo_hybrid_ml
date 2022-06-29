@@ -64,7 +64,7 @@ def colorMap(dataset, dataset_name):
     cbar_ax = fig.add_axes([0.85, 0.15, 0.05, 0.7])
     fig.colorbar(sc, cax=cbar_ax)
     fig.set_size_inches(7, 12)
-    fig.savefig(f'Colormap_Visualization_Dataset_{dataset_name}.eps')
+    fig.savefig(f'Colormap_Visualization_Dataset_{dataset_name}.png')
     # fig.savefig('myfig.eps', format='eps')
     # plt.show()
     plt.close()
