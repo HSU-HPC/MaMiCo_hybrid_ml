@@ -44,7 +44,7 @@ def colorMap(dataset, dataset_name):
         ax = fig.add_subplot(3, 3, (counter+1), projection='3d')
         ax.set_title(f't={t[counter]}', fontsize=10)
         sc = ax.scatter3D(X, Y, Z, c=dataset[t[counter], 0, :, :, :],
-                          alpha=0.8, marker='.', s=0.25, vmin=-4, vmax=4, cmap=cm)
+                          alpha=0.8, marker='.', s=0.25, vmin=-2, vmax=2, cmap=cm)
 
         if counter == 4:
             ax.set_xlabel("X", fontsize=7, fontweight='bold')
