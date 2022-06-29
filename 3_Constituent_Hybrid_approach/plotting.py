@@ -44,7 +44,7 @@ def colorMap(dataset, dataset_name):
         ax = fig.add_subplot(3, 3, (counter+1), projection='3d')
         ax.set_title(f't={t[counter]}', fontsize=10)
         sc = ax.scatter3D(X, Y, Z, c=dataset[t[counter], 0, :, :, :],
-                          alpha=0.8, marker='.', s=0.25, vmin=-2, vmax=2, cmap=cm)
+                          alpha=0.8, marker='.', s=0.25, vmin=-2, vmax=4, cmap=cm)
 
         if counter == 4:
             ax.set_xlabel("X", fontsize=7, fontweight='bold')
@@ -63,7 +63,7 @@ def colorMap(dataset, dataset_name):
     fig.subplots_adjust(right=0.8)
     cbar_ax = fig.add_axes([0.85, 0.15, 0.05, 0.7])
     fig.colorbar(sc, cax=cbar_ax)
-    fig.set_size_inches(7, 12)
+    fig.set_size_inches(15, 15)
     fig.savefig(f'Colormap_Visualization_Dataset_{dataset_name}.png')
     # fig.savefig('myfig.eps', format='eps')
     # plt.show()
