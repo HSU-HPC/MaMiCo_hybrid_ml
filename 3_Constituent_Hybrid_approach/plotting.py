@@ -182,12 +182,7 @@ def compareAvgLoss(loss_files, loss_labels, file_prefix=0, file_name=0):
     # BRIEF:
     # PARAMETERS:
     losses = csv2dataset_mp(loss_files)
-    # print('number of labels:', len(loss_labels))
-    num_epoch = 30
 
-    # for i, loss in enumerate(losses):
-    #     num_epoch = loss.shape[0]
-    #     print(i)
     loss_list = []
     for loss in losses:
         loss_list.append(loss)
@@ -196,11 +191,6 @@ def compareAvgLoss(loss_files, loss_labels, file_prefix=0, file_name=0):
 
     x_axis = range(1, (num_epoch+1), 1)
 
-    # y_ticks = np.arange(0, 0.31, 0.05)
-    # max_x = len(min_losses)
-    # max_loss = max(max_losses)
-
-    print('Where difficulties?')
     fig, (ax1) = plt.subplots(1, constrained_layout=True)
     ax1.set_xlabel('Number of Epochs')
     ax1.set_ylabel('Error')
@@ -208,13 +198,8 @@ def compareAvgLoss(loss_files, loss_labels, file_prefix=0, file_name=0):
     for idx, loss in enumerate(loss_list):
         ax1.plot(x_axis, loss, color=getColor(c='tab20',
                  N=12, idx=idx), label=loss_labels[idx])
-        ax1.legend(ncol=2, fontsize=7)
-        print(idx)
 
-    # ax1.set_yticks(y_ticks)
-    # ax1.set_xticks(x_ticks)
-    # fig.set_size_inches(6, 3.5)
-    # plt.show()
+    ax1.legend(ncol=2, fontsize=7)
     if file_name != 0:
         fig.savefig(f'{file_prefix}Compare_Avg_Losses_{file_name}.svg')
 
