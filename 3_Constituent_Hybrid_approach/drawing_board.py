@@ -1,7 +1,7 @@
 import numpy as np
 import torch
 import torch.nn as nn
-from plotting import compareColorMap, compareAvgLossRNN
+from plotting import compareColorMap, compareAvgLossRNN, compareAvgLoss
 from model import UNET_AE, LSTM, Hybrid_MD_RNN_UNET
 from utils import get_UNET_AE_loaders, get_Hybrid_loaders
 
@@ -70,6 +70,7 @@ def trial_0_UNET_AE_plots():
 
 
 def trial_1_RNN_plots():
+
     _alpha_strings = ['0_01', '0_005', '0_001', '0_0005', '0_0001', '0_00005']
     _alphas = [0.01, 0.005, 0.001, 0.0005, 0.0001, 0.00005]
     _rnn_depths = [1, 2, 3, 4]
@@ -78,6 +79,8 @@ def trial_1_RNN_plots():
 
     _list_of_list_f = []
     _list_of_list_l = []
+
+    '''
     for idx, _alpha in enumerate(_alphas):
         files = []
         labels = []
@@ -96,7 +99,25 @@ def trial_1_RNN_plots():
         file_prefix=_directory,
         file_name='RNN'
     )
+    '''
+    files = []
+    labels = []
+    for _seq_length in _seq_lengths:
+        files.append(
+            f'{_directory}Losses_RNN_LR0_00005_Lay1_Seq{_seq_length}.csv')
+        labels.append(
+            f'Training LR:0.00005 Lay:1 Seq:{_seq_length}')
+        files.append(
+            f'{_directory}Valids_RNN_LR0_00005_Lay1_Seq{_seq_length}.csv')
+        labels.append(
+            f'Validation LR:0.00005 Lay:1 Seq:{_seq_length}')
 
+    compareAvgLoss(
+        loss_files=files,
+        loss_labels=labels,
+        file_prefix=_directory,
+        file_name='RNN_LR0_00005_Lay1_All_Seqs'
+    )
     pass
 
 
@@ -237,5 +258,5 @@ def trial_4_Hybrid_plots():
 
 
 if __name__ == "__main__":
-        trial_1_RNN_plots()
-        pass
+    trial_1_RNN_plots()
+    pass
