@@ -192,14 +192,14 @@ def compareAvgLoss(loss_files, loss_labels, file_prefix=0, file_name=0):
     x_axis = range(1, (num_epoch+1), 1)
 
     fig, (ax1) = plt.subplots(1, constrained_layout=True)
-    ax1.set_xlabel('Number of Epochs')
-    ax1.set_ylabel('Error')
-
     for idx, loss in enumerate(loss_list):
         ax1.plot(x_axis, loss, color=getColor(c='tab20',
                  N=12, idx=idx), label=loss_labels[idx])
 
+    ax1.set_xlabel('Number of Epochs')
+    ax1.set_ylabel('Error')
     ax1.legend(ncol=2, fontsize=7)
+    fig.set_size_inches(7, 2.5)
     if file_name != 0:
         fig.savefig(f'{file_prefix}Compare_Avg_Losses_{file_name}.svg')
 

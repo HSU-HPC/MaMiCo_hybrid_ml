@@ -106,11 +106,11 @@ def trial_1_RNN_plots():
         files.append(
             f'{_directory}Losses_RNN_LR0_00005_Lay1_Seq{_seq_length}.csv')
         labels.append(
-            f'Training LR:0.00005 Lay:1 Seq:{_seq_length}')
+            f'Training Seq:{_seq_length}')
         files.append(
             f'{_directory}Valids_RNN_LR0_00005_Lay1_Seq{_seq_length}.csv')
         labels.append(
-            f'Validation LR:0.00005 Lay:1 Seq:{_seq_length}')
+            f'Validation Seq:{_seq_length}')
 
     compareAvgLoss(
         loss_files=files,
