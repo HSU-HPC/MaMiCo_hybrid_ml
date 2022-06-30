@@ -102,21 +102,26 @@ def trial_1_RNN_plots():
     '''
     files = []
     labels = []
-    for _seq_length in _seq_lengths:
-        files.append(
-            f'{_directory}Losses_RNN_LR0_00005_Lay1_Seq{_seq_length}.csv')
-        labels.append(
-            f'Training Seq:{_seq_length}')
-        files.append(
-            f'{_directory}Valids_RNN_LR0_00005_Lay1_Seq{_seq_length}.csv')
-        labels.append(
-            f'Validation Seq:{_seq_length}')
+    for _rnn_depth in _rnn_depths:
+        files = []
+        labels = []
+        for _seq_length in _seq_lengths:
+            files.append(
+                f'{_directory}Losses_RNN_LR0_00005_Lay1_Seq{_seq_length}.csv')
+            labels.append(
+                f'Training Seq:{_seq_length}')
+            files.append(
+                f'{_directory}Valids_RNN_LR0_00005_Lay1_Seq{_seq_length}.csv')
+            labels.append(
+                f'Validation Seq:{_seq_length}')
+        _list_of_list_f.append(files)
+        _list_of_list_l.append(labels)
 
-    compareAvgLoss(
-        loss_files=files,
-        loss_labels=labels,
+    compareAvgLossRNN(
+        l_of_l_files=_list_of_list_f,
+        l_of_l_labels=_list_of_list_l,
         file_prefix=_directory,
-        file_name='RNN_LR0_00005_Lay1_All_Seqs'
+        file_name='And_Valids_RNN_LR0_00005'
     )
     pass
 
