@@ -198,8 +198,8 @@ def compareAvgLoss(loss_files, loss_labels, file_prefix=0, file_name=0):
 
     ax1.set_xlabel('Number of Epochs')
     ax1.set_ylabel('Error')
-    ax1.legend(ncol=2, fontsize=7)
-    fig.set_size_inches(7, 2.5)
+    ax1.legend(ncol=2, fontsize=9)
+    fig.set_size_inches(6, 2)
     if file_name != 0:
         fig.savefig(f'{file_prefix}Compare_Avg_Losses_{file_name}.svg')
 
