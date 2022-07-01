@@ -320,13 +320,11 @@ def valid_HYBRID(loader, model, criterion, scaler, alpha, current_epoch):
     return avg_loss
 
 
-def trial_0_UNET_AE(_alpha, _alpha_string, _train_loader, _valid_loader):
-    # _alphas = [0.01, 0.005, 0.001, 0.0005, 0.0001, 0.00005]
-    # _alpha_strings = ['0_01', '0_005', '0_001', '0_0005', '0_0001', '0_00005']
+def trial_0_UNET_AE(_alpha, _alpha_string, _train_loaders, _valid_loaders):
     _criterion = nn.L1Loss()
-    # _train_loader, _valid_loader = get_UNET_AE_loaders(file_names=0)
     _file_prefix = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/0_UNET_AE/'
-    print('Initializing model.')
+    _model_identifier = f'LR{_alpha_string}'
+    print('Initializing UNET_AE model.')
     _model = UNET_AE(
         device=device,
         in_channels=3,
@@ -339,58 +337,71 @@ def trial_0_UNET_AE(_alpha, _alpha_string, _train_loader, _valid_loader):
     _scaler = torch.cuda.amp.GradScaler()
     _optimizer = optim.Adam(_model.parameters(), lr=_alpha)
     _epoch_losses = []
+    _epoch_valids = []
 
     print('Beginning training.')
-    for epoch in range(30):
-        avg_loss = train_AE(
-            loader=_train_loader,
-            model=_model,
-            optimizer=_optimizer,
-            criterion=_criterion,
-            scaler=_scaler,
-            alpha=_alpha_string,
-            current_epoch=epoch+1
-        )
-        _epoch_losses.append(avg_loss)
+    for epoch in range(5):
+        avg_loss = 0
+        for _train_loader in _train_loaders:
+            avg_loss += train_AE(
+                loader=_train_loader,
+                model=_model,
+                optimizer=_optimizer,
+                criterion=_criterion,
+                scaler=_scaler,
+                alpha=_alpha_string,
+                current_epoch=epoch+1
+            )
+        print('------------------------------------------------------------')
+        print(f'{_model_identifier} Training Epoch: {epoch+1}-> Averaged Loader Loss: {avg_loss/len(_train_loaders):.3f}')
+        _epoch_losses.append(avg_loss/len(_train_loaders))
 
-    _valid_loss = valid_AE(
-        loader=_valid_loader,
-        model=_model,
-        criterion=_criterion,
-        scaler=_scaler,
-        alpha=_alpha_string,
-        current_epoch=0
-    )
-    _epoch_losses.append(_valid_loss)
+        avg_valid = 0
+        for _valid_loader in _valid_loaders:
+            avg_valid += valid_AE(
+                loader=_valid_loader,
+                model=_model,
+                criterion=_criterion,
+                scaler=_scaler,
+                alpha=_alpha_string,
+                current_epoch=0
+            )
+        print('------------------------------------------------------------')
+        print(f'{_model_identifier} Validation -> Averaged Loader Loss: {avg_valid/len(_valid_loaders):.3f}')
+        _epoch_valids.append(avg_valid/len(_valid_loaders))
+
     losses2file(
         losses=_epoch_losses,
-        filename=f'{_file_prefix}Losses_UNET_AE_{_alpha_string}'
+        filename=f'{_file_prefix}Losses_UNET_AE_{_model_identifier}'
+    )
+    losses2file(
+        losses=_epoch_valids,
+        filename=f'{_file_prefix}Valids_UNET_AE_{_model_identifier}'
     )
 
-    plotAvgLoss(
-        avg_losses=_epoch_losses,
+    compareAvgLoss(
+        loss_files=[
+            f'{_file_prefix}Losses_UNET_AE_{_model_identifier}.csv',
+            f'{_file_prefix}Valids_UNET_AE_{_model_identifier}.csv'
+        ],
+        loss_labels=['Training', 'Validation'],
         file_prefix=_file_prefix,
-        file_name=f'UNET_AE_{_alpha_string}'
+        file_name=f'And_Valids_UNET_AE_{_model_identifier}'
     )
     torch.save(
         _model.state_dict(),
-        f'{_file_prefix}Model_UNET_AE_{_alpha_string}'
+        f'{_file_prefix}Model_UNET_AE_{_model_identifier}'
     )
-
     return
 
 
 def trial_0_mp():
-    _alphas = [0.01, 0.005, 0.001, 0.0005, 0.0001, 0.00005]
-    _alpha_strings = ['0_01', '0_005', '0_001', '0_0005', '0_0001', '0_00005']
+    _alphas = [0.001]  # [0.01, 0.005, 0.001, 0.0005, 0.0001, 0.00005]
+    _alpha_strings = ['0_001']  # ['0_01', '0_005', '0_001', '0_0005', '0_0001', '0_00005']
     # _alphas = [0.01, 0.001, 0.0001]
     # _alphas_strings = ['test1', 'test2', 'test3']
     _train_loader, _valid_loader = get_UNET_AE_loaders(file_names=1)
-    '''
-    with concurrent.futures.ProcessPoolExecutor() as executor:
-        results = executor.map(trial_1_UNET_AE, _alphas, _alphas_strings, repeat(
-            _train_loader), repeat(_valid_loader))
-    '''
+
     processes = []
     counter = 1
 
