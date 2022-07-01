@@ -305,12 +305,12 @@ def compareLossVsValidRNN(l_of_l_files, l_of_l_labels, file_prefix=0, file_name=
             axs[i].plot(x_axis, list_of_loss[2*j+1], color=getColor(
                 c='tab20', N=12, idx=j), linestyle='--', label=l_of_l_labels[i][2*j+1])
 
-        axs[i].set_xlabel('Number of Epochs')
         axs[i].set_ylabel('Error')
-        axs[i].legend(ncol=1, fontsize=7)
+        axs[i].legend(ncol=3, fontsize=7)
         axs[i].grid(axis='y')
 
-    fig.set_size_inches(7, 10)
+    axs[-1].set_xlabel('Number of Epochs')
+    fig.set_size_inches(6, 6.66)
     if file_name != 0:
         fig.savefig(f'{file_prefix}Compare_Avg_Losses_{file_name}.svg')
 
