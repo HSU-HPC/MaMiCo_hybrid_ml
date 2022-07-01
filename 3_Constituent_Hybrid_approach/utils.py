@@ -200,6 +200,30 @@ def get_UNET_AE_loaders(file_names=0, num_workers=4):
             data_valid.append(data)
         print('Completed loading ---> RANDOM <--- validation datasets.')
 
+        dataloaders_train = []
+        dataloaders_valid = []
+
+        for dataset in data_train:
+            dataset = MyMamicoDataset_UNET_AE(dataset)
+            dataloader = DataLoader(
+                dataset=dataset,
+                batch_size=32,
+                shuffle=False,
+                num_workers=num_workers
+                )
+            dataloaders_train.append(dataloader)
+
+        for dataset in data_valid:
+            dataset = MyMamicoDataset_UNET_AE(dataset)
+            dataloader = DataLoader(
+                dataset=dataset,
+                batch_size=32,
+                shuffle=False,
+                num_workers=num_workers
+                )
+            dataloaders_valid.append(dataloader)
+        return dataloaders_train, dataloaders_valid
+
     data_valid_stack = np.vstack(data_valid)
     dataset_valid = MyMamicoDataset_UNET_AE(data_valid_stack)
     dataloader_valid = DataLoader(
