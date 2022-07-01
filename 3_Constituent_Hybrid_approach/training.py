@@ -340,7 +340,7 @@ def trial_0_UNET_AE(_alpha, _alpha_string, _train_loaders, _valid_loaders):
     _epoch_valids = []
 
     print('Beginning training.')
-    for epoch in range(2):
+    for epoch in range(30):
         avg_loss = 0
         for _train_loader in _train_loaders:
             avg_loss += train_AE(
@@ -396,20 +396,32 @@ def trial_0_UNET_AE(_alpha, _alpha_string, _train_loaders, _valid_loaders):
 
 
 def trial_0_UNET_AE_mp():
-    _alphas = [0.001]  # [0.01, 0.005, 0.001, 0.0005, 0.0001, 0.00005]
-    # ['0_01', '0_005', '0_001', '0_0005', '0_0001', '0_00005']
-    _alpha_strings = ['0_001']
-    # _alphas = [0.01, 0.001, 0.0001]
-    # _alphas_strings = ['test1', 'test2', 'test3']
-    _train_loaders, _valid_loaders = get_UNET_AE_loaders(file_names=1)
+    _alphas = [0.01, 0.005, 0.001, 0.0005, 0.0001, 0.00005]
+    _alpha_strings = ['0_01', '0_005', '0_001', '0_0005', '0_0001', '0_00005']
+    _train_loaders, _valid_loaders = get_UNET_AE_loaders(file_names=-1)
 
     processes = []
     counter = 1
 
-    for i in range(1):
+    for i in range(3):
         p = mp.Process(
             target=trial_0_UNET_AE,
-            args=(_alphas[0], _alpha_strings[0],
+            args=(_alphas[i], _alpha_strings[i],
+                  _train_loaders, _valid_loaders,)
+        )
+        p.start()
+        processes.append(p)
+        print(f'Creating Process Number: {counter}')
+        counter += 1
+
+    for process in processes:
+        process.join()
+        print('Joining Process')
+
+    for i in range(3, 6):
+        p = mp.Process(
+            target=trial_0_UNET_AE,
+            args=(_alphas[i], _alpha_strings[i],
                   _train_loaders, _valid_loaders,)
         )
         p.start()
