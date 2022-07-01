@@ -307,10 +307,10 @@ def compareLossVsValidRNN(l_of_l_files, l_of_l_labels, file_prefix=0, file_name=
 
         axs[i].set_title(f'Number of Layers = {list_of_layers[i]}')
         axs[i].set_ylabel('Error')
-        axs[i].legend(ncol=3, fontsize=9)
         axs[i].grid(axis='y')
 
     axs[-1].set_xlabel('Number of Epochs')
+    axs[-1].legend(ncol=3, fontsize=9)
     fig.set_size_inches(6, 6.66)
     if file_name != 0:
         fig.savefig(f'{file_prefix}Compare_Avg_Losses_{file_name}.svg')
