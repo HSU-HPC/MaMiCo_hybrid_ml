@@ -239,6 +239,7 @@ def compareAvgLossRNN(l_of_l_files, l_of_l_labels, file_prefix=0, file_name=0):
     # BRIEF:
     # PARAMETERS:
     list_of_list_l = []
+    list_of_LR = ['0.01', '0.005', '0.001', '0.0005', '0.0001', '0.00005']
 
     for list in l_of_l_files:
         losses = csv2dataset_mp(list)
@@ -261,6 +262,7 @@ def compareAvgLossRNN(l_of_l_files, l_of_l_labels, file_prefix=0, file_name=0):
             axs[i].plot(x_axis, loss, color=getColor(
                 c='tab20', N=12, idx=j), label=l_of_l_labels[i][j])
 
+        axs[i].set_title(f'Learning Rate = {list_of_LR[i]}')
         axs[i].set_xlabel('Number of Epochs')
         axs[i].set_ylabel('Error')
         axs[i].legend(ncol=4, fontsize=8)
