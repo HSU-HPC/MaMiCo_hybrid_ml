@@ -9,7 +9,7 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 
 def trial_0_UNET_AE_plots():
-    _, valid_loaders = get_UNET_AE_loaders(file_names=-1)
+    # _, valid_loaders = get_UNET_AE_loaders(file_names=-1)
     model_names = [
         'Model_UNET_AE_0_01',
         'Model_UNET_AE_0_005',
