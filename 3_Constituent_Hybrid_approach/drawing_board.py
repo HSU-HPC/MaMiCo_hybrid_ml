@@ -102,8 +102,6 @@ def trial_1_RNN_plots():
     _list_of_list_f = []
     _list_of_list_l = []
 
-    files = []
-    labels = []
     for _rnn_depth in _rnn_depths:
         files = []
         labels = []
@@ -145,9 +143,9 @@ def trial_2_GRU_plots():
                 if _rnn_depth == 1 and _seq_length != 5:
                     continue
                 files.append(
-                    f'{_directory}Losses_GRU_Seq{_seq_length}_Lay{_rnn_depth}_LR{_alpha_strings[idx]}.csv')
+                    f'{_directory}Losses_GRU_LR{_alpha_strings[idx]}_Lay{_rnn_depth}_Seq{_seq_length}.csv')
                 labels.append(
-                    f'Seq:{_seq_length} Lay:{_rnn_depth} LR:{_alpha}')
+                    f'Lay:{_rnn_depth} Seq:{_seq_length}')
         _list_of_list_f.append(files)
         _list_of_list_l.append(labels)
 
@@ -157,6 +155,26 @@ def trial_2_GRU_plots():
         file_prefix=_directory,
         file_name='GRU'
     )
+
+    _list_of_list_f = []
+    _list_of_list_l = []
+
+    for _rnn_depth in _rnn_depths:
+        files = []
+        labels = []
+        for _seq_length in _seq_lengths:
+            if _rnn_depth == 1 and _seq_length != 5:
+                continue
+            files.append(
+                f'{_directory}Losses_GRU_LR0_00005_Lay{_rnn_depth}_Seq{_seq_length}.csv')
+            labels.append(
+                f'Training Seq:{_seq_length}')
+            files.append(
+                f'{_directory}Valids_GRU_LR0_00005_Lay{_rnn_depth}_Seq{_seq_length}.csv')
+            labels.append(
+                f'Validation Seq:{_seq_length}')
+        _list_of_list_f.append(files)
+        _list_of_list_l.append(labels)
     pass
 
 
@@ -265,5 +283,5 @@ def trial_4_Hybrid_plots():
 
 
 if __name__ == "__main__":
-    trial_1_RNN_plots()
+    trial_2_GRU_plots()
     pass
