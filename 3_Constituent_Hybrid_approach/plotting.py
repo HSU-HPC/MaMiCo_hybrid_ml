@@ -224,7 +224,7 @@ def compareLossVsValid(loss_files, loss_labels, file_prefix=0, file_name=0):
         ax1.plot(x_axis, loss_list[2*idx], color=getColor(c='tab20',
                  N=12, idx=idx), label=loss_labels[2*idx+1])
         ax1.plot(x_axis, loss_list[2*idx+1], color=getColor(c='tab20',
-                 N=12, idx=idx), linestyle='densely dashed', label=loss_labels[2*idx+1])
+                 N=12, idx=idx), linestyle='--', label=loss_labels[2*idx+1])
     ax1.set_xlabel('Number of Epochs')
     ax1.set_ylabel('Error')
     ax1.legend(ncol=2, fontsize=7)
