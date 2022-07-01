@@ -140,8 +140,6 @@ def trial_2_GRU_plots():
         labels = []
         for _rnn_depth in _rnn_depths:
             for _seq_length in _seq_lengths:
-                # if _rnn_depth == 1 and _seq_length != 5:
-                #     continue
                 files.append(
                     f'{_directory}Losses_GRU_LR{_alpha_strings[idx]}_Lay{_rnn_depth}_Seq{_seq_length}.csv')
                 labels.append(
@@ -200,9 +198,9 @@ def trial_3_LSTM_plots():
         for _rnn_depth in _rnn_depths:
             for _seq_length in _seq_lengths:
                 files.append(
-                    f'{_directory}Losses_LSTM_Seq{_seq_length}_Lay{_rnn_depth}_LR{_alpha_strings[idx]}.csv')
+                    f'{_directory}Losses_LSTM_LR{_alpha_strings[idx]}_Lay{_rnn_depth}_Seq{_seq_length}.csv')
                 labels.append(
-                    f'Seq:{_seq_length} Lay:{_rnn_depth} LR:{_alpha}')
+                    f'Lay:{_rnn_depth} Seq:{_seq_length}')
         _list_of_list_f.append(files)
         _list_of_list_l.append(labels)
 
@@ -212,6 +210,33 @@ def trial_3_LSTM_plots():
         file_prefix=_directory,
         file_name='LSTM'
     )
+
+    for _alpha_string in _alpha_strings:
+        _list_of_list_f = []
+        _list_of_list_l = []
+        for _rnn_depth in _rnn_depths:
+            files = []
+            labels = []
+            for _seq_length in _seq_lengths:
+                # if _rnn_depth == 1 and _seq_length != 5:
+                #     continue
+                files.append(
+                    f'{_directory}Losses_LSTM_LR{_alpha_string}_Lay{_rnn_depth}_Seq{_seq_length}.csv')
+                labels.append(
+                    f'Training Seq:{_seq_length}')
+                files.append(
+                    f'{_directory}Valids_LSTM_LR{_alpha_string}_Lay{_rnn_depth}_Seq{_seq_length}.csv')
+                labels.append(
+                    f'Validation Seq:{_seq_length}')
+            _list_of_list_f.append(files)
+            _list_of_list_l.append(labels)
+
+        compareLossVsValidRNN(
+            l_of_l_files=_list_of_list_f,
+            l_of_l_labels=_list_of_list_l,
+            file_prefix=_directory,
+            file_name=f'And_Valids_LSTM_LR{_alpha_string}'
+        )
     pass
 
 
@@ -290,5 +315,5 @@ def trial_4_Hybrid_plots():
 
 
 if __name__ == "__main__":
-    trial_2_GRU_plots()
+    trial_3_LSTM_plots()
     pass
