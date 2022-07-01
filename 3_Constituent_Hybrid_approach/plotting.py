@@ -222,7 +222,7 @@ def compareLossVsValid(loss_files, loss_labels, file_prefix=0, file_name=0):
     fig, (ax1) = plt.subplots(1, constrained_layout=True)
     for idx in range(int(len(loss_list)/2)):
         ax1.plot(x_axis, loss_list[2*idx], color=getColor(c='tab20',
-                 N=12, idx=idx), label=loss_labels[2*idx+1])
+                 N=12, idx=idx), label=loss_labels[2*idx])
         ax1.plot(x_axis, loss_list[2*idx+1], color=getColor(c='tab20',
                  N=12, idx=idx), linestyle='--', label=loss_labels[2*idx+1])
     ax1.set_xlabel('Number of Epochs')
