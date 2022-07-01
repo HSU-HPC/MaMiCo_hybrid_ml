@@ -1,7 +1,7 @@
 import numpy as np
 import torch
 import torch.nn as nn
-from plotting import compareColorMap, compareAvgLossRNN, compareLossVsValidRNN
+from plotting import compareColorMap, compareAvgLoss, compareAvgLossRNN, compareLossVsValidRNN
 from model import UNET_AE, LSTM, Hybrid_MD_RNN_UNET
 from utils import get_UNET_AE_loaders, get_Hybrid_loaders
 
@@ -27,7 +27,31 @@ def trial_0_UNET_AE_plots():
         'C_5_0_B'
     ]
     model_directory = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/0_UNET_AE/'
+    loss_prefix = 'Losses_UNET_AE_LR'
+    loss_files = [
+        f'{model_directory}{loss_prefix}0_01.csv',
+        f'{model_directory}{loss_prefix}0_001.csv',
+        f'{model_directory}{loss_prefix}0_0001.csv',
+        f'{model_directory}{loss_prefix}0_005.csv',
+        f'{model_directory}{loss_prefix}0_0005.csv',
+        f'{model_directory}{loss_prefix}0_00005.csv'
+    ]
+    loss_labels = [
+        'Learning Rate = 0.01',
+        'Learning Rate = 0.001',
+        'Learning Rate = 0.0001',
+        'Learning Rate = 0.005',
+        'Learning Rate = 0.0005',
+        'Learning Rate = 0.00005'
+    ]
+    compareAvgLoss(
+        loss_files=loss_files,
+        loss_labels=loss_labels,
+        file_prefix=model_directory,
+        file_name='UNET_AE'
+    )
 
+    '''
     for i in range(len(model_names)):
 
         _model = UNET_AE(
@@ -66,7 +90,7 @@ def trial_0_UNET_AE_plots():
                 model_name=model_names[i],
                 dataset_name=dataset_names[j]
             )
-    pass
+    '''
 
 
 def trial_1_RNN_plots():
@@ -315,5 +339,5 @@ def trial_4_Hybrid_plots():
 
 
 if __name__ == "__main__":
-    trial_3_LSTM_plots()
+    trial_0_UNET_AE_plots()
     pass
