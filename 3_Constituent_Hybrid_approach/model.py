@@ -149,7 +149,7 @@ class UNET_AE(nn.Module):
             # print("Size of x after expanding path: ", x.size())
 
             x = self.helper_up_2(x)
-            print("Size of x after helper_up2: ", x.size())
+            # print("Size of x after helper_up2: ", x.size())
             # x = self.activation(x)
 
             # for i in range(2):

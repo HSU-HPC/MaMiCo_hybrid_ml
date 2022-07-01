@@ -8,7 +8,7 @@ import torch.nn as nn
 import numpy as np
 from model import UNET_AE, RNN, GRU, LSTM, Hybrid_MD_RNN_UNET
 from utils import get_UNET_AE_loaders, get_RNN_loaders, get_mamico_loaders, losses2file, dataset2csv, get_Hybrid_loaders
-from plotting import plotAvgLoss, compareAvgLoss
+from plotting import plotAvgLoss, compareAvgLoss, compareLossVsValid
 
 torch.manual_seed(0)
 random.seed(0)
@@ -63,8 +63,8 @@ def train_AE(loader, model, optimizer, criterion, scaler, alpha, current_epoch):
         # loop.set_postfix(loss=loss.item())
     avg_loss = epoch_loss/counter
     duration = time.time() - start_time
-    print('------------------------------------------------------------')
-    print(f'{alpha} Training -> Epoch: {current_epoch}, Loss: {avg_loss:.3f}, Duration: {duration:.3f}')
+    # print('------------------------------------------------------------')
+    # print(f'{alpha} Training -> Epoch: {current_epoch}, Loss: {avg_loss:.3f}, Duration: {duration:.3f}')
     return avg_loss
 
 
@@ -97,8 +97,8 @@ def valid_AE(loader, model, criterion, scaler, alpha, current_epoch):
 
     avg_loss = epoch_loss/counter
     duration = time.time() - start_time
-    print('------------------------------------------------------------')
-    print(f'{alpha} Validation -> Loss: {avg_loss:.3f}, Duration: {duration:.3f}')
+    # print('------------------------------------------------------------')
+    # print(f'{alpha} Validation -> Loss: {avg_loss:.3f}, Duration: {duration:.3f}')
     return avg_loss
 
 
@@ -340,7 +340,7 @@ def trial_0_UNET_AE(_alpha, _alpha_string, _train_loaders, _valid_loaders):
     _epoch_valids = []
 
     print('Beginning training.')
-    for epoch in range(5):
+    for epoch in range(2):
         avg_loss = 0
         for _train_loader in _train_loaders:
             avg_loss += train_AE(
@@ -379,14 +379,14 @@ def trial_0_UNET_AE(_alpha, _alpha_string, _train_loaders, _valid_loaders):
         filename=f'{_file_prefix}Valids_UNET_AE_{_model_identifier}'
     )
 
-    compareAvgLoss(
+    compareLossVsValid(
         loss_files=[
             f'{_file_prefix}Losses_UNET_AE_{_model_identifier}.csv',
             f'{_file_prefix}Valids_UNET_AE_{_model_identifier}.csv'
         ],
         loss_labels=['Training', 'Validation'],
         file_prefix=_file_prefix,
-        file_name=f'And_Valids_UNET_AE_{_model_identifier}'
+        file_name=f'UNET_AE_{_model_identifier}'
     )
     torch.save(
         _model.state_dict(),
@@ -401,15 +401,16 @@ def trial_0_UNET_AE_mp():
     _alpha_strings = ['0_001']
     # _alphas = [0.01, 0.001, 0.0001]
     # _alphas_strings = ['test1', 'test2', 'test3']
-    _train_loader, _valid_loader = get_UNET_AE_loaders(file_names=1)
+    _train_loaders, _valid_loaders = get_UNET_AE_loaders(file_names=1)
 
     processes = []
     counter = 1
 
-    for i in range(3):
+    for i in range(1):
         p = mp.Process(
             target=trial_0_UNET_AE,
-            args=(_alphas[i], _alpha_strings[i], _train_loader, _valid_loader,)
+            args=(_alphas[0], _alpha_strings[0],
+                  _train_loaders, _valid_loaders,)
         )
         p.start()
         processes.append(p)
