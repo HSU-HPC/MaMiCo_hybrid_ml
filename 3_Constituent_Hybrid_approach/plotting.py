@@ -424,7 +424,7 @@ def compareFlowProfile3x3(preds, targs):
     # model_descriptor -
 
     t, c, d, h, w = preds.shape
-    steps = np.arange(0, h).tolist()
+    steps = np.arange(0, d).tolist()
     pred_avg_050 = [[], [], []]
     pred_avg_500 = [[], [], []]
     pred_avg_999 = [[], [], []]
@@ -433,7 +433,7 @@ def compareFlowProfile3x3(preds, targs):
     targ_avg_999 = [[], [], []]
 
     for i in range(3):
-        for i in range(h):
+        for i in range(d):
             pred_avg_050[i].append(preds[50, i, :, :, d].mean())
             targ_avg_050[i].append(targs[50, i, :, :, d].mean())
             pred_avg_500[i].append(preds[500, i, :, :, d].mean())
