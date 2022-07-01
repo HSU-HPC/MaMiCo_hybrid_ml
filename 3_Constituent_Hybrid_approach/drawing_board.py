@@ -1,7 +1,7 @@
 import numpy as np
 import torch
 import torch.nn as nn
-from plotting import compareColorMap, compareAvgLossRNN, compareAvgLoss
+from plotting import compareColorMap, compareAvgLossRNN, compareLossVsValidRNN
 from model import UNET_AE, LSTM, Hybrid_MD_RNN_UNET
 from utils import get_UNET_AE_loaders, get_Hybrid_loaders
 
@@ -80,7 +80,6 @@ def trial_1_RNN_plots():
     _list_of_list_f = []
     _list_of_list_l = []
 
-    '''
     for idx, _alpha in enumerate(_alphas):
         files = []
         labels = []
@@ -99,7 +98,10 @@ def trial_1_RNN_plots():
         file_prefix=_directory,
         file_name='RNN'
     )
-    '''
+
+    _list_of_list_f = []
+    _list_of_list_l = []
+
     files = []
     labels = []
     for _rnn_depth in _rnn_depths:
@@ -117,7 +119,7 @@ def trial_1_RNN_plots():
         _list_of_list_f.append(files)
         _list_of_list_l.append(labels)
 
-    compareAvgLossRNN(
+    compareLossVsValidRNN(
         l_of_l_files=_list_of_list_f,
         l_of_l_labels=_list_of_list_l,
         file_prefix=_directory,
