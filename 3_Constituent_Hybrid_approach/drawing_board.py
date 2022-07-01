@@ -109,11 +109,11 @@ def trial_1_RNN_plots():
             files.append(
                 f'{_directory}Losses_RNN_LR0_00005_Lay{_rnn_depth}_Seq{_seq_length}.csv')
             labels.append(
-                f'Training Seq:{_seq_length}')
+                f'Training Lay: {_rnn_depth} Seq:{_seq_length}')
             files.append(
                 f'{_directory}Valids_RNN_LR0_00005_Lay{_rnn_depth}_Seq{_seq_length}.csv')
             labels.append(
-                f'Validation Seq:{_seq_length}')
+                f'Validation Lay: {_rnn_depth} Seq:{_seq_length}')
         _list_of_list_f.append(files)
         _list_of_list_l.append(labels)
 

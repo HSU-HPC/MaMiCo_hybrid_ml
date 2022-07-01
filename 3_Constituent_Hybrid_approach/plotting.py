@@ -253,7 +253,8 @@ def compareAvgLossRNN(l_of_l_files, l_of_l_labels, file_prefix=0, file_name=0):
 
     x_axis = range(1, (num_epoch+1), 1)
 
-    fig, axs = plt.subplots(len(list_of_list_l), sharex=True, sharey=True, constrained_layout=True)
+    fig, axs = plt.subplots(len(list_of_list_l), sharex=True,
+                            sharey=True, constrained_layout=True)
 
     for i, list_of_loss in enumerate(list_of_list_l):
         for j in range(int(len(list_of_loss)/2)):
@@ -405,4 +406,5 @@ def main():
 if __name__ == "__main__":
 
     visualizeMaMiCoDataset(
+        filenames=['clean_kvs_test_combined_domain.csv'], dataset_names=['kvs test'], u_wall=[0])
         filenames=['clean_kvs_test_combined_domain.csv'], dataset_names=['kvs test'], u_wall=[0])
