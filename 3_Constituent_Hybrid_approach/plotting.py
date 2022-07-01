@@ -433,13 +433,13 @@ def compareFlowProfile3x3(preds, targs):
     targ_avg_999 = [[], [], []]
 
     for i in range(3):
-        for i in range(d-1):
-            pred_avg_050[i].append(preds[50, i, :, :, d].mean())
-            targ_avg_050[i].append(targs[50, i, :, :, d].mean())
-            pred_avg_500[i].append(preds[500, i, :, :, d].mean())
-            targ_avg_500[i].append(targs[500, i, :, :, d].mean())
-            pred_avg_999[i].append(preds[-1, i, :, :, d].mean())
-            targ_avg_999[i].append(targs[-1, i, :, :, d].mean())
+        for j in range(w):
+            pred_avg_050[i].append(preds[50, i, :, :, j].mean())
+            targ_avg_050[i].append(targs[50, i, :, :, j].mean())
+            pred_avg_500[i].append(preds[500, i, :, :, j].mean())
+            targ_avg_500[i].append(targs[500, i, :, :, j].mean())
+            pred_avg_999[i].append(preds[-1, i, :, :, j].mean())
+            targ_avg_999[i].append(targs[-1, i, :, :, j].mean())
 
     preds_avg = [pred_avg_050, pred_avg_500, pred_avg_999]
     targs_avg = [targ_avg_050, targ_avg_500, targ_avg_999]
