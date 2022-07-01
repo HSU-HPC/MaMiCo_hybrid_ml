@@ -256,9 +256,11 @@ def compareAvgLossRNN(l_of_l_files, l_of_l_labels, file_prefix=0, file_name=0):
     fig, axs = plt.subplots(len(list_of_list_l), constrained_layout=True)
 
     for i, list_of_loss in enumerate(list_of_list_l):
-        for j, loss in enumerate(list_of_loss):
-            axs[i].plot(x_axis, loss, color=getColor(
-                c='tab20', N=12, idx=j), label=l_of_l_labels[i][j])
+        for j in range(int(len(list_of_loss)/2)):
+            axs[i].plot(x_axis, list_of_loss[2*j], color=getColor(
+                c='tab20', N=12, idx=j), label=l_of_l_labels[i][2*j])
+            axs[i].plot(x_axis, list_of_loss[2*j+1], color=getColor(
+                c='tab20', N=12, idx=j), linestyle='--', label=l_of_l_labels[i][2*j+1])
 
         axs[i].set_xlabel('Number of Epochs')
         axs[i].set_ylabel('Error')
