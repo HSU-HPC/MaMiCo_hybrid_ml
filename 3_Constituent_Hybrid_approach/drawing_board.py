@@ -1,7 +1,7 @@
 import numpy as np
 import torch
 import torch.nn as nn
-from plotting import compareColorMap, compareAvgLoss, compareAvgLossRNN, compareLossVsValidRNN
+from plotting import compareColorMap, compareAvgLoss, compareAvgLossRNN, compareLossVsValidRNN, compareFlowProfile3x3
 from model import UNET_AE, LSTM, Hybrid_MD_RNN_UNET
 from utils import get_UNET_AE_loaders, get_Hybrid_loaders
 
@@ -9,7 +9,7 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 
 def trial_0_UNET_AE_plots():
-    # _, valid_loaders = get_UNET_AE_loaders(file_names=-1)
+    _, valid_loaders = get_UNET_AE_loaders(file_names=-1)
     model_names = [
         'Model_UNET_AE_0_01',
         'Model_UNET_AE_0_005',
@@ -51,8 +51,7 @@ def trial_0_UNET_AE_plots():
         file_name='UNET_AE'
     )
 
-    '''
-    for i in range(len(model_names)):
+    for i in range(2, 3):
 
         _model = UNET_AE(
             device=device,
@@ -80,17 +79,14 @@ def trial_0_UNET_AE_plots():
             # print('Shape of preds: ', preds.shape)
             _targs = np.vstack(_targs)
             # print('Shape of targs: ', targs.shape)
-            _preds = np.array(
-                [_preds[60], _preds[125], _preds[250], _preds[500], _preds[-1]])
-            _targs = np.array(
-                [_targs[60], _targs[125], _targs[250], _targs[500], _targs[-1]])
-            compareColorMap(
+            # _preds = np.array(
+            #     [_preds[60], _preds[125], _preds[250], _preds[500], _preds[-1]])
+            # _targs = np.array(
+            #     [_targs[60], _targs[125], _targs[250], _targs[500], _targs[-1]])
+            compareFlowProfile3x3(
                 preds=_preds,
-                targs=_targs,
-                model_name=model_names[i],
-                dataset_name=dataset_names[j]
+                targs=_targs
             )
-    '''
 
 
 def trial_1_RNN_plots():
@@ -324,20 +320,13 @@ def trial_4_Hybrid_plots():
         # print('Shape of preds: ', preds.shape)
         _targs = np.vstack(_targs)
         # print('Shape of targs: ', targs.shape)
-        _preds = np.array(
-            [_preds[60], _preds[125], _preds[250], _preds[500], _preds[-1]])
-        _targs = np.array(
-            [_targs[60], _targs[125], _targs[250], _targs[500], _targs[-1]])
-        compareColorMap(
-            preds=_preds,
-            targs=_targs,
-            model_name='Hybrid_LSTM_Seq15_Lay1_LR0_00005',
-            dataset_name=dataset_names[j]
-        )
+        # _preds = np.array(
+        #     [_preds[60], _preds[125], _preds[250], _preds[500], _preds[-1]])
+        # _targs = np.array(
+        #     [_targs[60], _targs[125], _targs[250], _targs[500], _targs[-1]])
 
     pass
 
 
 if __name__ == "__main__":
     trial_0_UNET_AE_plots()
-    pass

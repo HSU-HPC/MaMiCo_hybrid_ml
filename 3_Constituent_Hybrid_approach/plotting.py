@@ -415,6 +415,61 @@ def compareFlowProfile(preds, targs, model_descriptor):
     plt.close()
 
 
+def compareFlowProfile3x3(preds, targs):
+    # BRIEF:
+    #
+    # PARAMETERS:
+    # preds -
+    # targs -
+    # model_descriptor -
+
+    t, c, d, h, w = preds.shape
+    steps = np.arange(0, h).tolist()
+    pred_avg_050 = [[], [], []]
+    pred_avg_500 = [[], [], []]
+    pred_avg_999 = [[], [], []]
+    targ_avg_050 = [[], [], []]
+    targ_avg_500 = [[], [], []]
+    targ_avg_999 = [[], [], []]
+
+    for i in range(3):
+        for i in range(h):
+            pred_avg_050[i].append(preds[50, i, :, :, d].mean())
+            targ_avg_050[i].append(targs[50, i, :, :, d].mean())
+            pred_avg_500[i].append(preds[500, i, :, :, d].mean())
+            targ_avg_500[i].append(targs[500, i, :, :, d].mean())
+            pred_avg_999[i].append(preds[-1, i, :, :, d].mean())
+            targ_avg_999[i].append(targs[-1, i, :, :, d].mean())
+
+    preds_avg = [pred_avg_050, pred_avg_500, pred_avg_999]
+    targs_avg = [targ_avg_050, targ_avg_500, targ_avg_999]
+    # time_list = [0, 4, 1, 5, 2, 6, 3, 7]
+
+    fig, axs = plt.subplots(3, 3, sharex=True, sharey=True)
+    fig.suptitle('Target and Prediction Comparison', fontsize=16)
+    plt.tick_params(labelcolor='none', which='both', top=False,
+                    bottom=False, left=False, right=False)
+    plt.setp(axs[-1, :], xlabel='Z-Direction')
+    plt.setp(axs[:, 0], ylabel='$u_x$')
+    plt.setp(axs[:, 1], ylabel='$u_y$')
+    plt.setp(axs[:, 2], ylabel='$u_z$')
+
+    plt.yticks(range(-2, 7, 2))
+    plt.xticks([])
+
+    for i in range(3):
+        axs[i, 0].plot(steps, preds_avg[i][0], label='Averaged Prediction')
+        axs[i, 0].plot(steps, targs_avg[i][0], label='Averaged Target')
+        axs[i, 1].plot(steps, preds_avg[i][1], label='Averaged Prediction')
+        axs[i, 1].plot(steps, targs_avg[i][1], label='Averaged Target')
+        axs[i, 2].plot(steps, preds_avg[i][2], label='Averaged Prediction')
+        axs[i, 2].plot(steps, targs_avg[i][2], label='Averaged Target')
+
+    fig.savefig(
+        'CompareFlowprofile_TEST_TEST_TEST.svg')
+    pass
+
+
 def showSample():
     v_step = 20 / (31)
     v_steps = np.arange(0, 20 + v_step, v_step).tolist()
