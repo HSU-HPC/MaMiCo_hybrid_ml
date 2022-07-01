@@ -395,9 +395,10 @@ def trial_0_UNET_AE(_alpha, _alpha_string, _train_loaders, _valid_loaders):
     return
 
 
-def trial_0_mp():
+def trial_0_UNET_AE_mp():
     _alphas = [0.001]  # [0.01, 0.005, 0.001, 0.0005, 0.0001, 0.00005]
-    _alpha_strings = ['0_001']  # ['0_01', '0_005', '0_001', '0_0005', '0_0001', '0_00005']
+    # ['0_01', '0_005', '0_001', '0_0005', '0_0001', '0_00005']
+    _alpha_strings = ['0_001']
     # _alphas = [0.01, 0.001, 0.0001]
     # _alphas_strings = ['test1', 'test2', 'test3']
     _train_loader, _valid_loader = get_UNET_AE_loaders(file_names=1)
@@ -866,5 +867,4 @@ def trial_4_Hybrid_mp():
 
 
 if __name__ == "__main__":
-    trial_2_GRU_mp()
-    pass
+    trial_0_UNET_AE_mp()
