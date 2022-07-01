@@ -265,7 +265,7 @@ def compareAvgLossRNN(l_of_l_files, l_of_l_labels, file_prefix=0, file_name=0):
         axs[i].set_title(f'Learning Rate = {list_of_LR[i]}')
         axs[i].set_ylabel('Error')
         # axs[i].set_xlabel('Number of Epochs')
-        axs[i].legend(ncol=4, fontsize=8)
+        axs[i].legend(ncol=4, fontsize=9)
         # axs[i].grid(axis='y')
 
     axs[-1].set_xlabel('Number of Epochs')
