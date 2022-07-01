@@ -263,10 +263,10 @@ def compareAvgLossRNN(l_of_l_files, l_of_l_labels, file_prefix=0, file_name=0):
 
         axs[i].set_xlabel('Number of Epochs')
         axs[i].set_ylabel('Error')
-        axs[i].legend(ncol=3, fontsize=12)
+        axs[i].legend(ncol=4, fontsize=10)
         axs[i].grid(axis='y')
 
-    fig.set_size_inches(7, 10)
+    fig.set_size_inches(6, 10)
     if file_name != 0:
         fig.savefig(f'{file_prefix}Compare_Avg_Losses_{file_name}.svg')
 
