@@ -10,8 +10,8 @@ from model import UNET_AE, RNN, GRU, LSTM, Hybrid_MD_RNN_UNET
 from utils import get_UNET_AE_loaders, get_RNN_loaders, get_mamico_loaders, losses2file, dataset2csv, get_Hybrid_loaders
 from plotting import plotAvgLoss, compareAvgLoss, compareLossVsValid
 
-torch.manual_seed(10)
-random.seed(10)
+# torch.manual_seed(10)
+# random.seed(10)
 
 try:
     mp.set_start_method('spawn')
