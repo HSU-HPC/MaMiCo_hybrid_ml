@@ -187,7 +187,7 @@ def get_UNET_AE_loaders(file_names=0, num_workers=4):
             return dataloaders_train, dataloaders_valid
     else:
         print('Loading ---> RANDOM <--- training datasets as loader.')
-        for i in range(1):
+        for i in range(2):
             data = np.random.rand(1000, 3, 26, 26, 26)
             # print("Utils.py - Sanity Check - Dimension of loaded dataset: ", dataset.shape)
             data_train.append(data)
