@@ -170,7 +170,7 @@ def get_UNET_AE_loaders(file_names=0, num_workers=4):
                 dataloader = DataLoader(
                     dataset=dataset,
                     batch_size=32,
-                    shuffle=False,
+                    shuffle=True,
                     num_workers=num_workers
                     )
                 dataloaders_train.append(dataloader)
@@ -180,7 +180,7 @@ def get_UNET_AE_loaders(file_names=0, num_workers=4):
                 dataloader = DataLoader(
                     dataset=dataset,
                     batch_size=32,
-                    shuffle=False,
+                    shuffle=True,
                     num_workers=num_workers
                     )
                 dataloaders_valid.append(dataloader)
