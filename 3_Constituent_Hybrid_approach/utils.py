@@ -129,21 +129,21 @@ def get_UNET_AE_loaders(file_names=0, num_workers=4):
         'clean_couette_test_combined_domain_1_0_top.csv',
         'clean_couette_test_combined_domain_1_0_middle.csv',
         'clean_couette_test_combined_domain_1_0_bottom.csv',
-        'clean_couette_test_combined_domain_2_0_top.csv',
-        'clean_couette_test_combined_domain_2_0_middle.csv',
-        'clean_couette_test_combined_domain_2_0_bottom.csv',
-        'clean_couette_test_combined_domain_4_0_top.csv',
-        'clean_couette_test_combined_domain_4_0_middle.csv',
-        'clean_couette_test_combined_domain_4_0_bottom.csv',
+        # 'clean_couette_test_combined_domain_2_0_top.csv',
+        # 'clean_couette_test_combined_domain_2_0_middle.csv',
+        # 'clean_couette_test_combined_domain_2_0_bottom.csv',
+        # 'clean_couette_test_combined_domain_4_0_top.csv',
+        # 'clean_couette_test_combined_domain_4_0_middle.csv',
+        # 'clean_couette_test_combined_domain_4_0_bottom.csv',
     ]
 
     _valid_files = [
         'clean_couette_test_combined_domain_3_0_top.csv',
         'clean_couette_test_combined_domain_3_0_middle.csv',
         'clean_couette_test_combined_domain_3_0_bottom.csv',
-        'clean_couette_test_combined_domain_5_0_top.csv',
-        'clean_couette_test_combined_domain_5_0_middle.csv',
-        'clean_couette_test_combined_domain_5_0_bottom.csv'
+        # 'clean_couette_test_combined_domain_5_0_top.csv',
+        # 'clean_couette_test_combined_domain_5_0_middle.csv',
+        # 'clean_couette_test_combined_domain_5_0_bottom.csv'
     ]
 
     if file_names == 0 or file_names == -1:

@@ -400,9 +400,18 @@ def trial_0_UNET_AE_mp():
     _alpha_strings = ['0_01', '0_005', '0_001', '0_0005', '0_0001', '0_00005']
     _train_loaders, _valid_loaders = get_UNET_AE_loaders(file_names=-1)
 
-    processes = []
-    counter = 1
+    # processes = []
+    # counter = 1
 
+    for idx, _alpha in enumerate(_alphas):
+        trial_0_UNET_AE(
+            _alpha=_alpha,
+            _alpha_string=_alpha_strings[idx],
+            _train_loaders=_train_loaders,
+            _valid_loaders=_valid_loaders
+        )
+
+    '''
     for i in range(3):
         p = mp.Process(
             target=trial_0_UNET_AE,
@@ -432,7 +441,8 @@ def trial_0_UNET_AE_mp():
     for process in processes:
         process.join()
         print('Joining Process')
-        return
+    '''
+    return
 
 
 def trial_1_RNN(_seq_length, _num_layers, _alpha, _alpha_string, _train_loaders, _valid_loaders):
