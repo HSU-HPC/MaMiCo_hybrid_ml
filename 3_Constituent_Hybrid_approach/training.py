@@ -324,7 +324,7 @@ def trial_0_UNET_AE(_alpha, _alpha_string, _train_loaders, _valid_loaders):
     _criterion = nn.L1Loss()
     _file_prefix = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/0_UNET_AE/'
     _model_identifier = f'LR{_alpha_string}'
-    print('Initializing UNET_AE model.')
+    print('Initializing UNET_AE model with LR: ', _alpha)
     _model = UNET_AE(
         device=device,
         in_channels=3,
@@ -364,7 +364,7 @@ def trial_0_UNET_AE(_alpha, _alpha_string, _train_loaders, _valid_loaders):
                 criterion=_criterion,
                 scaler=_scaler,
                 alpha=_alpha_string,
-                current_epoch=0
+                current_epoch=epoch+1
             )
         print('------------------------------------------------------------')
         print(f'{_model_identifier} Validation -> Averaged Loader Loss: {avg_valid/len(_valid_loaders):.3f}')
