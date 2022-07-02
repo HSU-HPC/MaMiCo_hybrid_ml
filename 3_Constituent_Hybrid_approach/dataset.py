@@ -50,7 +50,8 @@ class MyMamicoDataset_UNET_AE(Dataset):
         print("Dataset.py - Sanity Check - Shape of sample_masks: ",
               self.sample_masks.shape)
         print('Both should be 1000 x 3 x 24 x 24 x 24')
-        print("Dataset.py - Sanity Check - Print contents: ", self.sample_masks[300, 0, 12, 12, :])
+        print("Dataset.py - Sanity Check - Print contents: ",
+              self.sample_masks[300, 0, 12, 12, :])
 
     def __len__(self):
         return len(self.sample_images)
