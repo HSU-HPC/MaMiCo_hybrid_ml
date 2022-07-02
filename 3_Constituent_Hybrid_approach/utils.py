@@ -188,14 +188,14 @@ def get_UNET_AE_loaders(file_names=0, num_workers=4):
     else:
         print('Loading ---> RANDOM <--- training datasets as loader.')
         for i in range(5):
-            data = np.random.rand(64, 3, 26, 26, 26)
+            data = np.random.rand(1000, 3, 26, 26, 26)
             # print("Utils.py - Sanity Check - Dimension of loaded dataset: ", dataset.shape)
             data_train.append(data)
         print('Completed loading ---> RANDOM <--- training datasets.')
 
         print('Loading ---> RANDOM <--- validation datasets as loader.')
         for i in range(3):
-            data = np.random.rand(64, 3, 26, 26, 26)
+            data = np.random.rand(1000, 3, 26, 26, 26)
             # print("Utils.py - Sanity Check - Dimension of loaded dataset: ", dataset.shape)
             data_valid.append(data)
         print('Completed loading ---> RANDOM <--- validation datasets.')
