@@ -242,7 +242,7 @@ def get_UNET_AE_loaders(file_names=0, num_workers=4):
         num_workers=num_workers
         )
 
-    return dataloader_train, dataloader_valid
+    return [dataloader_train], [dataloader_valid]
 
 
 def get_RNN_loaders(file_names=0, sequence_length=15, num_workers=4):
