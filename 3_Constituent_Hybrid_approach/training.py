@@ -340,7 +340,7 @@ def trial_0_UNET_AE(_alpha, _alpha_string, _train_loaders, _valid_loaders):
     _epoch_valids = []
 
     print('Beginning training.')
-    for epoch in range(5):
+    for epoch in range(50):
         avg_loss = 0
         for _train_loader in _train_loaders:
             avg_loss += train_AE(
