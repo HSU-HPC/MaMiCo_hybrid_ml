@@ -340,7 +340,7 @@ def trial_0_UNET_AE(_alpha, _alpha_string, _train_loaders, _valid_loaders):
     _epoch_valids = []
 
     print('Beginning training.')
-    for epoch in range(50):
+    for epoch in range(5):
         avg_loss = 0
         for _train_loader in _train_loaders:
             avg_loss += train_AE(
@@ -396,10 +396,10 @@ def trial_0_UNET_AE(_alpha, _alpha_string, _train_loaders, _valid_loaders):
 
 
 def trial_0_UNET_AE_mp():
-    # _alphas = [0.01, 0.005, 0.001, 0.0005, 0.0001, 0.00005]
-    _alphas = [0.005, 0.001, 0.0005, 0.0001, 0.00005]
-    # _alpha_strings = ['0_01', '0_005', '0_001', '0_0005', '0_0001', '0_00005']
-    _alpha_strings = ['0_005', '0_001', '0_0005', '0_0001', '0_00005']
+    _alphas = [0.01, 0.005, 0.001, 0.0005, 0.0001, 0.00005]
+    # _alphas = [0.005, 0.001, 0.0005, 0.0001, 0.00005]
+    _alpha_strings = ['0_01', '0_005', '0_001', '0_0005', '0_0001', '0_00005']
+    # _alpha_strings = ['0_005', '0_001', '0_0005', '0_0001', '0_00005']
     _train_loaders, _valid_loaders = get_UNET_AE_loaders(file_names=0)
 
     processes = []
