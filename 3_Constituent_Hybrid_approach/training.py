@@ -415,7 +415,7 @@ def trial_0_UNET_AE_mp():
         )
 
     '''
-    for i in range(3):
+    for i in range(1, 3):
         p = mp.Process(
             target=trial_0_UNET_AE,
             args=(_alphas[i], _alpha_strings[i],
