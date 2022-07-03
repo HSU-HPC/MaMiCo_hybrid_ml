@@ -43,7 +43,7 @@ def train_AE(loader, model, optimizer, criterion, scaler, alpha, current_epoch):
 
     epoch_loss = 0
     counter = 0
-    optimizer.zero_grad()
+    # optimizer.zero_grad()
 
     for batch_idx, (data, targets) in enumerate(loader):
         data = data.float().to(device=device)
@@ -52,7 +52,7 @@ def train_AE(loader, model, optimizer, criterion, scaler, alpha, current_epoch):
         with torch.cuda.amp.autocast():
             predictions = model(data)
             loss = criterion(predictions.float(), targets.float())
-            # print('Current batch loss: ', loss.item())
+            print('Current batch loss: ', loss.item())
             epoch_loss += loss.item()
             counter += 1
 
