@@ -403,7 +403,7 @@ def trial_0_UNET_AE_mp():
     _train_loaders, _valid_loaders = get_UNET_AE_loaders(file_names=0)
 
     processes = []
-    counter = 1
+    counter = 0
 
     '''
     for idx, _alpha in enumerate(_alphas):
@@ -415,35 +415,22 @@ def trial_0_UNET_AE_mp():
         )
 
     '''
-    for i in range(1, 3):
-        p = mp.Process(
-            target=trial_0_UNET_AE,
-            args=(_alphas[i], _alpha_strings[i],
-                  _train_loaders, _valid_loaders,)
-        )
-        p.start()
-        processes.append(p)
-        print(f'Creating Process Number: {counter}')
-        counter += 1
+    for i in range(3):
+        for i in range(0, 2):
+            p = mp.Process(
+                target=trial_0_UNET_AE,
+                args=(_alphas[counter], _alpha_strings[counter],
+                      _train_loaders, _valid_loaders,)
+            )
+            p.start()
+            processes.append(p)
+            print(f'Creating Process Number: {counter}')
+            counter += 1
 
-    for process in processes:
-        process.join()
-        print('Joining Process')
+        for process in processes:
+            process.join()
+            print('Joining Process')
 
-    for i in range(3, 6):
-        p = mp.Process(
-            target=trial_0_UNET_AE,
-            args=(_alphas[i], _alpha_strings[i],
-                  _train_loaders, _valid_loaders,)
-        )
-        p.start()
-        processes.append(p)
-        print(f'Creating Process Number: {counter}')
-        counter += 1
-
-    for process in processes:
-        process.join()
-        print('Joining Process')
     return
 
 
