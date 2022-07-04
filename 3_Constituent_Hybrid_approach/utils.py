@@ -256,7 +256,7 @@ def get_RNN_loaders(file_names=0, sequence_length=15, num_workers=4):
     # if == -1: load data via mp and return multiple train and valid loaders
     # else: load random data for testing
     _num_workers = 4
-    _batch_size = 128
+    _batch_size = 256
 
     data_train = []
     data_valid = []
