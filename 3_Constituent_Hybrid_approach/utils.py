@@ -108,7 +108,7 @@ def csv2dataset_mp(filenames, output_shape=0):
     return results
 
 
-def get_UNET_AE_loaders(file_names=0, num_workers=4):
+def get_UNET_AE_loaders(file_names=0, num_workers=12):
     #
     # This function creates the dataloaders needed to automatically
     # feed the neural networks with the input dataset. In particular,
@@ -245,7 +245,7 @@ def get_UNET_AE_loaders(file_names=0, num_workers=4):
     return [dataloader_train], [dataloader_valid]
 
 
-def get_RNN_loaders(file_names=0, sequence_length=15, num_workers=4):
+def get_RNN_loaders(file_names=0, sequence_length=15, num_workers=12):
     #
     # This function creates the dataloaders needed to automatically
     # feed the neural networks with the input dataset. In particular,
