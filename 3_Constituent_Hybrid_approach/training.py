@@ -441,21 +441,20 @@ def trial_0_UNET_AE_mp():
         )
 
     '''
-    for i in range(3):
-        for i in range(0, 1):
-            p = mp.Process(
-                target=trial_0_UNET_AE,
-                args=(_alphas[counter], _alpha_strings[counter],
-                      _train_loaders, _valid_loaders,)
-            )
-            p.start()
-            processes.append(p)
-            print(f'Creating Process Number: {counter}')
-            counter += 1
+    for i in range(6):
+        p = mp.Process(
+            target=trial_0_UNET_AE,
+            args=(_alphas[counter], _alpha_strings[counter],
+                  _train_loaders, _valid_loaders,)
+        )
+        p.start()
+        processes.append(p)
+        print(f'Creating Process Number: {counter}')
+        counter += 1
 
-        for process in processes:
-            process.join()
-            print('Joining Process')
+    for process in processes:
+        process.join()
+        print('Joining Process')
 
     return
 
