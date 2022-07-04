@@ -44,14 +44,11 @@ class MyMamicoDataset_UNET_AE(Dataset):
     #
     def __init__(self, my_images):
         self.sample_images = my_images[:, :, 1:-1, 1:-1, 1:-1]
-        print("Dataset.py - Sanity Check - Shape of sample_images: ",
-              self.sample_images.shape)
+        # print("Dataset.py - Sanity Check - Shape of sample_images: ", self.sample_images.shape)
         self.sample_masks = my_images[:, :, 1:-1, 1:-1, 1:-1]
-        print("Dataset.py - Sanity Check - Shape of sample_masks: ",
-              self.sample_masks.shape)
-        print('Both should be 1000 x 3 x 24 x 24 x 24')
-        print("Dataset.py - Sanity Check - Print contents: ",
-              self.sample_masks[300, 0, 12, 12, :])
+        # print("Dataset.py - Sanity Check - Shape of sample_masks: ", self.sample_masks.shape)
+        # print('Both should be 1000 x 3 x 24 x 24 x 24')
+        # print("Dataset.py - Sanity Check - Print contents: ", self.sample_masks[300, 0, 12, 12, :])
 
     def __len__(self):
         return len(self.sample_images)
