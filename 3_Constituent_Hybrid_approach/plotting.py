@@ -459,19 +459,19 @@ def compareFlowProfile3x3(preds, targs, model_id='', dataset_id=''):
     # plt.xticks([])
 
     for i, row in enumerate(axs):
-        axs[0, i].plot(steps, preds_avg[0][i], label='Avg Prediction')
-        axs[0, i].plot(steps, targs_avg[0][i], label='Avg Target')
-        axs[0, i].set_yticks(list(np.arange(-0.25, 0.255, 0.25)))
+        axs[i, 0].plot(steps, preds_avg[0][i], label='Avg Prediction')
+        axs[i, 0].plot(steps, targs_avg[0][i], label='Avg Target')
+        axs[i, 0].set_yticks(list(np.arange(-0.25, 0.255, 0.25)))
 
-        axs[1, i].plot(steps, preds_avg[1][i], label='Avg Prediction')
-        axs[1, i].plot(steps, targs_avg[1][i], label='Avg Target')
-        axs[1, i].set_yticks(list(np.arange(-0.25, 0.255, 0.25)))
+        axs[i, 1].plot(steps, preds_avg[1][i], label='Avg Prediction')
+        axs[i, 1].plot(steps, targs_avg[1][i], label='Avg Target')
+        axs[i, 1].set_yticks(list(np.arange(-0.25, 0.255, 0.25)))
 
-        axs[2, i].plot(steps, preds_avg[2][i], label='Avg Prediction')
-        axs[2, i].plot(steps, targs_avg[2][i], label='Avg Target')
-        axs[2, i].set_yticks(list(np.arange(-0.25, 0.255, 0.25)))
+        axs[i, 2].plot(steps, preds_avg[2][i], label='Avg Prediction')
+        axs[i, 2].plot(steps, targs_avg[2][i], label='Avg Target')
+        axs[i, 2].set_yticks(list(np.arange(-0.25, 0.255, 0.25)))
 
-        axs[i, 0].set_title(f'Timestep {samples[i]}')
+        axs[0, i].set_title(f'Timestep {samples[i]}')
         '''
         axs[i, 0].plot(steps, preds_avg[i][0], label='Avg Prediction')
         axs[i, 0].plot(steps, targs_avg[i][0], label='Avg Target')
@@ -483,8 +483,8 @@ def compareFlowProfile3x3(preds, targs, model_id='', dataset_id=''):
         '''
 
     axs[0, 0].set_yticks(list(np.arange(-0.5, 1.55, 0.5)))
-    axs[1, 0].set_yticks(list(np.arange(-0.5, 1.55, 0.5)))
-    axs[2, 0].set_yticks(list(np.arange(-0.5, 1.55, 0.5)))
+    axs[0, 1].set_yticks(list(np.arange(-0.5, 1.55, 0.5)))
+    axs[0, 2].set_yticks(list(np.arange(-0.5, 1.55, 0.5)))
     axs[-1, -1].legend(ncol=1, fontsize=9)
     fig.savefig(
         f'CompareFlowprofile_{model_id}_{dataset_id}.svg')
