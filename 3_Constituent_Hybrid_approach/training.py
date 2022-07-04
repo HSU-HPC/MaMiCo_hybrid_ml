@@ -22,7 +22,7 @@ plt.style.use(['science'])
 np.set_printoptions(precision=6)
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-NUM_WORKERS = 12             # guideline: 4* num_GPU
+NUM_WORKERS = 4             # guideline: 4* num_GPU
 PIN_MEMORY = True
 LOAD_MODEL = False
 

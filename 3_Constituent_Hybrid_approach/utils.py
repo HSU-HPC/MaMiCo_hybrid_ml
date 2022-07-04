@@ -245,7 +245,7 @@ def get_UNET_AE_loaders(file_names=0, num_workers=12):
     return [dataloader_train], [dataloader_valid]
 
 
-def get_RNN_loaders(file_names=0, sequence_length=15, num_workers=12):
+def get_RNN_loaders(file_names=0, sequence_length=15, num_workers=4):
     #
     # This function creates the dataloaders needed to automatically
     # feed the neural networks with the input dataset. In particular,
