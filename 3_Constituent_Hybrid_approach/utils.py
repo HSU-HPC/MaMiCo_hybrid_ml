@@ -118,23 +118,25 @@ def get_UNET_AE_loaders(file_names=0, num_workers=12):
     # if == 0 : load data via mp and return one train and valid loader
     # if == -1: load data via mp and return multiple train and valid loaders
     # else: load random data for testing
+    _batch_size = 32
+    _num_workers = 1
 
     data_train = []
     data_valid = []
     _directory = '/home/lerdo/lerdo_HPC_Lab_Project/Trainingdata'
     _train_files = [
         'clean_couette_test_combined_domain_0_5_top.csv',
-        # 'clean_couette_test_combined_domain_0_5_middle.csv',
-        # 'clean_couette_test_combined_domain_0_5_bottom.csv',
-        # 'clean_couette_test_combined_domain_1_0_top.csv',
-        # 'clean_couette_test_combined_domain_1_0_middle.csv',
-        # 'clean_couette_test_combined_domain_1_0_bottom.csv',
-        # 'clean_couette_test_combined_domain_2_0_top.csv',
-        # 'clean_couette_test_combined_domain_2_0_middle.csv',
-        # 'clean_couette_test_combined_domain_2_0_bottom.csv',
-        # 'clean_couette_test_combined_domain_4_0_top.csv',
-        # 'clean_couette_test_combined_domain_4_0_middle.csv',
-        # 'clean_couette_test_combined_domain_4_0_bottom.csv',
+        'clean_couette_test_combined_domain_0_5_middle.csv',
+        'clean_couette_test_combined_domain_0_5_bottom.csv',
+        'clean_couette_test_combined_domain_1_0_top.csv',
+        'clean_couette_test_combined_domain_1_0_middle.csv',
+        'clean_couette_test_combined_domain_1_0_bottom.csv',
+        'clean_couette_test_combined_domain_2_0_top.csv',
+        'clean_couette_test_combined_domain_2_0_middle.csv',
+        'clean_couette_test_combined_domain_2_0_bottom.csv',
+        'clean_couette_test_combined_domain_4_0_top.csv',
+        'clean_couette_test_combined_domain_4_0_middle.csv',
+        'clean_couette_test_combined_domain_4_0_bottom.csv',
     ]
 
     _valid_files = [
@@ -169,9 +171,9 @@ def get_UNET_AE_loaders(file_names=0, num_workers=12):
                 dataset = MyMamicoDataset_UNET_AE(dataset)
                 dataloader = DataLoader(
                     dataset=dataset,
-                    batch_size=32,
+                    batch_size=_batch_size,
                     shuffle=False,
-                    num_workers=num_workers
+                    num_workers=_num_workers
                     )
                 dataloaders_train.append(dataloader)
 
@@ -179,9 +181,9 @@ def get_UNET_AE_loaders(file_names=0, num_workers=12):
                 dataset = MyMamicoDataset_UNET_AE(dataset)
                 dataloader = DataLoader(
                     dataset=dataset,
-                    batch_size=1,
+                    batch_size=_batch_size,
                     shuffle=False,
-                    num_workers=num_workers
+                    num_workers=_num_workers
                     )
                 dataloaders_valid.append(dataloader)
             return dataloaders_train, dataloaders_valid
@@ -228,18 +230,18 @@ def get_UNET_AE_loaders(file_names=0, num_workers=12):
     dataset_valid = MyMamicoDataset_UNET_AE(data_valid_stack)
     dataloader_valid = DataLoader(
         dataset=dataset_valid,
-        batch_size=32,
+        batch_size=_batch_size,
         shuffle=False,
-        num_workers=num_workers
+        num_workers=_num_workers
         )
 
     data_train_stack = np.vstack(data_train)
     dataset_train = MyMamicoDataset_UNET_AE(data_train_stack)
     dataloader_train = DataLoader(
         dataset=dataset_train,
-        batch_size=32,
+        batch_size=_batch_size,
         shuffle=True,
-        num_workers=num_workers
+        num_workers=_num_workers
         )
 
     return [dataloader_train], [dataloader_valid]

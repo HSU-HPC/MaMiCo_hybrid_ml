@@ -440,7 +440,7 @@ def trial_0_UNET_AE_mp():
 
     '''
     for i in range(3):
-        for i in range(0, 2):
+        for i in range(0, 1):
             p = mp.Process(
                 target=trial_0_UNET_AE,
                 args=(_alphas[counter], _alpha_strings[counter],
@@ -952,4 +952,4 @@ def trial_4_Hybrid_mp():
 
 
 if __name__ == "__main__":
-    trial_0_error_timeline()
+    trial_0_UNET_AE_mp()
