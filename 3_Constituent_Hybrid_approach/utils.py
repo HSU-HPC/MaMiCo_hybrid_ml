@@ -319,7 +319,7 @@ def get_RNN_loaders(file_names=0, sequence_length=15, num_workers=4):
         _dataset = MyMamicoDataset_RNN(data, sequence_length)
         _dataloader = DataLoader(
             dataset=_dataset,
-            batch_size=32,
+            batch_size=128,
             shuffle=False,
             num_workers=num_workers
         )
@@ -329,7 +329,7 @@ def get_RNN_loaders(file_names=0, sequence_length=15, num_workers=4):
         _dataset = MyMamicoDataset_RNN(data, sequence_length)
         _dataloader = DataLoader(
             dataset=_dataset,
-            batch_size=32,
+            batch_size=128,
             shuffle=False,
             num_workers=num_workers
         )
