@@ -335,13 +335,14 @@ def trial_4_Hybrid_plots():
 
 
 if __name__ == "__main__":
+    _directory = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/0_UNET_AE/'
     _files = [
-        'Valid_Error_Timeline_C_3_0_B.csv',
-        'Valid_Error_Timeline_C_3_0_M.csv',
-        'Valid_Error_Timeline_C_3_0_T.csv',
-        'Valid_Error_Timeline_C_5_0_B.csv',
-        'Valid_Error_Timeline_C_5_0_M.csv',
-        'Valid_Error_Timeline_C_5_0_T.csv'
+        f'{_directory}Valid_Error_Timeline_C_3_0_B.csv',
+        f'{_directory}Valid_Error_Timeline_C_3_0_M.csv',
+        f'{_directory}Valid_Error_Timeline_C_3_0_T.csv',
+        f'{_directory}Valid_Error_Timeline_C_5_0_B.csv',
+        f'{_directory}Valid_Error_Timeline_C_5_0_M.csv',
+        f'{_directory}Valid_Error_Timeline_C_5_0_T.csv'
     ]
     _labels = [
         'C 3 0 B',
@@ -351,7 +352,6 @@ if __name__ == "__main__":
         'C 5 0 M',
         'C 5 0 T',
     ]
-    _directory = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/0_UNET_AE'
     compareAvgLoss(
         loss_files=_files,
         loss_labels=_labels,
