@@ -668,9 +668,9 @@ def trial_2_GRU_mp():
                 print(f'Creating Process Number: {counter}')
                 counter += 1
 
-            for process in processes:
-                process.join()
-                print('Joining Process')
+        for process in processes:
+            process.join()
+            print('Joining Process')
 
 
 def trial_3_LSTM(_seq_length, _num_layers, _alpha, _alpha_string, _train_loaders, _valid_loaders):
