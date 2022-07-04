@@ -458,14 +458,14 @@ def compareFlowProfile3x3(preds, targs, model_id='', dataset_id=''):
     # plt.xticks([])
 
     for i in range(3):
-        axs[i, 0].plot(steps, preds_avg[i][0], label='Averaged Prediction')
-        axs[i, 0].plot(steps, targs_avg[i][0], label='Averaged Target')
+        axs[i, 0].plot(steps, preds_avg[i][0], label='Avg Prediction')
+        axs[i, 0].plot(steps, targs_avg[i][0], label='Avg Target')
         axs[i, 0].set_yticks(list(np.arange(-0.5, 2.5, 0.5)))
-        axs[i, 1].plot(steps, preds_avg[i][1], label='Averaged Prediction')
-        axs[i, 1].plot(steps, targs_avg[i][1], label='Averaged Target')
+        axs[i, 1].plot(steps, preds_avg[i][1], label='Avg Prediction')
+        axs[i, 1].plot(steps, targs_avg[i][1], label='Avg Target')
         axs[i, 1].set_yticks(list(np.arange(-0.25, 0.255, 0.25)))
-        axs[i, 2].plot(steps, preds_avg[i][2], label='Averaged Prediction')
-        axs[i, 2].plot(steps, targs_avg[i][2], label='Averaged Target')
+        axs[i, 2].plot(steps, preds_avg[i][2], label='Avg Prediction')
+        axs[i, 2].plot(steps, targs_avg[i][2], label='Avg Target')
         axs[i, 2].set_yticks(list(np.arange(-0.25, 0.255, 0.25)))
     axs[-1, -1].legend(ncol=1, fontsize=9)
     fig.savefig(
