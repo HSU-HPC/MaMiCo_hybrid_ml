@@ -450,10 +450,10 @@ def compareFlowProfile3x3(preds, targs, model_id='', dataset_id=''):
     # plt.tick_params(labelcolor='none', which='both', top=False,
     #                 bottom=False, left=False, right=False)
     plt.setp(axs[-1, :], xlabel='Z-Direction')
-    plt.setp(axs[:, 0], ylabel='$u_x$')
-    plt.setp(axs[:, 1], ylabel='$u_y$')
-    plt.setp(axs[:, 2], ylabel='$u_z$')
-
+    plt.setp(axs[0, 1], ylabel='$u_x$')
+    plt.setp(axs[1, 1], ylabel='$u_y$')
+    plt.setp(axs[1, 2], ylabel='$u_z$')
+    fig.set_size_inches(6, 6)
     # plt.yticks(range(-2, 7, 2))
     # plt.xticks([])
 
@@ -466,7 +466,7 @@ def compareFlowProfile3x3(preds, targs, model_id='', dataset_id=''):
         axs[i, 1].set_yticks(list(np.arange(-0.5, 0.5, 0.5)))
         axs[i, 2].plot(steps, preds_avg[i][2], label='Averaged Prediction')
         axs[i, 2].plot(steps, targs_avg[i][2], label='Averaged Target')
-        axs[i, 2].set_ytickslist(list(np.arange(-0.5, 0.5, 0.5)))
+        axs[i, 2].set_yticks(list(np.arange(-0.5, 0.5, 0.5)))
 
     fig.savefig(
         f'CompareFlowprofile_{model_id}_{dataset_id}.svg')
