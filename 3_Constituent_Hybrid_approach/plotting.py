@@ -460,10 +460,13 @@ def compareFlowProfile3x3(preds, targs, model_id='', dataset_id=''):
     for i in range(3):
         axs[i, 0].plot(steps, preds_avg[i][0], label='Averaged Prediction')
         axs[i, 0].plot(steps, targs_avg[i][0], label='Averaged Target')
+        axs[i, 0].set_ylim([-2, 7])
         axs[i, 1].plot(steps, preds_avg[i][1], label='Averaged Prediction')
         axs[i, 1].plot(steps, targs_avg[i][1], label='Averaged Target')
+        axs[i, 0].set_ylim([-1, 1])
         axs[i, 2].plot(steps, preds_avg[i][2], label='Averaged Prediction')
         axs[i, 2].plot(steps, targs_avg[i][2], label='Averaged Target')
+        axs[i, 0].set_ylim([-1, 1])
 
     fig.savefig(
         f'CompareFlowprofile_{model_id}_{dataset_id}.svg')
