@@ -136,10 +136,11 @@ def get_latentspace_AE_helper():
 
     #TO DO - Check proper model to load
     _model.load_state_dict(torch.load(
-        '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/0_UNET_AE/Model_UNET_AE_0_001'))
+        '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/0_UNET_AE/Model_UNET_AE_LR0_001'))
     _model.eval()
 
-    _loader_1, _ = get_mamico_loaders()
+    _loader_1, _loader_2_ = get_mamico_loaders()
+    _loaders = _loader_1 + _loader_2_
     _out_directory = '/home/lerdo/lerdo_HPC_Lab_Project/Trainingdata/Latentspace_Dataset'
     _out_file_names = [
         '_0_5_T',
@@ -161,11 +162,11 @@ def get_latentspace_AE_helper():
         '_5_0_M',
         '_5_0_B',
     ]
-    for i in range(18):
+    for idx, _loader in enumerate(_loaders):
         get_latentspace_AE(
-            loader=_loader_1[i],
+            loader=_loader,
             model=_model,
-            out_file_name=f'{_out_directory}{_out_file_names[i]}'
+            out_file_name=f'{_out_directory}{_out_file_names[idx]}'
         )
     pass
 
@@ -879,4 +880,4 @@ def trial_4_Hybrid_mp():
 
 
 if __name__ == "__main__":
-    trial_0_UNET_AE_mp()
+    get_latentspace_AE_helper()
