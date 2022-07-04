@@ -187,13 +187,13 @@ def compareAvgLoss(loss_files, loss_labels, file_prefix=0, file_name=0):
     for loss in losses:
         loss_list.append(loss)
 
-    num_epoch = (loss_list[0]).shape[0]
+    # num_epoch = (loss_list[0]).shape[0]
 
-    x_axis = range(1, (num_epoch+1), 1)
+    # x_axis = range(1, (num_epoch+1), 1)
 
     fig, (ax1) = plt.subplots(1, constrained_layout=True)
     for idx, loss in enumerate(loss_list):
-        ax1.plot(x_axis, loss, color=getColor(c='tab20',
+        ax1.plot(range(1, ((loss_list[idx]).shape[0]+1), 1), loss, color=getColor(c='tab20',
                  N=12, idx=idx), label=loss_labels[idx])
 
     ax1.set_xlabel('Number of Epochs')
@@ -415,7 +415,7 @@ def compareFlowProfile(preds, targs, model_descriptor):
     plt.close()
 
 
-def compareFlowProfile3x3(preds, targs):
+def compareFlowProfile3x3(preds, targs, model_id='', dataset_id=''):
     # BRIEF:
     #
     # PARAMETERS:
@@ -466,7 +466,7 @@ def compareFlowProfile3x3(preds, targs):
         axs[i, 2].plot(steps, targs_avg[i][2], label='Averaged Target')
 
     fig.savefig(
-        'CompareFlowprofile_TEST_TEST_TEST.svg')
+        f'CompareFlowprofile_{model_id}_{dataset_id}.svg')
     pass
 
 
@@ -497,7 +497,12 @@ def showSample():
 
 
 def main():
-
+    '''
+    compareAvgLoss(
+        loss_files=_loss_files,
+        loss_labels=loss_labels=
+    )
+    '''
     pass
 
 

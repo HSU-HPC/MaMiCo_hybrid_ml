@@ -11,13 +11,12 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 def trial_0_UNET_AE_plots():
     _, valid_loaders = get_UNET_AE_loaders(file_names=-1)
     model_names = [
-        'Model_UNET_AE_LR0_01',
         'Model_UNET_AE_LR0_005',
         'Model_UNET_AE_LR0_001',
         'Model_UNET_AE_LR0_0005',
         'Model_UNET_AE_LR0_0001',
-        'Model_UNET_AE_LR0_00005'
     ]
+
     dataset_names = [
         'C_3_0_T',
         'C_3_0_M',
@@ -85,7 +84,9 @@ def trial_0_UNET_AE_plots():
             #     [_targs[60], _targs[125], _targs[250], _targs[500], _targs[-1]])
             compareFlowProfile3x3(
                 preds=_preds,
-                targs=_targs
+                targs=_targs,
+                model_id=model_names[i],
+                dataset_id=dataset_names[j],
             )
 
 
