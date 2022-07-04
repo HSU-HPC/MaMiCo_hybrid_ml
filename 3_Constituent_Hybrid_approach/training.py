@@ -627,9 +627,11 @@ def trial_2_GRU(_seq_length, _num_layers, _alpha, _alpha_string, _train_loaders,
 
 
 def trial_2_GRU_mp():
-    _alphas = [0.01, 0.005, 0.001, 0.0005, 0.0001, 0.00005]
-    _alpha_strings = ['0_01', '0_005', '0_001', '0_0005', '0_0001', '0_00005']
-    _rnn_depths = [1, 2, 3, 4]
+    # _alphas = [0.01, 0.005, 0.001, 0.0005, 0.0001, 0.00005]
+    # _alpha_strings = ['0_01', '0_005', '0_001', '0_0005', '0_0001', '0_00005']
+    _alphas = [0.001, 0.0005, 0.0001, 0.00005]
+    _alpha_strings = ['0_001', '0_0005', '0_0001', '0_00005']
+    _rnn_depths = [1, 2, 3]
     _seq_lengths = [5, 15, 25]
 
     _alphas.reverse()
@@ -882,4 +884,4 @@ def trial_4_Hybrid_mp():
 
 
 if __name__ == "__main__":
-    trial_1_RNN_mp()
+    trial_2_GRU_mp()
