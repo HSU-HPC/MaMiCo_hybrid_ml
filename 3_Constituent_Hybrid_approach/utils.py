@@ -118,8 +118,8 @@ def get_UNET_AE_loaders(file_names=0, num_workers=12):
     # if == 0 : load data via mp and return one train and valid loader
     # if == -1: load data via mp and return multiple train and valid loaders
     # else: load random data for testing
-    _batch_size = 32
-    _num_workers = 4
+    _batch_size = 64
+    _num_workers = 1
     print('------------------------------------------------------------')
     print(f'Batch size = {_batch_size}        Num worker = {_num_workers}')
 
