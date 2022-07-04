@@ -443,24 +443,26 @@ def compareFlowProfile3x3(preds, targs, model_id='', dataset_id=''):
 
     preds_avg = [pred_avg_050, pred_avg_500, pred_avg_999]
     targs_avg = [targ_avg_050, targ_avg_500, targ_avg_999]
+    samples = [50, 500, 999]
     # time_list = [0, 4, 1, 5, 2, 6, 3, 7]
 
     fig, axs = plt.subplots(3, 3, sharex=True)  # , sharey=True)
-    fig.suptitle('Target and Prediction Comparison', fontsize=16)
+    # fig.suptitle('Target and Prediction Comparison', fontsize=16)
     # plt.tick_params(labelcolor='none', which='both', top=False,
     #                 bottom=False, left=False, right=False)
     plt.setp(axs[-1, :], xlabel='Z-Direction')
     plt.setp(axs[1, 0], ylabel='$u_x$')
     plt.setp(axs[1, 1], ylabel='$u_y$')
     plt.setp(axs[1, 2], ylabel='$u_z$')
-    fig.set_size_inches(8, 8)
+    fig.set_size_inches(10, 8)
     # plt.yticks(range(-2, 7, 2))
     # plt.xticks([])
 
     for i in range(3):
         axs[i, 0].plot(steps, preds_avg[i][0], label='Avg Prediction')
         axs[i, 0].plot(steps, targs_avg[i][0], label='Avg Target')
-        axs[i, 0].set_yticks(list(np.arange(-0.5, 2.5, 0.5)))
+        axs[i, 0].set_yticks(list(np.arange(-0.5, 1.55, 0.5)))
+        axs[i, 1].set_title(f'Timestep {samples[i]}')
         axs[i, 1].plot(steps, preds_avg[i][1], label='Avg Prediction')
         axs[i, 1].plot(steps, targs_avg[i][1], label='Avg Target')
         axs[i, 1].set_yticks(list(np.arange(-0.25, 0.255, 0.25)))
