@@ -575,6 +575,7 @@ def trial_2_GRU(_seq_length, _num_layers, _alpha, _alpha_string, _train_loaders,
     print('Beginning training.')
     for epoch in range(30):
         avg_loss = 0
+        start_time = time.time()
         for _train_loader in _train_loaders:
             avg_loss += train_RNN(
                 loader=_train_loader,
@@ -585,9 +586,10 @@ def trial_2_GRU(_seq_length, _num_layers, _alpha, _alpha_string, _train_loaders,
                 identifier=_model_identifier,
                 current_epoch=epoch+1
             )
+        duration = time.time() - start_time
         print('------------------------------------------------------------')
         print(
-            f'{_model_identifier} Training Epoch: {epoch+1}-> Averaged Loader Loss: {avg_loss/len(_train_loaders):.3f}')
+            f'{_model_identifier} Training Epoch: {epoch+1}-> Averaged Loader Loss: {avg_loss/len(_train_loaders):.3f}. Duration: {duration:.3f}')
         _epoch_losses.append(avg_loss/len(_train_loaders))
 
         avg_valid = 0
@@ -601,7 +603,7 @@ def trial_2_GRU(_seq_length, _num_layers, _alpha, _alpha_string, _train_loaders,
                 current_epoch=0
             )
         print('------------------------------------------------------------')
-        print(f'{_model_identifier} Validation -> Averaged Loader Loss: {avg_valid/len(_valid_loaders):.3f}')
+        print(f'{_model_identifier} Validation -> Averaged Loader Loss: {avg_valid/len(_valid_loaders):.3f}.')
         _epoch_valids.append(avg_valid/len(_valid_loaders))
 
     losses2file(
