@@ -455,7 +455,7 @@ def trial_1_RNN(_seq_length, _num_layers, _alpha, _alpha_string, _train_loaders,
     _epoch_valids = []
 
     print('Beginning training.')
-    for epoch in range(30):
+    for epoch in range(50):
         avg_loss = 0
         start_time = time.time()
         for _train_loader in _train_loaders:
@@ -575,7 +575,7 @@ def trial_2_GRU(_seq_length, _num_layers, _alpha, _alpha_string, _train_loaders,
     _epoch_valids = []
 
     print('Beginning training.')
-    for epoch in range(30):
+    for epoch in range(50):
         avg_loss = 0
         start_time = time.time()
         for _train_loader in _train_loaders:
@@ -892,4 +892,4 @@ def trial_4_Hybrid_mp():
 
 
 if __name__ == "__main__":
-    trial_2_GRU_mp()
+    trial_1_RNN_mp()
