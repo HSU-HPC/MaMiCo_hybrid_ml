@@ -635,7 +635,7 @@ def trial_2_GRU_mp():
     # _alpha_strings = ['0_01', '0_005', '0_001', '0_0005', '0_0001', '0_00005']
     _alphas = [0.001, 0.0005, 0.0001, 0.00005]
     _alpha_strings = ['0_001', '0_0005', '0_0001', '0_00005']
-    _rnn_depths = [1, 2, 3]
+    _rnn_depths = [2, 3]
     _seq_lengths = [5, 15, 25]
 
     _alphas.reverse()
