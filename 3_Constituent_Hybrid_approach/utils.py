@@ -179,7 +179,7 @@ def get_UNET_AE_loaders(file_names=0, num_workers=12):
                 dataset = MyMamicoDataset_UNET_AE(dataset)
                 dataloader = DataLoader(
                     dataset=dataset,
-                    batch_size=32,
+                    batch_size=1,
                     shuffle=False,
                     num_workers=num_workers
                     )

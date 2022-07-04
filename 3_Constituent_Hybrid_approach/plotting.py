@@ -196,7 +196,7 @@ def compareAvgLoss(loss_files, loss_labels, file_prefix=0, file_name=0):
         ax1.plot(range(1, ((loss_list[idx]).shape[0]+1), 1), loss, color=getColor(c='tab20',
                  N=12, idx=idx), label=loss_labels[idx])
 
-    ax1.set_xlabel('Number of Epochs')
+    ax1.set_xlabel('Timestep')
     ax1.set_ylabel('Error')
     ax1.legend(ncol=2, fontsize=9)
     fig.set_size_inches(6, 2)

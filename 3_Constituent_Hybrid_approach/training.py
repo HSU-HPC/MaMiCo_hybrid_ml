@@ -102,6 +102,29 @@ def valid_AE(loader, model, criterion, scaler, alpha, current_epoch):
     return avg_loss
 
 
+def errorTimeline(loader, model, criterion):
+    # BRIEF: The train function completes one epoch of the training cycle.
+    # PARAMETERS:
+    # loader - object of PyTorch-type DataLoader to automatically feed dataset
+    # model - the model to be trained
+    # optimizer - the optimization algorithm applied during training
+    # criterion - the loss function applied to quantify the error
+    # scaler -
+
+    losses = []
+    for batch_idx, (data, targets) in enumerate(loader):
+        data = data.float().to(device=device)
+        targets = targets.float().to(device=device)
+
+        with torch.cuda.amp.autocast():
+            predictions = model(data)
+            loss = criterion(predictions.float(), targets.float())
+            # print('Current batch loss: ', loss.item())
+            losses.append(loss.item())
+
+    return losses
+
+
 def get_latentspace_AE(loader, model, out_file_name):
 
     # The tqdm module allows to display a smart progress meter for iterables
@@ -433,6 +456,43 @@ def trial_0_UNET_AE_mp():
             print('Joining Process')
 
     return
+
+
+def trial_0_error_timeline():
+    _directory = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/0_UNET_AE/'
+    model_name = 'Model_UNET_AE_LR0_001'
+    _model = UNET_AE(
+        device=device,
+        in_channels=3,
+        out_channels=3,
+        features=[4, 8, 16],
+        activation=nn.ReLU(inplace=True)
+    ).to(device)
+    _model.load_state_dict(torch.load(f'{_directory}{model_name}'))
+    _criterion = nn.L1Loss()
+    _, valid_loaders = get_UNET_AE_loaders(file_names=-1)
+
+    _datasets = [
+        'C_3_0_T',
+        'C_3_0_M',
+        'C_3_0_B',
+        'C_5_0_T',
+        'C_5_0_M',
+        'C_5_0_B'
+    ]
+
+    for idx, _loader in enumerate(valid_loaders):
+        _losses = errorTimeline(
+            loader=_loader,
+            model=_model,
+            criterion=_criterion
+        )
+        losses2file(
+            losses=_losses,
+            filename=f'{_directory}Valid_Error_Timeline_{_datasets[idx]}'
+        )
+
+    pass
 
 
 def trial_1_RNN(_seq_length, _num_layers, _alpha, _alpha_string, _train_loaders, _valid_loaders):
@@ -892,4 +952,4 @@ def trial_4_Hybrid_mp():
 
 
 if __name__ == "__main__":
-    trial_2_GRU_mp()
+    trial_0_error_timeline()
