@@ -445,17 +445,17 @@ def compareFlowProfile3x3(preds, targs, model_id='', dataset_id=''):
     targs_avg = [targ_avg_050, targ_avg_500, targ_avg_999]
     # time_list = [0, 4, 1, 5, 2, 6, 3, 7]
 
-    fig, axs = plt.subplots(3, 3, sharex=True, sharey=True)
+    fig, axs = plt.subplots(3, 3, sharex=True)  # , sharey=True)
     fig.suptitle('Target and Prediction Comparison', fontsize=16)
-    plt.tick_params(labelcolor='none', which='both', top=False,
-                    bottom=False, left=False, right=False)
+    # plt.tick_params(labelcolor='none', which='both', top=False,
+    #                 bottom=False, left=False, right=False)
     plt.setp(axs[-1, :], xlabel='Z-Direction')
     plt.setp(axs[:, 0], ylabel='$u_x$')
     plt.setp(axs[:, 1], ylabel='$u_y$')
     plt.setp(axs[:, 2], ylabel='$u_z$')
 
     plt.yticks(range(-2, 7, 2))
-    plt.xticks([])
+    # plt.xticks([])
 
     for i in range(3):
         axs[i, 0].plot(steps, preds_avg[i][0], label='Averaged Prediction')
