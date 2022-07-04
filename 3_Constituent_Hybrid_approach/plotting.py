@@ -450,10 +450,10 @@ def compareFlowProfile3x3(preds, targs, model_id='', dataset_id=''):
     # plt.tick_params(labelcolor='none', which='both', top=False,
     #                 bottom=False, left=False, right=False)
     plt.setp(axs[-1, :], xlabel='Z-Direction')
-    plt.setp(axs[0, 1], ylabel='$u_x$')
+    plt.setp(axs[1, 0], ylabel='$u_x$')
     plt.setp(axs[1, 1], ylabel='$u_y$')
     plt.setp(axs[1, 2], ylabel='$u_z$')
-    fig.set_size_inches(6, 6)
+    fig.set_size_inches(8, 8)
     # plt.yticks(range(-2, 7, 2))
     # plt.xticks([])
 
