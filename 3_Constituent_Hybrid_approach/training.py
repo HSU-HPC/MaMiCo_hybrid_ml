@@ -139,7 +139,7 @@ def get_latentspace_AE_helper():
         '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/0_UNET_AE/Model_UNET_AE_LR0_001'))
     _model.eval()
 
-    _loader_1, _loader_2_ = get_mamico_loaders()
+    _loader_1, _loader_2_ = get_UNET_AE_loaders()
     _loaders = _loader_1 + _loader_2_
     _out_directory = '/home/lerdo/lerdo_HPC_Lab_Project/Trainingdata/Latentspace_Dataset'
     _out_file_names = [
