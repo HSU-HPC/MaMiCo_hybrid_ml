@@ -59,12 +59,12 @@ def trial_0_UNET_AE_plots():
         f'{model_directory}Valids_UNET_AE_LR0_0005.csv'
     ]
     lossVsValidLabels = [
-        'Training Error   LR = 0.001',
-        'Validation Error LR = 0.001',
-        'Training Error   LR = 0.0005',
-        'Validation Error LR = 0.0005'
+        'Training Loss   LR = 0.001',
+        'Validation Loss LR = 0.001',
+        'Training Loss   LR = 0.0005',
+        'Validation Loss LR = 0.0005'
     ]
-    '''
+
     compareLossVsValid(
         loss_files=lossVsValidFiles,
         loss_labels=lossVsValidLabels,
@@ -111,6 +111,7 @@ def trial_0_UNET_AE_plots():
                 model_id=model_names[i],
                 dataset_id=dataset_names[j],
             )
+    '''
 
 
 def trial_1_RNN_plots():
