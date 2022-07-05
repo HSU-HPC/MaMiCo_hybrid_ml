@@ -336,12 +336,12 @@ if __name__ == "__main__":
     _directory = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/0_UNET_AE/'
     _model_name = 'Model_UNET_AE_LR0_001'
     _files = [
-        f'{_directory}{_model_name}Valid_Error_Timeline_C_3_0_B.csv',
-        f'{_directory}{_model_name}Valid_Error_Timeline_C_3_0_M.csv',
-        f'{_directory}{_model_name}Valid_Error_Timeline_C_3_0_T.csv',
-        f'{_directory}{_model_name}Valid_Error_Timeline_C_5_0_B.csv',
-        f'{_directory}{_model_name}Valid_Error_Timeline_C_5_0_M.csv',
-        f'{_directory}{_model_name}Valid_Error_Timeline_C_5_0_T.csv'
+        f'{_directory}{_model_name}_Valid_Error_Timeline_C_3_0_B.csv',
+        f'{_directory}{_model_name}_Valid_Error_Timeline_C_3_0_M.csv',
+        f'{_directory}{_model_name}_Valid_Error_Timeline_C_3_0_T.csv',
+        f'{_directory}{_model_name}_Valid_Error_Timeline_C_5_0_B.csv',
+        f'{_directory}{_model_name}_Valid_Error_Timeline_C_5_0_M.csv',
+        f'{_directory}{_model_name}_Valid_Error_Timeline_C_5_0_T.csv'
     ]
     _labels = [
         'C 3 0 B',
