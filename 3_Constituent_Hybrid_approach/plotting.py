@@ -454,10 +454,10 @@ def compareFlowProfile3x3(preds, targs, model_id='', dataset_id=''):
     # fig.suptitle('Target and Prediction Comparison', fontsize=16)
     # plt.tick_params(labelcolor='none', which='both', top=False,
     #                 bottom=False, left=False, right=False)
-    plt.setp(axs[-1, :], xlabel='Z-Direction')
-    plt.setp(axs[0, 0], ylabel='$u_x$')
-    plt.setp(axs[1, 0], ylabel='$u_y$')
-    plt.setp(axs[2, 0], ylabel='$u_z$')
+    plt.setp(axs[-1, :], xlabel='Z-Direction', fontsize=12)
+    plt.setp(axs[0, 0], ylabel='$u_x$', fontsize=12)
+    plt.setp(axs[1, 0], ylabel='$u_y$', fontsize=12)
+    plt.setp(axs[2, 0], ylabel='$u_z$', fontsize=12)
     fig.set_size_inches(10, 8)
     # plt.yticks(range(-2, 7, 2))
     # plt.xticks([])
@@ -475,7 +475,7 @@ def compareFlowProfile3x3(preds, targs, model_id='', dataset_id=''):
         axs[i, 2].plot(steps, targs_avg[2][i], label='Avg Target')
         axs[i, 2].set_yticks(list(np.arange(-0.25, 0.255, 0.25)))
 
-        axs[0, i].set_title(f'Timestep {samples[i]}')
+        axs[0, i].set_title(f'Timestep {samples[i]}', fontsize=12)
         '''
         axs[i, 0].plot(steps, preds_avg[i][0], label='Avg Prediction')
         axs[i, 0].plot(steps, targs_avg[i][0], label='Avg Target')
@@ -489,7 +489,7 @@ def compareFlowProfile3x3(preds, targs, model_id='', dataset_id=''):
     axs[0, 0].set_yticks(list(np.arange(-1, max_ux, 1)))
     axs[0, 1].set_yticks(list(np.arange(-1, max_ux, 1)))
     axs[0, 2].set_yticks(list(np.arange(-1, max_ux, 1)))
-    axs[-1, -1].legend(ncol=1, fontsize=9)
+    axs[-1, -1].legend(ncol=1, fontsize=12)
     fig.savefig(
         f'{directory}CompareFlowprofile_{model_id}_{dataset_id}.svg')
     pass

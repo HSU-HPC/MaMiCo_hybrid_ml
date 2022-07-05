@@ -64,7 +64,7 @@ def trial_0_UNET_AE_plots():
         'Training Loss   LR = 0.0005',
         'Validation Loss LR = 0.0005'
     ]
-
+    '''
     compareLossVsValid(
         loss_files=lossVsValidFiles,
         loss_labels=lossVsValidLabels,
@@ -111,7 +111,6 @@ def trial_0_UNET_AE_plots():
                 model_id=model_names[i],
                 dataset_id=dataset_names[j],
             )
-    '''
 
 
 def trial_1_RNN_plots():
