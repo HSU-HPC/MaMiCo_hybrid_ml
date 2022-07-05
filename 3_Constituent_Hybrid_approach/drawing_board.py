@@ -1,7 +1,7 @@
 import numpy as np
 import torch
 import torch.nn as nn
-from plotting import compareColorMap, compareAvgLoss, compareAvgLossRNN, compareLossVsValidRNN, compareFlowProfile3x3
+from plotting import compareColorMap, compareAvgLoss, compareAvgLossRNN, compareLossVsValidRNN, compareFlowProfile3x3, compareLossVsValid
 from model import UNET_AE, LSTM, Hybrid_MD_RNN_UNET
 from utils import get_UNET_AE_loaders, get_Hybrid_loaders
 
@@ -27,7 +27,7 @@ def trial_0_UNET_AE_plots():
     model_directory = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/0_UNET_AE/'
 
     loss_prefix = 'Losses_UNET_AE_LR'
-
+    '''
     loss_files = [
         f'{model_directory}{loss_prefix}0_01.csv',
         f'{model_directory}{loss_prefix}0_001.csv',
@@ -50,6 +50,25 @@ def trial_0_UNET_AE_plots():
         loss_labels=loss_labels,
         file_prefix=model_directory,
         file_name='UNET_AE'
+    )
+    '''
+    lossVsValidFiles = [
+        f'{model_directory}Losses_UNET_AE_LR0_001.csv',
+        f'{model_directory}Valids_UNET_AE_LR0_001.csv',
+        f'{model_directory}Losses_UNET_AE_LR0_0005.csv',
+        f'{model_directory}Valids_UNET_AE_LR0_0005.csv'
+    ]
+    lossVsValidLabels = [
+        'Training Error   LR = 0.001',
+        'Validation Error LR = 0.001',
+        'Training Error   LR = 0.0005',
+        'Validation Error LR = 0.0005'
+    ]
+    compareLossVsValid(
+        loss_files=lossVsValidFiles,
+        loss_labels=lossVsValidLabels,
+        file_prefix=model_directory,
+        file_name='Model_UNET_AE_LR0_001_and_LR0_0005'
     )
     '''
     _, valid_loaders = get_UNET_AE_loaders(file_names=-1)
