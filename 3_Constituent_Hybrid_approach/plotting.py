@@ -227,6 +227,7 @@ def compareLossVsValid(loss_files, loss_labels, file_prefix=0, file_name=0):
                  N=12, idx=idx), linestyle='--', label=loss_labels[2*idx+1])
     ax1.set_xlabel('Number of Epochs')
     ax1.set_ylabel('Error')
+    ax1.grid(axis='y')
     ax1.legend(ncol=2, fontsize=7)
     fig.set_size_inches(7, 2.5)
     if file_name != 0:
