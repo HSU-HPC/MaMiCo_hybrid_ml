@@ -443,9 +443,7 @@ def compareFlowProfile3x3(preds, targs, model_id='', dataset_id=''):
             pred_avg_999[i].append(preds[-1, i, :, :, j].mean())
             targ_avg_999[i].append(targs[-1, i, :, :, j].mean())
 
-    max_ux = max(targ_avg_999[0])
-    print(max_ux)
-    print(int(max_ux))
+    max_ux = int(max(targ_avg_999[0])) + 1
 
     preds_avg = [pred_avg_050, pred_avg_500, pred_avg_999]
     targs_avg = [targ_avg_050, targ_avg_500, targ_avg_999]
@@ -488,9 +486,9 @@ def compareFlowProfile3x3(preds, targs, model_id='', dataset_id=''):
         axs[i, 1].set_yticks(list(np.arange(-0.25, 0.255, 0.25)))
         '''
 
-    axs[0, 0].set_yticks(list(np.arange(-0.5, 1.55, 0.5)))
-    axs[0, 1].set_yticks(list(np.arange(-0.5, 1.55, 0.5)))
-    axs[0, 2].set_yticks(list(np.arange(-0.5, 1.55, 0.5)))
+    axs[0, 0].set_yticks(list(np.arange(-0.5, max_ux, 0.5)))
+    axs[0, 1].set_yticks(list(np.arange(-0.5, max_ux, 0.5)))
+    axs[0, 2].set_yticks(list(np.arange(-0.5, max_ux, 0.5)))
     axs[-1, -1].legend(ncol=1, fontsize=9)
     fig.savefig(
         f'{directory}CompareFlowprofile_{model_id}_{dataset_id}.svg')
