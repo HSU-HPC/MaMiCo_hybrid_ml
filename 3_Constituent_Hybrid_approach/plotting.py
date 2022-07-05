@@ -443,6 +443,10 @@ def compareFlowProfile3x3(preds, targs, model_id='', dataset_id=''):
             pred_avg_999[i].append(preds[-1, i, :, :, j].mean())
             targ_avg_999[i].append(targs[-1, i, :, :, j].mean())
 
+    max_ux = max(targ_avg_999[0])
+    print(max_ux)
+    print(int(max_ux))
+
     preds_avg = [pred_avg_050, pred_avg_500, pred_avg_999]
     targs_avg = [targ_avg_050, targ_avg_500, targ_avg_999]
     samples = [50, 500, 999]

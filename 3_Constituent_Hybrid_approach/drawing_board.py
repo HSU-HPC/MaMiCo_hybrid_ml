@@ -27,7 +27,7 @@ def trial_0_UNET_AE_plots():
     model_directory = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/0_UNET_AE/'
 
     loss_prefix = 'Losses_UNET_AE_LR'
-    '''
+
     loss_files = [
         f'{model_directory}{loss_prefix}0_01.csv',
         f'{model_directory}{loss_prefix}0_001.csv',
@@ -44,7 +44,7 @@ def trial_0_UNET_AE_plots():
         'Learning Rate = 0.0005',
         'Learning Rate = 0.00005'
     ]
-
+    '''
     compareAvgLoss(
         loss_files=loss_files,
         loss_labels=loss_labels,
@@ -64,6 +64,7 @@ def trial_0_UNET_AE_plots():
         'Training Error   LR = 0.0005',
         'Validation Error LR = 0.0005'
     ]
+    '''
     compareLossVsValid(
         loss_files=lossVsValidFiles,
         loss_labels=lossVsValidLabels,
@@ -110,7 +111,6 @@ def trial_0_UNET_AE_plots():
                 model_id=model_names[i],
                 dataset_id=dataset_names[j],
             )
-    '''
 
 
 def trial_1_RNN_plots():
