@@ -694,11 +694,8 @@ def trial_2_GRU(_seq_length, _num_layers, _alpha, _alpha_string, _train_loaders,
 
 
 def trial_2_GRU_mp():
-    # _alphas = [0.01, 0.005, 0.001, 0.0005, 0.0001, 0.00005]
-    # _alpha_strings = ['0_01', '0_005', '0_001', '0_0005', '0_0001', '0_00005']
     _alphas = [0.001, 0.0005, 0.0001, 0.00005, 0.00001, 0.000005]
-    _alpha_strings = ['0_001', '0_0005', '0_0001',
-                      '0_00005', '0_00001', '0_000005']
+    _alpha_strings = ['0_001', '0_0005', '0_0001', '0_00005', '0_00001', '0_000005']
     _rnn_depths = [1, 2, 3]
     _seq_lengths = [5, 15, 25]
 
@@ -770,11 +767,9 @@ def trial_3_LSTM(_seq_length, _num_layers, _alpha, _alpha_string, _train_loaders
                 identifier=_model_identifier,
                 current_epoch=epoch+1
             )
-            duration = time.time() - start_time
-            print('------------------------------------------------------------')
-            print(
-                f'{_model_identifier} Training Epoch: {epoch+1}-> Averaged Loader Loss: {avg_loss/len(_train_loaders):.3f}. Duration: {duration:.3f}')
-            _epoch_losses.append(avg_loss/len(_train_loaders))
+        duration = time.time() - start_time
+        print('------------------------------------------------------------')
+        print(f'{_model_identifier} Training Epoch: {epoch+1}-> Averaged Loader Loss: {avg_loss/len(_train_loaders):.3f}. Duration: {duration:.3f}')
         _epoch_losses.append(avg_loss/len(_train_loaders))
 
         avg_valid = 0
@@ -816,8 +811,7 @@ def trial_3_LSTM(_seq_length, _num_layers, _alpha, _alpha_string, _train_loaders
 
 def trial_3_LSTM_mp():
     _alphas = [0.001, 0.0005, 0.0001, 0.00005, 0.00001, 0.000005]
-    _alpha_strings = ['0_001', '0_0005', '0_0001',
-                      '0_00005', '0_00001', '0_000005']
+    _alpha_strings = ['0_001', '0_0005', '0_0001', '0_00005', '0_00001', '0_000005']
     _rnn_depths = [1, 2, 3]
     _seq_lengths = [5, 15, 25]
 
@@ -836,8 +830,8 @@ def trial_3_LSTM_mp():
 
     for idx, _lr in enumerate(_alphas):
         counter = 1
-        for _rnn_depth in _rnn_depths:
 
+        for _rnn_depth in _rnn_depths:
             processes = []
 
             for i in range(3):
