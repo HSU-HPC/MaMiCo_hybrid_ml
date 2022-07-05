@@ -51,7 +51,7 @@ def trial_0_UNET_AE_plots():
         file_prefix=model_directory,
         file_name='UNET_AE'
     )
-
+    '''
     _, valid_loaders = get_UNET_AE_loaders(file_names=-1)
     for i in range(1, 3):
 
@@ -91,6 +91,7 @@ def trial_0_UNET_AE_plots():
                 model_id=model_names[i],
                 dataset_id=dataset_names[j],
             )
+    '''
 
 
 def trial_1_RNN_plots():
@@ -333,6 +334,8 @@ def trial_4_Hybrid_plots():
 
 
 if __name__ == "__main__":
+    trial_0_UNET_AE_plots()
+    '''
     _directory = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/0_UNET_AE/'
     _model_name = 'Model_UNET_AE_LR0_0005'
     _files = [
@@ -357,3 +360,4 @@ if __name__ == "__main__":
         file_prefix=_directory,
         file_name=f'valid_error_timeline_{_model_name}'
     )
+    '''

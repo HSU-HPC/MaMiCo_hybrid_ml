@@ -196,8 +196,8 @@ def compareAvgLoss(loss_files, loss_labels, file_prefix=0, file_name=0):
         ax1.plot(range(1, ((loss_list[idx]).shape[0]+1), 1), loss, color=getColor(c='tab20',
                  N=12, idx=idx), label=loss_labels[idx])
 
-    ax1.set_xlabel('Timestep')
-    ax1.set_ylabel('Error')
+    ax1.set_xlabel('Epoch')
+    ax1.set_ylabel('Average Loss')
     ax1.legend(ncol=2, fontsize=9)
     fig.set_size_inches(6, 2)
     if file_name != 0:
@@ -250,9 +250,9 @@ def compareAvgLossRNN(l_of_l_files, l_of_l_labels, file_prefix=0, file_name=0):
 
         list_of_list_l.append(list_l)
 
-    num_epoch = 30
+    num_epoch = list_of_list_l[0][0].shape[0]+1
 
-    x_axis = range(1, (num_epoch+1), 1)
+    x_axis = range(1, num_epoch, 1)
 
     fig, axs = plt.subplots(len(list_of_list_l),
                             sharex=True, constrained_layout=True)
