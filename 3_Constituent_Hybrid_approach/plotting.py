@@ -486,9 +486,9 @@ def compareFlowProfile3x3(preds, targs, model_id='', dataset_id=''):
         axs[i, 1].set_yticks(list(np.arange(-0.25, 0.255, 0.25)))
         '''
 
-    axs[0, 0].set_yticks(list(np.arange(-0.5, max_ux, 0.5)))
-    axs[0, 1].set_yticks(list(np.arange(-0.5, max_ux, 0.5)))
-    axs[0, 2].set_yticks(list(np.arange(-0.5, max_ux, 0.5)))
+    axs[0, 0].set_yticks(list(np.arange(-1, max_ux, 1)))
+    axs[0, 1].set_yticks(list(np.arange(-1, max_ux, 1)))
+    axs[0, 2].set_yticks(list(np.arange(-1, max_ux, 1)))
     axs[-1, -1].legend(ncol=1, fontsize=9)
     fig.savefig(
         f'{directory}CompareFlowprofile_{model_id}_{dataset_id}.svg')
