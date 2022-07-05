@@ -422,6 +422,7 @@ def compareFlowProfile3x3(preds, targs, model_id='', dataset_id=''):
     # preds -
     # targs -
     # model_descriptor -
+    directory = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/0_UNET_AE/'
 
     t, c, d, h, w = preds.shape
     steps = np.arange(0, d).tolist()
@@ -487,7 +488,7 @@ def compareFlowProfile3x3(preds, targs, model_id='', dataset_id=''):
     axs[0, 2].set_yticks(list(np.arange(-0.5, 1.55, 0.5)))
     axs[-1, -1].legend(ncol=1, fontsize=9)
     fig.savefig(
-        f'CompareFlowprofile_{model_id}_{dataset_id}.svg')
+        f'{directory}CompareFlowprofile_{model_id}_{dataset_id}.svg')
     pass
 
 
