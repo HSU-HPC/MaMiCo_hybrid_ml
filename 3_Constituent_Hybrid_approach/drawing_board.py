@@ -53,7 +53,7 @@ def trial_0_UNET_AE_plots():
     )
 
     _, valid_loaders = get_UNET_AE_loaders(file_names=-1)
-    for i in range(2, 3):
+    for i in range(1, 3):
 
         _model = UNET_AE(
             device=device,
