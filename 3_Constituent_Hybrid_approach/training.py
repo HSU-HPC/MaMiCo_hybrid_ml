@@ -490,7 +490,7 @@ def trial_0_error_timeline():
         )
         losses2file(
             losses=_losses,
-            filename=f'{_directory}Valid_Error_Timeline_{_datasets[idx]}'
+            filename=f'{_directory}{model_name}_Valid_Error_Timeline_{_datasets[idx]}'
         )
 
     pass
