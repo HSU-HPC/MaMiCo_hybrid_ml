@@ -292,7 +292,7 @@ def compareLossVsValidRNN(l_of_l_files, l_of_l_labels, file_prefix=0, file_name=
 
         list_of_list_l.append(list_l)
 
-    num_epoch = 30
+    num_epoch = list_of_list_l[0][0].shape[0]
 
     x_axis = range(1, (num_epoch+1), 1)
 
