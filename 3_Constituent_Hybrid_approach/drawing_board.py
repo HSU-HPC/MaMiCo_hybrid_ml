@@ -333,8 +333,6 @@ def trial_4_Hybrid_plots():
 
 
 if __name__ == "__main__":
-    trial_0_UNET_AE_plots()
-    '''
     _directory = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/0_UNET_AE/'
     _files = [
         f'{_directory}Valid_Error_Timeline_C_3_0_B.csv',
@@ -358,4 +356,3 @@ if __name__ == "__main__":
         file_prefix=_directory,
         file_name='valid_error_timeline'
     )
-    '''
