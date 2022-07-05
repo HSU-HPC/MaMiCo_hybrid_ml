@@ -461,7 +461,7 @@ def trial_0_UNET_AE_mp():
 
 def trial_0_error_timeline():
     _directory = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/0_UNET_AE/'
-    model_name = 'Model_UNET_AE_LR0_001'
+    model_name = 'Model_UNET_AE_LR0_0005'
     _model = UNET_AE(
         device=device,
         in_channels=3,
