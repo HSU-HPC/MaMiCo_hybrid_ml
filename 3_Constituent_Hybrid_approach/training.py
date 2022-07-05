@@ -757,8 +757,9 @@ def trial_3_LSTM(_seq_length, _num_layers, _alpha, _alpha_string, _train_loaders
     _epoch_valids = []
 
     print('Beginning training.')
-    for epoch in range(30):
+    for epoch in range(50):
         avg_loss = 0
+        start_time = time.time()
         for _train_loader in _train_loaders:
             avg_loss += train_RNN(
                 loader=_train_loader,
@@ -769,10 +770,11 @@ def trial_3_LSTM(_seq_length, _num_layers, _alpha, _alpha_string, _train_loaders
                 identifier=_model_identifier,
                 current_epoch=epoch+1
             )
-        print('------------------------------------------------------------')
-        print(
-            f'{_model_identifier} Training Epoch: {epoch+1}-> Averaged Loader Loss: {avg_loss/len(_train_loaders):.3f}')
-
+            duration = time.time() - start_time
+            print('------------------------------------------------------------')
+            print(
+                f'{_model_identifier} Training Epoch: {epoch+1}-> Averaged Loader Loss: {avg_loss/len(_train_loaders):.3f}. Duration: {duration:.3f}')
+            _epoch_losses.append(avg_loss/len(_train_loaders))
         _epoch_losses.append(avg_loss/len(_train_loaders))
 
         avg_valid = 0
@@ -953,4 +955,4 @@ def trial_4_Hybrid_mp():
 
 
 if __name__ == "__main__":
-    trial_2_GRU_mp()
+    trial_3_LSTM_mp()
