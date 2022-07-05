@@ -355,5 +355,5 @@ if __name__ == "__main__":
         loss_files=_files,
         loss_labels=_labels,
         file_prefix=_directory,
-        file_name='valid_error_timeline'
+        file_name=f'valid_error_timeline_{_model_name}'
     )
