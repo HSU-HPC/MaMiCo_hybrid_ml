@@ -953,4 +953,4 @@ def trial_4_Hybrid_mp():
 
 
 if __name__ == "__main__":
-    trial_0_error_timeline()
+    trial_1_RNN_mp()
