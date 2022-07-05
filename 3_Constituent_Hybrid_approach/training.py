@@ -953,4 +953,4 @@ def trial_4_Hybrid_mp():
 
 
 if __name__ == "__main__":
-    get_latentspace_AE_helper()
+    trial_0_error_timeline()
