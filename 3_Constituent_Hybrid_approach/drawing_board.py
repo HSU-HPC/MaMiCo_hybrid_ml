@@ -229,7 +229,8 @@ def trial_2_GRU_plots():
 
 def trial_3_LSTM_plots():
     _alphas = [0.001, 0.0005, 0.0001, 0.00005, 0.00001, 0.000005]
-    _alpha_strings = ['0_001', '0_0005', '0_0001', '0_00005', '0_00001', '0_000005']
+    _alpha_strings = ['0_001', '0_0005', '0_0001',
+                      '0_00005', '0_00001', '0_000005']
     _rnn_depths = [1, 2, 3]
     _seq_lengths = [5, 15, 25]
     _directory = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/3_LSTM/'
@@ -353,7 +354,7 @@ def trial_4_Hybrid_plots():
 
 
 if __name__ == "__main__":
-    trial_3_LSTM_plots()
+    trial_1_RNN_plots()
     '''
     _directory = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/0_UNET_AE/'
     _model_name = 'Model_UNET_AE_LR0_0005'
@@ -379,4 +380,5 @@ if __name__ == "__main__":
         file_prefix=_directory,
         file_name=f'valid_error_timeline_{_model_name}'
     )
+    '''
     '''
