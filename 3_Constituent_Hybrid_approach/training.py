@@ -929,6 +929,7 @@ def trial_4_Hybrid(_train_loaders, _valid_loaders):
             avg_loss += train_HYBRID(
                 loader=_train_loader,
                 model=_model_hybrid,
+                optimizer=_optimizer,
                 criterion=_criterion,
                 scaler=_scaler,
                 identifier=_model_identifier,
