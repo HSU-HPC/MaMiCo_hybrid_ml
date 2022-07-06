@@ -123,7 +123,7 @@ def trial_1_RNN_plots():
 
     _list_of_list_f = []
     _list_of_list_l = []
-
+    '''
     for idx, _alpha in enumerate(_alphas):
         files = []
         labels = []
@@ -142,6 +142,7 @@ def trial_1_RNN_plots():
         file_prefix=_directory,
         file_name='RNN'
     )
+    '''
 
     _list_of_list_f = []
     _list_of_list_l = []
@@ -151,11 +152,11 @@ def trial_1_RNN_plots():
         labels = []
         for _seq_length in _seq_lengths:
             files.append(
-                f'{_directory}Losses_RNN_LR{_alpha_strings[-1]}_Lay{_rnn_depth}_Seq{_seq_length}.csv')
+                f'{_directory}Losses_RNN_LR{_alpha_strings[-2]}_Lay{_rnn_depth}_Seq{_seq_length}.csv')
             labels.append(
                 f'Training Seq:{_seq_length}')
             files.append(
-                f'{_directory}Valids_RNN_LR{_alpha_strings[-1]}_Lay{_rnn_depth}_Seq{_seq_length}.csv')
+                f'{_directory}Valids_RNN_LR{_alpha_strings[-2]}_Lay{_rnn_depth}_Seq{_seq_length}.csv')
             labels.append(
                 f'Validation Seq:{_seq_length}')
         _list_of_list_f.append(files)
@@ -356,8 +357,7 @@ def trial_4_Hybrid_plots():
 
 
 if __name__ == "__main__":
-    trial_2_GRU_plots()
-    trial_3_LSTM_plots()
+    trial_1_RNN_plots()
     '''
     _directory = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/0_UNET_AE/'
     _model_name = 'Model_UNET_AE_LR0_0005'
