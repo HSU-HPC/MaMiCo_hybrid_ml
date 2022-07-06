@@ -903,8 +903,8 @@ def trial_4_Hybrid(_train_loaders, _valid_loaders):
     _model_rnn = LSTM(
         input_size=256,
         hidden_size=256,
-        seq_size=15,
-        num_layers=1,
+        seq_size=25,
+        num_layers=3,
         device=device
     )
     _model_rnn.load_state_dict(torch.load(
