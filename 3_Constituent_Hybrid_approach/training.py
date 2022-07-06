@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import torch.optim as optim
 import torch.nn as nn
 import numpy as np
-from model import UNET_AE, RNN, GRU, LSTM, Hybrid_MD_RNN_UNET
+from model import UNET_AE, RNN, GRU, LSTM, Hybrid_MD_RNN_UNET, resetPipeline
 from utils import get_UNET_AE_loaders, get_RNN_loaders, get_mamico_loaders, losses2file, dataset2csv, get_Hybrid_loaders
 from plotting import plotAvgLoss, compareAvgLoss, compareLossVsValid
 
@@ -264,8 +264,8 @@ def valid_RNN(loader, model, criterion, scaler, identifier='', current_epoch='')
 
     avg_loss = epoch_loss/counter
     duration = time.time() - start_time
-    # print('------------------------------------------------------------')
-    # print(f'{identifier} Validation -> Loss: {avg_loss:.3f}, Duration: {duration:.3f}')
+    print('------------------------------------------------------------')
+    print(f'{identifier} Validation -> Loss: {avg_loss:.3f}, Duration: {duration:.3f}')
     return avg_loss
 
 
@@ -885,12 +885,9 @@ def trial_3_LSTM_mp():
 
 
 def trial_4_Hybrid(_train_loaders, _valid_loaders):
-    # _alphas = [0.01, 0.005, 0.001, 0.0005, 0.0001, 0.00005]
-    # _alpha_strings = ['0_01', '0_005', '0_001', '0_0005', '0_0001', '0_00005']
     _criterion = nn.L1Loss()
-    # _train_loader, _valid_loader = get_UNET_AE_loaders(file_names=0)
     _file_prefix = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/4_Hybrid_RNN_UNET/'
-    _model_identifier = 'LSTM_Seq15_Lay1_LR0_00005'
+    _model_identifier = 'LSTM_LR0_000005_Lay3_Seq25'
     print('Initializing model.')
 
     _model_unet = UNET_AE(
@@ -901,7 +898,7 @@ def trial_4_Hybrid(_train_loaders, _valid_loaders):
         activation=nn.ReLU(inplace=True)
     )
     _model_unet.load_state_dict(torch.load(
-        '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/0_UNET_AE/Model_UNET_AE_0_001'))
+        '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/0_UNET_AE/Model_UNET_AE_LR0_0005'))
 
     _model_rnn = LSTM(
         input_size=256,
@@ -911,20 +908,24 @@ def trial_4_Hybrid(_train_loaders, _valid_loaders):
         device=device
     )
     _model_rnn.load_state_dict(torch.load(
-        '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/3_LSTM/Model_LSTM_Seq15_Lay1_LR0_00005'))
+        '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/3_LSTM/Model_LSTM_LR0_000005_Lay3_Seq25'))
 
     _model_hybrid = Hybrid_MD_RNN_UNET(
         device=device,
         UNET_Model=_model_unet,
         RNN_Model=_model_rnn,
-        seq_length=15
+        seq_length=25
     ).to(device)
 
+    _model_hybrid.eval()
+    '''
     print('Initializing training parameters.')
+    '''
     _scaler = torch.cuda.amp.GradScaler()
     _optimizer = optim.Adam(_model_hybrid.parameters(), lr=0.001)
     _epoch_losses = []
 
+    '''
     print('Beginning training.')
     for epoch in range(30):
         avg_loss = 0
@@ -941,8 +942,9 @@ def trial_4_Hybrid(_train_loaders, _valid_loaders):
         print(
             f'{_model_identifier} Training Epoch: {epoch+1}-> Averaged Loader Loss: {avg_loss/len(_train_loaders):.3f}')
         _epoch_losses.append(avg_loss/len(_train_loaders))
-
+    '''
     _valid_loss = 0
+    _valid_loaders = _train_loaders + _valid_loaders
     for _valid_loader in _valid_loaders:
         _valid_loss += valid_RNN(
             loader=_valid_loader,
@@ -952,6 +954,8 @@ def trial_4_Hybrid(_train_loaders, _valid_loaders):
             identifier=_model_identifier,
             current_epoch=0
         )
+        resetPipeline(_model_hybrid)
+    '''
     print('------------------------------------------------------------')
     print(f'{_model_identifier} Validation -> Averaged Loader Loss: {_valid_loss/len(_valid_loaders):.3f}')
     _epoch_losses.append(_valid_loss/len(_valid_loaders))
@@ -971,6 +975,7 @@ def trial_4_Hybrid(_train_loaders, _valid_loaders):
         _model_hybrid.state_dict(),
         f'{_file_prefix}Model_Hybrid_{_model_identifier}'
     )
+    '''
 
     pass
 
