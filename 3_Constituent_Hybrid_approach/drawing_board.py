@@ -186,8 +186,6 @@ def trial_2_GRU_plots():
         labels = []
         for _rnn_depth in _rnn_depths:
             for _seq_length in _seq_lengths:
-                if _rnn_depth == 1 and _seq_length == 25:
-                    continue
                 files.append(
                     f'{_directory}Losses_GRU_LR{_alpha_strings[idx]}_Lay{_rnn_depth}_Seq{_seq_length}.csv')
                 labels.append(
