@@ -288,8 +288,8 @@ class Hybrid_MD_RNN_UNET(nn.Module):
         # PARAMETERS:
         super(Hybrid_MD_RNN_UNET, self).__init__()
         self.device = device
-        self.unet = UNET_Model
-        self.rnn = RNN_Model
+        self.unet = UNET_Model.eval()
+        self.rnn = RNN_Model.eval()
         self.seq_length = seq_length
         self.sequence = torch.zeros(self.seq_length, 256)
         print('Model initialized: Hybrid_MD_RNN_UNET')
