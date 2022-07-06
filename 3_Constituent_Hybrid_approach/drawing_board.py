@@ -116,7 +116,8 @@ def trial_0_UNET_AE_plots():
 def trial_1_RNN_plots():
 
     _alphas = [0.001, 0.0005, 0.0001, 0.00005, 0.00001, 0.000005]
-    _alpha_strings = ['0_001', '0_0005', '0_0001', '0_00005', '0_00001', '0_000005']
+    _alpha_strings = ['0_001', '0_0005', '0_0001',
+                      '0_00005', '0_00001', '0_000005']
     _rnn_depths = [1, 2, 3]
     _seq_lengths = [5, 15, 25]
     _directory = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/1_RNN/'
@@ -151,11 +152,11 @@ def trial_1_RNN_plots():
         labels = []
         for _seq_length in _seq_lengths:
             files.append(
-                f'{_directory}Losses_RNN_LR0_00005_Lay{_rnn_depth}_Seq{_seq_length}.csv')
+                f'{_directory}Losses_RNN_LR{_alpha_strings[-1]}_Lay{_rnn_depth}_Seq{_seq_length}.csv')
             labels.append(
                 f'Training Seq:{_seq_length}')
             files.append(
-                f'{_directory}Valids_RNN_LR0_00005_Lay{_rnn_depth}_Seq{_seq_length}.csv')
+                f'{_directory}Valids_RNN_LR{_alpha_strings[-1]}_Lay{_rnn_depth}_Seq{_seq_length}.csv')
             labels.append(
                 f'Validation Seq:{_seq_length}')
         _list_of_list_f.append(files)
@@ -165,7 +166,7 @@ def trial_1_RNN_plots():
         l_of_l_files=_list_of_list_f,
         l_of_l_labels=_list_of_list_l,
         file_prefix=_directory,
-        file_name='And_Valids_RNN_LR0_00005'
+        file_name=f'And_Valids_RNN_LR{_alpha_strings[-1]}'
     )
     pass
 
@@ -380,4 +381,5 @@ if __name__ == "__main__":
         file_prefix=_directory,
         file_name=f'valid_error_timeline_{_model_name}'
     )
+    '''
     '''
