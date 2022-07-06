@@ -307,7 +307,7 @@ class Hybrid_MD_RNN_UNET(nn.Module):
             device=self.device).to(self.device)
         # print('Size of self.sequence: ', self.sequence.size())
 
-        interim = torch.reshape(self.sequence, (1, 15, 256))
+        interim = torch.reshape(self.sequence, (1, self.seq_length, 256))
         x = self.rnn(interim)
         # print('Size of RNN Output: ', x.size())
 
