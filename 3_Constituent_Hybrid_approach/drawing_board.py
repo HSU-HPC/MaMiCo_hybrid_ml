@@ -357,7 +357,7 @@ def trial_4_Hybrid_plots():
 
 
 if __name__ == "__main__":
-    trial_1_RNN_plots()
+    trial_2_GRU_plots()
     '''
     _directory = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/0_UNET_AE/'
     _model_name = 'Model_UNET_AE_LR0_0005'
