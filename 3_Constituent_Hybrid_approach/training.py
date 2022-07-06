@@ -576,16 +576,20 @@ def trial_1_RNN(_seq_length, _num_layers, _alpha, _alpha_string, _train_loaders,
 
 def trial_1_RNN_mp():
     _alphas = [0.001, 0.0005, 0.0001, 0.00005, 0.00001, 0.000005]
-    _alpha_strings = ['0_001', '0_0005', '0_0001', '0_00005', '0_00001', '0_000005']
+    _alpha_strings = ['0_001', '0_0005', '0_0001',
+                      '0_00005', '0_00001', '0_000005']
     _rnn_depths = [1, 2, 3]
     _seq_lengths = [5, 15, 25]
 
     _alphas.reverse()
     _alpha_strings.reverse()
 
-    _t_loader_05, _v_loader_05 = get_RNN_loaders(file_names=0, sequence_length=5)
-    _t_loader_15, _v_loader_15 = get_RNN_loaders(file_names=0, sequence_length=15)
-    _t_loader_25, _v_loader_25 = get_RNN_loaders(file_names=0, sequence_length=25)
+    _t_loader_05, _v_loader_05 = get_RNN_loaders(
+        file_names=0, sequence_length=5)
+    _t_loader_15, _v_loader_15 = get_RNN_loaders(
+        file_names=0, sequence_length=15)
+    _t_loader_25, _v_loader_25 = get_RNN_loaders(
+        file_names=0, sequence_length=25)
 
     _t_loaders = [_t_loader_05, _t_loader_15, _t_loader_25]
     _v_loaders = [_v_loader_05, _v_loader_15, _v_loader_25]
@@ -693,29 +697,34 @@ def trial_2_GRU_mp():
     # _alphas = [0.01, 0.005, 0.001, 0.0005, 0.0001, 0.00005]
     # _alpha_strings = ['0_01', '0_005', '0_001', '0_0005', '0_0001', '0_00005']
     _alphas = [0.001, 0.0005, 0.0001, 0.00005, 0.00001, 0.000005]
-    _alpha_strings = ['0_001', '0_0005', '0_0001', '0_00005', '0_00001', '0_000005']
+    _alpha_strings = ['0_001', '0_0005', '0_0001',
+                      '0_00005', '0_00001', '0_000005']
     _rnn_depths = [1, 2, 3]
     _seq_lengths = [5, 15, 25]
 
     _alphas.reverse()
     _alpha_strings.reverse()
-    _t_loader_05, _v_loader_05 = get_RNN_loaders(file_names=0, sequence_length=5)
+    _t_loader_05, _v_loader_05 = get_RNN_loaders(
+        file_names=0, sequence_length=5)
     # _t_loader_15, _v_loader_15 = get_RNN_loaders(file_names=0, sequence_length=15)
-    _t_loader_25, _v_loader_25 = get_RNN_loaders(file_names=0, sequence_length=25)
+    _t_loader_25, _v_loader_25 = get_RNN_loaders(
+        file_names=0, sequence_length=25)
     # _t_loaders = [_t_loader_05, _t_loader_15, _t_loader_25]
     # _v_loaders = [_v_loader_05, _v_loader_15, _v_loader_25]
-    _R_alphas =[0.000005, 0.00001, 0.00005, 0.0001, 0.0005, 0.001]  # , 0.001]
-    _R_alpha_strings = ['0_000005', '0_00001', '0_00005', '0_0001', '0_0005', '0_001']  # , '0_001']
+    _R_alphas = [0.000005, 0.00001, 0.00005, 0.0001, 0.0005, 0.001]  # , 0.001]
+    _R_alpha_strings = ['0_000005', '0_00001', '0_00005',
+                        '0_0001', '0_0005', '0_001']  # , '0_001']
     _R_depths = [1, 1, 1, 1, 1, 1]  # , 2]
     _R_lengths = [25, 25, 25, 25, 25, 25]  # , 5]
 
     processes = []
     counter = 1
 
-    for i, _a_string in _R_alpha_strings:
+    for i, _a_string in enumerate(_R_alpha_strings):
         p = mp.Process(
             target=trial_2_GRU,
-            args=(_R_lengths[i], _R_depths[i], _R_alphas[i], _a_string, _t_loader_25, _v_loader_25,)
+            args=(_R_lengths[i], _R_depths[i], _R_alphas[i],
+                  _a_string, _t_loader_25, _v_loader_25,)
         )
         p.start()
         processes.append(p)
