@@ -240,7 +240,7 @@ def compareAvgLossRNN(l_of_l_files, l_of_l_labels, file_prefix=0, file_name=0):
     # BRIEF:
     # PARAMETERS:
     list_of_list_l = []
-    list_of_LR = ['0.01', '0.005', '0.001', '0.0005', '0.0001', '0.00005']
+    list_of_LR = ['0_001', '0_0005', '0_0001', '0_00005', '0_00001', '0_000005']
 
     for list in l_of_l_files:
         losses = csv2dataset_mp(list)
