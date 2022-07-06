@@ -269,7 +269,7 @@ def compareAvgLossRNN(l_of_l_files, l_of_l_labels, file_prefix=0, file_name=0):
         # axs[i].legend(ncol=4, fontsize=9)
         # axs[i].grid(axis='y')
 
-    axs[-1].set_xlabel('Number of Epochs')
+    axs[-1].set_xlabel('Epoch')
     axs[-1].legend(ncol=3, fontsize=9)
     fig.set_size_inches(6, 10)
     if file_name != 0:
