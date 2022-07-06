@@ -269,7 +269,7 @@ def valid_RNN(loader, model, criterion, scaler, identifier='', current_epoch='')
     return avg_loss
 
 
-def train_HYBRID(loader, model, optimizer, criterion, scaler, alpha, current_epoch):
+def train_HYBRID(loader, model, optimizer, criterion, scaler, identifier='', current_epoch=''):
     # BRIEF: The train function completes one epoch of the training cycle.
     # PARAMETERS:
     # loader - object of PyTorch-type DataLoader to automatically feed dataset
@@ -306,11 +306,11 @@ def train_HYBRID(loader, model, optimizer, criterion, scaler, alpha, current_epo
     avg_loss = epoch_loss/counter
     duration = time.time() - start_time
     print('------------------------------------------------------------')
-    print(f'{alpha} Training -> Epoch: {current_epoch}, Loss: {avg_loss:.3f}, Duration: {duration:.3f}')
+    print(f'{identifier} Training -> Epoch: {current_epoch}, Loss: {avg_loss:.3f}, Duration: {duration:.3f}')
     return avg_loss
 
 
-def valid_HYBRID(loader, model, criterion, scaler, alpha, current_epoch):
+def valid_HYBRID(loader, model, criterion, scaler, identifier='', current_epoch=''):
     # BRIEF: The train function completes one epoch of the training cycle.
     # PARAMETERS:
     # loader - object of PyTorch-type DataLoader to automatically feed dataset
@@ -340,7 +340,7 @@ def valid_HYBRID(loader, model, criterion, scaler, alpha, current_epoch):
     avg_loss = epoch_loss/counter
     duration = time.time() - start_time
     print('------------------------------------------------------------')
-    print(f'{alpha} Validation -> Loss: {avg_loss:.3f}, Duration: {duration:.3f}')
+    print(f'{identifier} Validation -> Loss: {avg_loss:.3f}, Duration: {duration:.3f}')
     return avg_loss
 
 
@@ -917,34 +917,29 @@ def trial_4_Hybrid(_train_loaders, _valid_loaders):
         seq_length=25
     ).to(device)
 
-    _model_hybrid.eval()
-    '''
     print('Initializing training parameters.')
-    '''
     _scaler = torch.cuda.amp.GradScaler()
     _optimizer = optim.Adam(_model_hybrid.parameters(), lr=0.001)
     _epoch_losses = []
 
-    '''
     print('Beginning training.')
     for epoch in range(30):
         avg_loss = 0
         for _train_loader in _train_loaders:
-            avg_loss += valid_RNN(
+            avg_loss += train_HYBRID(
                 loader=_train_loader,
                 model=_model_hybrid,
                 criterion=_criterion,
                 scaler=_scaler,
                 identifier=_model_identifier,
-                current_epoch=0
+                current_epoch=epoch+1
             )
         print('------------------------------------------------------------')
         print(
             f'{_model_identifier} Training Epoch: {epoch+1}-> Averaged Loader Loss: {avg_loss/len(_train_loaders):.3f}')
         _epoch_losses.append(avg_loss/len(_train_loaders))
-    '''
+
     _valid_loss = 0
-    _valid_loaders = _train_loaders + _valid_loaders
     for _valid_loader in _valid_loaders:
         _valid_loss += valid_RNN(
             loader=_valid_loader,
