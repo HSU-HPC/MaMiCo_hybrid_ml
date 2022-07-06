@@ -308,10 +308,10 @@ def compareLossVsValidRNN(l_of_l_files, l_of_l_labels, file_prefix=0, file_name=
                 c='tab20', N=12, idx=j), linestyle='--', label=l_of_l_labels[i][2*j+1])
 
         axs[i].set_title(f'Number of Layers = {list_of_layers[i]}')
-        axs[i].set_ylabel('Error')
+        axs[i].set_ylabel('Avg Loss')
         axs[i].grid(axis='y', alpha=0.3)
 
-    axs[-1].set_xlabel('Number of Epochs')
+    axs[-1].set_xlabel('Epoch')
     axs[-1].legend(ncol=3, fontsize=9)
     fig.set_size_inches(6, 6.66)
     if file_name != 0:
