@@ -562,8 +562,10 @@ if __name__ == "__main__":
         'clean-kvs-40K-SE-combined-domain',
         'clean-kvs-40K-SW-combined-domain',
     ]
+    _u_wall = [3 for i in range(15)]
+
     visualizeMaMiCoDataset(
         file_names=_file_names,
         dataset_names=_dataset_names,
-        u_wall=3)
+        u_wall=_u_wall)
     pass
