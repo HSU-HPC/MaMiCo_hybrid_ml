@@ -710,6 +710,17 @@ if __name__ == "__main__":
         'kvs_10K_NW_combined_domain.csv',
         'kvs_10K_SE_combined_domain.csv',
         'kvs_10K_SW_combined_domain.csv',
+        'kvs_20K_NW_combined_domain.csv',
+        'kvs_20K_SE_combined_domain.csv',
+        'kvs_20K_SW_combined_domain.csv',
+        'kvs_30K_NE_combined_domain.csv',
+        'kvs_30K_NW_combined_domain.csv',
+        'kvs_30K_SE_combined_domain.csv',
+        'kvs_30K_SW_combined_domain.csv',
+        'kvs_40K_NE_combined_domain.csv',
+        'kvs_40K_NW_combined_domain.csv',
+        'kvs_40K_SE_combined_domain.csv',
+        'kvs_40K_SW_combined_domain.csv',
     ]
 
     processes = []
