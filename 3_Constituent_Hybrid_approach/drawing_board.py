@@ -382,6 +382,8 @@ if __name__ == "__main__":
         for model in _model_identifiers:
             _l_of_files.append(f'{_directory}{_prefix}{model}_{counter}.csv')
 
+        _l_of_l_files.append(_l_of_files)
+
     compareErrorTimeline(
         l_of_l_files=_l_of_l_files,
         l_of_l_labels=_l_of_labels,
