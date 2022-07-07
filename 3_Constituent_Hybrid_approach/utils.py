@@ -711,11 +711,11 @@ if __name__ == "__main__":
         'kvs_10K_SW_combined_domain.csv',
     ]
 
-
     start = time.time()
 
     with concurrent.futures.ProcessPoolExecutor() as executor:
         results = executor.map(clean_mamico_data, _directory, _filenames)
 
+    print(results)
     duration = time.time() - start
     print(f'Loading Data via Multiprocessing takes: {duration:.3f} secs')
