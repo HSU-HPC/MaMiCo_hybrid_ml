@@ -2,6 +2,7 @@ import torch
 import numpy as np
 import time
 import csv
+import torch.multiprocessing as mp
 import concurrent.futures
 from dataset import MyMamicoDataset, MyMamicoDataset_UNET_AE, MyMamicoDataset_RNN
 from torch.utils.data import DataLoader
@@ -711,11 +712,22 @@ if __name__ == "__main__":
         'kvs_10K_SW_combined_domain.csv',
     ]
 
+    processes = []
+    counter = 1
     start = time.time()
+    for idx, filename in enumerate(_filenames):
+        p = mp.Process(
+            target=clean_mamico_data,
+            args=(_directory, filename,)
+        )
+        p.start()
+        processes.append(p)
+        print(f'Creating Process Number: {counter}')
+        counter += 1
 
-    with concurrent.futures.ProcessPoolExecutor() as executor:
-        results = executor.map(clean_mamico_data, _directory, _filenames)
+    for process in processes:
+        process.join()
+        print('Joining Process')
 
-    print(results)
     duration = time.time() - start
     print(f'Loading Data via Multiprocessing takes: {duration:.3f} secs')
