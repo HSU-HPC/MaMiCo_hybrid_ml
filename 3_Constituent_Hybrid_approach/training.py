@@ -1061,7 +1061,7 @@ def trial_5_KVS_AE(_alpha, _alpha_string, _train_loaders, _valid_loaders):
     return
 
 
-if __name__ == "__main__":
+def trial_5_KVS_AE_helper():
     _t_loaders, _v_loaders = get_UNET_AE_loaders(file_names=-2)
     trial_5_KVS_AE(
         _alpha=0.0005,
@@ -1069,3 +1069,8 @@ if __name__ == "__main__":
         _train_loaders=_t_loaders,
         _valid_loaders=_v_loaders
     )
+
+
+if __name__ == "__main__":
+
+    trial_2_GRU_mp()
