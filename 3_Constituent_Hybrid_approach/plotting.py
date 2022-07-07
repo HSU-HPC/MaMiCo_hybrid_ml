@@ -117,7 +117,7 @@ def flowProfile(dataset, dataset_name, u_wall=1):
     plt.close()
 
 
-def visualizeMaMiCoDataset(filenames, dataset_names, u_wall):
+def visualizeMaMiCoDataset(file_names, dataset_names, u_wall):
     # BRIEF: This function is used to visualize the MaMiCo generated simulation
     # data. It loads the dataset from a csv file.
     # Here, the use case is tailored to simulation results containing 1000
@@ -126,10 +126,10 @@ def visualizeMaMiCoDataset(filenames, dataset_names, u_wall):
     # filename -  the name of the file of interest including file suffix,
     # e.g. 'my_values.csv'
 
-    for i in range(len(filenames)):
+    for i in range(len(file_names)):
         # Load dataset from csv
         print('Loading Dataset.')
-        _dataset = mamico_csv2dataset(filenames[i])
+        _dataset = mamico_csv2dataset(file_names[i])
         print('Complete.')
         # Create 3D scatterplot for meaningful timesteps.
         print('Creating ColorMap.')
@@ -228,7 +228,7 @@ def compareLossVsValid(loss_files, loss_labels, file_prefix=0, file_name=0):
     ax1.set_xlabel('Epoch')
     ax1.set_ylabel('Average Loss')
     ax1.grid(axis='y', alpha=0.3)
-    ax1.legend(ncol=2, fontsize=7)
+    ax1.legend(ncol=2, fontsize=9)
     fig.set_size_inches(7, 2.5)
     if file_name != 0:
         fig.savefig(f'{file_prefix}Compare_Loss_vs_Valid_{file_name}.svg')
@@ -403,7 +403,7 @@ def compareFlowProfile(preds, targs, model_descriptor):
         axs[i].set_title(f't={samples[time_list[i]]}', fontsize=12)
 
     # plt.xlabel('Spatial Dimension')
-    plt.legend(ncol=2, fontsize=7)
+    plt.legend(ncol=2, fontsize=9)
     plt.subplots_adjust(left=0.1,
                         bottom=0.1,
                         right=0.9,
@@ -523,14 +523,47 @@ def showSample():
 
 
 def main():
-    '''
-    compareAvgLoss(
-        loss_files=_loss_files,
-        loss_labels=loss_labels=
-    )
-    '''
     pass
 
 
 if __name__ == "__main__":
+    _directory = '/home/lerdo/lerdo_HPC_Lab_Project/Trainingdata'
+    _file_names = [
+        f'{_directory}clean_kvs_10K_NE_combined_domain.csv',
+        f'{_directory}clean_kvs_10K_NW_combined_domain.csv',
+        f'{_directory}clean_kvs_10K_SE_combined_domain.csv',
+        f'{_directory}clean_kvs_10K_SW_combined_domain.csv',
+        f'{_directory}clean_kvs_20K_NW_combined_domain.csv',
+        f'{_directory}clean_kvs_20K_SE_combined_domain.csv',
+        f'{_directory}clean_kvs_20K_SW_combined_domain.csv',
+        f'{_directory}clean_kvs_30K_NE_combined_domain.csv',
+        f'{_directory}clean_kvs_30K_NW_combined_domain.csv',
+        f'{_directory}clean_kvs_30K_SE_combined_domain.csv',
+        f'{_directory}clean_kvs_30K_SW_combined_domain.csv',
+        f'{_directory}clean_kvs_40K_NE_combined_domain.csv',
+        f'{_directory}clean_kvs_40K_NW_combined_domain.csv',
+        f'{_directory}clean_kvs_40K_SE_combined_domain.csv',
+        f'{_directory}clean_kvs_40K_SW_combined_domain.csv',
+    ]
+    _dataset_names = [
+        'clean_kvs_10K_NE_combined_domain',
+        'clean_kvs_10K_NW_combined_domain',
+        'clean_kvs_10K_SE_combined_domain',
+        'clean_kvs_10K_SW_combined_domain',
+        'clean_kvs_20K_NW_combined_domain',
+        'clean_kvs_20K_SE_combined_domain',
+        'clean_kvs_20K_SW_combined_domain',
+        'clean_kvs_30K_NE_combined_domain',
+        'clean_kvs_30K_NW_combined_domain',
+        'clean_kvs_30K_SE_combined_domain',
+        'clean_kvs_30K_SW_combined_domain',
+        'clean_kvs_40K_NE_combined_domain',
+        'clean_kvs_40K_NW_combined_domain',
+        'clean_kvs_40K_SE_combined_domain',
+        'clean_kvs_40K_SW_combined_domain',
+    ]
+    visualizeMaMiCoDataset(
+        file_names=_file_names,
+        dataset_names=_dataset_names,
+        u_wall=3)
     pass
