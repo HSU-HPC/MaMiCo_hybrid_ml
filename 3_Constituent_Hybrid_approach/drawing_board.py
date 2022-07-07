@@ -365,6 +365,7 @@ if __name__ == "__main__":
         'RNN_LR0_00001_Lay1_Seq25',
         'GRU_LR0_00001_Lay2_Seq25',
         'LSTM_LR0_00001_Lay2_Seq25',
+        'UNET_AE_LR0_0005RNN_LR0_00001_Lay1_Seq25'
     ]
     _counters = [15, 16, 17]
     _dataset_names = [
@@ -374,7 +375,7 @@ if __name__ == "__main__":
     ]
 
     _l_of_l_files = []
-    _l_of_labels = ['RNN', 'GRU', 'LSTM']
+    _l_of_labels = ['RNN', 'GRU', 'LSTM', 'UNET AE Baseline']
 
     for counter in _counters:
         _l_of_files = []
