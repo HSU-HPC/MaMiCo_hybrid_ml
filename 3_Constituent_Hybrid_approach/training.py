@@ -985,7 +985,7 @@ def trial_4_Hybrid_mp():
 
 def trial_5_KVS_AE(_alpha, _alpha_string, _train_loaders, _valid_loaders):
     _criterion = nn.L1Loss()
-    _file_prefix = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/5_Hybrid_KVS'
+    _file_prefix = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/5_Hybrid_KVS/'
     _model_identifier = f'LR{_alpha_string}'
     print('Initializing UNET_AE model with LR: ', _alpha)
     _model = UNET_AE(
