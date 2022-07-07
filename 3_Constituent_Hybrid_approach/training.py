@@ -983,5 +983,89 @@ def trial_4_Hybrid_mp():
     pass
 
 
+def trial_5_KVS_AE(_alpha, _alpha_string, _train_loaders, _valid_loaders):
+    _criterion = nn.L1Loss()
+    _file_prefix = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/5_Hybrid_KVS'
+    _model_identifier = f'LR{_alpha_string}'
+    print('Initializing UNET_AE model with LR: ', _alpha)
+    _model = UNET_AE(
+        device=device,
+        in_channels=3,
+        out_channels=3,
+        features=[4, 8, 16],
+        activation=nn.ReLU(inplace=True)
+    ).to(device)
+
+    print('Initializing training parameters.')
+    _scaler = torch.cuda.amp.GradScaler()
+    _optimizer = optim.Adam(_model.parameters(), lr=_alpha)
+    _epoch_losses = []
+    _epoch_valids = []
+
+    print('Beginning training.')
+    for epoch in range(50):
+        avg_loss = 0
+        start_time = time.time()
+        for _train_loader in _train_loaders:
+            avg_loss += train_AE(
+                loader=_train_loader,
+                model=_model,
+                optimizer=_optimizer,
+                criterion=_criterion,
+                scaler=_scaler,
+                alpha=_alpha_string,
+                current_epoch=epoch+1
+            )
+        duration = time.time() - start_time
+        print('------------------------------------------------------------')
+        print(f'{_model_identifier} Training Epoch: {epoch+1}-> Averaged Loader Loss: {avg_loss/len(_train_loaders):.3f}. Duration: {duration:.3f}')
+        _epoch_losses.append(avg_loss/len(_train_loaders))
+
+        avg_valid = 0
+        for _valid_loader in _valid_loaders:
+            avg_valid += valid_AE(
+                loader=_valid_loader,
+                model=_model,
+                criterion=_criterion,
+                scaler=_scaler,
+                alpha=_alpha_string,
+                current_epoch=epoch+1
+            )
+        print('------------------------------------------------------------')
+        print(f'{_model_identifier} Validation -> Averaged Loader Loss: {avg_valid/len(_valid_loaders):.3f}')
+        _epoch_valids.append(avg_valid/len(_valid_loaders))
+
+    losses2file(
+        losses=_epoch_losses,
+        filename=f'{_file_prefix}Losses_UNET_AE_{_model_identifier}'
+    )
+    losses2file(
+        losses=_epoch_valids,
+        filename=f'{_file_prefix}Valids_UNET_AE_{_model_identifier}'
+    )
+
+    compareLossVsValid(
+        loss_files=[
+            f'{_file_prefix}Losses_UNET_AE_{_model_identifier}.csv',
+            f'{_file_prefix}Valids_UNET_AE_{_model_identifier}.csv'
+        ],
+        loss_labels=['Training', 'Validation'],
+        file_prefix=_file_prefix,
+        file_name=f'UNET_AE_{_model_identifier}'
+    )
+    torch.save(
+        _model.state_dict(),
+        f'{_file_prefix}Model_UNET_AE_{_model_identifier}'
+    )
+
+    return
+
+
 if __name__ == "__main__":
-    trial_4_Hybrid_mp()
+    _t_loaders, _v_loaders = get_UNET_AE_loaders(file_names=-2)
+    trial_5_KVS_AE(
+        _alpha=0.0005,
+        _alpha_string='0_0005',
+        _train_loaders=_t_loaders,
+        _valid_loaders=_v_loaders
+    )

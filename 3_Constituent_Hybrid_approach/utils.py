@@ -127,31 +127,32 @@ def get_UNET_AE_loaders(file_names=0, num_workers=12):
     data_train = []
     data_valid = []
     _directory = '/home/lerdo/lerdo_HPC_Lab_Project/Trainingdata'
-    _train_files = [
-        'clean_couette_test_combined_domain_0_5_top.csv',
-        'clean_couette_test_combined_domain_0_5_middle.csv',
-        'clean_couette_test_combined_domain_0_5_bottom.csv',
-        'clean_couette_test_combined_domain_1_0_top.csv',
-        'clean_couette_test_combined_domain_1_0_middle.csv',
-        'clean_couette_test_combined_domain_1_0_bottom.csv',
-        'clean_couette_test_combined_domain_2_0_top.csv',
-        'clean_couette_test_combined_domain_2_0_middle.csv',
-        'clean_couette_test_combined_domain_2_0_bottom.csv',
-        'clean_couette_test_combined_domain_4_0_top.csv',
-        'clean_couette_test_combined_domain_4_0_middle.csv',
-        'clean_couette_test_combined_domain_4_0_bottom.csv',
-    ]
-
-    _valid_files = [
-        'clean_couette_test_combined_domain_3_0_top.csv',
-        'clean_couette_test_combined_domain_3_0_middle.csv',
-        'clean_couette_test_combined_domain_3_0_bottom.csv',
-        'clean_couette_test_combined_domain_5_0_top.csv',
-        'clean_couette_test_combined_domain_5_0_middle.csv',
-        'clean_couette_test_combined_domain_5_0_bottom.csv'
-    ]
 
     if file_names == 0 or file_names == -1:
+        _train_files = [
+            'clean_couette_test_combined_domain_0_5_top.csv',
+            'clean_couette_test_combined_domain_0_5_middle.csv',
+            'clean_couette_test_combined_domain_0_5_bottom.csv',
+            'clean_couette_test_combined_domain_1_0_top.csv',
+            'clean_couette_test_combined_domain_1_0_middle.csv',
+            'clean_couette_test_combined_domain_1_0_bottom.csv',
+            'clean_couette_test_combined_domain_2_0_top.csv',
+            'clean_couette_test_combined_domain_2_0_middle.csv',
+            'clean_couette_test_combined_domain_2_0_bottom.csv',
+            'clean_couette_test_combined_domain_4_0_top.csv',
+            'clean_couette_test_combined_domain_4_0_middle.csv',
+            'clean_couette_test_combined_domain_4_0_bottom.csv',
+        ]
+
+        _valid_files = [
+            'clean_couette_test_combined_domain_3_0_top.csv',
+            'clean_couette_test_combined_domain_3_0_middle.csv',
+            'clean_couette_test_combined_domain_3_0_bottom.csv',
+            'clean_couette_test_combined_domain_5_0_top.csv',
+            'clean_couette_test_combined_domain_5_0_middle.csv',
+            'clean_couette_test_combined_domain_5_0_bottom.csv'
+        ]
+
         start_time = time.time()
         print('Loading training data.')
         data_train = mamico_csv2dataset_mp(_train_files)
@@ -190,6 +191,43 @@ def get_UNET_AE_loaders(file_names=0, num_workers=12):
                     )
                 dataloaders_valid.append(dataloader)
             return dataloaders_train, dataloaders_valid
+
+    elif file_names == -2:
+        _train_files = [
+            'clean_kvs_10K_NE_combined_domain.csv',
+            'clean_kvs_10K_NW_combined_domain.csv',
+            'clean_kvs_10K_SE_combined_domain.csv',
+            'clean_kvs_10K_SW_combined_domain.csv',
+            'clean_kvs_20K_NW_combined_domain.csv',
+            'clean_kvs_20K_SE_combined_domain.csv',
+            'clean_kvs_20K_SW_combined_domain.csv',
+            'clean_kvs_30K_NE_combined_domain.csv',
+            'clean_kvs_30K_NW_combined_domain.csv',
+            'clean_kvs_30K_SE_combined_domain.csv',
+            'clean_kvs_30K_SW_combined_domain.csv',
+        ]
+
+        _valid_files = [
+            'clean_kvs_40K_NE_combined_domain.csv',
+            'clean_kvs_40K_NW_combined_domain.csv',
+            'clean_kvs_40K_SE_combined_domain.csv',
+            'clean_kvs_40K_SW_combined_domain.csv',
+        ]
+
+        start_time = time.time()
+        print('Loading training data.')
+        data_train = mamico_csv2dataset_mp(_train_files)
+        duration = time.time() - start_time
+        print(
+            f'Completed loading training data. Duration: {duration:.3f}')
+
+        start_time = time.time()
+        print('Loading validation data.')
+        data_valid = mamico_csv2dataset_mp(_valid_files)
+        duration = time.time() - start_time
+        print(
+            f'Completed loading validation data. Duration: {duration:.3f}')
+
     else:
         print('Loading ---> RANDOM <--- training datasets as loader.')
         for i in range(3):
@@ -213,7 +251,7 @@ def get_UNET_AE_loaders(file_names=0, num_workers=12):
             dataloader = DataLoader(
                 dataset=dataset,
                 batch_size=32,
-                shuffle=False,
+                shuffle=True,
                 num_workers=num_workers
                 )
             dataloaders_train.append(dataloader)
