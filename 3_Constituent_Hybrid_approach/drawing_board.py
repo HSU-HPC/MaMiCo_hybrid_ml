@@ -1,7 +1,7 @@
 import numpy as np
 import torch
 import torch.nn as nn
-from plotting import compareColorMap, compareAvgLoss, compareAvgLossRNN, compareLossVsValidRNN, compareFlowProfile3x3, compareLossVsValid
+from plotting import compareColorMap, compareAvgLoss, compareAvgLossRNN, compareLossVsValidRNN, compareFlowProfile3x3, compareLossVsValid, compareErrorTimeline
 from model import UNET_AE, LSTM, Hybrid_MD_RNN_UNET
 from utils import get_UNET_AE_loaders, get_Hybrid_loaders
 
@@ -357,30 +357,35 @@ def trial_4_Hybrid_plots():
 
 
 if __name__ == "__main__":
-    trial_2_GRU_plots()
-    '''
-    _directory = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/0_UNET_AE/'
-    _model_name = 'Model_UNET_AE_LR0_0005'
-    _files = [
-        f'{_directory}{_model_name}_Valid_Error_Timeline_C_3_0_B.csv',
-        f'{_directory}{_model_name}_Valid_Error_Timeline_C_3_0_M.csv',
-        f'{_directory}{_model_name}_Valid_Error_Timeline_C_3_0_T.csv',
-        f'{_directory}{_model_name}_Valid_Error_Timeline_C_5_0_B.csv',
-        f'{_directory}{_model_name}_Valid_Error_Timeline_C_5_0_M.csv',
-        f'{_directory}{_model_name}_Valid_Error_Timeline_C_5_0_T.csv'
+
+    _directory = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/4_Hybrid/'
+    _prefix = 'Losses_Hybrid_'
+
+    _model_identifiers = [
+        'RNN_LR0_00001_Lay1_Seq25',
+        'GRU_LR0_00001_Lay2_Seq25',
+        'LSTM_LR0_00001_Lay2_Seq25',
     ]
-    _labels = [
-        'C 3 0 B',
-        'C 3 0 M',
-        'C 3 0 T',
-        'C 5 0 B',
-        'C 5 0 M',
+    _counters = [15, 16, 17]
+    _dataset_names = [
         'C 5 0 T',
+        'C 5 0 M',
+        'C 5 0 B'
     ]
-    compareAvgLoss(
-        loss_files=_files,
-        loss_labels=_labels,
+
+    _l_of_l_files = []
+    _l_of_labels = ['RNN', 'GRU', 'LSTM']
+
+    for counter in _counters:
+        _l_of_files = []
+
+        for model in _model_identifiers:
+            _l_of_files.append(f'{_directory}{_prefix}{model}_{counter}.csv')
+
+    compareErrorTimeline(
+        l_of_l_files=_l_of_l_files,
+        l_of_l_labels=_l_of_labels,
+        l_of_titles=_dataset_names,
         file_prefix=_directory,
-        file_name=f'valid_error_timeline_{_model_name}'
+        file_name='Couette_5_0'
     )
-    '''
