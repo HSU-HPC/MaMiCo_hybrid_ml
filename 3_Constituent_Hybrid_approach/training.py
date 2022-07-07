@@ -243,7 +243,7 @@ def valid_RNN(loader, model, criterion, scaler, identifier='', current_epoch='')
     # optimizer - the optimization algorithm applied during training
     # criterion - the loss function applied to quantify the error
     # scaler -
-    start_time = time.time()
+    # start_time = time.time()
 
     # The tqdm module allows to display a smart progress meter for iterables
     # using tqdm(iterable).
@@ -263,9 +263,9 @@ def valid_RNN(loader, model, criterion, scaler, identifier='', current_epoch='')
             counter += 1
 
     avg_loss = epoch_loss/counter
-    duration = time.time() - start_time
-    print('------------------------------------------------------------')
-    print(f'{identifier} Validation -> Loss: {avg_loss:.3f}, Duration: {duration:.3f}')
+    # duration = time.time() - start_time
+    # print('------------------------------------------------------------')
+    # print(f'{identifier} Validation -> Loss: {avg_loss:.3f}, Duration: {duration:.3f}')
     return avg_loss
 
 
@@ -318,13 +318,15 @@ def valid_HYBRID(loader, model, criterion, scaler, identifier='', current_epoch=
     # optimizer - the optimization algorithm applied during training
     # criterion - the loss function applied to quantify the error
     # scaler -
-    start_time = time.time()
+    # start_time = time.time()
 
     # The tqdm module allows to display a smart progress meter for iterables
     # using tqdm(iterable).
 
     epoch_loss = 0
+    timeline = []
     counter = 0
+    _file_prefix = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/4_Hybrid/'
 
     for batch_idx, (data, targets) in enumerate(loader):
         data = data.float().to(device=device)
@@ -335,12 +337,17 @@ def valid_HYBRID(loader, model, criterion, scaler, identifier='', current_epoch=
             loss = criterion(predictions.float(), targets.float())
             # print('Current batch loss: ', loss.item())
             epoch_loss += loss.item()
+            timeline.append(loss.item())
             counter += 1
 
+    losses2file(
+        losses=timeline,
+        filename=f'{_file_prefix}Losses_Hybrid_{identifier}_{current_epoch}'
+    )
     avg_loss = epoch_loss/counter
-    duration = time.time() - start_time
-    print('------------------------------------------------------------')
-    print(f'{identifier} Validation -> Loss: {avg_loss:.3f}, Duration: {duration:.3f}')
+    # duration = time.time() - start_time
+    # print('------------------------------------------------------------')
+    # print(f'{identifier} Validation -> Loss: {avg_loss:.3f}, Duration: {duration:.3f}')
     return avg_loss
 
 
@@ -884,10 +891,10 @@ def trial_3_LSTM_mp():
             print('Joining Process')
 
 
-def trial_4_Hybrid(_train_loaders, _valid_loaders):
+def trial_4_Hybrid(_train_loaders, _valid_loaders, _model_rnn, _model_identifier):
     _criterion = nn.L1Loss()
-    _file_prefix = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/4_Hybrid_RNN_UNET/'
-    _model_identifier = 'LSTM_LR0_000005_Lay3_Seq25'
+    _file_prefix = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/4_Hybrid/'
+    # _model_identifier = 'LSTM_LR0_000005_Lay3_Seq25'
     print('Initializing model.')
 
     _model_unet = UNET_AE(
@@ -900,16 +907,6 @@ def trial_4_Hybrid(_train_loaders, _valid_loaders):
     _model_unet.load_state_dict(torch.load(
         '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/0_UNET_AE/Model_UNET_AE_LR0_0005'))
 
-    _model_rnn = LSTM(
-        input_size=256,
-        hidden_size=256,
-        seq_size=25,
-        num_layers=3,
-        device=device
-    )
-    _model_rnn.load_state_dict(torch.load(
-        '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/3_LSTM/Model_LSTM_LR0_000005_Lay3_Seq25'))
-
     _model_hybrid = Hybrid_MD_RNN_UNET(
         device=device,
         UNET_Model=_model_unet,
@@ -917,70 +914,111 @@ def trial_4_Hybrid(_train_loaders, _valid_loaders):
         seq_length=25
     ).to(device)
 
-    print('Initializing training parameters.')
     _scaler = torch.cuda.amp.GradScaler()
-    _optimizer = optim.Adam(_model_hybrid.parameters(), lr=0.001)
-    _epoch_losses = []
+    # _optimizer = optim.Adam(_model_hybrid.parameters(), lr=0.001)
 
-    print('Beginning training.')
-    for epoch in range(30):
-        avg_loss = 0
-        for _train_loader in _train_loaders:
-            avg_loss += train_HYBRID(
-                loader=_train_loader,
-                model=_model_hybrid,
-                optimizer=_optimizer,
-                criterion=_criterion,
-                scaler=_scaler,
-                identifier=_model_identifier,
-                current_epoch=epoch+1
-            )
-        print('------------------------------------------------------------')
-        print(
-            f'{_model_identifier} Training Epoch: {epoch+1}-> Averaged Loader Loss: {avg_loss/len(_train_loaders):.3f}')
-        _epoch_losses.append(avg_loss/len(_train_loaders))
+    _train_loss = 0
+    counter = 0
 
-    _valid_loss = 0
-    for _valid_loader in _valid_loaders:
-        _valid_loss += valid_RNN(
-            loader=_valid_loader,
+    for _loader in _train_loaders:
+        _train_loss += valid_HYBRID(
+            loader=_loader,
             model=_model_hybrid,
             criterion=_criterion,
             scaler=_scaler,
             identifier=_model_identifier,
-            current_epoch=0
+            current_epoch=counter
         )
         resetPipeline(_model_hybrid)
-    '''
+        counter += 1
+
+    print('------------------------------------------------------------')
+    print(f'{_model_identifier} Training -> Averaged Loader Loss: {_train_loss/len(_train_loaders):.3f}')
+
+    _valid_loss = 0
+
+    for _loader in _valid_loaders:
+        _valid_loss += valid_HYBRID(
+            loader=_loader,
+            model=_model_hybrid,
+            criterion=_criterion,
+            scaler=_scaler,
+            identifier=_model_identifier,
+            current_epoch=counter
+        )
+        resetPipeline(_model_hybrid)
+        counter += 1
+
     print('------------------------------------------------------------')
     print(f'{_model_identifier} Validation -> Averaged Loader Loss: {_valid_loss/len(_valid_loaders):.3f}')
-    _epoch_losses.append(_valid_loss/len(_valid_loaders))
-
-    losses2file(
-        losses=_epoch_losses,
-        filename=f'{_file_prefix}Losses_Hybrid_{_model_identifier}'
-    )
-
-    plotAvgLoss(
-        avg_losses=_epoch_losses,
-        file_prefix=_file_prefix,
-        file_name=f'Hybrid_{_model_identifier}'
-    )
 
     torch.save(
         _model_hybrid.state_dict(),
         f'{_file_prefix}Model_Hybrid_{_model_identifier}'
     )
-    '''
 
     pass
 
 
 def trial_4_Hybrid_mp():
     _train_loaders, _valid_loaders = get_Hybrid_loaders(file_names=-1)
-    trial_4_Hybrid(_train_loaders, _valid_loaders)
+    _models = []
+    _model_identifiers = [
+        'RNN_LR0_00001_Lay1_Seq25',
+        'GRU_LR0_00001_Lay2_Seq25',
+        'LSTM_LR0_00001_Lay2_Seq25',
+    ]
 
-    pass
+    _model_rnn_1 = RNN(
+        input_size=256,
+        hidden_size=256,
+        seq_size=25,
+        num_layers=1,
+        device=device
+    )
+    _model_rnn_1.load_state_dict(torch.load(
+            '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/1_RNN/Model_RNN_LR0_00001_Lay1_Seq25'))
+    _models.append(_model_rnn_1)
+
+    _model_rnn_2 = GRU(
+        input_size=256,
+        hidden_size=256,
+        seq_size=25,
+        num_layers=2,
+        device=device
+    )
+    _model_rnn_2.load_state_dict(torch.load(
+            '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/2_GRU/Model_GRU_LR0_00001_Lay2_Seq25'))
+    _models.append(_model_rnn_2)
+
+    _model_rnn_3 = LSTM(
+        input_size=256,
+        hidden_size=256,
+        seq_size=25,
+        num_layers=2,
+        device=device
+    )
+    _model_rnn_3.load_state_dict(torch.load(
+            '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/3_LSTM/Model_LSTM_LR0_00001_Lay2_Seq25'))
+    _models.append(_model_rnn_3)
+
+    counter = 1
+    processes = []
+    for i in range(3):
+        p = mp.Process(
+            target=trial_4_Hybrid,
+            args=(_train_loaders, _valid_loaders, _models[i], _model_identifiers[i])
+        )
+        p.start()
+        processes.append(p)
+        print(f'Creating Process Number: {counter}')
+        counter += 1
+
+    for process in processes:
+        process.join()
+        print('Joining Process')
+
+    return
 
 
 def trial_5_KVS_AE(_alpha, _alpha_string, _train_loaders, _valid_loaders):
@@ -1073,4 +1111,4 @@ def trial_5_KVS_AE_helper():
 
 if __name__ == "__main__":
 
-    trial_2_GRU_mp()
+    trial_4_Hybrid_mp()
