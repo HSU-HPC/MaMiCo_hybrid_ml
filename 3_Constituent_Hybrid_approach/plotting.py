@@ -496,6 +496,47 @@ def compareFlowProfile3x3(preds, targs, model_id='', dataset_id=''):
     pass
 
 
+def compareErrorTimeline(l_of_l_files, l_of_l_labels, l_of_titles, file_prefix=0, file_name=0):
+    # BRIEF:
+    # PARAMETERS:
+    list_of_list_l = []
+
+    for list in l_of_l_files:
+        losses = csv2dataset_mp(list)
+        list_l = []
+
+        for loss in losses:
+            list_l.append(loss)
+
+        list_of_list_l.append(list_l)
+
+    num_epoch = list_of_list_l[0][0].shape[0]+1
+
+    x_axis = range(1, num_epoch, 1)
+
+    fig, axs = plt.subplots(len(list_of_list_l),
+                            sharex=True, constrained_layout=True)
+
+    for i, list_of_loss in enumerate(list_of_list_l):
+        for j, loss in enumerate(list_of_loss):
+            axs[i].plot(x_axis, loss, color=getColor(
+                c='tab20', N=12, idx=j*2), label=l_of_l_labels[j])
+
+            axs[i].set_title(f'{l_of_titles[i]}')
+            axs[i].set_ylabel('Error')
+            # axs[i].set_xlabel('Number of Epochs')
+            # axs[i].legend(ncol=4, fontsize=9)
+            axs[i].grid(axis='y', alpha=0.3)
+
+    axs[-1].set_xlabel('Timestep')
+    axs[-1].legend(ncol=3, fontsize=9)
+    fig.set_size_inches(6, 10)
+    if file_name != 0:
+        fig.savefig(f'{file_prefix}Compare_Error_Timeline_{file_name}.svg')
+
+    plt.close()
+
+
 def showSample():
     v_step = 20 / (31)
     v_steps = np.arange(0, 20 + v_step, v_step).tolist()

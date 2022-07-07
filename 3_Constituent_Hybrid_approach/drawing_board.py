@@ -1,7 +1,7 @@
 import numpy as np
 import torch
 import torch.nn as nn
-from plotting import compareColorMap, compareAvgLoss, compareAvgLossRNN, compareLossVsValidRNN, compareFlowProfile3x3, compareLossVsValid, compareErrorTimeline
+from plotting import compareAvgLossRNN, compareLossVsValidRNN, compareFlowProfile3x3, compareErrorTimeline
 from model import UNET_AE, LSTM, Hybrid_MD_RNN_UNET
 from utils import get_UNET_AE_loaders, get_Hybrid_loaders
 
