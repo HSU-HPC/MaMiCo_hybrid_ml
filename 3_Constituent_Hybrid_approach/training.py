@@ -923,7 +923,7 @@ def trial_4_Hybrid(_train_loaders, _valid_loaders, _model_rnn, _model_identifier
     for _loader in _train_loaders:
         _train_loss += valid_HYBRID(
             loader=_loader,
-            model=_model_hybrid,
+            model=_model_unet,
             criterion=_criterion,
             scaler=_scaler,
             identifier=_model_identifier,
@@ -940,7 +940,7 @@ def trial_4_Hybrid(_train_loaders, _valid_loaders, _model_rnn, _model_identifier
     for _loader in _valid_loaders:
         _valid_loss += valid_HYBRID(
             loader=_loader,
-            model=_model_hybrid,
+            model=_model_unet,
             criterion=_criterion,
             scaler=_scaler,
             identifier=_model_identifier,
@@ -964,6 +964,7 @@ def trial_4_Hybrid_mp():
     _train_loaders, _valid_loaders = get_Hybrid_loaders(file_names=-1)
     _models = []
     _model_identifiers = [
+        'UNET_AE_LR0_0005'
         'RNN_LR0_00001_Lay1_Seq25',
         'GRU_LR0_00001_Lay2_Seq25',
         'LSTM_LR0_00001_Lay2_Seq25',
@@ -1004,7 +1005,7 @@ def trial_4_Hybrid_mp():
 
     counter = 1
     processes = []
-    for i in range(3):
+    for i in range(1):
         p = mp.Process(
             target=trial_4_Hybrid,
             args=(_train_loaders, _valid_loaders,
