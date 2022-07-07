@@ -1007,7 +1007,8 @@ def trial_4_Hybrid_mp():
     for i in range(3):
         p = mp.Process(
             target=trial_4_Hybrid,
-            args=(_train_loaders, _valid_loaders, _models[i], _model_identifiers[i])
+            args=(_train_loaders, _valid_loaders,
+                  _models[i], _model_identifiers[i],)
         )
         p.start()
         processes.append(p)
@@ -1111,4 +1112,8 @@ def trial_5_KVS_AE_helper():
 
 if __name__ == "__main__":
 
+    trial_4_Hybrid_mp()
+    trial_4_Hybrid_mp()
+
+    trial_4_Hybrid_mp()
     trial_4_Hybrid_mp()
