@@ -704,7 +704,18 @@ def check_RNN_dataset_approach():
 
 if __name__ == "__main__":
     _directory = '/home/lerdo/lerdo_HPC_Lab_Project/Trainingdata'
-    _filename = 'kvs_test_combined_domain.csv'
+    _filenames = [
+        'kvs_10K_NE_combined_domain.csv',
+        'kvs_10K_NW_combined_domain.csv',
+        'kvs_10K_SE_combined_domain.csv',
+        'kvs_10K_SW_combined_domain.csv',
+    ]
 
-    clean_mamico_data(directory=_directory, filename=_filename)
-    pass
+
+    start = time.time()
+
+    with concurrent.futures.ProcessPoolExecutor() as executor:
+        results = executor.map(clean_mamico_data, _directory, _filenames)
+
+    duration = time.time() - start
+    print(f'Loading Data via Multiprocessing takes: {duration:.3f} secs')
