@@ -530,7 +530,7 @@ def compareErrorTimeline(l_of_l_files, l_of_l_labels, l_of_titles, file_prefix=0
 
     axs[-1].set_xlabel('Timestep')
     axs[-1].legend(ncol=3, fontsize=9)
-    fig.set_size_inches(6, 10)
+    fig.set_size_inches(6, 7)
     if file_name != 0:
         fig.savefig(f'{file_prefix}Compare_Error_Timeline_{file_name}.svg')
 
