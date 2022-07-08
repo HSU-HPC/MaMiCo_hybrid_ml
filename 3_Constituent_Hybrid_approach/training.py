@@ -274,7 +274,7 @@ def valid_RNN(loader, model, criterion, scaler, identifier='', current_epoch='')
     pred_mean = pred_mean/counter
     targ_mean = targ_mean/counter
     print('------------------------------------------------------------')
-    print(f'{identifier} Training -> Epoch: {current_epoch}')
+    print(f'{identifier} Validation -> Epoch: {current_epoch}')
     print(
         f'Mean Targ LS: {targ_mean:.5f}         Mean Pred LS: {pred_mean:.5f}')
     return avg_loss
@@ -1310,8 +1310,8 @@ def trial_5_1_KVS_RNN_mp():
 
 
 def trial_6_GRU_MSE(_seq_length, _num_layers, _alpha, _alpha_string, _train_loaders, _valid_loaders):
-    # _criterion = nn.MSELoss()
-    _criterion = nn.L1Loss()
+    _criterion = nn.MSELoss()
+    # _criterion = nn.L1Loss()
     _file_prefix = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/6_GRU_MSE/'
     _model_identifier = f'LR{_alpha_string}_Lay{_num_layers}_Seq{_seq_length}'
     print('Initializing GRU_MSE model.')
@@ -1357,7 +1357,7 @@ def trial_6_GRU_MSE(_seq_length, _num_layers, _alpha, _alpha_string, _train_load
                 criterion=_criterion,
                 scaler=_scaler,
                 identifier=_model_identifier,
-                current_epoch=0
+                current_epoch=epoch+1
             )
         print('------------------------------------------------------------')
         print(f'{_model_identifier} Validation -> Averaged Loader Loss: {avg_valid/len(_valid_loaders):.3f}.')
@@ -1424,9 +1424,9 @@ def trial_6_GRU_MSE_mp():
             print(f'Creating Process Number: {counter}')
             counter += 1
 
-        for process in processes:
-            process.join()
-            print('Joining Process')
+    for process in processes:
+        process.join()
+        print('Joining Process')
 
 
 if __name__ == "__main__":
