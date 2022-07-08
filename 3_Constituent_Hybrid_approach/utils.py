@@ -198,6 +198,7 @@ def get_UNET_AE_loaders(file_names=0, num_workers=12):
             'clean_kvs_10K_NW_combined_domain.csv',
             'clean_kvs_10K_SE_combined_domain.csv',
             'clean_kvs_10K_SW_combined_domain.csv',
+            'clean_kvs_20K_NE_combined_domain.csv',
             'clean_kvs_20K_NW_combined_domain.csv',
             'clean_kvs_20K_SE_combined_domain.csv',
             'clean_kvs_20K_SW_combined_domain.csv',
