@@ -258,7 +258,7 @@ def compareAvgLossRNN(l_of_l_files, l_of_l_labels, file_prefix=0, file_name=0):
 
     fig, axs = plt.subplots(len(list_of_list_l),
                             sharex=True, constrained_layout=True)
-
+    axs = [axs]
     for i, list_of_loss in enumerate(list_of_list_l):
         for j, loss in enumerate(list_of_loss):
             axs[i].plot(x_axis, loss, color=getColor(
