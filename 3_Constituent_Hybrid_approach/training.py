@@ -1310,8 +1310,8 @@ def trial_5_1_KVS_RNN_mp():
 
 
 def trial_6_GRU_MSE(_seq_length, _num_layers, _alpha, _alpha_string, _train_loaders, _valid_loaders):
-    # _criterion = nn.MSELoss()
-    _criterion = nn.L1Loss()
+    _criterion = nn.MSELoss()
+    # _criterion = nn.L1Loss()
     _file_prefix = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/6_GRU_MSE/'
     _model_identifier = f'LR{_alpha_string}_Lay{_num_layers}_Seq{_seq_length}'
     print('Initializing GRU_MSE model.')
