@@ -345,8 +345,8 @@ def valid_HYBRID(loader, model, criterion, scaler, identifier='', current_epoch=
             counter += 1
 
     compareFlowProfile3x3(
-        preds=_preds,
-        targs=_targs,
+        preds=np.vstack(_preds),
+        targs=np.vstack(_targs),
         model_id=identifier,
         dataset_id=current_epoch
         )
