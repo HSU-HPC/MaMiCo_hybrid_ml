@@ -413,8 +413,11 @@ def trial_5_Hybrid_kvs_plots():
 
         pass
 
-if __name__ == "__main__":
 
+if __name__ == "__main__":
+    trial_5_Hybrid_kvs_plots()
+
+    '''
     _directory = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/4_Hybrid/'
     _prefix = 'Losses_Hybrid_'
 
@@ -449,3 +452,4 @@ if __name__ == "__main__":
         file_prefix=_directory,
         file_name='Couette_5_0'
     )
+    '''
