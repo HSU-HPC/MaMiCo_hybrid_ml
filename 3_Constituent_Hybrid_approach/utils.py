@@ -743,7 +743,9 @@ def check_RNN_dataset_approach():
 
 if __name__ == "__main__":
     _directory = '/home/lerdo/lerdo_HPC_Lab_Project/Trainingdata'
-    _filenames = [
+    _filenames = ['kvs_20K_NE_combined_domain.csv']
+
+    '''[
         'kvs_10K_NE_combined_domain.csv',
         'kvs_10K_NW_combined_domain.csv',
         'kvs_10K_SE_combined_domain.csv',
@@ -759,7 +761,7 @@ if __name__ == "__main__":
         'kvs_40K_NW_combined_domain.csv',
         'kvs_40K_SE_combined_domain.csv',
         'kvs_40K_SW_combined_domain.csv',
-    ]
+    ]'''
 
     processes = []
     counter = 1
