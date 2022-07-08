@@ -1144,7 +1144,7 @@ def trial_5_0_KVS_error_timeline():
         input_size=256,
         hidden_size=256,
         seq_size=25,
-        num_layers=2,
+        num_layers=3,
         device=device
     )
     _model_rnn.load_state_dict(torch.load(f'{_directory}{model_name_2}'))
