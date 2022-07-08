@@ -110,7 +110,7 @@ def errorTimeline(loader, model, criterion):
     # optimizer - the optimization algorithm applied during training
     # criterion - the loss function applied to quantify the error
     # scaler -
-
+    print('Starting errorTimeline.')
     losses = []
     for batch_idx, (data, targets) in enumerate(loader):
         data = data.float().to(device=device)
