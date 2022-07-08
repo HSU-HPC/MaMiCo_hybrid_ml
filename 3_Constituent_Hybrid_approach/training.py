@@ -200,7 +200,6 @@ def train_RNN(loader, model, optimizer, criterion, scaler, identifier='', curren
     # optimizer - the optimization algorithm applied during training
     # criterion - the loss function applied to quantify the error
     # scaler -
-    start_time = time.time()
 
     # loop = tqdm(loader)
     # The tqdm module allows to display a smart progress meter for iterables
@@ -209,8 +208,8 @@ def train_RNN(loader, model, optimizer, criterion, scaler, identifier='', curren
     epoch_loss = 0
     counter = 0
     optimizer.zero_grad()
-    seq_avg = 0
-
+    pred_mean = 0
+    targ_mean = 0
     for batch_idx, (data, targets) in enumerate(loader):
         data = data.float().to(device=device)
         targets = targets.float().to(device=device)
@@ -218,7 +217,8 @@ def train_RNN(loader, model, optimizer, criterion, scaler, identifier='', curren
         with torch.cuda.amp.autocast():
             predictions = model(data)
             loss = criterion(predictions.float(), targets.float())
-            seq_avg += (predictions.cpu().detach().numpy()).mean()
+            pred_mean += (predictions.cpu().detach().numpy()).mean()
+            targ_mean += (targets.cpu().detach().numpy()).mean()
 
             # print('Current batch loss: ', loss.item())
             epoch_loss += loss.item()
@@ -230,10 +230,12 @@ def train_RNN(loader, model, optimizer, criterion, scaler, identifier='', curren
 
         # loop.set_postfix(loss=loss.item())
     avg_loss = epoch_loss/counter
-    duration = time.time() - start_time
-    seq_avg = seq_avg/counter
+    pred_mean = pred_mean/counter
+    targ_mean = targ_mean/counter
     print('------------------------------------------------------------')
-    print(f'{identifier} Training -> Epoch: {current_epoch}, Mean RNN Seq Values: {seq_avg}')
+    print(f'{identifier} Training -> Epoch: {current_epoch}')
+    print(
+        f'Mean Target LS: {targ_mean:.5f}         Mean Target LS: {pred_mean:.5f}')
     return avg_loss
 
 
@@ -252,6 +254,8 @@ def valid_RNN(loader, model, criterion, scaler, identifier='', current_epoch='')
 
     epoch_loss = 0
     counter = 0
+    pred_mean = 0
+    targ_mean = 0
 
     for batch_idx, (data, targets) in enumerate(loader):
         data = data.float().to(device=device)
@@ -260,14 +264,19 @@ def valid_RNN(loader, model, criterion, scaler, identifier='', current_epoch='')
         with torch.cuda.amp.autocast():
             predictions = model(data)
             loss = criterion(predictions.float(), targets.float())
+            pred_mean += (predictions.cpu().detach().numpy()).mean()
+            targ_mean += (targets.cpu().detach().numpy()).mean()
             # print('Current batch loss: ', loss.item())
             epoch_loss += loss.item()
             counter += 1
 
     avg_loss = epoch_loss/counter
-    # duration = time.time() - start_time
-    # print('------------------------------------------------------------')
-    # print(f'{identifier} Validation -> Loss: {avg_loss:.3f}, Duration: {duration:.3f}')
+    pred_mean = pred_mean/counter
+    targ_mean = targ_mean/counter
+    print('------------------------------------------------------------')
+    print(f'{identifier} Training -> Epoch: {current_epoch}')
+    print(
+        f'Mean Target LS: {targ_mean:.5f}         Mean Target LS: {pred_mean:.5f}')
     return avg_loss
 
 
@@ -1300,6 +1309,125 @@ def trial_5_1_KVS_RNN_mp():
             print('Joining Process')
 
 
+def trial_6_GRU_MSE(_seq_length, _num_layers, _alpha, _alpha_string, _train_loaders, _valid_loaders):
+    _criterion = nn.MSELoss()
+    _file_prefix = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/6_GRU_MSE/'
+    _model_identifier = f'LR{_alpha_string}_Lay{_num_layers}_Seq{_seq_length}'
+    print('Initializing GRU_MSE model.')
+    _model = GRU(
+        input_size=256,
+        hidden_size=256,
+        seq_size=_seq_length,
+        num_layers=_num_layers,
+        device=device
+    ).to(device)
+
+    print('Initializing training parameters.')
+    _scaler = torch.cuda.amp.GradScaler()
+    _optimizer = optim.Adam(_model.parameters(), lr=_alpha)
+    _epoch_losses = []
+    _epoch_valids = []
+
+    print('Beginning training.')
+    for epoch in range(50):
+        avg_loss = 0
+        start_time = time.time()
+        for _train_loader in _train_loaders:
+            avg_loss += train_RNN(
+                loader=_train_loader,
+                model=_model,
+                optimizer=_optimizer,
+                criterion=_criterion,
+                scaler=_scaler,
+                identifier=_model_identifier,
+                current_epoch=epoch+1
+            )
+        duration = time.time() - start_time
+        print('------------------------------------------------------------')
+        print(
+            f'{_model_identifier} Training Epoch: {epoch+1}-> Averaged Loader Loss: {avg_loss/len(_train_loaders):.3f}. Duration: {duration:.3f}')
+        _epoch_losses.append(avg_loss/len(_train_loaders))
+
+        avg_valid = 0
+        for _valid_loader in _valid_loaders:
+            avg_valid += valid_RNN(
+                loader=_valid_loader,
+                model=_model,
+                criterion=_criterion,
+                scaler=_scaler,
+                identifier=_model_identifier,
+                current_epoch=0
+            )
+        print('------------------------------------------------------------')
+        print(f'{_model_identifier} Validation -> Averaged Loader Loss: {avg_valid/len(_valid_loaders):.3f}.')
+        _epoch_valids.append(avg_valid/len(_valid_loaders))
+
+    losses2file(
+        losses=_epoch_losses,
+        filename=f'{_file_prefix}Losses_GRU_MSE_{_model_identifier}'
+    )
+    losses2file(
+        losses=_epoch_valids,
+        filename=f'{_file_prefix}Valids_GRU_MSE_{_model_identifier}'
+    )
+
+    compareAvgLoss(
+        loss_files=[
+            f'{_file_prefix}Losses_GRU_MSE_{_model_identifier}.csv',
+            f'{_file_prefix}Valids_GRU_MSE_{_model_identifier}.csv'
+        ],
+        loss_labels=['Training', 'Validation'],
+        file_prefix=_file_prefix,
+        file_name=f'And_Valids_GRU_MSE_{_model_identifier}'
+    )
+    torch.save(
+        _model.state_dict(),
+        f'{_file_prefix}Model_GRU_MSE_{_model_identifier}'
+    )
+
+
+def trial_6_GRU_MSE_mp():
+    # _alphas = [0.01, 0.005, 0.001, 0.0005, 0.0001, 0.00005]
+    # _alpha_strings = ['0_01', '0_005', '0_001', '0_0005', '0_0001', '0_00005']
+    # _alphas = [0.001, 0.0005, 0.0001, 0.00005, 0.00001, 0.000005]
+    # _alpha_strings = ['0_001', '0_0005', '0_0001', '0_00005', '0_00001', '0_000005']
+    _alphas = [0.0001, 0.00005, 0.00001, 0.000005]
+    _alpha_strings = ['0_0001', '0_00005', '0_00001', '0_000005']
+    _rnn_depths = [1, 3]
+    _seq_lengths = [25]
+
+    _alphas.reverse()
+    _alpha_strings.reverse()
+    # _t_loader_05, _v_loader_05 = get_RNN_loaders(file_names=0, sequence_length=5)
+    # _t_loader_15, _v_loader_15 = get_RNN_loaders(file_names=0, sequence_length=15)
+    _t_loader_25, _v_loader_25 = get_RNN_loaders(
+        file_names=0, sequence_length=25)
+    # _t_loaders = [_t_loader_05, _t_loader_15, _t_loader_25]
+    # _v_loaders = [_v_loader_05, _v_loader_15, _v_loader_25]
+    _t_loaders = [_t_loader_25]
+    _v_loaders = [_v_loader_25]
+
+    processes = []
+    counter = 1
+
+    for idx, _lr in enumerate(_alphas):
+
+        for _rnn_depth in _rnn_depths:
+            p = mp.Process(
+                target=trial_6_GRU_MSE,
+                args=(_seq_lengths[0], _rnn_depth, _lr,
+                      _alpha_strings[idx], _t_loaders[0], _v_loaders[0],)
+            )
+            p.start()
+            processes.append(p)
+            print(f'Creating Process Number: {counter}')
+            counter += 1
+
+        for process in processes:
+            process.join()
+            print('Joining Process')
+
+
 if __name__ == "__main__":
 
-    trial_5_0_KVS_error_timeline()
+    trial_6_GRU_MSE_mp()
