@@ -166,22 +166,22 @@ def get_latentspace_AE_helper():
     _loaders = _loader_1 + _loader_2_
     _out_directory = '/home/lerdo/lerdo_HPC_Lab_Project/Trainingdata/Latentspace_Dataset'
     _out_file_names = [
-        '_kvs_10K_NE.csv',
-        '_kvs_10K_NW.csv',
-        '_kvs_10K_SE.csv',
-        '_kvs_10K_SW.csv',
-        '_kvs_20K_NE.csv',
-        '_kvs_20K_NW.csv',
-        '_kvs_20K_SE.csv',
-        '_kvs_20K_SW.csv',
-        '_kvs_30K_NE.csv',
-        '_kvs_30K_NW.csv',
-        '_kvs_30K_SE.csv',
-        '_kvs_30K_SW.csv',
-        '_kvs_40K_NE.csv',
-        '_kvs_40K_NW.csv',
-        '_kvs_40K_SE.csv',
-        '_kvs_40K_SW.csv',
+        '_kvs_10K_NE',
+        '_kvs_10K_NW',
+        '_kvs_10K_SE',
+        '_kvs_10K_SW',
+        '_kvs_20K_NE',
+        '_kvs_20K_NW',
+        '_kvs_20K_SE',
+        '_kvs_20K_SW',
+        '_kvs_30K_NE',
+        '_kvs_30K_NW',
+        '_kvs_30K_SE',
+        '_kvs_30K_SW',
+        '_kvs_40K_NE',
+        '_kvs_40K_NW',
+        '_kvs_40K_SE',
+        '_kvs_40K_SW',
     ]
     for idx, _loader in enumerate(_loaders):
         get_latentspace_AE(
