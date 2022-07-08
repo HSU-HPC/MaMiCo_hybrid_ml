@@ -1125,6 +1125,41 @@ def trial_5_0_KVS_AE_helper():
     )
 
 
+def trial_5_0_KVS_error_timeline():
+    _directory = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/5_Hybrid_KVS/'
+    model_name = 'Model_UNET_AE_LR0_0005'
+    _model = UNET_AE(
+        device=device,
+        in_channels=3,
+        out_channels=3,
+        features=[4, 8, 16],
+        activation=nn.ReLU(inplace=True)
+    ).to(device)
+    _model.load_state_dict(torch.load(f'{_directory}{model_name}'))
+    _criterion = nn.L1Loss()
+    _, valid_loaders = get_UNET_AE_loaders(file_names=-2)
+
+    _datasets = [
+        'kvs_40K_NE',
+        'kvs_40K_NW',
+        'kvs_40K_SE',
+        'kvs_40K_SW'
+    ]
+
+    for idx, _loader in enumerate(valid_loaders):
+        _losses = errorTimeline(
+            loader=_loader,
+            model=_model,
+            criterion=_criterion
+        )
+        losses2file(
+            losses=_losses,
+            filename=f'{_directory}{model_name}_KVS_Valid_Error_Timeline_{_datasets[idx]}'
+        )
+
+    pass
+
+
 def trial_5_1_KVS_RNN(_seq_length, _num_layers, _alpha, _alpha_string, _train_loaders, _valid_loaders):
     _criterion = nn.L1Loss()
     _file_prefix = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/5_Hybrid_KVS/'
@@ -1247,4 +1282,4 @@ def trial_5_1_KVS_RNN_mp():
 
 if __name__ == "__main__":
 
-    trial_5_1_KVS_RNN_mp()
+    trial_5_0_KVS_error_timeline()
