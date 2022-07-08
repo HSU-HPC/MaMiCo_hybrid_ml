@@ -363,7 +363,6 @@ def trial_5_Hybrid_kvs_plots():
     _seq_lengths = [5, 15, 25]
     _directory = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/5_Hybrid_KVS/'
 
-
     '''
     _list_of_list_f = []
     _list_of_list_l = []
@@ -442,7 +441,7 @@ if __name__ == "__main__":
     ]
 
     _l_of_l_files = []
-    _l_of_labels = ['UNET_AE', 'Hybrid UNET']
+    _l_of_labels = ['UNET AE', 'Hybrid UNET']
 
     for _valid in _valid_identifiers:
         _l_of_files = []
