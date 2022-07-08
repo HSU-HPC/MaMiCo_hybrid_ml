@@ -8,7 +8,7 @@ import torch.nn as nn
 import numpy as np
 from model import UNET_AE, RNN, GRU, LSTM, Hybrid_MD_RNN_UNET, resetPipeline
 from utils import get_UNET_AE_loaders, get_RNN_loaders, get_mamico_loaders, losses2file, dataset2csv, get_Hybrid_loaders
-from plotting import plotAvgLoss, compareAvgLoss, compareLossVsValid
+from plotting import compareAvgLoss, compareLossVsValid, compareFlowProfile3x3
 
 torch.manual_seed(10)
 random.seed(10)
@@ -325,7 +325,8 @@ def valid_HYBRID(loader, model, criterion, scaler, identifier='', current_epoch=
 
     epoch_loss = 0
     timeline = []
-    preds = []
+    _preds = []
+    _targs = []
     counter = 0
     _file_prefix = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/4_Hybrid/'
 
@@ -339,13 +340,20 @@ def valid_HYBRID(loader, model, criterion, scaler, identifier='', current_epoch=
             # print('Current batch loss: ', loss.item())
             epoch_loss += loss.item()
             timeline.append(loss.item())
-            preds.append(predictions.cpu().detach().numpy())
+            _preds.append(predictions.cpu().detach().numpy())
+            _targs.append(targets.cpu().detach().numpy())
             counter += 1
 
-    losses2file(
-        losses=timeline,
-        filename=f'{_file_prefix}Losses_Hybrid_{identifier}_{current_epoch}'
-    )
+    compareFlowProfile3x3(
+        preds=_preds,
+        targs=_targs,
+        model_id=identifier,
+        dataset_id=current_epoch
+        )
+    # losses2file(
+    #     losses=timeline,
+    #     filename=f'{_file_prefix}Losses_Hybrid_{identifier}_{current_epoch}'
+    # )
     avg_loss = epoch_loss/counter
     # duration = time.time() - start_time
     # print('------------------------------------------------------------')
@@ -923,9 +931,9 @@ def trial_4_Hybrid(_train_loaders, _valid_loaders, _model_rnn, _model_identifier
     counter = 0
 
     for _loader in _train_loaders:
-        loss, preds = valid_HYBRID(
+        loss, _ = valid_HYBRID(
             loader=_loader,
-            model=_model_unet,
+            model=_model_hybrid,
             criterion=_criterion,
             scaler=_scaler,
             identifier=_model_identifier,
@@ -933,12 +941,6 @@ def trial_4_Hybrid(_train_loaders, _valid_loaders, _model_rnn, _model_identifier
         )
         _train_loss += loss
         resetPipeline(_model_hybrid)
-        dataset2csv(
-            dataset=preds,
-            dataset_name=counter,
-            model_descriptor=_model_identifier,
-            counter=''
-        )
         counter += 1
 
     print('------------------------------------------------------------')
@@ -947,9 +949,9 @@ def trial_4_Hybrid(_train_loaders, _valid_loaders, _model_rnn, _model_identifier
     _valid_loss = 0
 
     for _loader in _valid_loaders:
-        loss, preds = valid_HYBRID(
+        loss, _ = valid_HYBRID(
             loader=_loader,
-            model=_model_unet,
+            model=_model_hybrid,
             criterion=_criterion,
             scaler=_scaler,
             identifier=_model_identifier,
@@ -957,12 +959,6 @@ def trial_4_Hybrid(_train_loaders, _valid_loaders, _model_rnn, _model_identifier
         )
         _valid_loss += loss
         resetPipeline(_model_hybrid)
-        dataset2csv(
-            dataset=preds,
-            dataset_name='predictions',
-            model_descriptor=_model_identifier,
-            counter=counter
-        )
         counter += 1
 
     print('------------------------------------------------------------')
@@ -980,7 +976,7 @@ def trial_4_Hybrid_mp():
     _train_loaders, _valid_loaders = get_Hybrid_loaders(file_names=-1)
     _models = []
     _model_identifiers = [
-        'UNET_AE_LR0_0005'
+        # 'UNET_AE_LR0_0005'
         'RNN_LR0_00001_Lay1_Seq25',
         'GRU_LR0_00001_Lay2_Seq25',
         'LSTM_LR0_00001_Lay2_Seq25',
@@ -1021,7 +1017,7 @@ def trial_4_Hybrid_mp():
 
     counter = 1
     processes = []
-    for i in range(1):
+    for i in range(3):
         p = mp.Process(
             target=trial_4_Hybrid,
             args=(_train_loaders, _valid_loaders,
