@@ -159,31 +159,29 @@ def get_latentspace_AE_helper():
 
     #TO DO - Check proper model to load
     _model.load_state_dict(torch.load(
-        '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/0_UNET_AE/Model_UNET_AE_LR0_0005'))
+        '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/5_Hybrid_KVS/Model_UNET_AE_LR0_0005'))
     _model.eval()
 
-    _loader_1, _loader_2_ = get_UNET_AE_loaders(file_names=-1)
+    _loader_1, _loader_2_ = get_UNET_AE_loaders(file_names=-2)
     _loaders = _loader_1 + _loader_2_
     _out_directory = '/home/lerdo/lerdo_HPC_Lab_Project/Trainingdata/Latentspace_Dataset'
     _out_file_names = [
-        '_0_5_T',
-        '_0_5_M',
-        '_0_5_B',
-        '_1_0_T',
-        '_1_0_M',
-        '_1_0_B',
-        '_2_0_T',
-        '_2_0_M',
-        '_2_0_B',
-        '_4_0_T',
-        '_4_0_M',
-        '_4_0_B',
-        '_3_0_T',
-        '_3_0_M',
-        '_3_0_B',
-        '_5_0_T',
-        '_5_0_M',
-        '_5_0_B',
+        '_kvs_10K_NE.csv',
+        '_kvs_10K_NW.csv',
+        '_kvs_10K_SE.csv',
+        '_kvs_10K_SW.csv',
+        '_kvs_20K_NE.csv',
+        '_kvs_20K_NW.csv',
+        '_kvs_20K_SE.csv',
+        '_kvs_20K_SW.csv',
+        '_kvs_30K_NE.csv',
+        '_kvs_30K_NW.csv',
+        '_kvs_30K_SE.csv',
+        '_kvs_30K_SW.csv',
+        '_kvs_40K_NE.csv',
+        '_kvs_40K_NW.csv',
+        '_kvs_40K_SE.csv',
+        '_kvs_40K_SW.csv',
     ]
     for idx, _loader in enumerate(_loaders):
         get_latentspace_AE(

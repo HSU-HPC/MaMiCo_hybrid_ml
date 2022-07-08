@@ -282,7 +282,7 @@ def get_UNET_AE_loaders(file_names=0, num_workers=12):
     dataloader_train = DataLoader(
         dataset=dataset_train,
         batch_size=_batch_size,
-        shuffle=True,
+        shuffle=False,
         num_workers=_num_workers
         )
 
