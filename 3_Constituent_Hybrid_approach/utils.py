@@ -457,31 +457,33 @@ def get_Hybrid_loaders(file_names=0, num_workers=4):
 
     data_train = []
     data_valid = []
-    _train_files = [
-        # 'clean_couette_test_combined_domain_0_5_top.csv',
-        # 'clean_couette_test_combined_domain_0_5_middle.csv',
-        # 'clean_couette_test_combined_domain_0_5_bottom.csv',
-        # 'clean_couette_test_combined_domain_1_0_top.csv',
-        # 'clean_couette_test_combined_domain_1_0_middle.csv',
-        # 'clean_couette_test_combined_domain_1_0_bottom.csv',
-        # 'clean_couette_test_combined_domain_2_0_top.csv',
-        'clean_couette_test_combined_domain_2_0_middle.csv',
-        # 'clean_couette_test_combined_domain_2_0_bottom.csv',
-        # 'clean_couette_test_combined_domain_4_0_top.csv',
-        # 'clean_couette_test_combined_domain_4_0_middle.csv',
-        # 'clean_couette_test_combined_domain_4_0_bottom.csv',
-    ]
-
-    _valid_files = [
-        # 'clean_couette_test_combined_domain_3_0_top.csv',
-        # 'clean_couette_test_combined_domain_3_0_middle.csv',
-        # 'clean_couette_test_combined_domain_3_0_bottom.csv',
-        # 'clean_couette_test_combined_domain_5_0_top.csv',
-        # 'clean_couette_test_combined_domain_5_0_middle.csv',
-        'clean_couette_test_combined_domain_5_0_bottom.csv'
-    ]
+    _batch_size = 1
+    _num_workers = 1
 
     if file_names == 0 or file_names == -1:
+        _train_files = [
+            # 'clean_couette_test_combined_domain_0_5_top.csv',
+            # 'clean_couette_test_combined_domain_0_5_middle.csv',
+            # 'clean_couette_test_combined_domain_0_5_bottom.csv',
+            # 'clean_couette_test_combined_domain_1_0_top.csv',
+            # 'clean_couette_test_combined_domain_1_0_middle.csv',
+            # 'clean_couette_test_combined_domain_1_0_bottom.csv',
+            # 'clean_couette_test_combined_domain_2_0_top.csv',
+            'clean_couette_test_combined_domain_2_0_middle.csv',
+            # 'clean_couette_test_combined_domain_2_0_bottom.csv',
+            # 'clean_couette_test_combined_domain_4_0_top.csv',
+            # 'clean_couette_test_combined_domain_4_0_middle.csv',
+            # 'clean_couette_test_combined_domain_4_0_bottom.csv',
+        ]
+
+        _valid_files = [
+            # 'clean_couette_test_combined_domain_3_0_top.csv',
+            # 'clean_couette_test_combined_domain_3_0_middle.csv',
+            # 'clean_couette_test_combined_domain_3_0_bottom.csv',
+            # 'clean_couette_test_combined_domain_5_0_top.csv',
+            # 'clean_couette_test_combined_domain_5_0_middle.csv',
+            'clean_couette_test_combined_domain_5_0_bottom.csv'
+        ]
         start_time = time.time()
         print('Loading training data.')
         data_train = mamico_csv2dataset_mp(_train_files)
@@ -520,6 +522,66 @@ def get_Hybrid_loaders(file_names=0, num_workers=4):
                     )
                 dataloaders_valid.append(dataloader)
             return dataloaders_train, dataloaders_valid
+    elif file_names == -2:
+        _train_files = [
+            'clean_kvs_10K_NE_combined_domain.csv',
+            'clean_kvs_10K_NW_combined_domain.csv',
+            'clean_kvs_10K_SE_combined_domain.csv',
+            'clean_kvs_10K_SW_combined_domain.csv',
+            'clean_kvs_20K_NE_combined_domain.csv',
+            'clean_kvs_20K_NW_combined_domain.csv',
+            'clean_kvs_20K_SE_combined_domain.csv',
+            'clean_kvs_20K_SW_combined_domain.csv',
+            'clean_kvs_30K_NE_combined_domain.csv',
+            'clean_kvs_30K_NW_combined_domain.csv',
+            'clean_kvs_30K_SE_combined_domain.csv',
+            'clean_kvs_30K_SW_combined_domain.csv',
+        ]
+
+        _valid_files = [
+            'clean_kvs_40K_NE_combined_domain.csv',
+            'clean_kvs_40K_NW_combined_domain.csv',
+            'clean_kvs_40K_SE_combined_domain.csv',
+            'clean_kvs_40K_SW_combined_domain.csv',
+        ]
+
+        start_time = time.time()
+        print('Loading training data.')
+        data_train = mamico_csv2dataset_mp(_train_files)
+        duration = time.time() - start_time
+        print(
+            f'Completed loading training data. Duration: {duration:.3f}')
+
+        start_time = time.time()
+        print('Loading validation data.')
+        data_valid = mamico_csv2dataset_mp(_valid_files)
+        duration = time.time() - start_time
+        print(
+            f'Completed loading validation data. Duration: {duration:.3f}')
+
+        dataloaders_train = []
+        dataloaders_valid = []
+
+        for dataset in data_train:
+            dataset = MyMamicoDataset_UNET_AE(dataset)
+            dataloader = DataLoader(
+                dataset=dataset,
+                batch_size=_batch_size,
+                shuffle=False,
+                num_workers=_num_workers
+                )
+            dataloaders_train.append(dataloader)
+
+        for dataset in data_valid:
+            dataset = MyMamicoDataset_UNET_AE(dataset)
+            dataloader = DataLoader(
+                dataset=dataset,
+                batch_size=_batch_size,
+                shuffle=False,
+                num_workers=_num_workers
+                )
+            dataloaders_valid.append(dataloader)
+        return dataloaders_train, dataloaders_valid
     else:
         print('Loading ---> RANDOM <--- training datasets as loader.')
         for i in range(5):
