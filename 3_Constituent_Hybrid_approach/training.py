@@ -209,6 +209,7 @@ def train_RNN(loader, model, optimizer, criterion, scaler, identifier='', curren
     epoch_loss = 0
     counter = 0
     optimizer.zero_grad()
+    seq_avg = 0
 
     for batch_idx, (data, targets) in enumerate(loader):
         data = data.float().to(device=device)
@@ -217,6 +218,8 @@ def train_RNN(loader, model, optimizer, criterion, scaler, identifier='', curren
         with torch.cuda.amp.autocast():
             predictions = model(data)
             loss = criterion(predictions.float(), targets.float())
+            seq_avg += (predictions.cpu().detach().numpy()).mean()
+
             # print('Current batch loss: ', loss.item())
             epoch_loss += loss.item()
             counter += 1
@@ -228,8 +231,9 @@ def train_RNN(loader, model, optimizer, criterion, scaler, identifier='', curren
         # loop.set_postfix(loss=loss.item())
     avg_loss = epoch_loss/counter
     duration = time.time() - start_time
-    # print('------------------------------------------------------------')
-    # print(f'{identifier} Training -> Epoch: {current_epoch}, Loss: {avg_loss:.3f}, Duration: {duration:.3f}')
+    seq_avg = seq_avg/counter
+    print('------------------------------------------------------------')
+    print(f'{identifier} Training -> Epoch: {current_epoch}, Mean RNN Seq Values: {seq_avg}')
     return avg_loss
 
 
