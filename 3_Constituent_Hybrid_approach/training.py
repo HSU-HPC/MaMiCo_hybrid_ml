@@ -1408,11 +1408,11 @@ def trial_6_GRU_MSE_mp():
     _t_loaders = [_t_loader_25]
     _v_loaders = [_v_loader_25]
 
-    processes = []
+
     counter = 1
 
     for idx, _lr in enumerate(_alphas):
-
+        processes = []
         for _rnn_depth in _rnn_depths:
             p = mp.Process(
                 target=trial_6_GRU_MSE,
@@ -1424,9 +1424,9 @@ def trial_6_GRU_MSE_mp():
             print(f'Creating Process Number: {counter}')
             counter += 1
 
-    for process in processes:
-        process.join()
-        print('Joining Process')
+        for process in processes:
+            process.join()
+            print('Joining Process')
 
 
 if __name__ == "__main__":
