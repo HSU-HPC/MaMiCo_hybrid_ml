@@ -1231,7 +1231,7 @@ def trial_5_1_KVS_RNN_mp():
 
             for i in range(3):
                 p = mp.Process(
-                    target=trial_1_RNN,
+                    target=trial_5_1_KVS_RNN,
                     args=(_seq_lengths[i], _rnn_depth, _alphas[idx],
                           _alpha_strings[idx], _t_loaders[i], _v_loaders[i],)
                 )
