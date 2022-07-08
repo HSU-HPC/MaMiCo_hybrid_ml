@@ -363,6 +363,8 @@ def trial_5_Hybrid_kvs_plots():
     _seq_lengths = [5, 15, 25]
     _directory = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/5_Hybrid_KVS/'
 
+
+    '''
     _list_of_list_f = []
     _list_of_list_l = []
     for idx, _alpha in enumerate(_alphas):
@@ -410,38 +412,43 @@ def trial_5_Hybrid_kvs_plots():
             file_prefix=_directory,
             file_name=f'And_Valids_LSTM_LR{_alpha_string}'
         )
+    '''
 
-        pass
+    pass
 
 
 if __name__ == "__main__":
-    trial_5_Hybrid_kvs_plots()
+    # trial_5_Hybrid_kvs_plots()
 
-    '''
-    _directory = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/4_Hybrid/'
+    _directory = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/5_Hybrid_KVS/'
     _prefix = 'Losses_Hybrid_'
 
     _model_identifiers = [
-        'RNN_LR0_00001_Lay1_Seq25',
-        'GRU_LR0_00001_Lay2_Seq25',
-        'LSTM_LR0_00001_Lay2_Seq25',
-        'UNET_AE_LR0_0005RNN_LR0_00001_Lay1_Seq25'
+        'Model_UNET_AE_LR0_0005_KVS',
+        'Hybrid_Model_KVS'
     ]
-    _counters = [15, 16, 17]
+    _valid_identifiers = [
+        '_Valid_Error_Timeline_kvs_40K_NE',
+        '_Valid_Error_Timeline_kvs_40K_NW',
+        '_Valid_Error_Timeline_kvs_40K_SE',
+        '_Valid_Error_Timeline_kvs_40K_SW',
+    ]
+
     _dataset_names = [
-        'C 5 0 T',
-        'C 5 0 M',
-        'C 5 0 B'
+        'kvs 40K NE',
+        'kvs 40K NW',
+        'kvs 40K SE',
+        'kvs 40K SW',
     ]
 
     _l_of_l_files = []
-    _l_of_labels = ['RNN', 'GRU', 'LSTM', 'UNET AE Baseline']
+    _l_of_labels = ['UNET_AE', 'Hybrid UNET']
 
-    for counter in _counters:
+    for _valid in _valid_identifiers:
         _l_of_files = []
 
         for model in _model_identifiers:
-            _l_of_files.append(f'{_directory}{_prefix}{model}_{counter}.csv')
+            _l_of_files.append(f'{_directory}{model}{_valid}.csv')
 
         _l_of_l_files.append(_l_of_files)
 
@@ -450,6 +457,5 @@ if __name__ == "__main__":
         l_of_l_labels=_l_of_labels,
         l_of_titles=_dataset_names,
         file_prefix=_directory,
-        file_name='Couette_5_0'
+        file_name='kvs_40K_test'
     )
-    '''
