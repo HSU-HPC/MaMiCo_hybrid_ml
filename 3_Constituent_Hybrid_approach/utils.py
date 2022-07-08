@@ -329,31 +329,31 @@ def get_RNN_loaders(file_names=0, sequence_length=15, num_workers=4):
     data_train = []
     data_valid = []
     _directory = '/home/lerdo/lerdo_HPC_Lab_Project/Trainingdata/'
-    _train_files = [
-        f'{_directory}Latentspace_Dataset_0_5_B.csv',
-        f'{_directory}Latentspace_Dataset_0_5_M.csv',
-        f'{_directory}Latentspace_Dataset_0_5_T.csv',
-        f'{_directory}Latentspace_Dataset_1_0_B.csv',
-        f'{_directory}Latentspace_Dataset_1_0_M.csv',
-        f'{_directory}Latentspace_Dataset_1_0_T.csv',
-        f'{_directory}Latentspace_Dataset_2_0_B.csv',
-        f'{_directory}Latentspace_Dataset_2_0_M.csv',
-        f'{_directory}Latentspace_Dataset_2_0_T.csv',
-        f'{_directory}Latentspace_Dataset_4_0_B.csv',
-        f'{_directory}Latentspace_Dataset_4_0_M.csv',
-        f'{_directory}Latentspace_Dataset_4_0_T.csv',
-    ]
-
-    _valid_files = [
-        f'{_directory}Latentspace_Dataset_3_0_B.csv',
-        f'{_directory}Latentspace_Dataset_3_0_M.csv',
-        f'{_directory}Latentspace_Dataset_3_0_T.csv',
-        f'{_directory}Latentspace_Dataset_5_0_B.csv',
-        f'{_directory}Latentspace_Dataset_5_0_M.csv',
-        f'{_directory}Latentspace_Dataset_5_0_T.csv',
-    ]
 
     if file_names == 0:
+        _train_files = [
+            f'{_directory}Latentspace_Dataset_0_5_B.csv',
+            f'{_directory}Latentspace_Dataset_0_5_M.csv',
+            f'{_directory}Latentspace_Dataset_0_5_T.csv',
+            f'{_directory}Latentspace_Dataset_1_0_B.csv',
+            f'{_directory}Latentspace_Dataset_1_0_M.csv',
+            f'{_directory}Latentspace_Dataset_1_0_T.csv',
+            f'{_directory}Latentspace_Dataset_2_0_B.csv',
+            f'{_directory}Latentspace_Dataset_2_0_M.csv',
+            f'{_directory}Latentspace_Dataset_2_0_T.csv',
+            f'{_directory}Latentspace_Dataset_4_0_B.csv',
+            f'{_directory}Latentspace_Dataset_4_0_M.csv',
+            f'{_directory}Latentspace_Dataset_4_0_T.csv',
+        ]
+
+        _valid_files = [
+            f'{_directory}Latentspace_Dataset_3_0_B.csv',
+            f'{_directory}Latentspace_Dataset_3_0_M.csv',
+            f'{_directory}Latentspace_Dataset_3_0_T.csv',
+            f'{_directory}Latentspace_Dataset_5_0_B.csv',
+            f'{_directory}Latentspace_Dataset_5_0_M.csv',
+            f'{_directory}Latentspace_Dataset_5_0_T.csv',
+        ]
         start_time = time.time()
         print('Loading training data.')
         data_train = csv2dataset_mp(_train_files)
@@ -367,6 +367,40 @@ def get_RNN_loaders(file_names=0, sequence_length=15, num_workers=4):
         duration = time.time() - start_time
         print(f'Completed loading validation data. Duration: {duration:.3f}')
 
+    elif file_names == -2:
+        _train_files = [
+            f'{_directory}Latentspace_Dataset_kvs_10K_NE.csv',
+            f'{_directory}Latentspace_Dataset_kvs_10K_NW.csv',
+            f'{_directory}Latentspace_Dataset_kvs_10K_SE.csv',
+            f'{_directory}Latentspace_Dataset_kvs_10K_SW.csv',
+            f'{_directory}Latentspace_Dataset_kvs_20K_NE.csv',
+            f'{_directory}Latentspace_Dataset_kvs_20K_NW.csv',
+            f'{_directory}Latentspace_Dataset_kvs_20K_SE.csv',
+            f'{_directory}Latentspace_Dataset_kvs_20K_SW.csv',
+            f'{_directory}Latentspace_Dataset_kvs_30K_NE.csv',
+            f'{_directory}Latentspace_Dataset_kvs_30K_NW.csv',
+            f'{_directory}Latentspace_Dataset_kvs_30K_SE.csv',
+            f'{_directory}Latentspace_Dataset_kvs_30K_SW.csv',
+        ]
+
+        _valid_files = [
+            f'{_directory}Latentspace_Dataset_kvs_40K_NE.csv',
+            f'{_directory}Latentspace_Dataset_kvs_20K_NW.csv',
+            f'{_directory}Latentspace_Dataset_kvs_40K_SE.csv',
+            f'{_directory}Latentspace_Dataset_kvs_40K_SW.csv',
+        ]
+        start_time = time.time()
+        print('Loading training data.')
+        data_train = csv2dataset_mp(_train_files)
+        duration = time.time() - start_time
+        print(
+            f'Completed loading training data. Duration: {duration:.3f}')
+
+        start_time = time.time()
+        print('Loading validation data.')
+        data_valid = csv2dataset_mp(_valid_files)
+        duration = time.time() - start_time
+        print(f'Completed loading validation data. Duration: {duration:.3f}')
     else:
         print('Loading ---> RANDOM <--- training datasets as loader.')
         for i in range(5):
