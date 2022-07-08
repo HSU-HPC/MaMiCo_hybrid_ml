@@ -325,6 +325,7 @@ def valid_HYBRID(loader, model, criterion, scaler, identifier='', current_epoch=
 
     epoch_loss = 0
     timeline = []
+    preds = []
     counter = 0
     _file_prefix = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/4_Hybrid/'
 
@@ -338,6 +339,7 @@ def valid_HYBRID(loader, model, criterion, scaler, identifier='', current_epoch=
             # print('Current batch loss: ', loss.item())
             epoch_loss += loss.item()
             timeline.append(loss.item())
+            preds.append(predictions.cpu().detach().numpy())
             counter += 1
 
     losses2file(
@@ -348,7 +350,7 @@ def valid_HYBRID(loader, model, criterion, scaler, identifier='', current_epoch=
     # duration = time.time() - start_time
     # print('------------------------------------------------------------')
     # print(f'{identifier} Validation -> Loss: {avg_loss:.3f}, Duration: {duration:.3f}')
-    return avg_loss
+    return avg_loss, predictions
 
 
 def trial_0_UNET_AE(_alpha, _alpha_string, _train_loaders, _valid_loaders):
@@ -921,7 +923,7 @@ def trial_4_Hybrid(_train_loaders, _valid_loaders, _model_rnn, _model_identifier
     counter = 0
 
     for _loader in _train_loaders:
-        _train_loss += valid_HYBRID(
+        loss, preds = valid_HYBRID(
             loader=_loader,
             model=_model_unet,
             criterion=_criterion,
@@ -929,7 +931,14 @@ def trial_4_Hybrid(_train_loaders, _valid_loaders, _model_rnn, _model_identifier
             identifier=_model_identifier,
             current_epoch=counter
         )
+        _train_loss += loss
         resetPipeline(_model_hybrid)
+        dataset2csv(
+            dataset=preds,
+            dataset_name=counter,
+            model_descriptor=_model_identifier,
+            counter=''
+        )
         counter += 1
 
     print('------------------------------------------------------------')
@@ -938,7 +947,7 @@ def trial_4_Hybrid(_train_loaders, _valid_loaders, _model_rnn, _model_identifier
     _valid_loss = 0
 
     for _loader in _valid_loaders:
-        _valid_loss += valid_HYBRID(
+        loss, preds = valid_HYBRID(
             loader=_loader,
             model=_model_unet,
             criterion=_criterion,
@@ -946,7 +955,14 @@ def trial_4_Hybrid(_train_loaders, _valid_loaders, _model_rnn, _model_identifier
             identifier=_model_identifier,
             current_epoch=counter
         )
+        _valid_loss += loss
         resetPipeline(_model_hybrid)
+        dataset2csv(
+            dataset=preds,
+            dataset_name='predictions',
+            model_descriptor=_model_identifier,
+            counter=counter
+        )
         counter += 1
 
     print('------------------------------------------------------------')
