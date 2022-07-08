@@ -1123,4 +1123,4 @@ def trial_5_KVS_AE_helper():
 
 if __name__ == "__main__":
 
-    trial_5_KVS_AE_helper()
+    get_latentspace_AE_helper()
