@@ -1062,9 +1062,9 @@ def trial_4_error_timeline():
     _error_timelines = [[], [], [], [], [], []]
 
     _model_identifiers = [
-        'RNN_Hybrid',
-        'GRU_Hybrid',
-        'LSTM_Hybrid',
+        'RNN Hybrid',
+        'GRU Hybrid',
+        'LSTM Hybrid',
     ]
     _dataset_identifiers = [
             'C 3 0 T',
