@@ -543,7 +543,7 @@ def compareErrorTimeline_np(l_of_l_losses, l_of_l_labels, l_of_titles, file_pref
 
     num_epoch = len(l_of_l_losses[0][0])
 
-    x_axis = range(1, num_epoch, 1)
+    x_axis = range(1, num_epoch+1, 1)
 
     fig, axs = plt.subplots(len(l_of_l_losses),
                             sharex=True, constrained_layout=True)
