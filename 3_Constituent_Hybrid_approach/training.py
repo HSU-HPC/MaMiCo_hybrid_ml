@@ -1056,7 +1056,6 @@ def trial_4_error_timeline():
     model_name_2 = 'Model_GRU_LR0_00001_Lay2_Seq25'
     model_name_3 = 'Model_LSTM_LR0_00001_Lay2_Seq25'
 
-    _train_loaders, _valid_loaders = get_Hybrid_loaders(file_names=-1)
     _models = []
     _hybrid_models = []
     _scaler = torch.cuda.amp.GradScaler()
@@ -1119,6 +1118,8 @@ def trial_4_error_timeline():
     _model_rnn_3.load_state_dict(torch.load(
         f'{_directory}3_LSTM/{model_name_3}'))
     _models.append(_model_rnn_3)
+
+    _train_loaders, _valid_loaders = get_Hybrid_loaders(file_names=-1)
 
     for i in range(3):
         _model_hybrid = Hybrid_MD_RNN_UNET(
