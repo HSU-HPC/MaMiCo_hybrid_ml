@@ -551,7 +551,7 @@ def compareErrorTimeline_np(l_of_l_losses, l_of_l_labels, l_of_titles, file_pref
     for i, list_of_loss in enumerate(l_of_l_losses):
         for j, loss in enumerate(list_of_loss):
             axs[i].plot(x_axis, loss, color=getColor(
-                c='tab20', N=12, idx=j*2), linewidth=0.05, label=l_of_l_labels[j])
+                c='tab20', N=12, idx=j*4), linewidth=0.2, label=l_of_l_labels[j])
 
             axs[i].set_title(f'{l_of_titles[i]}')
             axs[i].set_ylabel('Error')
