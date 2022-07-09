@@ -541,6 +541,10 @@ def compareErrorTimeline_np(l_of_l_losses, l_of_l_labels, l_of_titles, file_pref
     # BRIEF:
     # PARAMETERS:
 
+    for i, list_of_l in enumerate(l_of_l_losses):
+        for j, label in enumerate(l_of_l_labels):
+            print(f'Length of {label} list for {l_of_titles[i]} dataset: {len(l_of_l_losses[i][j])}')
+
     num_epoch = len(l_of_l_losses[0][0])
 
     x_axis = range(1, num_epoch+1, 1)
