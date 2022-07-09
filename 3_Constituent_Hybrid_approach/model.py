@@ -292,7 +292,7 @@ class Hybrid_MD_RNN_UNET(nn.Module):
         self.rnn = RNN_Model.eval()
         self.seq_length = seq_length
         self.sequence = torch.zeros(self.seq_length, 256)
-        self.doubleConv = DoubleConv(in_channels=3, out_channels=3)
+        # self.doubleConv = DoubleConv(in_channels=3, out_channels=3)
         print('Model initialized: Hybrid_MD_RNN_UNET')
 
     def forward(self, x):
@@ -317,7 +317,7 @@ class Hybrid_MD_RNN_UNET(nn.Module):
 
         x = self.unet(x, y='get_MD_output', skip_connections=skip_connections)
         # print('Size of x as final output: ', x.size())
-        return self.doubleConv(x)
+        return x
 
 
 def resetPipeline(model):
