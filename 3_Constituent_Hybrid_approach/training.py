@@ -1052,9 +1052,9 @@ def trial_4_Hybrid_mp():
 def trial_4_error_timeline():
     _directory = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/'
     _unet_name = 'Model_UNET_AE_LR0_0005'
-    model_name_1 = 'RNN_LR0_00001_Lay1_Seq25'
-    model_name_2 = 'GRU_LR0_00001_Lay2_Seq25'
-    model_name_3 = 'LSTM_LR0_00001_Lay2_Seq25'
+    model_name_1 = 'Model_RNN_LR0_00001_Lay1_Seq25'
+    model_name_2 = 'Model_GRU_LR0_00001_Lay2_Seq25'
+    model_name_3 = 'Model_LSTM_LR0_00001_Lay2_Seq25'
 
     _train_loaders, _valid_loaders = get_Hybrid_loaders(file_names=-1)
     _models = []
