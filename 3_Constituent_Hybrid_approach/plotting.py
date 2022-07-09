@@ -496,7 +496,7 @@ def compareFlowProfile3x3(preds, targs, model_id='', dataset_id=''):
     pass
 
 
-def compareErrorTimeline(l_of_l_files, l_of_l_labels, l_of_titles, file_prefix=0, file_name=0):
+def compareErrorTimeline_csv(l_of_l_files, l_of_l_labels, l_of_titles, file_prefix=0, file_name=0):
     # BRIEF:
     # PARAMETERS:
     list_of_list_l = []
@@ -531,6 +531,37 @@ def compareErrorTimeline(l_of_l_files, l_of_l_labels, l_of_titles, file_prefix=0
     axs[-1].set_xlabel('Timestep')
     axs[-1].legend(ncol=3, fontsize=9)
     fig.set_size_inches(6, 7)
+    if file_name != 0:
+        fig.savefig(f'{file_prefix}Compare_Error_Timeline_{file_name}.svg')
+
+    plt.close()
+
+
+def compareErrorTimeline_np(l_of_l_losses, l_of_l_labels, l_of_titles, file_prefix=0, file_name=0):
+    # BRIEF:
+    # PARAMETERS:
+
+    num_epoch = len(l_of_l_losses[0][0])
+
+    x_axis = range(1, num_epoch, 1)
+
+    fig, axs = plt.subplots(len(l_of_l_losses),
+                            sharex=True, constrained_layout=True)
+
+    for i, list_of_loss in enumerate(l_of_l_losses):
+        for j, loss in enumerate(list_of_loss):
+            axs[i].plot(x_axis, loss, color=getColor(
+                c='tab20', N=12, idx=j*2), label=l_of_l_labels[j])
+
+            axs[i].set_title(f'{l_of_titles[i]}')
+            axs[i].set_ylabel('Error')
+            # axs[i].set_xlabel('Number of Epochs')
+            # axs[i].legend(ncol=4, fontsize=9)
+            axs[i].grid(axis='y', alpha=0.3)
+
+    axs[-1].set_xlabel('Timestep')
+    axs[-1].legend(ncol=3, fontsize=9)
+    fig.set_size_inches(6, 10)
     if file_name != 0:
         fig.savefig(f'{file_prefix}Compare_Error_Timeline_{file_name}.svg')
 

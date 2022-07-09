@@ -8,7 +8,7 @@ import torch.nn as nn
 import numpy as np
 from model import UNET_AE, RNN, GRU, LSTM, Hybrid_MD_RNN_UNET, resetPipeline
 from utils import get_UNET_AE_loaders, get_RNN_loaders, get_mamico_loaders, losses2file, dataset2csv, get_Hybrid_loaders
-from plotting import compareAvgLoss, compareLossVsValid, compareFlowProfile3x3
+from plotting import compareAvgLoss, compareLossVsValid, compareFlowProfile3x3, compareErrorTimeline_np
 
 torch.manual_seed(10)
 random.seed(10)
@@ -1047,6 +1047,106 @@ def trial_4_Hybrid_mp():
         print('Joining Process')
 
     return
+
+
+def trial_4_error_timeline():
+    _directory = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/'
+    _unet_name = 'Model_UNET_AE_LR0_0005'
+    model_name_1 = 'RNN_LR0_00001_Lay1_Seq25'
+    model_name_2 = 'GRU_LR0_00001_Lay2_Seq25'
+    model_name_3 = 'LSTM_LR0_00001_Lay2_Seq25'
+
+    _train_loaders, _valid_loaders = get_Hybrid_loaders(file_names=-1)
+    _models = []
+    _hybrid_models = []
+    _scaler = torch.cuda.amp.GradScaler()
+    _criterion = nn.L1Loss()
+    _error_timelines = [[], [], [], [], [], []]
+    counter = 0
+
+    _model_identifiers = [
+        'RNN_Hybrid',
+        'GRU_Hybrid',
+        'LSTM_Hybrid',
+    ]
+    _dataset_identifiers = [
+            'C 3 0 T',
+            'C 3 0 M',
+            'C 3 0 B',
+            'C 5 0 T',
+            'C 5 0 M',
+            'C 5 0 B'
+        ]
+    _model_unet = UNET_AE(
+        device=device,
+        in_channels=3,
+        out_channels=3,
+        features=[4, 8, 16],
+        activation=nn.ReLU(inplace=True)
+    )
+    _model_unet.load_state_dict(torch.load(
+        f'{_directory}0_UNET_AE/{_unet_name}'))
+
+    _model_rnn_1 = RNN(
+        input_size=256,
+        hidden_size=256,
+        seq_size=25,
+        num_layers=1,
+        device=device
+    )
+    _model_rnn_1.load_state_dict(torch.load(
+        f'{_directory}1_RNN/{model_name_1}'))
+    _models.append(_model_rnn_1)
+
+    _model_rnn_2 = GRU(
+        input_size=256,
+        hidden_size=256,
+        seq_size=25,
+        num_layers=2,
+        device=device
+    )
+    _model_rnn_2.load_state_dict(torch.load(
+        f'{_directory}2_GRU/{model_name_2}'))
+    _models.append(_model_rnn_2)
+
+    _model_rnn_3 = LSTM(
+        input_size=256,
+        hidden_size=256,
+        seq_size=25,
+        num_layers=2,
+        device=device
+    )
+    _model_rnn_3.load_state_dict(torch.load(
+        f'{_directory}3_LSTM/{model_name_3}'))
+    _models.append(_model_rnn_3)
+
+    for i in range(3):
+        _model_hybrid = Hybrid_MD_RNN_UNET(
+            device=device,
+            UNET_Model=_model_unet,
+            RNN_Model=_models[i],
+            seq_length=25
+        ).to(device)
+        _hybrid_models.append(_model_hybrid)
+
+    for i, _loader in enumerate(_valid_loaders):
+        for _model in _hybrid_models:
+            error_timeline = errorTimeline(
+                loader=_loader,
+                model=_model,
+                criterion=_criterion
+            )
+            _error_timelines[i].append(error_timeline)
+
+    compareErrorTimeline_np(
+        l_of_l_losses=_error_timelines,
+        l_of_l_labels=_model_identifiers,
+        l_of_titles=_dataset_identifiers,
+        file_prefix=f'{_directory}/4_Hybrid/',
+        file_name='Hybrid_Models'
+    )
+
+    pass
 
 
 def trial_5_0_KVS_AE(_alpha, _alpha_string, _train_loaders, _valid_loaders):
