@@ -339,7 +339,7 @@ def valid_HYBRID(loader, model, criterion, scaler, identifier='', current_epoch=
     _preds = []
     _targs = []
     counter = 0
-    _file_prefix = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/4_Hybrid/'
+    _file_prefix = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/6_GRU_MSE/'
 
     for batch_idx, (data, targets) in enumerate(loader):
         data = data.float().to(device=device)
@@ -1408,7 +1408,6 @@ def trial_6_GRU_MSE_mp():
     _t_loaders = [_t_loader_25]
     _v_loaders = [_v_loader_25]
 
-
     counter = 1
 
     for idx, _lr in enumerate(_alphas):
@@ -1429,6 +1428,88 @@ def trial_6_GRU_MSE_mp():
             print('Joining Process')
 
 
+def trial_6_flow_profile():
+    _criterion = nn.L1Loss()
+    _file_prefix = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/6_GRU_MSE/'
+    _pwd = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/'
+    _model_identifier = 'Hybrid_UNET_AE_GRU_L3_S25'
+    print('Initializing model.')
+
+    _model_unet = UNET_AE(
+        device=device,
+        in_channels=3,
+        out_channels=3,
+        features=[4, 8, 16],
+        activation=nn.ReLU(inplace=True)
+    )
+    _model_unet.load_state_dict(torch.load(
+        f'{_pwd}0_UNET_AE/Model_UNET_AE_LR0_0005'))
+
+    _model_rnn = GRU(
+        input_size=256,
+        hidden_size=256,
+        seq_size=25,
+        num_layers=3,
+        device=device
+    )
+    _model_rnn.load_state_dict(torch.load(
+            f'{_pwd}6_GRU_MSE/Model_GRU_MSE_LR0_00001_Lay3_Seq25'))
+
+    _model_hybrid = Hybrid_MD_RNN_UNET(
+        device=device,
+        UNET_Model=_model_unet,
+        RNN_Model=_model_rnn,
+        seq_length=25
+    ).to(device)
+
+    _scaler = torch.cuda.amp.GradScaler()
+    # _optimizer = optim.Adam(_model_hybrid.parameters(), lr=0.001)
+
+    _train_loss = 0
+    counter = 0
+    _train_loaders, _valid_loaders = get_RNN_loaders(
+        file_names=0, sequence_length=25)
+
+    for _loader in _train_loaders:
+        loss, _ = valid_HYBRID(
+            loader=_loader,
+            model=_model_hybrid,
+            criterion=_criterion,
+            scaler=_scaler,
+            identifier=_model_identifier,
+            current_epoch=counter
+        )
+        _train_loss += loss
+        resetPipeline(_model_hybrid)
+        counter += 1
+
+    print('------------------------------------------------------------')
+    print(f'{_model_identifier} Training -> Averaged Loader Loss: {_train_loss/len(_train_loaders):.6f}')
+
+    _valid_loss = 0
+
+    for _loader in _valid_loaders:
+        loss, _ = valid_HYBRID(
+            loader=_loader,
+            model=_model_hybrid,
+            criterion=_criterion,
+            scaler=_scaler,
+            identifier=_model_identifier,
+            current_epoch=counter
+        )
+        _valid_loss += loss
+        resetPipeline(_model_hybrid)
+        counter += 1
+
+    print('------------------------------------------------------------')
+    print(f'{_model_identifier} Validation -> Averaged Loader Loss: {_valid_loss/len(_valid_loaders):.6f}')
+
+    torch.save(
+        _model_hybrid.state_dict(),
+        f'{_file_prefix}Model_{_model_identifier}'
+    )
+
+
 if __name__ == "__main__":
 
-    trial_6_GRU_MSE_mp()
+    trial_6_flow_profile()
