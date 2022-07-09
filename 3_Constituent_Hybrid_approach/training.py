@@ -1467,8 +1467,7 @@ def trial_6_flow_profile():
 
     _train_loss = 0
     counter = 0
-    _train_loaders, _valid_loaders = get_RNN_loaders(
-        file_names=0, sequence_length=25)
+    _train_loaders, _valid_loaders = get_Hybrid_loaders(file_names=-1)
 
     for _loader in _train_loaders:
         loss, _ = valid_HYBRID(
