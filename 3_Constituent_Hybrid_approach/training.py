@@ -361,6 +361,9 @@ def valid_HYBRID(loader, model, criterion, scaler, identifier='', current_epoch=
         model_id=identifier,
         dataset_id=current_epoch
         )
+
+    print(np.vstack(_preds).shape)
+    print(np.vstack(_preds).shape)
     # losses2file(
     #     losses=timeline,
     #     filename=f'{_file_prefix}Losses_Hybrid_{identifier}_{current_epoch}'
@@ -1429,7 +1432,7 @@ def trial_6_GRU_MSE_mp():
 
 
 def trial_6_flow_profile():
-    _criterion = nn.L1Loss()
+    _criterion = nn.MSELoss()
     _file_prefix = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/6_GRU_MSE/'
     _pwd = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/'
     _model_identifier = 'Hybrid_UNET_AE_GRU_L3_S25'
