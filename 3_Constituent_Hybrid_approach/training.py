@@ -1058,10 +1058,8 @@ def trial_4_error_timeline():
 
     _models = []
     _hybrid_models = []
-    _scaler = torch.cuda.amp.GradScaler()
     _criterion = nn.L1Loss()
     _error_timelines = [[], [], [], [], [], []]
-    counter = 0
 
     _model_identifiers = [
         'RNN_Hybrid',

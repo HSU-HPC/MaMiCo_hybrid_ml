@@ -199,6 +199,7 @@ class RNN(nn.Module):
             batch_first=True
         )
         self.fc = nn.Linear(self.hidden_size*self.seq_size, self.input_size)
+        print('Model initialized: RNN.')
 
     def forward(self, x):
         # Set initial hidden states(for RNN, GRU, LSTM)
@@ -232,6 +233,7 @@ class GRU(nn.Module):
             batch_first=True
         )
         self.fc = nn.Linear(self.hidden_size*self.seq_size, self.input_size)
+        print('Model initialized: GRU.')
 
     def forward(self, x):
         # Set initial hidden states(for RNN, GRU, LSTM)
@@ -265,6 +267,7 @@ class LSTM(nn.Module):
             batch_first=True
         )
         self.fc = nn.Linear(hidden_size*self.seq_size, input_size)
+        print('Model initialized: LSTM.')
 
     def forward(self, x):
         # Set initial hidden states(for RNN, GRU, LSTM)
