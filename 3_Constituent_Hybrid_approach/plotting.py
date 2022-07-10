@@ -3,8 +3,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 import torch
-from utils import csv2dataset, csv2dataset_mp
-mpl.use('Agg')
+from utils import csv2dataset, csv2dataset_mp, mamico_csv2dataset
+# mpl.use('Agg')
 plt.style.use(['science'])
 np.set_printoptions(precision=2)
 
@@ -543,7 +543,8 @@ def compareErrorTimeline_np(l_of_l_losses, l_of_l_labels, l_of_titles, file_pref
 
     for i, list_of_l in enumerate(l_of_l_losses):
         for j, label in enumerate(l_of_l_labels):
-            print(f'Length of {label} list for {l_of_titles[i]} dataset: {len(l_of_l_losses[i][j])}')
+            print(
+                f'Length of {label} list for {l_of_titles[i]} dataset: {len(l_of_l_losses[i][j])}')
 
     num_epoch = len(l_of_l_losses[0][0])
 
@@ -598,50 +599,65 @@ def showSample():
     fig.savefig('Plots/Sampling_of_Volume.png')
 
 
+def plotVelocityField(input_1, input_2='void', file_prefix=0, file_name=0):
+
+    t, c, x, y, z = input_1.shape
+    spatial_res = [i for i in range(x)]
+    X1, Y1 = np.meshgrid(spatial_res, spatial_res)
+    t_samples = [0, int(t/2), -1]
+    columns = 2
+    inputs = [input_1, input_2]
+    if input_2 == 'void':
+        columns = 1
+    # set color field for better visualisation
+    # n = -2
+    # color = np.sqrt(((v-n)/2)*2 + ((u-n)/2)*2)
+
+    # set plot parameters
+    # u - velocity component in x-direction
+    # v - velocity component in y-direction
+    fig, axs = plt.subplots(3, columns, constrained_layout=True)
+    if input_2 == 'void':
+        print(axs.shape)
+        axs = np.reshape(axs, (3, 1))
+        print(axs.shape)
+
+    for i in range(3):
+        for j in range(columns):
+            u_x = inputs[j][t_samples[i], 0, :, int(y/2), :]
+            u_y = inputs[j][t_samples[i], 0, :, int(y/2), :]
+            axs[i][j].quiver(X1, Y1, u_x, u_y)
+            axs[i][j].xaxis.set_major_locator(plt.NullLocator())
+            axs[i][j].yaxis.set_major_locator(plt.NullLocator())
+            axs[i][0].set_ylabel('Height $z$')
+            axs[-1][j].set_xlabel('Depth $x$')
+
+    fig.suptitle('KVS Velocity Field (Cross-Section)')
+    axs[0][0].set_title('Prediction')
+    axs[0][-1].set_title('Target')
+
+    fig.set_size_inches(6, 10)
+    if file_name != 0:
+        fig.savefig(f'{file_prefix}Plot_Velocity_Field_{file_name}.svg')
+    plt.show()
+
+
 def main():
     pass
 
 
 if __name__ == "__main__":
-    _directory = '/home/lerdo/lerdo_HPC_Lab_Project/Trainingdata'
-    _file_names = [
-        'clean_kvs_10K_NE_combined_domain.csv',
-        'clean_kvs_10K_NW_combined_domain.csv',
-        'clean_kvs_10K_SE_combined_domain.csv',
-        'clean_kvs_10K_SW_combined_domain.csv',
-        'clean_kvs_20K_NW_combined_domain.csv',
-        'clean_kvs_20K_SE_combined_domain.csv',
-        'clean_kvs_20K_SW_combined_domain.csv',
-        'clean_kvs_30K_NE_combined_domain.csv',
-        'clean_kvs_30K_NW_combined_domain.csv',
-        'clean_kvs_30K_SE_combined_domain.csv',
-        'clean_kvs_30K_SW_combined_domain.csv',
-        'clean_kvs_40K_NE_combined_domain.csv',
-        'clean_kvs_40K_NW_combined_domain.csv',
-        'clean_kvs_40K_SE_combined_domain.csv',
-        'clean_kvs_40K_SW_combined_domain.csv',
-    ]
-    _dataset_names = [
-        'clean-kvs-10K-NE-combined-domain',
-        'clean-kvs-10K-NW-combined-domain',
-        'clean-kvs-10K-SE-combined-domain',
-        'clean-kvs-10K-SW-combined-domain',
-        'clean-kvs-20K-NW-combined-domain',
-        'clean-kvs-20K-SE-combined-domain',
-        'clean-kvs-20K-SW-combined-domain',
-        'clean-kvs-30K-NE-combined-domain',
-        'clean-kvs-30K-NW-combined-domain',
-        'clean-kvs-30K-SE-combined-domain',
-        'clean-kvs-30K-SW-combined-domain',
-        'clean-kvs-40K-NE-combined-domain',
-        'clean-kvs-40K-NW-combined-domain',
-        'clean-kvs-40K-SE-combined-domain',
-        'clean-kvs-40K-SW-combined-domain',
-    ]
-    _u_wall = [3 for i in range(15)]
 
-    visualizeMaMiCoDataset(
-        file_names=_file_names,
-        dataset_names=_dataset_names,
-        u_wall=_u_wall)
+    _file_prefix = 'lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/5_Hybrid_KVS/'
+    _file_in = 'clean_kvs_10K_SW_combined_domain.csv'
+    _file_name = 'kvs_10K_SW'
+    _input = mamico_csv2dataset(
+        file_name=_file_in
+    )
+
+    plotVelocityField(
+        input_1=_input,
+        file_prefix=_file_prefix,
+        file_name=_file_name
+    )
     pass
