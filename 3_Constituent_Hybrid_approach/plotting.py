@@ -602,6 +602,7 @@ def showSample():
 def plotVelocityField(input_1, input_2='void', file_prefix=0, file_name=0):
 
     t, c, x, y, z = input_1.shape
+    print(input_1.shape)
     spatial_res = [i for i in range(x)]
     X1, Y1 = np.meshgrid(spatial_res, spatial_res)
     t_samples = [0, int(t/2), -1]
@@ -625,7 +626,7 @@ def plotVelocityField(input_1, input_2='void', file_prefix=0, file_name=0):
     for i in range(3):
         for j in range(columns):
             u_x = inputs[j][t_samples[i], 0, :, int(y/2), :]
-            u_y = inputs[j][t_samples[i], 0, :, int(y/2), :]
+            u_y = inputs[j][t_samples[i], 2, :, int(y/2), :]
             axs[i][j].quiver(X1, Y1, u_x, u_y)
             axs[i][j].xaxis.set_major_locator(plt.NullLocator())
             axs[i][j].yaxis.set_major_locator(plt.NullLocator())
