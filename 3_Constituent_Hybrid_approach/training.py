@@ -1144,7 +1144,7 @@ def trial_4_error_timeline():
     pass
 
 
-def trial_5_0_KVS_AE(_alpha, _alpha_string, _train_loaders, _valid_loaders):
+def trial_5_KVS_AE(_alpha, _alpha_string, _train_loaders, _valid_loaders):
     _criterion = nn.L1Loss()
     _file_prefix = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/5_Hybrid_KVS/'
     _model_identifier = f'LR{_alpha_string}'
@@ -1222,9 +1222,9 @@ def trial_5_0_KVS_AE(_alpha, _alpha_string, _train_loaders, _valid_loaders):
     return
 
 
-def trial_5_0_KVS_AE_helper():
+def trial_5_KVS_AE_helper():
     _t_loaders, _v_loaders = get_UNET_AE_loaders(file_names=-2)
-    trial_5_0_KVS_AE(
+    trial_5_KVS_AE(
         _alpha=0.0005,
         _alpha_string='0_0005',
         _train_loaders=_t_loaders,
@@ -1609,4 +1609,4 @@ def trial_6_flow_profile():
 
 if __name__ == "__main__":
 
-    trial_4_Hybrid_mp()
+    trial_5_KVS_AE_helper()
