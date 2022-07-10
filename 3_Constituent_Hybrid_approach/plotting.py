@@ -606,6 +606,7 @@ def plotVelocityField(input_1, input_2='void', file_prefix=0, file_name=0):
     spatial_res = [i for i in range(x)]
     X, Z = np.meshgrid(np.arange(0, x, 1), np.arange(0, z, 1))
     t_samples = [0, int(t/2), -1]
+    y_samples = [0, int(y/4), 3*int(y/4)]
     columns = 2
     inputs = [input_1, input_2]
     if input_2 == 'void':
@@ -625,9 +626,9 @@ def plotVelocityField(input_1, input_2='void', file_prefix=0, file_name=0):
 
     for i in range(3):
         for j in range(columns):
-            u_x = inputs[j][t_samples[i], 0, :, int(y/2), :]
+            u_x = inputs[j][t_samples[i], 0, :, y_samples[i], :]
             print(u_x.shape)
-            u_z = inputs[j][t_samples[i], 2, :, int(y/2), :]
+            u_z = inputs[j][t_samples[i], 2, :, y_samples[i], :]
             print(u_x.shape)
             axs[i][j].quiver(X, Z, u_x, u_z, units='width')
             # axs[i][j].xaxis.set_major_locator(plt.NullLocator())
@@ -657,7 +658,7 @@ if __name__ == "__main__":
     _input = mamico_csv2dataset(
         file_name=_file_in
     )
-    _input = _input[:, :, 2:-2, 2:-2, 2:-2]
+    _input = _input[:, :, 3:-3, 3:-3, 3:-3]
 
     # _input = np.ones((5, 3, 24, 24, 24))
     plotVelocityField(
