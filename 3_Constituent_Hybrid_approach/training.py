@@ -958,7 +958,7 @@ def trial_4_Hybrid(_train_loaders, _valid_loaders, _model_rnn, _model_identifier
         counter += 1
 
     print('------------------------------------------------------------')
-    print(f'{_model_identifier} Training -> Averaged Loader Loss: {_train_loss/len(_train_loaders):.6f}')
+    print(f'{_model_identifier} Training -> Averaged Loader Loss: {_train_loss/len(_train_loaders)}')
 
     _valid_loss = 0
 
@@ -976,7 +976,7 @@ def trial_4_Hybrid(_train_loaders, _valid_loaders, _model_rnn, _model_identifier
         counter += 1
 
     print('------------------------------------------------------------')
-    print(f'{_model_identifier} Validation -> Averaged Loader Loss: {_valid_loss/len(_valid_loaders):.6f}')
+    print(f'{_model_identifier} Validation -> Averaged Loader Loss: {_valid_loss/len(_valid_loaders)}')
 
     # torch.save(_model_hybrid.state_dict(), f'{_file_prefix}Model_Hybrid_{_model_identifier}')
 
