@@ -626,7 +626,9 @@ def plotVelocityField(input_1, input_2='void', file_prefix=0, file_name=0):
     for i in range(3):
         for j in range(columns):
             u_x = inputs[j][t_samples[i], 0, :, int(y/2), :]
+            print(u_x.shape)
             u_y = inputs[j][t_samples[i], 2, :, int(y/2), :]
+            print(u_x.shape)
             axs[i][j].quiver(X1, Y1, u_x, u_y)
             axs[i][j].xaxis.set_major_locator(plt.NullLocator())
             axs[i][j].yaxis.set_major_locator(plt.NullLocator())
