@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import matplotlib as mpl
 import torch
 from utils import csv2dataset, csv2dataset_mp, mamico_csv2dataset
-# mpl.use('Agg')
+mpl.use('Agg')
 plt.style.use(['science'])
 np.set_printoptions(precision=2)
 
@@ -648,7 +648,7 @@ def main():
 
 if __name__ == "__main__":
 
-    _file_prefix = 'lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/5_Hybrid_KVS/'
+    _file_prefix = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/5_Hybrid_KVS/'
     _file_in = 'clean_kvs_10K_SW_combined_domain.csv'
     _file_name = 'kvs_10K_SW'
     _input = mamico_csv2dataset(
