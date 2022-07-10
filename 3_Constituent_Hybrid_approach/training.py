@@ -978,10 +978,7 @@ def trial_4_Hybrid(_train_loaders, _valid_loaders, _model_rnn, _model_identifier
     print('------------------------------------------------------------')
     print(f'{_model_identifier} Validation -> Averaged Loader Loss: {_valid_loss/len(_valid_loaders):.6f}')
 
-    torch.save(
-        _model_hybrid.state_dict(),
-        f'{_file_prefix}Model_Hybrid_{_model_identifier}'
-    )
+    # torch.save(_model_hybrid.state_dict(), f'{_file_prefix}Model_Hybrid_{_model_identifier}')
 
     pass
 
@@ -990,7 +987,6 @@ def trial_4_Hybrid_mp():
     _train_loaders, _valid_loaders = get_Hybrid_loaders(file_names=-1)
     _models = []
     _model_identifiers = [
-        # 'UNET_AE_LR0_0005'
         'RNN_LR0_00001_Lay1_Seq25',
         'GRU_LR0_00001_Lay2_Seq25',
         'LSTM_LR0_00001_Lay2_Seq25',
@@ -1613,4 +1609,4 @@ def trial_6_flow_profile():
 
 if __name__ == "__main__":
 
-    trial_4_error_timeline()
+    trial_4_Hybrid_mp()
