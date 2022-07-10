@@ -627,9 +627,9 @@ def plotVelocityField(input_1, input_2='void', file_prefix=0, file_name=0):
         for j in range(columns):
             u_x = inputs[j][t_samples[i], 0, :, int(y/2), :]
             print(u_x.shape)
-            u_y = inputs[j][t_samples[i], 2, :, int(y/2), :]
+            u_z = inputs[j][t_samples[i], 2, :, int(y/2), :]
             print(u_x.shape)
-            axs[i][j].quiver(X, Z, u_x, u_y, units='width')
+            axs[i][j].quiver(X, Z, u_x, u_z, units='width')
             # axs[i][j].xaxis.set_major_locator(plt.NullLocator())
             # axs[i][j].yaxis.set_major_locator(plt.NullLocator())
             axs[i][0].set_ylabel('Height $z$')
@@ -652,14 +652,14 @@ def main():
 if __name__ == "__main__":
 
     _file_prefix = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/5_Hybrid_KVS/'
-    _file_in = 'clean_kvs_20K_NE_combined_domain.csv'
-    _file_name = 'kvs_20K_NE'
+    _file_in = 'clean_kvs_40K_NE_combined_domain.csv'
+    _file_name = 'kvs_40K_NE'
     _input = mamico_csv2dataset(
         file_name=_file_in
     )
-
     _input = _input[:, :, 2:-2, 2:-2, 2:-2]
 
+    # _input = np.ones((5, 3, 24, 24, 24))
     plotVelocityField(
         input_1=_input,
         file_prefix=_file_prefix,
