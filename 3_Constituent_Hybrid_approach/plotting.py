@@ -604,7 +604,7 @@ def plotVelocityField(input_1, input_2='void', file_prefix=0, file_name=0):
     t, c, x, y, z = input_1.shape
     print(input_1.shape)
     spatial_res = [i for i in range(x)]
-    X1, Y1 = np.meshgrid(spatial_res, spatial_res)
+    X, Z = np.meshgrid(np.arange(0, x, 1), np.arange(0, z, 1))
     t_samples = [0, int(t/2), -1]
     columns = 2
     inputs = [input_1, input_2]
@@ -629,7 +629,7 @@ def plotVelocityField(input_1, input_2='void', file_prefix=0, file_name=0):
             print(u_x.shape)
             u_y = inputs[j][t_samples[i], 2, :, int(y/2), :]
             print(u_x.shape)
-            axs[i][j].quiver(X1, Y1, u_x, u_y)
+            axs[i][j].quiver(X, Z, u_x, u_y)
             axs[i][j].xaxis.set_major_locator(plt.NullLocator())
             axs[i][j].yaxis.set_major_locator(plt.NullLocator())
             axs[i][0].set_ylabel('Height $z$')
@@ -658,7 +658,7 @@ if __name__ == "__main__":
         file_name=_file_in
     )
 
-    _input = _input[:, :, 1:-1, 1:-1, 1:-1]
+    _input = _input[:, :, 2:-2, 2:-2, 2:-2]
 
     plotVelocityField(
         input_1=_input,
