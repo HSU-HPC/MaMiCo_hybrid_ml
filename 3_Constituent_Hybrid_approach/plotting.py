@@ -656,6 +656,8 @@ if __name__ == "__main__":
         file_name=_file_in
     )
 
+    _input = _input[:, :, 1:-1, 1:-1, 1:-1]
+
     plotVelocityField(
         input_1=_input,
         file_prefix=_file_prefix,
