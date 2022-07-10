@@ -630,8 +630,8 @@ def plotVelocityField(input_1, input_2='void', file_prefix=0, file_name=0):
             u_y = inputs[j][t_samples[i], 2, :, int(y/2), :]
             print(u_x.shape)
             axs[i][j].quiver(X, Z, u_x, u_y, scale=1)
-            axs[i][j].xaxis.set_major_locator(plt.NullLocator())
-            axs[i][j].yaxis.set_major_locator(plt.NullLocator())
+            # axs[i][j].xaxis.set_major_locator(plt.NullLocator())
+            # axs[i][j].yaxis.set_major_locator(plt.NullLocator())
             axs[i][0].set_ylabel('Height $z$')
             axs[-1][j].set_xlabel('Depth $x$')
 
