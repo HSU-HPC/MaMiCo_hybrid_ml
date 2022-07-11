@@ -605,7 +605,7 @@ def plotVelocityField(input_1, input_2='void', file_prefix=0, file_name=0):
     print(input_1.shape)
     spatial_res = [i for i in range(x)]
     X, Z = np.meshgrid(np.arange(0, x, 1), np.arange(0, z, 1))
-    t_samples = [0, int(t/2), 0]
+    t_samples = [0, int(t/2), t-1]
     y_samples = [0, int(y/4), 3*int(y/4)]
     columns = 2
     inputs = [input_1, input_2]
