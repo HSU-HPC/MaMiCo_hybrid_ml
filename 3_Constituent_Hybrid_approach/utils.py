@@ -864,7 +864,7 @@ def check_RNN_dataset_approach():
 
 if __name__ == "__main__":
     _directory = '/home/lerdo/lerdo_HPC_Lab_Project/Trainingdata'
-    _filename = 'kvs_20K_NE_NEW.csv'
+    _filename = 'kvs_10K_NE_combined_domain.csv'
 
     clean_mamico_data(
         directory=_directory,
