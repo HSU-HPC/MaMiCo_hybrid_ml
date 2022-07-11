@@ -653,8 +653,8 @@ def main():
 if __name__ == "__main__":
 
     _file_prefix = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/5_Hybrid_KVS/'
-    _file_in = 'kvs_10K_NE_combined_domain.csv'
-    _file_name = 'clean_kvs_10K_NE_combined_domain'
+    _file_in = 'clean_kvs_10K_NE_combined_domain.csv'
+    _file_name = 'kvs_10K_NE'
     _input = mamico_csv2dataset(
         file_name=_file_in
     )
