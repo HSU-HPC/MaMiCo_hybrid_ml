@@ -605,7 +605,7 @@ def plotVelocityField(input_1, input_2='void', file_prefix=0, file_name=0):
     print(input_1.shape)
     spatial_res = [i for i in range(x)]
     X, Z = np.meshgrid(np.arange(0, x, 1), np.arange(0, z, 1))
-    t_samples = [0, int(t/2), -1]
+    t_samples = [0, 84, 87]
     y_samples = [0, int(y/4), 3*int(y/4)]
     columns = 2
     inputs = [input_1, input_2]
@@ -653,12 +653,12 @@ def main():
 if __name__ == "__main__":
 
     _file_prefix = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/5_Hybrid_KVS/'
-    _file_in = 'clean_kvs_40K_NE_combined_domain.csv'
-    _file_name = 'kvs_40K_NE'
+    _file_in = 'clean_kvs_20K_NE_NEW.csv'
+    _file_name = 'kvs_20K_NE_NEW'
     _input = mamico_csv2dataset(
         file_name=_file_in
     )
-    _input = _input[:, :, 3:-3, 3:-3, 3:-3]
+    # _input = _input[:, :, 3:-3, 3:-3, 3:-3]
 
     # _input = np.ones((5, 3, 24, 24, 24))
     plotVelocityField(
