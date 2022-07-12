@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 import torch
-from utils import csv2dataset, csv2dataset_mp, mamico_csv2dataset
+from utils import csv2dataset, csv2dataset_mp, mamico_csv2dataset, mamico_csv2dataset_mp
 mpl.use('Agg')
 plt.style.use(['science'])
 np.set_printoptions(precision=2)
@@ -687,7 +687,7 @@ if __name__ == "__main__":
         'kvs_40K_SE',
         'kvs_40K_SW',
     ]
-    _inputs = mamico_csv2dataset(
+    _inputs = mamico_csv2dataset_mp(
         file_name=_files_in
     )
 
