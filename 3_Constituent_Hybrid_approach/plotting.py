@@ -606,7 +606,7 @@ def plotVelocityField(input_1, input_2='void', file_prefix=0, file_name=0):
     X, Z = np.meshgrid(np.arange(0, x, 1), np.arange(0, z, 1))
     t_samples = [0, int(t/2), t-1]
     columns = 2
-    inputs = [input_1, input_2]
+    inputs = [input_1.mean(axis=3), input_2]
     if input_2 == 'void':
         columns = 1
     # set color field for better visualisation
@@ -617,6 +617,7 @@ def plotVelocityField(input_1, input_2='void', file_prefix=0, file_name=0):
     # u - velocity component in x-direction
     # v - velocity component in y-direction
     fig, axs = plt.subplots(3, columns, constrained_layout=True)
+
     if input_2 == 'void':
         print(axs.shape)
         axs = np.reshape(axs, (3, 1))
@@ -624,9 +625,9 @@ def plotVelocityField(input_1, input_2='void', file_prefix=0, file_name=0):
 
     for i in range(3):
         for j in range(columns):
-            u_x = inputs[j][t_samples[i], 0, :, int(y/2), :]
+            u_x = inputs[j][t_samples[i], 0, :, :]
             print(u_x.shape)
-            u_z = inputs[j][t_samples[i], 2, :, int(y/2), :]
+            u_z = inputs[j][t_samples[i], 2, :, :]
             print(u_x.shape)
             axs[i][j].quiver(X, Z, u_x, u_z, units='width')
             # axs[i][j].xaxis.set_major_locator(plt.NullLocator())
@@ -640,7 +641,8 @@ def plotVelocityField(input_1, input_2='void', file_prefix=0, file_name=0):
 
     fig.set_size_inches(6, 10)
     if file_name != 0:
-        fig.savefig(f'{file_prefix}Plot_Velocity_Field_{file_name}.svg')
+        fig.savefig(
+            f'{file_prefix}Plot_Averaged_Velocity_Field_{file_name}.svg')
     plt.show()
 
 
