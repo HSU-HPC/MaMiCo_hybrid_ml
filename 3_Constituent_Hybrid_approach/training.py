@@ -189,7 +189,6 @@ def get_latentspace_AE_helper():
             model=_model,
             out_file_name=f'{_out_directory}{_out_file_names[idx]}'
         )
-    pass
 
 
 def train_RNN(loader, model, optimizer, criterion, scaler, identifier='', current_epoch=''):
@@ -1232,6 +1231,54 @@ def trial_5_KVS_AE_helper():
     )
 
 
+def trial_5_KVS_AE_latentspace_helper():
+    _model = UNET_AE(
+        device=device,
+        in_channels=3,
+        out_channels=3,
+        features=[4, 8, 16],
+        activation=torch.nn.ReLU(inplace=True)
+    ).to(device)
+
+    #TO DO - Check proper model to load
+    _model.load_state_dict(torch.load(
+        '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/5_Hybrid_KVS/Model_UNET_AE_LR0_0005'))
+    _model.eval()
+
+    _loader_1, _loader_2_ = get_UNET_AE_loaders(
+        file_names=-2,
+        num_workers=1,
+        batch_size=32,
+        shuffle=False
+    )
+    _loaders = _loader_1 + _loader_2_
+    _out_directory = '/home/lerdo/lerdo_HPC_Lab_Project/Trainingdata/Latentspace_Dataset'
+    _out_file_names = [
+        '_kvs_10K_NE',
+        '_kvs_10K_NW',
+        '_kvs_10K_SE',
+        '_kvs_10K_SW',
+        '_kvs_20K_NE',
+        '_kvs_20K_NW',
+        '_kvs_20K_SE',
+        '_kvs_20K_SW',
+        '_kvs_30K_NE',
+        '_kvs_30K_NW',
+        '_kvs_30K_SE',
+        '_kvs_30K_SW',
+        '_kvs_40K_NE',
+        '_kvs_40K_NW',
+        '_kvs_40K_SE',
+        '_kvs_40K_SW',
+    ]
+    for idx, _loader in enumerate(_loaders):
+        get_latentspace_AE(
+            loader=_loader,
+            model=_model,
+            out_file_name=f'{_out_directory}{_out_file_names[idx]}'
+        )
+
+
 def trial_5_0_KVS_error_timeline():
     _directory = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/5_Hybrid_KVS/'
     model_name_1 = 'Model_UNET_AE_LR0_0005'
@@ -1609,4 +1656,4 @@ def trial_6_flow_profile():
 
 if __name__ == "__main__":
 
-    trial_5_KVS_AE_helper()
+    trial_5_KVS_AE_latentspace_helper()
