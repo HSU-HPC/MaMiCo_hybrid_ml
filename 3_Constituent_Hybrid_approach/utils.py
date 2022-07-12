@@ -226,9 +226,28 @@ def get_UNET_AE_loaders(file_names=0, num_workers=12):
         print('Loading validation data.')
         data_valid = mamico_csv2dataset_mp(_valid_files)
         duration = time.time() - start_time
-        print(
-            f'Completed loading validation data. Duration: {duration:.3f}')
+        print(f'Completed loading validation data. Duration: {duration:.3f}')
 
+        data_train_stack = np.vstack(data_train)
+        dataset_train = MyMamicoDataset_UNET_AE(data_train_stack)
+        dataloader_train = DataLoader(
+            dataset=dataset_train,
+            batch_size=_batch_size,
+            shuffle=True,
+            num_workers=_num_workers
+            )
+
+        data_valid_stack = np.vstack(data_valid)
+        dataset_valid = MyMamicoDataset_UNET_AE(data_valid_stack)
+        dataloader_valid = DataLoader(
+            dataset=dataset_valid,
+            batch_size=_batch_size,
+            shuffle=False,
+            num_workers=_num_workers
+            )
+
+        return [dataloader_train], [dataloader_valid]
+        '''
         dataloaders_train = []
         dataloaders_valid = []
 
@@ -252,6 +271,7 @@ def get_UNET_AE_loaders(file_names=0, num_workers=12):
                 )
             dataloaders_valid.append(dataloader)
         return dataloaders_train, dataloaders_valid
+        '''
 
     else:
         print('Loading ---> RANDOM <--- training datasets as loader.')
@@ -884,7 +904,7 @@ if __name__ == "__main__":
     ]
     processes = []
 
-    for i in range(12):
+    for i in range(8, 12):
         p = mp.Process(
             target=clean_mamico_data,
             args=(_directory, _filenames[i],)
