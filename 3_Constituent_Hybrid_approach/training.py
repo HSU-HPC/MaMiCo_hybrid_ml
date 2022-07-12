@@ -1428,7 +1428,7 @@ def trial_5_KVS_RNN_mp():
         seq_size=25,
         num_layers=1,
         device=device
-    )
+    ).to(device)
     _models.append(_model_rnn_1)
     _model_rnn_2 = GRU(
         input_size=256,
@@ -1436,7 +1436,7 @@ def trial_5_KVS_RNN_mp():
         seq_size=25,
         num_layers=2,
         device=device
-    )
+    ).to(device)
     _models.append(_model_rnn_2)
     _model_rnn_3 = LSTM(
         input_size=256,
@@ -1444,7 +1444,7 @@ def trial_5_KVS_RNN_mp():
         seq_size=25,
         num_layers=2,
         device=device
-    )
+    ).to(device)
     _models.append(_model_rnn_3)
 
     _t_loader_25, _v_loader_25 = get_RNN_loaders(
