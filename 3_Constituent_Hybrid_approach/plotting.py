@@ -688,7 +688,7 @@ if __name__ == "__main__":
         'kvs_40K_SW',
     ]
     _inputs = mamico_csv2dataset_mp(
-        file_name=_files_in
+        file_names=_files_in
     )
 
     for i, _input in enumerate(_inputs):
