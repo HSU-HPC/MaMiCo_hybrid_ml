@@ -1279,7 +1279,7 @@ def trial_5_KVS_AE_latentspace_helper():
         )
 
 
-def trial_5_0_KVS_error_timeline():
+def trial_5_KVS_error_timeline():
     _directory = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/5_Hybrid_KVS/'
     model_name_1 = 'Model_UNET_AE_LR0_0005'
     model_name_2 = 'Model_LSTM_LR0_00001_Lay3_Seq25'
@@ -1334,18 +1334,10 @@ def trial_5_0_KVS_error_timeline():
     pass
 
 
-def trial_5_1_KVS_RNN(_seq_length, _num_layers, _alpha, _alpha_string, _train_loaders, _valid_loaders):
+def trial_5_KVS_RNN(_alpha, _train_loaders, _valid_loaders, _model_identifier, _model):
     _criterion = nn.L1Loss()
     _file_prefix = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/5_Hybrid_KVS/'
-    _model_identifier = f'LR{_alpha_string}_Lay{_num_layers}_Seq{_seq_length}'
     print('Initializing RNN model.')
-    _model = LSTM(
-        input_size=256,
-        hidden_size=256,
-        seq_size=_seq_length,
-        num_layers=_num_layers,
-        device=device
-    ).to(device)
 
     print('Initializing training parameters.')
     _scaler = torch.cuda.amp.GradScaler()
@@ -1412,46 +1404,70 @@ def trial_5_1_KVS_RNN(_seq_length, _num_layers, _alpha, _alpha_string, _train_lo
     )
 
 
-def trial_5_1_KVS_RNN_mp():
-    _alphas = [0.001, 0.0005, 0.0001, 0.00005, 0.00001, 0.000005]
-    _alpha_strings = ['0_001', '0_0005', '0_0001',
-                      '0_00005', '0_00001', '0_000005']
-    _rnn_depths = [1, 2, 3]
-    _seq_lengths = [5, 15, 25]
+def trial_5_KVS_RNN_mp():
+    # BRIEF: this part of trial 5 aims to train the best RNN, GRU and LSTM
+    # configurations from the previous trials on the basis of the KVS dataset.
+    # PARAMETERS:
+    # loader - object
 
-    _alphas.reverse()
-    _alpha_strings.reverse()
+    _alphas = [0.00001, 0.00001, 0.00001]
+    # _alpha_strings = ['0_00001', '0_00001', '0_00001']
+    # _rnn_depths = [1, 2, 2]
+    # _seq_lengths = [25, 25, 25]
+    # _model_id = [RNN, GRU, LSTM]
+    _model_identifiers = [
+        'KVS_RNN_LR0_00001_Lay1_Seq25',
+        'KVS_GRU_LR0_00001_Lay2_Seq25',
+        'KVS_LSTM_LR0_00001_Lay2_Seq25',
+    ]
+    _models = []
 
-    _t_loader_05, _v_loader_05 = get_RNN_loaders(
-        file_names=-2, sequence_length=5)
-    _t_loader_15, _v_loader_15 = get_RNN_loaders(
-        file_names=-2, sequence_length=15)
+    _model_rnn_1 = RNN(
+        input_size=256,
+        hidden_size=256,
+        seq_size=25,
+        num_layers=1,
+        device=device
+    )
+    _models.append(_model_rnn_1)
+    _model_rnn_2 = GRU(
+        input_size=256,
+        hidden_size=256,
+        seq_size=25,
+        num_layers=2,
+        device=device
+    )
+    _models.append(_model_rnn_2)
+    _model_rnn_3 = LSTM(
+        input_size=256,
+        hidden_size=256,
+        seq_size=25,
+        num_layers=2,
+        device=device
+    )
+    _models.append(_model_rnn_3)
+
     _t_loader_25, _v_loader_25 = get_RNN_loaders(
-        file_names=-2, sequence_length=25)
+        file_names=-2,
+        sequence_length=25,
+        batch_size=32,
+        shuffle=False
+    )
+    processes = []
 
-    _t_loaders = [_t_loader_05, _t_loader_15, _t_loader_25]
-    _v_loaders = [_v_loader_05, _v_loader_15, _v_loader_25]
+    for i in range(3):
+        p = mp.Process(
+            target=trial_5_KVS_RNN,
+            args=(_alphas[i], _t_loader_25, _v_loader_25,
+                  _model_identifiers[i], _models[i],)
+        )
+        p.start()
+        processes.append(p)
+        print(f'Creating Process Number: {i+1}')
 
-    for idx in range(1, 2):
-        counter = 1
-
-        for _rnn_depth in _rnn_depths:
-            processes = []
-
-            for i in range(3):
-                p = mp.Process(
-                    target=trial_5_1_KVS_RNN,
-                    args=(_seq_lengths[i], _rnn_depth, _alphas[idx],
-                          _alpha_strings[idx], _t_loaders[i], _v_loaders[i],)
-                )
-                p.start()
-                processes.append(p)
-                print(f'Creating Process Number: {counter}')
-                counter += 1
-
-        for process in processes:
-            process.join()
-            print('Joining Process')
+    for process in processes:
+        process.join()
+        print('Joining Process')
 
 
 def trial_6_GRU_MSE(_seq_length, _num_layers, _alpha, _alpha_string, _train_loaders, _valid_loaders):
@@ -1656,4 +1672,4 @@ def trial_6_flow_profile():
 
 if __name__ == "__main__":
 
-    trial_5_KVS_AE_latentspace_helper()
+    trial_5_KVS_RNN_mp()

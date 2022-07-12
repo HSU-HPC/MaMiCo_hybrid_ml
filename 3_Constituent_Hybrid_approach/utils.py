@@ -195,7 +195,8 @@ def get_UNET_AE_loaders(file_names=0, num_workers=12, batch_size=32, shuffle=Tru
                     num_workers=_num_workers
                     )
                 dataloaders_valid.append(dataloader)
-            print(f'Num Train Loaders = {len(dataloaders_train)}        Num Valid Loaders = {len(dataloaders_valid)}')
+            print(
+                f'Num Train Loaders = {len(dataloaders_train)}        Num Valid Loaders = {len(dataloaders_valid)}')
             return dataloaders_train, dataloaders_valid
 
     elif file_names == -2:
@@ -279,9 +280,9 @@ def get_UNET_AE_loaders(file_names=0, num_workers=12, batch_size=32, shuffle=Tru
                 num_workers=_num_workers
                 )
             dataloaders_valid.append(dataloader)
-        print(f'Num Train Loaders = {len(dataloaders_train)}        Num Valid Loaders = {len(dataloaders_valid)}')
+        print(
+            f'Num Train Loaders = {len(dataloaders_train)}        Num Valid Loaders = {len(dataloaders_valid)}')
         return dataloaders_train, dataloaders_valid
-
 
     else:
         print('Loading ---> RANDOM <--- training datasets as loader.')
@@ -339,11 +340,12 @@ def get_UNET_AE_loaders(file_names=0, num_workers=12, batch_size=32, shuffle=Tru
         shuffle=False,
         num_workers=_num_workers
         )
-    print(f'Num Train Loaders = {len([dataloader_train])}        Num Valid Loaders = {len([dataloader_valid])}')
+    print(
+        f'Num Train Loaders = {len([dataloader_train])}        Num Valid Loaders = {len([dataloader_valid])}')
     return [dataloader_train], [dataloader_valid]
 
 
-def get_RNN_loaders(file_names=0, sequence_length=15, batch_size=16, num_workers=1, shuffle=False):
+def get_RNN_loaders(file_names=0, sequence_length=15, batch_size=32, num_workers=1, shuffle=False):
     #
     # This function creates the dataloaders needed to automatically
     # feed the neural networks with the input dataset. In particular,
@@ -467,6 +469,7 @@ def get_RNN_loaders(file_names=0, sequence_length=15, batch_size=16, num_workers
         )
         dataloaders_valid.append(_dataloader)
 
+    print(f'Num Train Loaders = {len(dataloaders_train)}        Num Valid Loaders = {len(dataloaders_valid)}')
     return dataloaders_train, dataloaders_valid
 
 
