@@ -864,9 +864,35 @@ def check_RNN_dataset_approach():
 
 if __name__ == "__main__":
     _directory = '/home/lerdo/lerdo_HPC_Lab_Project/Trainingdata'
-    _filename = 'kvs_10K_NE_combined_domain.csv'
+    _filenames = [
+        'kvs_10K_NE_combined_domain.csv',
+        'kvs_10K_NW_combined_domain.csv',
+        'kvs_10K_SE_combined_domain.csv',
+        'kvs_10K_SW_combined_domain.csv',
+        'kvs_20K_NE_combined_domain.csv',
+        'kvs_20K_NW_combined_domain.csv',
+        'kvs_20K_SE_combined_domain.csv',
+        'kvs_20K_SW_combined_domain.csv',
+        'kvs_30K_NE_combined_domain.csv',
+        'kvs_30K_NW_combined_domain.csv',
+        'kvs_30K_SE_combined_domain.csv',
+        'kvs_30K_SW_combined_domain.csv',
+        'kvs_40K_NE_combined_domain.csv',
+        'kvs_40K_NW_combined_domain.csv',
+        'kvs_40K_SE_combined_domain.csv',
+        'kvs_40K_SW_combined_domain.csv',
+    ]
+    processes = []
 
-    clean_mamico_data(
-        directory=_directory,
-        filename=_filename
-    )
+    for i in range(12):
+        p = mp.Process(
+            target=clean_mamico_data,
+            args=(_directory, _filenames[i],)
+        )
+        p.start()
+        processes.append(p)
+        print(f'Creating Process Number: {i}')
+
+    for process in processes:
+        process.join()
+        print('Joining Process')
