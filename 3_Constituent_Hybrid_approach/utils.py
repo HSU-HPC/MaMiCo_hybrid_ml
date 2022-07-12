@@ -195,6 +195,7 @@ def get_UNET_AE_loaders(file_names=0, num_workers=12, batch_size=32, shuffle=Tru
                     num_workers=_num_workers
                     )
                 dataloaders_valid.append(dataloader)
+            print(f'Num Train Loaders = {len(dataloaders_train)}        Num Valid Loaders = {len(dataloaders_valid)}')
             return dataloaders_train, dataloaders_valid
 
     elif file_names == -2:
@@ -234,6 +235,7 @@ def get_UNET_AE_loaders(file_names=0, num_workers=12, batch_size=32, shuffle=Tru
         duration = time.time() - start_time
         print(f'Completed loading validation data. Duration: {duration:.3f}')
 
+        '''
         data_train_stack = np.vstack(data_train)
         dataset_train = MyMamicoDataset_UNET_AE(data_train_stack)
         dataloader_train = DataLoader(
@@ -251,9 +253,10 @@ def get_UNET_AE_loaders(file_names=0, num_workers=12, batch_size=32, shuffle=Tru
             shuffle=False,
             num_workers=_num_workers
             )
-
+        print(f'Num Train Loaders = {len([dataloader_train])}        Num Valid Loaders = {len([dataloader_valid])}')
         return [dataloader_train], [dataloader_valid]
         '''
+
         dataloaders_train = []
         dataloaders_valid = []
 
@@ -276,8 +279,9 @@ def get_UNET_AE_loaders(file_names=0, num_workers=12, batch_size=32, shuffle=Tru
                 num_workers=_num_workers
                 )
             dataloaders_valid.append(dataloader)
+        print(f'Num Train Loaders = {len(dataloaders_train)}        Num Valid Loaders = {len(dataloaders_valid)}')
         return dataloaders_train, dataloaders_valid
-        '''
+
 
     else:
         print('Loading ---> RANDOM <--- training datasets as loader.')
@@ -335,7 +339,7 @@ def get_UNET_AE_loaders(file_names=0, num_workers=12, batch_size=32, shuffle=Tru
         shuffle=False,
         num_workers=_num_workers
         )
-
+    print(f'Num Train Loaders = {len([dataloader_train])}        Num Valid Loaders = {len([dataloader_valid])}')
     return [dataloader_train], [dataloader_valid]
 
 
