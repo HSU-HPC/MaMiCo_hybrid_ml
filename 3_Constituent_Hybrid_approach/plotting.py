@@ -603,10 +603,8 @@ def plotVelocityField(input_1, input_2='void', file_prefix=0, file_name=0):
 
     t, c, x, y, z = input_1.shape
     print(input_1.shape)
-    spatial_res = [i for i in range(x)]
     X, Z = np.meshgrid(np.arange(0, x, 1), np.arange(0, z, 1))
     t_samples = [0, int(t/2), t-1]
-    y_samples = [0, int(y/4), 3*int(y/4)]
     columns = 2
     inputs = [input_1, input_2]
     if input_2 == 'void':
@@ -653,17 +651,50 @@ def main():
 if __name__ == "__main__":
 
     _file_prefix = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/5_Hybrid_KVS/'
-    _file_in = 'clean_kvs_10K_NE_combined_domain.csv'
-    _file_name = 'kvs_10K_NE'
-    _input = mamico_csv2dataset(
-        file_name=_file_in
+    _files_in = [
+        'clean_kvs_10K_NE_combined_domain.csv',
+        'clean_kvs_10K_NW_combined_domain.csv',
+        'clean_kvs_10K_SE_combined_domain.csv',
+        'clean_kvs_10K_SW_combined_domain.csv',
+        'clean_kvs_20K_NE_combined_domain.csv',
+        'clean_kvs_20K_NW_combined_domain.csv',
+        'clean_kvs_20K_SE_combined_domain.csv',
+        'clean_kvs_20K_SW_combined_domain.csv',
+        'clean_kvs_30K_NE_combined_domain.csv',
+        'clean_kvs_30K_NW_combined_domain.csv',
+        'clean_kvs_30K_SE_combined_domain.csv',
+        'clean_kvs_30K_SW_combined_domain.csv',
+        'clean_kvs_40K_NE_combined_domain.csv',
+        'clean_kvs_40K_NW_combined_domain.csv',
+        'clean_kvs_40K_SE_combined_domain.csv',
+        'clean_kvs_40K_SW_combined_domain.csv',
+    ]
+    _files_out = [
+        'kvs_10K_NE',
+        'kvs_10K_NW',
+        'kvs_10K_SE',
+        'kvs_10K_SW',
+        'kvs_20K_NE',
+        'kvs_20K_NW',
+        'kvs_20K_SE',
+        'kvs_20K_SW',
+        'kvs_30K_NE',
+        'kvs_30K_NW',
+        'kvs_30K_SE',
+        'kvs_30K_SW',
+        'kvs_40K_NE',
+        'kvs_40K_NW',
+        'kvs_40K_SE',
+        'kvs_40K_SW',
+    ]
+    _inputs = mamico_csv2dataset(
+        file_name=_files_in
     )
-    _input = _input[:, :, 4:-4, 4:-4, 4:-4]
 
-    # _input = np.ones((5, 3, 24, 24, 24))
-    plotVelocityField(
-        input_1=_input,
-        file_prefix=_file_prefix,
-        file_name=_file_name
-    )
+    for i, _input in enumerate(_inputs):
+        plotVelocityField(
+            input_1=_input,
+            file_prefix=_file_prefix,
+            file_name=_files_out[i]
+        )
     pass
