@@ -17,6 +17,7 @@ def clean_mamico_data(directory, filename):
     # csv file. In other words, to remove the comma delimiter
     # and ensure a semicolon delimiter.
     #
+    print(f'Cleaning MaMiCo Dataset: {filename}.')
     text = open(f"{directory}/{filename}", "r")
     text = ''.join([i for i in text]) \
         .replace(",", ";")
@@ -32,6 +33,7 @@ def mamico_csv2dataset(file_name):
     # Currently, proper functionality is hardcoded for simulations
     # containing 1000 timesteps.
     #
+    print(f'Loading MaMiCo dataset from csv: {file_name}')
     _directory = '/home/lerdo/lerdo_HPC_Lab_Project/Trainingdata'
     dataset = np.zeros((1000, 3, 26, 26, 26))
 
@@ -57,13 +59,9 @@ def mamico_csv2dataset_mp(file_names):
     # Currently, proper functionality is hardcoded for simulations
     # containing 1000 timesteps.
     #
-    start = time.time()
-
+    print('Loading MaMiCo Datasets from csv via Multiprocessing.')
     with concurrent.futures.ProcessPoolExecutor() as executor:
         results = executor.map(mamico_csv2dataset, file_names)
-
-    duration = time.time() - start
-    print(f'Loading Data via Multiprocessing takes: {duration:.3f} secs')
     return results
 
 
@@ -72,7 +70,7 @@ def dataset2csv(dataset, dataset_name,  model_descriptor=0, counter=''):
     # This function reads from a MaMiCo generatd csv file.
     # Currently, proper functionality is hardcoded for simulations
     # containing 1000 timesteps.
-    #
+    print(f'Saving dataset to csv: {dataset_name}')
     # 1) Convert 3D array to 2D array
     dataset_reshaped = dataset.reshape(dataset.shape[0], -1)
     # 2) Save 2D array to file
@@ -85,8 +83,9 @@ def dataset2csv(dataset, dataset_name,  model_descriptor=0, counter=''):
 
 def csv2dataset(filename, output_shape=0):
     # directory = '/home/lerdo/lerdo_HPC_Lab_Project/Trainingdata'
+    print(f'Loading Dataset from csv: {filename}')
     dataset = np.loadtxt(f'{filename}')
-    print('Shape of dataset: ', dataset.shape)
+    # print('Shape of dataset: ', dataset.shape)
 
     if output_shape == 0:
         return dataset
@@ -99,17 +98,15 @@ def csv2dataset(filename, output_shape=0):
 
 
 def csv2dataset_mp(filenames, output_shape=0):
-    start = time.time()
+    print('Loading Datasets from csv via Multiprocessing.')
 
     with concurrent.futures.ProcessPoolExecutor() as executor:
         results = executor.map(csv2dataset, filenames)
 
-    duration = time.time() - start
-    print(f'Loading Data via Multiprocessing takes: {duration:.3f} secs')
     return results
 
 
-def get_UNET_AE_loaders(file_names=0, num_workers=12):
+def get_UNET_AE_loaders(file_names=0, num_workers=12, batch_size=32, shuffle=True):
     #
     # This function creates the dataloaders needed to automatically
     # feed the neural networks with the input dataset. In particular,
@@ -119,9 +116,16 @@ def get_UNET_AE_loaders(file_names=0, num_workers=12):
     # if == 0 : load data via mp and return one train and valid loader
     # if == -1: load data via mp and return multiple train and valid loaders
     # else: load random data for testing
-    _batch_size = 32
+    _batch_size = batch_size
+    _shuffle = shuffle
+    if _shuffle is True:
+        switch = 'on'
+    else:
+        switch = 'off'
+
     _num_workers = 1
     print('------------------------------------------------------------')
+    print('                      Loader Summary                        ')
     print(f'Batch size = {_batch_size}        Num worker = {_num_workers}')
 
     data_train = []
@@ -129,6 +133,7 @@ def get_UNET_AE_loaders(file_names=0, num_workers=12):
     _directory = '/home/lerdo/lerdo_HPC_Lab_Project/Trainingdata'
 
     if file_names == 0 or file_names == -1:
+        print(f'Data Distribution = Couette        Shuffle = {switch}')
         _train_files = [
             'clean_couette_test_combined_domain_0_5_top.csv',
             'clean_couette_test_combined_domain_0_5_middle.csv',
@@ -176,7 +181,7 @@ def get_UNET_AE_loaders(file_names=0, num_workers=12):
                 dataloader = DataLoader(
                     dataset=dataset,
                     batch_size=_batch_size,
-                    shuffle=False,
+                    shuffle=_shuffle,
                     num_workers=_num_workers
                     )
                 dataloaders_train.append(dataloader)
@@ -193,6 +198,7 @@ def get_UNET_AE_loaders(file_names=0, num_workers=12):
             return dataloaders_train, dataloaders_valid
 
     elif file_names == -2:
+        print(f'Data Distribution = KVS        Shuffle = {switch}')
         _train_files = [
             'clean_kvs_10K_NE_combined_domain.csv',
             'clean_kvs_10K_NW_combined_domain.csv',
@@ -233,7 +239,7 @@ def get_UNET_AE_loaders(file_names=0, num_workers=12):
         dataloader_train = DataLoader(
             dataset=dataset_train,
             batch_size=_batch_size,
-            shuffle=True,
+            shuffle=_shuffle,
             num_workers=_num_workers
             )
 
@@ -333,7 +339,7 @@ def get_UNET_AE_loaders(file_names=0, num_workers=12):
     return [dataloader_train], [dataloader_valid]
 
 
-def get_RNN_loaders(file_names=0, sequence_length=15, num_workers=4):
+def get_RNN_loaders(file_names=0, sequence_length=15, batch_size=16, num_workers=1, shuffle=False):
     #
     # This function creates the dataloaders needed to automatically
     # feed the neural networks with the input dataset. In particular,
@@ -343,14 +349,25 @@ def get_RNN_loaders(file_names=0, sequence_length=15, num_workers=4):
     # if == 0 : load data via mp and return one train and valid loader
     # if == -1: load data via mp and return multiple train and valid loaders
     # else: load random data for testing
-    _num_workers = 1
-    _batch_size = 16
+    _batch_size = batch_size
+    _shuffle = shuffle
+    _num_workers = num_workers
+
+    if _shuffle is True:
+        switch = 'on'
+    else:
+        switch = 'off'
+
+    print('------------------------------------------------------------')
+    print('                      Loader Summary                        ')
+    print(f'Batch size = {_batch_size}        Num worker = {_num_workers}')
 
     data_train = []
     data_valid = []
     _directory = '/home/lerdo/lerdo_HPC_Lab_Project/Trainingdata/'
 
     if file_names == 0:
+        print(f'Data Distribution = Couette        Shuffle = {switch}')
         _train_files = [
             f'{_directory}Latentspace_Dataset_0_5_B.csv',
             f'{_directory}Latentspace_Dataset_0_5_M.csv',
@@ -374,20 +391,14 @@ def get_RNN_loaders(file_names=0, sequence_length=15, num_workers=4):
             f'{_directory}Latentspace_Dataset_5_0_M.csv',
             f'{_directory}Latentspace_Dataset_5_0_T.csv',
         ]
-        start_time = time.time()
         print('Loading training data.')
         data_train = csv2dataset_mp(_train_files)
-        duration = time.time() - start_time
-        print(
-            f'Completed loading training data. Duration: {duration:.3f}')
 
-        start_time = time.time()
         print('Loading validation data.')
         data_valid = csv2dataset_mp(_valid_files)
-        duration = time.time() - start_time
-        print(f'Completed loading validation data. Duration: {duration:.3f}')
 
     elif file_names == -2:
+        print(f'Data Distribution = KVS        Shuffle = {switch}')
         _train_files = [
             f'{_directory}Latentspace_Dataset_kvs_10K_NE.csv',
             f'{_directory}Latentspace_Dataset_kvs_10K_NW.csv',
@@ -409,18 +420,11 @@ def get_RNN_loaders(file_names=0, sequence_length=15, num_workers=4):
             f'{_directory}Latentspace_Dataset_kvs_40K_SE.csv',
             f'{_directory}Latentspace_Dataset_kvs_40K_SW.csv',
         ]
-        start_time = time.time()
         print('Loading training data.')
         data_train = csv2dataset_mp(_train_files)
-        duration = time.time() - start_time
-        print(
-            f'Completed loading training data. Duration: {duration:.3f}')
 
-        start_time = time.time()
         print('Loading validation data.')
         data_valid = csv2dataset_mp(_valid_files)
-        duration = time.time() - start_time
-        print(f'Completed loading validation data. Duration: {duration:.3f}')
     else:
         print('Loading ---> RANDOM <--- training datasets as loader.')
         for i in range(5):
@@ -444,7 +448,7 @@ def get_RNN_loaders(file_names=0, sequence_length=15, num_workers=4):
         _dataloader = DataLoader(
             dataset=_dataset,
             batch_size=_batch_size,
-            shuffle=False,
+            shuffle=_shuffle,
             num_workers=_num_workers
         )
         dataloaders_train.append(_dataloader)
@@ -454,17 +458,15 @@ def get_RNN_loaders(file_names=0, sequence_length=15, num_workers=4):
         _dataloader = DataLoader(
             dataset=_dataset,
             batch_size=_batch_size,
-            shuffle=False,
+            shuffle=_shuffle,
             num_workers=_num_workers
         )
         dataloaders_valid.append(_dataloader)
-    print('------------------------------------------------------------')
-    print(f'Batch size = {_batch_size}        Num worker = {_num_workers}')
 
     return dataloaders_train, dataloaders_valid
 
 
-def get_Hybrid_loaders(file_names=0, num_workers=4):
+def get_Hybrid_loaders(file_names=0, batch_size=1, num_workers=4, shuffle=False):
     #
     # This function creates the dataloaders needed to automatically
     # feed the neural networks with the input dataset. In particular,
@@ -474,13 +476,24 @@ def get_Hybrid_loaders(file_names=0, num_workers=4):
     # if == 0 : load data via mp and return one train and valid loader
     # if == -1: load data via mp and return multiple train and valid loaders
     # else: load random data for testing
+    _batch_size = batch_size
+    _shuffle = shuffle
+    _num_workers = num_workers
+
+    if _shuffle is True:
+        switch = 'on'
+    else:
+        switch = 'off'
+
+    print('------------------------------------------------------------')
+    print('                      Loader Summary                        ')
+    print(f'Batch size = {_batch_size}        Num worker = {_num_workers}')
 
     data_train = []
     data_valid = []
-    _batch_size = 1
-    _num_workers = 1
 
     if file_names == 0 or file_names == -1:
+        print(f'Data Distribution = Couette        Shuffle = {switch}')
         _train_files = [
             'clean_couette_test_combined_domain_0_5_top.csv',
             'clean_couette_test_combined_domain_0_5_middle.csv',
@@ -504,19 +517,11 @@ def get_Hybrid_loaders(file_names=0, num_workers=4):
             'clean_couette_test_combined_domain_5_0_middle.csv',
             'clean_couette_test_combined_domain_5_0_bottom.csv'
         ]
-        start_time = time.time()
         print('Loading training data.')
         data_train = mamico_csv2dataset_mp(_train_files)
-        duration = time.time() - start_time
-        print(
-            f'Completed loading training data. Duration: {duration:.3f}')
 
-        start_time = time.time()
         print('Loading validation data.')
         data_valid = mamico_csv2dataset_mp(_valid_files)
-        duration = time.time() - start_time
-        print(
-            f'Completed loading validation data. Duration: {duration:.3f}')
 
         if file_names == -1:
             dataloaders_train = []
@@ -526,9 +531,9 @@ def get_Hybrid_loaders(file_names=0, num_workers=4):
                 dataset = MyMamicoDataset(dataset)
                 dataloader = DataLoader(
                     dataset=dataset,
-                    batch_size=1,
-                    shuffle=False,
-                    num_workers=num_workers
+                    batch_size=_batch_size,
+                    shuffle=_shuffle,
+                    num_workers=_num_workers
                     )
                 dataloaders_train.append(dataloader)
 
@@ -536,13 +541,14 @@ def get_Hybrid_loaders(file_names=0, num_workers=4):
                 dataset = MyMamicoDataset(dataset)
                 dataloader = DataLoader(
                     dataset=dataset,
-                    batch_size=1,
-                    shuffle=False,
-                    num_workers=num_workers
+                    batch_size=_batch_size,
+                    shuffle=_shuffle,
+                    num_workers=_num_workers
                     )
                 dataloaders_valid.append(dataloader)
             return dataloaders_train, dataloaders_valid
     elif file_names == -2:
+        print(f'Data Distribution = KVS        Shuffle = {switch}')
         _train_files = [
             'clean_kvs_10K_NE_combined_domain.csv',
             'clean_kvs_10K_NW_combined_domain.csv',
@@ -565,19 +571,11 @@ def get_Hybrid_loaders(file_names=0, num_workers=4):
             'clean_kvs_40K_SW_combined_domain.csv',
         ]
 
-        start_time = time.time()
         print('Loading training data.')
         data_train = mamico_csv2dataset_mp(_train_files)
-        duration = time.time() - start_time
-        print(
-            f'Completed loading training data. Duration: {duration:.3f}')
 
-        start_time = time.time()
         print('Loading validation data.')
         data_valid = mamico_csv2dataset_mp(_valid_files)
-        duration = time.time() - start_time
-        print(
-            f'Completed loading validation data. Duration: {duration:.3f}')
 
         dataloaders_train = []
         dataloaders_valid = []
@@ -587,7 +585,7 @@ def get_Hybrid_loaders(file_names=0, num_workers=4):
             dataloader = DataLoader(
                 dataset=dataset,
                 batch_size=_batch_size,
-                shuffle=False,
+                shuffle=_shuffle,
                 num_workers=_num_workers
                 )
             dataloaders_train.append(dataloader)
@@ -597,7 +595,7 @@ def get_Hybrid_loaders(file_names=0, num_workers=4):
             dataloader = DataLoader(
                 dataset=dataset,
                 batch_size=_batch_size,
-                shuffle=False,
+                shuffle=_shuffle,
                 num_workers=_num_workers
                 )
             dataloaders_valid.append(dataloader)
@@ -621,18 +619,18 @@ def get_Hybrid_loaders(file_names=0, num_workers=4):
     dataset_valid = MyMamicoDataset(data_valid_stack)
     dataloader_valid = DataLoader(
         dataset=dataset_valid,
-        batch_size=32,
-        shuffle=False,
-        num_workers=num_workers
+        batch_size=_batch_size,
+        shuffle=_shuffle,
+        num_workers=_num_workers
         )
 
     data_train_stack = np.vstack(data_train)
     dataset_train = MyMamicoDataset(data_train_stack)
     dataloader_train = DataLoader(
         dataset=dataset_train,
-        batch_size=32,
-        shuffle=False,
-        num_workers=num_workers
+        batch_size=_batch_size,
+        shuffle=_shuffle,
+        num_workers=_num_workers
         )
 
     return dataloader_train, dataloader_valid
@@ -826,6 +824,7 @@ def get_UNET_AE_bottleneck():
 
 
 def losses2file(losses, filename):
+    print(f'Saving losses to file: {filename}')
     np.savetxt(f"{filename}.csv", losses, delimiter=", ", fmt='% s')
 
 
