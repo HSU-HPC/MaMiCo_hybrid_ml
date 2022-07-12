@@ -904,7 +904,7 @@ if __name__ == "__main__":
     ]
     processes = []
 
-    for i in range(8, 12):
+    for i in range(12, 16):
         p = mp.Process(
             target=clean_mamico_data,
             args=(_directory, _filenames[i],)
