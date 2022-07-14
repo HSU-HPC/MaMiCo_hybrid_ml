@@ -34,7 +34,7 @@ def train_RNN(loader, model, optimizer, criterion, scaler, model_identifier, cur
         loader:
           Object of PyTorch-type DataLoader to automatically feed dataset
         model:
-          Object of PyTorch MOdule class, i.e. the model to be trained.
+          Object of PyTorch Module class, i.e. the model to be trained.
         optimizer:
           The optimization algorithm applied during training.
         criterion:
@@ -198,11 +198,11 @@ def trial_2_RNN(seq_length, num_layers, alpha, alpha_string, train_loaders, vali
 
     losses2file(
         losses=_epoch_losses,
-        filename=f'{_file_prefix}Losses_RNN_{_model_identifier}'
+        file_name=f'{_file_prefix}Losses_RNN_{_model_identifier}'
     )
     losses2file(
         losses=_epoch_valids,
-        filename=f'{_file_prefix}Valids_RNN_{_model_identifier}'
+        file_name=f'{_file_prefix}Valids_RNN_{_model_identifier}'
     )
 
     compareAvgLoss(
@@ -245,11 +245,20 @@ def trial_2_RNN_mp():
     _alpha_strings.reverse()
 
     _t_loader_05, _v_loader_05 = get_RNN_loaders(
-        file_names=0, sequence_length=5)
+        data_distribution='get_couette',
+        batch_size=32,
+        seq_length=5
+    )
     _t_loader_15, _v_loader_15 = get_RNN_loaders(
-        file_names=0, sequence_length=15)
+        data_distribution='get_couette',
+        batch_size=32,
+        seq_length=15
+    )
     _t_loader_25, _v_loader_25 = get_RNN_loaders(
-        file_names=0, sequence_length=25)
+        data_distribution='get_couette',
+        batch_size=32,
+        seq_length=25
+    )
 
     _t_loaders = [_t_loader_05, _t_loader_15, _t_loader_25]
     _v_loaders = [_v_loader_05, _v_loader_15, _v_loader_25]

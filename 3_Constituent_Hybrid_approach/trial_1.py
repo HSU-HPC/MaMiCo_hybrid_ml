@@ -315,11 +315,11 @@ def trial_1_UNET_AE(alpha, alpha_string, train_loaders, valid_loaders):
 
     losses2file(
         losses=_epoch_losses,
-        filename=f'{_file_prefix}Losses_UNET_AE_{_model_identifier}'
+        file_name=f'{_file_prefix}Losses_UNET_AE_{_model_identifier}'
     )
     losses2file(
         losses=_epoch_valids,
-        filename=f'{_file_prefix}Valids_UNET_AE_{_model_identifier}'
+        file_name=f'{_file_prefix}Valids_UNET_AE_{_model_identifier}'
     )
 
     compareLossVsValid(
@@ -426,7 +426,7 @@ def trial_1_error_timeline():
         )
         losses2file(
             losses=_losses,
-            filename=f'{_directory}{_model_name}_Valid_Error_Timeline_{_datasets[idx]}'
+            file_name=f'{_directory}{_model_name}_Valid_Error_Timeline_{_datasets[idx]}'
         )
 
     pass
