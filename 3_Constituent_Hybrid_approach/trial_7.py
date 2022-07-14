@@ -113,8 +113,8 @@ def trial_7_Both_AE(alpha, alpha_string, train_loaders, valid_loaders):
 
     compareLossVsValid(
         loss_files=[
-            f'{_file_prefix}Losses_UNET_AE_KVS_{_model_identifier}.csv',
-            f'{_file_prefix}Valids_UNET_AE_KVS_{_model_identifier}.csv'
+            f'{_file_prefix}Losses_UNET_AE_Both_{_model_identifier}.csv',
+            f'{_file_prefix}Valids_UNET_AE_Both_{_model_identifier}.csv'
         ],
         loss_labels=['Training', 'Validation'],
         file_prefix=_file_prefix,
