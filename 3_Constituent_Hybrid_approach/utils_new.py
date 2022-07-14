@@ -716,6 +716,8 @@ def check_RNN_dataset_approach():
 if __name__ == "__main__":
     _directory = "/home/lerdo/lerdo_HPC_Lab_Project/Trainingdata/RawCouette"
     _raw_files = glob.glob(f"{_directory}/*.csv")
+    for _file in _raw_files:
+        _file.replace(f'{_directory}/', '')
 
     processes = []
 
