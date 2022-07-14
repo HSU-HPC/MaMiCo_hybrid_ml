@@ -1,6 +1,5 @@
 import torch
 import random
-import time
 import torch.multiprocessing as mp
 import matplotlib.pyplot as plt
 import torch.optim as optim
@@ -442,4 +441,4 @@ def trial_6_KVS_RNN_mp():
 
 if __name__ == "__main__":
 
-    trial_6_KVS_AE_latentspace_helper()
+    trial_6_KVS_RNN_mp()
