@@ -57,12 +57,12 @@ def mamico_csv2dataset(file_name):
           ordinates and reference the MD cells. The dataset is hardcoded for
           d_0 = 1000, d_1 = 3, d_2 = d_3 = d_4 = 26.
     """
-
-    print(f'Loading MaMiCo dataset from csv: {file_name}')
     _directory = '/home/lerdo/lerdo_HPC_Lab_Project/Trainingdata'
+    print('Loading MaMiCo dataset from csv: ',
+          file_name.replace(_directory, ''))
     dataset = np.zeros((1000, 3, 26, 26, 26))
 
-    with open(f'{_directory}/{file_name}') as csvfile:
+    with open(file_name) as csvfile:
         csv_reader = csv.reader(csvfile, delimiter=';')
 
         for row in csv_reader:
