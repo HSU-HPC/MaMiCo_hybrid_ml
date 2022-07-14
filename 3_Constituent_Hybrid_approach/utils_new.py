@@ -359,8 +359,14 @@ def get_RNN_loaders(data_distribution, batch_size=32, seq_length=15, shuffle=Fal
     """
     _batch_size = batch_size
     _shuffle = shuffle
-    _switch = 'off'
     _num_workers = 1
+    _data_tag = ''
+
+    if _shuffle is True:
+        switch = 'on'
+    elif _shuffle is False:
+        switch = 'off'
+        _batch_size = 1
 
     if data_distribution == "get_couette":
         _data_tag = 'Couette'
@@ -376,7 +382,7 @@ def get_RNN_loaders(data_distribution, batch_size=32, seq_length=15, shuffle=Fal
     print(f'Data Dist. \t= {_data_tag}')
     print(f'Batch size\t= {_batch_size}')
     print(f'Num worker\t= {_num_workers}')
-    print(f'Shuffle\t\t= {_switch}')
+    print(f'Shuffle\t\t= {switch}')
 
     _data_train = []
     _data_valid = []
