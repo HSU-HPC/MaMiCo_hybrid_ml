@@ -1,7 +1,5 @@
 import torch
 import random
-import pickle
-import io
 import torch.multiprocessing as mp
 import matplotlib.pyplot as plt
 import torch.optim as optim
@@ -12,6 +10,7 @@ from utils_new import get_UNET_AE_loaders, get_RNN_loaders, losses2file, get_Hyb
 from plotting import compareAvgLoss, compareLossVsValid
 from trial_1 import train_AE, valid_AE, error_timeline, get_latentspace_AE
 from trial_2 import train_RNN, valid_RNN
+from trial_5 import valid_HYBRID
 
 torch.manual_seed(10)
 random.seed(10)

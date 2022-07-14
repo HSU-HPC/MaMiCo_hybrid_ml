@@ -201,7 +201,8 @@ def get_latentspace_AE_helper():
     ).to(device)
 
     _model.load_state_dict(torch.load(
-        '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/5_Hybrid_KVS/Model_UNET_AE_LR0_0005'))
+        '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/'
+        '3_Constituent_Hybrid_approach/Results/1_UNET_AE/Model_UNET_AE_LR0_0005'))
     _model.eval()
 
     _loader_1, _loader_2_ = get_UNET_AE_loaders(
