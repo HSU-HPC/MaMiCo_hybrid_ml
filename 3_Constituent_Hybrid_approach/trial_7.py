@@ -306,8 +306,8 @@ def trial_7_Both_error_timeline():
     pass
 
 
-def trial_6_KVS_RNN(model, model_identifier, alpha, train_loaders, valid_loaders):
-    """The trial_6_KVS_RNN function trains the given model and documents its
+def trial_7_Both_RNN(model, model_identifier, alpha, train_loaders, valid_loaders):
+    """The trial_7_Both_RNN function trains the given model and documents its
     progress via saving average training and validation losses to file and
     comparing them in a plot.
 
@@ -334,7 +334,7 @@ def trial_6_KVS_RNN(model, model_identifier, alpha, train_loaders, valid_loaders
     """
     _criterion = nn.L1Loss()
     _file_prefix = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/' + \
-        '3_Constituent_Hybrid_approach/Results/6_Hybrid_KVS/'
+        '3_Constituent_Hybrid_approach/Results/7_Hybrid_Both/'
 
     print('Initializing training parameters.')
     _scaler = torch.cuda.amp.GradScaler()
@@ -401,12 +401,12 @@ def trial_6_KVS_RNN(model, model_identifier, alpha, train_loaders, valid_loaders
     )
 
 
-def trial_6_KVS_RNN_mp():
-    """The trial_6_KVS_RNN_mp function is essentially a helper function to
+def trial_7_Both_RNN_mp():
+    """The trial_7_Both_RNN_mp function is essentially a helper function to
     facilitate the training of multiple concurrent models via multiprocessing
-    of the trial_6_KVS_RNN function. Here, 3 unique models are trained using
+    of the trial_7_Both_RNN function. Here, 3 unique models are trained using
     the most promising RNN/GRU/LSTM configurations from trials 2/3/4. Refer to
-    the trial_6_KVS_RNN function for more details.
+    the trial_7_Both_RNN function for more details.
 
     Args:
         NONE
@@ -448,7 +448,7 @@ def trial_6_KVS_RNN_mp():
     _models.append(_model_rnn_3)
 
     _t_loader_25, _v_loader_25 = get_RNN_loaders(
-        data_distribution='get_KVS',
+        data_distribution='get_both',
         batch_size=32,
         seq_length=25
     )
@@ -456,7 +456,7 @@ def trial_6_KVS_RNN_mp():
 
     for i in range(3):
         p = mp.Process(
-            target=trial_6_KVS_RNN,
+            target=trial_7_Both_RNN,
             args=(_models[i], _model_identifiers[i], _alphas[i],
                   _t_loader_25, _v_loader_25,)
         )
@@ -559,4 +559,4 @@ def trial_6_KVS_Hybrid(model_rnn, model_identifier, train_loaders, valid_loaders
 
 if __name__ == "__main__":
 
-    trial_7_Both_AE_latentspace_helper()
+    trial_7_Both_RNN_mp()

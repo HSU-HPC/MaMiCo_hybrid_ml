@@ -392,11 +392,8 @@ def get_RNN_loaders(data_distribution, batch_size=32, seq_length=15):
         _train_files = glob.glob(f"{_directory}CleanKVSLS/Training/*.csv")
         _valid_files = glob.glob(f"{_directory}CleanKVSLS/Validation/*.csv")
     elif _data_tag == 'Couette and KVS':
-        _train_files = glob.glob(f"{_directory}CleanCouetteLS/Training/*.csv") + \
-                                 glob.glob(
-                                     f"{_directory}CleanKVSLS/Training/*.csv")
-        _valid_files = glob.glob(f"{_directory}CleanCouetteLS/Validation/*.csv") + \
-            glob.glob(f"{_directory}CleanKVSLS/Validation/*.csv")
+        _train_files = glob.glob(f"{_directory}CleanBothLS/Training/*.csv")
+        _valid_files = glob.glob(f"{_directory}CleanBothLS/Validation/*.csv")
     elif _data_tag == 'random':
         print('Loading ---> RANDOM <--- training datasets as loader.')
         for i in range(3):
