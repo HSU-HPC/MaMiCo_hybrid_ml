@@ -173,7 +173,7 @@ def csv2dataset_mp(filenames, output_shape=0):
     return results
 
 
-def get_UNET_AE_loaders(data_distribution, batch_size=32, shuffle=True):
+def get_UNET_AE_loaders(data_distribution, batch_size=32, shuffle=True, num_workers=1):
     """The get_UNET_AE_loaders retrieves the loaders of PyTorch-type DataLoader to
     automatically feed datasets to the UNET_AE model.
 
@@ -198,7 +198,7 @@ def get_UNET_AE_loaders(data_distribution, batch_size=32, shuffle=True):
     """
     _batch_size = batch_size
     _shuffle = shuffle
-    _num_workers = 1
+    _num_workers = num_workers
     _data_tag = ''
 
     if _shuffle is True:

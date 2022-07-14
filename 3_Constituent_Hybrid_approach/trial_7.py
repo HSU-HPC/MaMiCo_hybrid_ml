@@ -140,6 +140,7 @@ def trial_7_Both_AE_helper():
     _t_loaders, _v_loaders = get_UNET_AE_loaders(
         data_distribution='get_both',
         batch_size=32,
+        num_workers=4,
         shuffle=True
     )
     trial_7_Both_AE(
