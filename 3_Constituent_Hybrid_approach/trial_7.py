@@ -1,5 +1,7 @@
 import torch
 import random
+import pickle
+import io
 import torch.multiprocessing as mp
 import matplotlib.pyplot as plt
 import torch.optim as optim
@@ -23,7 +25,7 @@ plt.style.use(['science'])
 np.set_printoptions(precision=6)
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-NUM_WORKERS = 1
+NUM_WORKERS = 0
 
 
 def trial_7_Both_AE(alpha, alpha_string, train_loaders, valid_loaders):
@@ -140,7 +142,7 @@ def trial_7_Both_AE_helper():
     _t_loaders, _v_loaders = get_UNET_AE_loaders(
         data_distribution='get_both',
         batch_size=32,
-        num_workers=4,
+        num_workers=0,
         shuffle=True
     )
     trial_7_Both_AE(
