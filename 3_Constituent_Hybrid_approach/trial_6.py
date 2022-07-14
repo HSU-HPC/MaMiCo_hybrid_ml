@@ -175,7 +175,8 @@ def trial_6_KVS_AE_latentspace_helper():
         activation=torch.nn.ReLU(inplace=True)
     ).to(device)
 
-    _model.load_state_dict(torch.load(f'{_file_prefix}Model_UNET_AE_LR0_0005'))
+    _model.load_state_dict(torch.load(
+        f'{_file_prefix}Model_UNET_AE_KVS_LR0_0005'))
     _model.eval()
 
     _loader_1, _loader_2_ = get_UNET_AE_loaders(
