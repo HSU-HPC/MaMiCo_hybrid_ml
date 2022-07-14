@@ -451,7 +451,8 @@ def trial_7_Both_RNN_mp():
     _t_loader_25, _v_loader_25 = get_RNN_loaders(
         data_distribution='get_both',
         batch_size=32,
-        seq_length=25
+        seq_length=25,
+        shuffle=True
     )
     processes = []
 
