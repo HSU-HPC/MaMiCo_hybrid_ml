@@ -4,7 +4,7 @@ import time
 import csv
 import torch.multiprocessing as mp
 import concurrent.futures
-from dataset import MyMamicoDataset, MyMamicoDataset_UNET_AE, MyMamicoDataset_RNN
+from dataset import MyMamicoDataset_UNET_AE, MyMamicoDataset_RNN, MyMamicoDataset_Hybrid
 from torch.utils.data import DataLoader
 from model import UNET_AE
 
