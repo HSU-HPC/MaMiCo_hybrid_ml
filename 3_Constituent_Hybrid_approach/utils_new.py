@@ -720,6 +720,9 @@ if __name__ == "__main__":
         _file = _file.replace(_directory+'/', '')
         print(_file)
 
+    for _file in _raw_files:
+        print(_file)
+        
     processes = []
 
     for i in range(15):
