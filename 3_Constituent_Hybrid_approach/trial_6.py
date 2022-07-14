@@ -223,7 +223,7 @@ def trial_6_KVS_error_timeline():
     Returns:
         NONE
     """
-    _directory = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/5_Hybrid_KVS/'
+    _directory = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/6_Hybrid_KVS/'
     model_name_1 = 'Model_UNET_AE_LR0_0005'
     model_name_2 = 'Model_LSTM_LR0_00001_Lay3_Seq25'
     model_name_3 = 'Hybrid_Model'
