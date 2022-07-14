@@ -10,7 +10,7 @@ from utils_new import get_UNET_AE_loaders, get_RNN_loaders, losses2file, get_Hyb
 from plotting import compareAvgLoss, compareLossVsValid
 from trial_1 import train_AE, valid_AE, error_timeline, get_latentspace_AE
 from trial_2 import train_RNN, valid_RNN
-from trial_5 import valid_HYBRID
+from trial_5 import valid_HYBRID_Couette
 
 torch.manual_seed(10)
 random.seed(10)
@@ -467,6 +467,94 @@ def trial_6_KVS_RNN_mp():
     for process in processes:
         process.join()
         print('Joining Process')
+
+
+def trial_6_KVS_Hybrid(model_rnn, model_identifier, train_loaders, valid_loaders):
+    """The trial_6_KVS_Hybrid function creates a Hybrid_MD_RNN_UNET model on the
+    basis of a trained UNET_AE and a trained RNN/GRU/LSTM. It then documents
+    its performance w.r.t. time series prediction, i.e. performance in
+    accurately predicting the cell velocities for the next MD timestep. This is
+    done as a proof of concept merley via terminal output. In addition, this
+    function calls the valid_HYBRID_KVS function which automatically compares
+    flow profiles of model prediction and corresponding target via the
+    compareFlowProfile3x3 function. Refer to valid_HYBRID_Couette for more
+    details.
+
+    Args:
+        model_rnn:
+          Object of PyTorch Module class, i.e. the RNN/GRU/LSTM model to be
+          incorporated into the hybrid model.
+        model_identifier:
+          A unique string to identify the model. Here the RNN configuration is
+          used to identify the RNN model (RNN-Type/LR0_XXXLayX_SeqXX)
+        train_loaders:
+          Object of PyTorch-type DataLoader to automatically pass training
+          dataset to model.
+        valid_loaders:
+          Object of PyTorch-type DataLoader to automatically pass validation
+          dataset to model.
+
+    Returns:
+        NONE:
+          This function documents model progress by printing the average loss
+          for each training and validation set to the terminal.
+    """
+    _criterion = nn.L1Loss()
+
+    _model_unet = UNET_AE(
+        device=device,
+        in_channels=3,
+        out_channels=3,
+        features=[4, 8, 16],
+        activation=nn.ReLU(inplace=True)
+    )
+    _model_unet.load_state_dict(torch.load(
+        '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/1_UNET_AE/Model_UNET_AE_LR0_0005'))
+
+    print('Initializing Hybrid_MD_RNN_UNET model.')
+    _model_hybrid = Hybrid_MD_RNN_UNET(
+        device=device,
+        UNET_Model=_model_unet,
+        RNN_Model=model_rnn,
+        seq_length=25
+    ).to(device)
+
+    _counter = 0
+
+    _train_loss = 0
+    for _loader in train_loaders:
+        _loss, _ = valid_HYBRID_Couette(
+            loader=_loader,
+            model=_model_hybrid,
+            criterion=_criterion,
+            model_identifier=model_identifier,
+            dataset_identifier=_counter
+        )
+        _train_loss += _loss
+        resetPipeline(_model_hybrid)
+        _counter += 1
+
+    print('------------------------------------------------------------')
+    print(f'{model_identifier} Training -> Averaged Loader Loss: '
+          f'{_train_loss/len(train_loaders)}')
+
+    _valid_loss = 0
+    for _loader in valid_loaders:
+        _loss, _ = valid_HYBRID_Couette(
+            loader=_loader,
+            model=_model_hybrid,
+            criterion=_criterion,
+            model_identifier=model_identifier,
+            dataset_identifier=_counter
+        )
+        _valid_loss += _loss
+        resetPipeline(_model_hybrid)
+        _counter += 1
+
+    print('------------------------------------------------------------')
+    print(f'{model_identifier} Validation -> Averaged Loader Loss: '
+          f'{_valid_loss/len(valid_loaders)}')
+    return
 
 
 if __name__ == "__main__":
