@@ -606,7 +606,7 @@ def plotVelocityField(input_1, input_2='void', file_prefix=0, file_name=0):
     X, Z = np.meshgrid(np.arange(0, x, 1), np.arange(0, z, 1))
     t_samples = [0, int(t/2), t-1]
     columns = 2
-    inputs = [input_1.mean(axis=3), input_2]
+    inputs = [input_1.mean(axis=3), input_2.mean(axis=3)]
     if input_2 == 'void':
         columns = 1
     # set color field for better visualisation
