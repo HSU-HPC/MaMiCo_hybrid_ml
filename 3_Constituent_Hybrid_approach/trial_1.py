@@ -263,7 +263,7 @@ def trial_1_UNET_AE(alpha, alpha_string, train_loaders, valid_loaders):
     """
     _criterion = nn.L1Loss()
     _file_prefix = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/' + \
-        '3_Constituent_Hybrid_approach/Results/0_UNET_AE/'
+        '3_Constituent_Hybrid_approach/Results/1_UNET_AE/'
     _model_identifier = f'LR{alpha_string}'
     print('Initializing UNET_AE model.')
     _model = UNET_AE(
@@ -281,7 +281,7 @@ def trial_1_UNET_AE(alpha, alpha_string, train_loaders, valid_loaders):
     _epoch_valids = []
 
     print('Beginning training.')
-    for epoch in range(3):
+    for epoch in range(50):
         _avg_loss = 0
         for _train_loader in train_loaders:
             _avg_loss += train_AE(
@@ -392,7 +392,7 @@ def trial_1_error_timeline():
     print('Starting Trial 1: UNET AE Error Timeline')
 
     _directory = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/' + \
-                 '3_Constituent_Hybrid_approach/Results/0_UNET_AE/'
+                 '3_Constituent_Hybrid_approach/Results/1_UNET_AE/'
     _model_name = 'Model_UNET_AE_LR0_0005'
     _model = UNET_AE(
         device=device,
