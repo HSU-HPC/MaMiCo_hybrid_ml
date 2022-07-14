@@ -218,7 +218,7 @@ def get_UNET_AE_loaders(data_distribution, batch_size=32, shuffle=True):
 
     print('------------------------------------------------------------')
     print('                      Loader Summary                        ')
-    print(f'Data Dist. \t={_data_tag}')
+    print(f'Data Dist. \t= {_data_tag}')
     print(f'Batch size\t= {_batch_size}')
     print(f'Num worker\t= {_num_workers}')
     print(f'Shuffle\t\t= {switch}')
@@ -373,7 +373,7 @@ def get_RNN_loaders(data_distribution, batch_size=32, seq_length=15):
 
     print('------------------------------------------------------------')
     print('                      Loader Summary                        ')
-    print(f'Data Dist. \t={_data_tag}')
+    print(f'Data Dist. \t= {_data_tag}')
     print(f'Batch size\t= {_batch_size}')
     print(f'Num worker\t= {_num_workers}')
     print(f'Shuffle\t\t= {_switch}')
@@ -520,7 +520,7 @@ def get_Hybrid_loaders(data_distribution, batch_size=1, shuffle=False):
 
     print('------------------------------------------------------------')
     print('                      Loader Summary                        ')
-    print(f'Data Dist. \t={_data_tag}')
+    print(f'Data Dist. \t= {_data_tag}')
     print(f'Batch size\t= {_batch_size}')
     print(f'Num worker\t= {_num_workers}')
     print(f'Shuffle\t\t= {switch}')
