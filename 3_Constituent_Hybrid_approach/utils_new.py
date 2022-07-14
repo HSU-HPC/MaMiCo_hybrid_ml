@@ -718,6 +718,7 @@ if __name__ == "__main__":
     _raw_files = glob.glob(f"{_directory}/*.csv")
     for _file in _raw_files:
         _file.replace(_directory+'/', '')
+        print(_file)
 
     processes = []
 
