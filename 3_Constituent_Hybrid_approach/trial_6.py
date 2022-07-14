@@ -179,9 +179,8 @@ def trial_6_KVS_AE_latentspace_helper():
     _model.eval()
 
     _loader_1, _loader_2_ = get_UNET_AE_loaders(
-        file_names=-2,
-        num_workers=1,
-        batch_size=32,
+        data_distribution='get_KVS',
+        batch_size=1,
         shuffle=False
     )
     _loaders = _loader_1 + _loader_2_
@@ -442,4 +441,4 @@ def trial_6_KVS_RNN_mp():
 
 if __name__ == "__main__":
 
-    trial_6_KVS_AE_helper()
+    trial_6_KVS_AE_latentspace_helper()
