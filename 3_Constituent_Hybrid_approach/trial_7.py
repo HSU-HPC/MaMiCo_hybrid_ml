@@ -559,4 +559,4 @@ def trial_6_KVS_Hybrid(model_rnn, model_identifier, train_loaders, valid_loaders
 
 if __name__ == "__main__":
 
-    trial_7_Both_AE_helper()
+    trial_7_Both_AE_latentspace_helper()
