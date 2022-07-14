@@ -278,6 +278,31 @@ def trial_6_KVS_error_timeline():
 
 
 def trial_6_KVS_RNN(model, model_identifier, alpha, train_loaders, valid_loaders):
+    """The trial_6_KVS_RNN function trains the given model and documents its
+    progress via saving average training and validation losses to file and
+    comparing them in a plot.
+
+    Args:
+        model:
+          Object of PyTorch Module class, i.e. the model to be trained.
+        model_identifier:
+          A unique string to identify the model. Here, a combination of the
+          learning rate (_alpha), num of RNN layers (_num_layers) and sequence
+          length (_seq_length) is used.
+        alpha:
+          A double value indicating the chosen learning rate.
+        train_loaders:
+          Object of PyTorch-type DataLoader to automatically pass training
+          dataset to model.
+        valid_loaders:
+          Object of PyTorch-type DataLoader to automatically pass validation
+          dataset to model.
+
+    Returns:
+        NONE:
+          This function documents model progress by saving results to file and
+          creating meaningful plots.
+    """
     _criterion = nn.L1Loss()
     _file_prefix = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/' + \
         '3_Constituent_Hybrid_approach/Results/6_Hybrid_KVS/'
@@ -325,45 +350,48 @@ def trial_6_KVS_RNN(model, model_identifier, alpha, train_loaders, valid_loaders
 
     losses2file(
         losses=_epoch_losses,
-        filename=f'{_file_prefix}Losses_LSTM_{model_identifier}'
+        filename=f'{_file_prefix}Losses_{model_identifier}'
     )
     losses2file(
         losses=_epoch_valids,
-        filename=f'{_file_prefix}Valids_LSTM_{model_identifier}'
+        filename=f'{_file_prefix}Valids_{model_identifier}'
     )
 
     compareAvgLoss(
         loss_files=[
-            f'{_file_prefix}Losses_LSTM_{model_identifier}.csv',
-            f'{_file_prefix}Valids_LSTM_{model_identifier}.csv'
+            f'{_file_prefix}Losses_{model_identifier}.csv',
+            f'{_file_prefix}Valids_{model_identifier}.csv'
         ],
         loss_labels=['Training', 'Validation'],
         file_prefix=_file_prefix,
-        file_name=f'And_Valids_LSTM_{model_identifier}'
+        file_name=f'And_Valids_{model_identifier}'
     )
     torch.save(
         model.state_dict(),
-        f'{_file_prefix}Model_LSTM_{model_identifier}'
+        f'{_file_prefix}Model_{model_identifier}'
     )
 
 
 def trial_6_KVS_RNN_mp():
-    # BRIEF: this part of trial 5 aims to train the best RNN, GRU and LSTM
-    # configurations from the previous trials on the basis of the KVS dataset.
-    # PARAMETERS:
-    # loader - object
+    """The trial_6_KVS_RNN_mp function is essentially a helper function to
+    facilitate the training of multiple concurrent models via multiprocessing
+    of the trial_6_KVS_RNN function. Here, 3 unique models are trained using
+    the most promising RNN/GRU/LSTM configurations from trials 2/3/4. Refer to
+    the trial_6_KVS_RNN function for more details.
 
-    _alphas = [0.00001, 0.00001, 0.00001]
-    # _alpha_strings = ['0_00001', '0_00001', '0_00001']
-    # _rnn_depths = [1, 2, 2]
-    # _seq_lengths = [25, 25, 25]
-    # _model_id = [RNN, GRU, LSTM]
+    Args:
+        NONE
+
+    Returns:
+        NONE
+    """
+    _models = []
     _model_identifiers = [
         'KVS_RNN_LR0_00001_Lay1_Seq25',
         'KVS_GRU_LR0_00001_Lay2_Seq25',
         'KVS_LSTM_LR0_00001_Lay2_Seq25',
     ]
-    _models = []
+    _alphas = [0.00001, 0.00001, 0.00001]
 
     _model_rnn_1 = RNN(
         input_size=256,
@@ -391,10 +419,9 @@ def trial_6_KVS_RNN_mp():
     _models.append(_model_rnn_3)
 
     _t_loader_25, _v_loader_25 = get_RNN_loaders(
-        file_names=-2,
-        sequence_length=25,
+        data_distribution='get_KVS',
         batch_size=32,
-        shuffle=False
+        seq_length=25
     )
     processes = []
 
@@ -415,4 +442,4 @@ def trial_6_KVS_RNN_mp():
 
 if __name__ == "__main__":
 
-    trial_6_KVS_AE_helper()
+    trial_6_KVS_RNN_mp()
