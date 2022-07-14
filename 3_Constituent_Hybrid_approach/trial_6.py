@@ -428,8 +428,8 @@ def trial_6_KVS_RNN_mp():
     for i in range(3):
         p = mp.Process(
             target=trial_6_KVS_RNN,
-            args=(_alphas[i], _t_loader_25, _v_loader_25,
-                  _model_identifiers[i], _models[i],)
+            args=(_models[i], _model_identifiers[i], _alphas[i],
+                  _t_loader_25, _v_loader_25,)
         )
         p.start()
         processes.append(p)
