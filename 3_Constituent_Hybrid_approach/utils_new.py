@@ -442,6 +442,30 @@ def get_RNN_loaders(data_distribution, batch_size=32, seq_length=15, shuffle=Fal
     _data_train = csv2dataset_mp(_train_files)
     _data_valid = csv2dataset_mp(_valid_files)
 
+    if _shuffle is True:
+        _data_train_stack = np.vstack(_data_train)
+        _data_valid_stack = np.vstack(_data_valid)
+
+        _dataset_train = MyMamicoDataset_RNN(_data_train_stack, seq_length)
+        _dataloader_train = DataLoader(
+            dataset=_dataset_train,
+            batch_size=_batch_size,
+            shuffle=_shuffle,
+            num_workers=_num_workers
+            )
+
+        _dataset_valid = MyMamicoDataset_RNN(_data_train_stack, seq_length)
+        _dataloader_valid = DataLoader(
+            dataset=_dataset_valid,
+            batch_size=_batch_size,
+            shuffle=_shuffle,
+            num_workers=_num_workers
+            )
+
+        print(f'Num Train Loaders = {len([_dataloader_train])}')
+        print(f'Num Valid Loaders = {len([_dataloader_valid])}')
+        return [_dataloader_train], [_dataloader_valid]
+
     _dataloaders_train = []
     _dataloaders_valid = []
 
