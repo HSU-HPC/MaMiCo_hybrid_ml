@@ -3,52 +3,31 @@ import torch
 from torch.utils.data import Dataset
 
 
-class MyMamicoDataset(Dataset):
-    #
-    # BRIEF: This class inherits from the torch Dataset class and allows
-    # to create a userdefined dataset. Here, the dataset is hardcoded
-    # to consider md+outer dimensionality of 26^3 consisting of:
-    # 1xghost_cell, 3xouter_cell, 18xmd_cell, 3xouter_cell, 1xghost_cell
-    # This dataset then takes the 26^3 input and removes the ghost_cells
-    # for the inputs(=images) and further removes the outer_cells for
-    # the outputs (=masks).
-    # Note that the data dimensions represent:
-    # timestep, RGB-channel (=x/y/z velocity), x-pos, y-pos, z-pos
-    #
-    def __init__(self, my_images):
-        self.sample_images = my_images[:-1, :, 1:-1, 1:-1, 1:-1]
-        # print("Dataset.py - Sanity Check - Shape of sample_images: ", self.sample_images.shape)
-        self.sample_masks = my_images[1:, :, 1:-1, 1:-1, 1:-1]
-        # print("Dataset.py - Sanity Check - Shape of sample_masks: ", self.sample_masks.shape)
-
-    def __len__(self):
-        return len(self.sample_images)
-
-    def __getitem__(self, idx):
-        image = torch.from_numpy(self.sample_images[idx])
-        mask = torch.from_numpy(self.sample_masks[idx])
-        return image, mask
-
-
 class MyMamicoDataset_UNET_AE(Dataset):
-    # BRIEF: This class inherits from the torch Dataset class and allows
-    # to create a userdefined dataset. Here, the dataset is hardcoded
-    # to consider md+outer dimensionality of 26^3 consisting of:
-    # 1xghost_cell, 3xouter_cell, 18xmd_cell, 3xouter_cell, 1xghost_cell
-    # As this Dataset will be used for the autoencoder U-Net training,
-    # this dataset takes the 26^3 input and removes the ghost_cells.
-    # The inputs(=images) and outputs are therefor identical.
-    #
-    # Note that the data dimensions represent:
-    # timestep, RGB-channel (=x/y/z velocity), x-pos, y-pos, z-pos
-    #
+    """This class inherits from the torch Dataset class and allows to create a
+    userdefined dataset. Here, the dataset is hardcoded to consider md+outer
+    dimensionality of 26^3 consisting of:
+    1x ghost_cell, 3x outer_cell, 18x md_cell, 3x outer_cell, 1x ghost_cell
+    As this Dataset will be used for the autoencoder U-Net training, this
+    dataset takes the 26^3 input and removes the ghost_cells. The inputs
+    (=images) and outputs (=masks) are therefor identical.
+
+    Note that the data dimensions [d_0, d_1, d_2, d_3, d_4] represent:
+    d_0 = 1000 -> timestep,
+    d_1 = 3    -> RGB-channel (= u_x, u_y, u_z),
+    d_2 = 24   -> x-pos,
+    d_3 = 24   -> y-pos,
+    d_4 = 24   -> z-pos
+
+    Args:
+        my_images:
+          Object of type numpy array containing the timeseries of multichannel
+          volumetric data.
+    """
+
     def __init__(self, my_images):
         self.sample_images = my_images[:, :, 1:-1, 1:-1, 1:-1]
-        # print("Dataset.py - Sanity Check - Shape of sample_images: ", self.sample_images.shape)
         self.sample_masks = my_images[:, :, 1:-1, 1:-1, 1:-1]
-        # print("Dataset.py - Sanity Check - Shape of sample_masks: ", self.sample_masks.shape)
-        # print('Both should be 1000 x 3 x 24 x 24 x 24')
-        # print("Dataset.py - Sanity Check - Print contents: ", self.sample_masks[300, 0, 12, 12, :])
 
     def __len__(self):
         return len(self.sample_images)
@@ -60,25 +39,65 @@ class MyMamicoDataset_UNET_AE(Dataset):
 
 
 class MyMamicoDataset_RNN(Dataset):
-    #
-    # This class inherits from the torch Dataset class and allows
-    # to create a userdefined dataset. Here, the dataset is hardcoded
-    # to consider md+outer dimensionality of 26^3 consisting of:
-    # 1xghost_cell, 3xouter_cell, 18xmd_cell, 3xouter_cell, 1xghost_cell
-    # This dataset then takes the 26^3 input and removes the ghost_cells
-    # for the inputs(=images) and further removes the outer_cells for
-    # the outputs (=masks).
-    # Note that the data dimensions represent:
-    # timestep, RGB-channel (=x/y/z velocity), x-pos, y-pos, z-pos
-    #
+    """This class inherits from the torch Dataset class and allows to create a
+    userdefined dataset. Here, the dataset is hardcoded to consider the UNET_AE
+    generated latent space of dimension [1000, 256] on the basis of MaMiCo
+    generated MD+outer data of dimension [1000, 3, 24, 24, 24]. In particular,
+    it creates datasets of dimension [d_0 - seq_length - 1, seq_length, 256]
+    tailored to a specific seq_length and used to predict the next timestep's
+    latentspace.
+
+    Args:
+        my_images:
+          Object of type numpy array containing the timeseries of latentspaces.
+        seq_length:
+          Object of integer type specifying the number of elements to include
+          in the RNN sequence.
+    """
+
     def __init__(self, my_images, seq_length=15):
         self.sample_masks = my_images[seq_length:]
-        # print("Dataset.py - Sanity Check - Shape of sample_masks: ", self.sample_masks.shape)
         self.sample_images = np.zeros((
             len(my_images)-seq_length-1, seq_length, 256))
 
         for i in range(len(self.sample_images)):
             self.sample_images[i] = my_images[i:seq_length+i]
+
+    def __len__(self):
+        return len(self.sample_images)
+
+    def __getitem__(self, idx):
+        image = torch.from_numpy(self.sample_images[idx])
+        mask = torch.from_numpy(self.sample_masks[idx])
+        return image, mask
+
+
+class MyMamicoDataset_Hybrid(Dataset):
+    """This class inherits from the torch Dataset class and allows to create a
+    userdefined dataset. Here, the dataset is hardcoded to consider md+outer
+    dimensionality of 26^3 consisting of:
+    1x ghost_cell, 3x outer_cell, 18x md_cell, 3x outer_cell, 1x ghost_cell
+    As this dataset will be used for Hybrid_MD_RNN_UNET validation, this
+    dataset first removes the ghost_cells and then creates input (=image) and
+    output (=mask) pairs for timeseries prediction. In other words, the image
+    is for timestep = t and the mask is for timestep = t+1.
+
+    Note that the data dimensions [d_0, d_1, d_2, d_3, d_4] represent:
+    d_0 = 999  -> timestep,
+    d_1 = 3    -> RGB-channel (= u_x, u_y, u_z),
+    d_2 = 24   -> x-pos,
+    d_3 = 24   -> y-pos,
+    d_4 = 24   -> z-pos
+
+    Args:
+        my_images:
+          Object of type numpy array containing the timeseries of multichannel
+          volumetric data.
+    """
+
+    def __init__(self, my_images):
+        self.sample_images = my_images[:-1, :, 1:-1, 1:-1, 1:-1]
+        self.sample_masks = my_images[1:, :, 1:-1, 1:-1, 1:-1]
 
     def __len__(self):
         return len(self.sample_images)
