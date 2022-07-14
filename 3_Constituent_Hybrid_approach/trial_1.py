@@ -433,4 +433,4 @@ def trial_1_error_timeline():
 
 
 if __name__ == "__main__":
-    pass
+    trial_1_UNET_AE_mp()
