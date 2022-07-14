@@ -442,8 +442,8 @@ def get_RNN_loaders(data_distribution, batch_size=32, seq_length=15):
         print('Invalid value for function parameter: data_distribution.')
         return
 
-    _data_train = mamico_csv2dataset_mp(_train_files)
-    _data_valid = mamico_csv2dataset_mp(_valid_files)
+    _data_train = csv2dataset_mp(_train_files)
+    _data_valid = csv2dataset_mp(_valid_files)
 
     _dataloaders_train = []
     _dataloaders_valid = []
