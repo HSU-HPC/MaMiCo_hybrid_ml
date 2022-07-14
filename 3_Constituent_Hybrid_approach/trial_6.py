@@ -314,7 +314,7 @@ def trial_6_KVS_RNN(model, model_identifier, alpha, train_loaders, valid_loaders
     _epoch_valids = []
 
     print('Beginning training.')
-    for epoch in range(2):
+    for epoch in range(50):
         _avg_loss = 0
         for _train_loader in train_loaders:
             _avg_loss += train_RNN(
@@ -442,4 +442,4 @@ def trial_6_KVS_RNN_mp():
 
 if __name__ == "__main__":
 
-    trial_6_KVS_RNN_mp()
+    trial_6_KVS_AE_helper()
