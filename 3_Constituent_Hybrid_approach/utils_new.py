@@ -335,7 +335,7 @@ def get_UNET_AE_loaders(data_distribution, batch_size=32, shuffle=True, num_work
     return _dataloaders_train, _dataloaders_valid
 
 
-def get_RNN_loaders(data_distribution, batch_size=32, seq_length=15):
+def get_RNN_loaders(data_distribution, batch_size=32, seq_length=15, shuffle=False):
     """The get_RNN_loaders retrieves the loaders of PyTorch-type DataLoader to
     automatically feed datasets to the RNN models.
 
@@ -358,7 +358,7 @@ def get_RNN_loaders(data_distribution, batch_size=32, seq_length=15):
           Object of PyTorch-type DataLoader to automatically feed validation datasets.
     """
     _batch_size = batch_size
-    _shuffle = False
+    _shuffle = shuffle
     _switch = 'off'
     _num_workers = 1
 
