@@ -414,6 +414,7 @@ def trial_7_Both_RNN_mp():
     Returns:
         NONE
     """
+    print('Starting Trial 7: RNN_mp (Both)')
     _models = []
     _model_identifiers = [
         'KVS_RNN_LR0_00001_Lay1_Seq25',
