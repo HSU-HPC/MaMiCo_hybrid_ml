@@ -658,16 +658,20 @@ def plotPredVsTargKVS(input_1, input_2='void', file_prefix=0, file_name=0):
     print(pred_std_per_t.shape)
     print(targ_std_per_t.shape)
 
-    pred_mean_per_t = np.std(input_1[:, 1, :, :, :], axis=(1, 2, 3))
-    targ_mean_per_t = np.std(input_2[:, 1, :, :, :], axis=(1, 2, 3))
+    pred_mean_per_t = np.mean(input_1[:, 1, :, :, :], axis=(1, 2, 3))
+    targ_mean_per_t = np.mean(input_2[:, 1, :, :, :], axis=(1, 2, 3))
     print(pred_mean_per_t.shape)
     print(targ_mean_per_t.shape)
 
-    fig, axs = plt.subplots(2, 2, constrained_layout=True)
-    axs[0, 0].plot(t_axis, pred_mean_per_t, t_axis, targ_mean_per_t)
-    axs[0, 1].plot(t_axis, input_1[:, 1, mid, mid, mid], t_axis,
-                   input_2[:, 1, mid, mid, mid])
-    axs[1, 0].plot(t_axis, pred_mean_per_t, t_axis, targ_mean_per_t)
+    fig, axs = plt.subplots(3, sharex=True, constrained_layout=True)
+    axs[0].plot(t_axis, pred_mean_per_t, label='Prediction')
+    axs[0].plot(t_axis, targ_mean_per_t, label='Target')
+    axs[1].plot(t_axis, pred_std_per_t, label='Prediction')
+    axs[1].plot(t_axis, targ_std_per_t, label='Target')
+    axs[2].plot(t_axis, input_1[:, 1, mid, mid, mid], label='Prediction')
+    axs[2].plot(t_axis, input_2[:, 1, mid, mid, mid], label='Target')
+    axs[-1].set_xlabel('Timestep')
+    axs[-1].legend(ncol=2, fontsize=9)
 
     fig.set_size_inches(6, 10)
     if file_name != 0:
