@@ -675,7 +675,7 @@ def plotPredVsTargKVS(input_1, input_2='void', file_prefix=0, file_name=0):
     axs[0].grid(axis='y', alpha=0.3)
 
     axs[1].plot(t_axis, p_loc, linewidth=0.5, label='Prediction')
-    axs[1].plot(t_axis, t_loc, linewidth=0.5, label='Prediction')
+    axs[1].plot(t_axis, t_loc, linewidth=0.5, label='Target')
     axs[1].set_ylabel(f'Local $u_z$ at [t, {mid}, {mid}, {mid}]')
     axs[1].grid(axis='y', alpha=0.3)
     axs[1].set_xlabel('Timestep')
