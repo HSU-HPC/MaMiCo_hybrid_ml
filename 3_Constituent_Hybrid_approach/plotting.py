@@ -1,10 +1,9 @@
-from utils import mamico_csv2dataset
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 import torch
-from utils import csv2dataset, csv2dataset_mp, mamico_csv2dataset, mamico_csv2dataset_mp
-mpl.use('Agg')
+from utils_new import csv2dataset, csv2dataset_mp, mamico_csv2dataset, mamico_csv2dataset_mp
+# mpl.use('Agg')
 plt.style.use(['science'])
 np.set_printoptions(precision=2)
 
@@ -665,10 +664,10 @@ def plotPredVsTargKVS(input_1, input_2='void', file_prefix=0, file_name=0):
     print(targ_mean_per_t.shape)
 
     fig, axs = plt.subplots(2, 2, constrained_layout=True)
-    axs[0, 0].plot(pred_mean_per_t, t_axis, targ_mean_per_t, t_axis)
-    axs[0, 1].plot(input_1[:, 1, mid, mid, mid], t_axis,
-                   input_2[:, 1, mid, mid, mid], t_axis)
-    axs[1, 0].plot(pred_mean_per_t, t_axis, targ_mean_per_t, t_axis)
+    axs[0, 0].plot(t_axis, pred_mean_per_t, t_axis, targ_mean_per_t)
+    axs[0, 1].plot(t_axis, input_1[:, 1, mid, mid, mid], t_axis,
+                   input_2[:, 1, mid, mid, mid])
+    axs[1, 0].plot(t_axis, pred_mean_per_t, t_axis, targ_mean_per_t)
 
     fig.set_size_inches(6, 10)
     if file_name != 0:
@@ -685,9 +684,7 @@ def main():
 
 if __name__ == "__main__":
 
-    a = np.random.rand(100, 3, 24, 24, 24)
-    b = a[:, 1, :, :, :]
-    b_std = np.mean(a[:, 1, :, :, :], axis=(1, 2, 3))
-    print(a.shape)
-    print(b.shape)
-    print(b_std.shape)
+    a = np.random.rand(100, 3, 24, 24, 24) + 1
+    b = np.random.rand(100, 3, 24, 24, 24) + 2
+
+    plotPredVsTargKVS(input_1=a, input_2=b)
