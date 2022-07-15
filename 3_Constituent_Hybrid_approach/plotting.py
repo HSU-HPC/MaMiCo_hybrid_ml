@@ -664,26 +664,23 @@ def plotPredVsTargKVS(input_1, input_2='void', file_prefix=0, file_name=0):
     p_loc = input_1[:t_max, 2, mid, mid, mid]
     t_loc = input_2[:t_max, 2, mid, mid, mid]
 
-    fig, axs = plt.subplots(3, sharex=True, sharey=True,
+    fig, axs = plt.subplots(2, sharex=True, sharey=True,
                             constrained_layout=True)
     axs[0].plot(t_axis, p_avg, linewidth=0.5, label='Prediction')
     axs[0].fill_between(t_axis, p_avg-p_std, p_avg+p_std,
                         alpha=0.2, label='Prediction')
     axs[0].plot(t_axis, t_avg, linewidth=0.5, label='Target')
+    axs[0].fill_between(t_axis, t_avg-t_std, t_avg+t_std,
+                        alpha=0.2, label='Prediction')
     axs[0].set_ylabel('Averaged $u_z$')
     axs[0].grid(axis='y', alpha=0.3)
 
-    axs[1].scatter(t_axis, p_std, s=2.5, label='Prediction')
-    axs[1].scatter(t_axis, t_std, s=2.5, label='Target')
-    axs[1].set_ylabel('Standard Deviation of Averaged $u_z$')
+    axs[1].plot(t_axis, p_loc, linewidth=0.5, label='Prediction')
+    axs[1].plot(t_axis, t_loc, linewidth=0.5, label='Prediction')
+    axs[1].set_ylabel(f'Local $u_z$ at [t, {mid}, {mid}, {mid}]')
     axs[1].grid(axis='y', alpha=0.3)
-
-    axs[2].scatter(t_axis, p_loc, s=2.5, label='Prediction')
-    axs[2].scatter(t_axis, t_loc, s=2.5, label='Target')
-    axs[2].set_ylabel(f'Local $u_z$ at [t, {mid}, {mid}, {mid}]')
-    axs[2].grid(axis='y', alpha=0.3)
-    axs[2].set_xlabel('Timestep')
-    axs[2].legend(ncol=2, fontsize=9)
+    axs[1].set_xlabel('Timestep')
+    axs[1].legend(ncol=2, fontsize=9)
 
     fig.set_size_inches(6, 6)
     if file_name != 0:
