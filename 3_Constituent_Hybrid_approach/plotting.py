@@ -664,9 +664,11 @@ def plotPredVsTargKVS(input_1, input_2='void', file_prefix=0, file_name=0):
     p_loc = input_1[:t_max, 2, mid, mid, mid]
     t_loc = input_2[:t_max, 2, mid, mid, mid]
 
-    fig, axs = plt.subplots(3, sharex=True, constrained_layout=True)
-    axs[0].scatter(t_axis, p_avg, s=2.5, label='Prediction')
-    axs[0].scatter(t_axis, t_avg, s=2.5, label='Target')
+    fig, axs = plt.subplots(3, sharex=True, sharey=True, constrained_layout=True)
+    axs[0].plot(t_axis, p_avg, marker='.', ms=2.5, label='Prediction')
+    axs[0].fill_between(t_axis, p_avg-p_std, p_avg+p_std,
+                        alpha=0.2, label='Prediction')
+    axs[0].plot(t_axis, t_avg, marker='.', ms=2.5, label='Target')
     axs[0].set_ylabel('Averaged $u_z$')
     axs[0].grid(axis='y', alpha=0.3)
 
