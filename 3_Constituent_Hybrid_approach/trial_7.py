@@ -11,6 +11,7 @@ from plotting import compareAvgLoss, compareLossVsValid
 from trial_1 import train_AE, valid_AE, error_timeline, get_latentspace_AE
 from trial_2 import train_RNN, valid_RNN
 from trial_5 import valid_HYBRID_Couette
+from trial_6 import valid_HYBRID_KVS
 
 torch.manual_seed(10)
 random.seed(10)
@@ -417,9 +418,9 @@ def trial_7_Both_RNN_mp():
     print('Starting Trial 7: RNN_mp (Both)')
     _models = []
     _model_identifiers = [
-        'KVS_RNN_LR0_00001_Lay1_Seq25',
-        'KVS_GRU_LR0_00001_Lay2_Seq25',
-        'KVS_LSTM_LR0_00001_Lay2_Seq25',
+        'Both_RNN_LR0_00001_Lay1_Seq25',
+        'Both_GRU_LR0_00001_Lay2_Seq25',
+        'Both_LSTM_LR0_00001_Lay2_Seq25',
     ]
     _alphas = [0.00001, 0.00001, 0.00001]
 
@@ -471,15 +472,15 @@ def trial_7_Both_RNN_mp():
         print('Joining Process')
 
 
-def trial_6_KVS_Hybrid(model_rnn, model_identifier, train_loaders, valid_loaders):
-    """The trial_6_KVS_Hybrid function creates a Hybrid_MD_RNN_UNET model on the
+def trial_7_Both_Hybrid(model_rnn, model_identifier, train_loaders_C, valid_loaders_C, train_loaders_KVS, valid_loaders_KVS):
+    """The trial_7_Both_Hybrid function creates a Hybrid_MD_RNN_UNET model on the
     basis of a trained UNET_AE and a trained RNN/GRU/LSTM. It then documents
     its performance w.r.t. time series prediction, i.e. performance in
     accurately predicting the cell velocities for the next MD timestep. This is
     done as a proof of concept merley via terminal output. In addition, this
-    function calls the valid_HYBRID_KVS function which automatically compares
+    function calls the valid_HYBRID_Both function which automatically compares
     flow profiles of model prediction and corresponding target via the
-    compareFlowProfile3x3 function. Refer to valid_HYBRID_Couette for more
+    compareFlowProfile3x3 function. Refer to valid_HYBRID_Both for more
     details.
 
     Args:
@@ -511,7 +512,7 @@ def trial_6_KVS_Hybrid(model_rnn, model_identifier, train_loaders, valid_loaders
         activation=nn.ReLU(inplace=True)
     )
     _model_unet.load_state_dict(torch.load(
-        '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/1_UNET_AE/Model_UNET_AE_LR0_0005'))
+        '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/7_Hybrid_Both/Model_UNET_AE_Both_LR0_0005'))
 
     print('Initializing Hybrid_MD_RNN_UNET model.')
     _model_hybrid = Hybrid_MD_RNN_UNET(
@@ -524,7 +525,7 @@ def trial_6_KVS_Hybrid(model_rnn, model_identifier, train_loaders, valid_loaders
     _counter = 0
 
     _train_loss = 0
-    for _loader in train_loaders:
+    for _loader in train_loaders_C:
         _loss, _ = valid_HYBRID_Couette(
             loader=_loader,
             model=_model_hybrid,
@@ -538,10 +539,10 @@ def trial_6_KVS_Hybrid(model_rnn, model_identifier, train_loaders, valid_loaders
 
     print('------------------------------------------------------------')
     print(f'{model_identifier} Training -> Averaged Loader Loss: '
-          f'{_train_loss/len(train_loaders)}')
+          f'{_train_loss/len(train_loaders_C)}')
 
     _valid_loss = 0
-    for _loader in valid_loaders:
+    for _loader in valid_loaders_C:
         _loss, _ = valid_HYBRID_Couette(
             loader=_loader,
             model=_model_hybrid,
@@ -555,10 +556,131 @@ def trial_6_KVS_Hybrid(model_rnn, model_identifier, train_loaders, valid_loaders
 
     print('------------------------------------------------------------')
     print(f'{model_identifier} Validation -> Averaged Loader Loss: '
-          f'{_valid_loss/len(valid_loaders)}')
+          f'{_valid_loss/len(valid_loaders_C)}')
+
+    _train_loss = 0
+    for _loader in train_loaders_KVS:
+        _loss, _ = valid_HYBRID_KVS(
+            loader=_loader,
+            model=_model_hybrid,
+            criterion=_criterion,
+            model_identifier=model_identifier,
+            dataset_identifier=_counter
+        )
+        _train_loss += _loss
+        resetPipeline(_model_hybrid)
+        _counter += 1
+
+    print('------------------------------------------------------------')
+    print(f'{model_identifier} Training -> Averaged Loader Loss: '
+          f'{_train_loss/len(train_loaders_KVS)}')
+
+    _valid_loss = 0
+    for _loader in valid_loaders_KVS:
+        _loss, _ = valid_HYBRID_KVS(
+            loader=_loader,
+            model=_model_hybrid,
+            criterion=_criterion,
+            model_identifier=model_identifier,
+            dataset_identifier=_counter
+        )
+        _valid_loss += _loss
+        resetPipeline(_model_hybrid)
+        _counter += 1
+
+    print('------------------------------------------------------------')
+    print(f'{model_identifier} Validation -> Averaged Loader Loss: '
+          f'{_valid_loss/len(valid_loaders_KVS)}')
+
     return
+
+
+def trial_7_Both_Hybrid_mp():
+    """The trial_7_Both_Hybrid_mp function is essentially a helper function to
+    facilitate the validation of multiple concurrent models via multiprocessing
+    of the trial_7_Both_Hybrid function. Here, 3 unique models are validated using
+    the best performing UNET_AE (pretrained) configurations from trial_1 and the best
+    performing RNN/GRU/LSTM (pretrained) from trials_2 - trial_4.
+
+    Args:
+        NONE
+
+    Returns:
+        NONE
+    """
+    print('Starting Trial 7: Hybrid MD RNN UNET (Both)')
+    _train_loaders_KVS, _valid_loaders_KVS = get_Hybrid_loaders(
+        data_distribution='get_KVS',
+        batch_size=1,
+        shuffle=False
+    )
+    _train_loaders_C, _valid_loaders_C = get_Hybrid_loaders(
+        data_distribution='get_couette',
+        batch_size=1,
+        shuffle=False
+    )
+    _models = []
+    _model_identifiers = [
+        'RNN_LR0_00001_Lay1_Seq25',
+        'GRU_LR0_00001_Lay2_Seq25',
+        'LSTM_LR0_00001_Lay2_Seq25',
+    ]
+
+    _model_rnn_1 = RNN(
+        input_size=256,
+        hidden_size=256,
+        seq_size=25,
+        num_layers=1,
+        device=device
+    )
+    _model_rnn_1.load_state_dict(torch.load(
+            '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach'
+            '/Results/7_Hybrid_Both/Model_KVS_RNN_LR0_00001_Lay1_Seq25'))
+    _models.append(_model_rnn_1)
+
+    _model_rnn_2 = GRU(
+        input_size=256,
+        hidden_size=256,
+        seq_size=25,
+        num_layers=2,
+        device=device
+    )
+    _model_rnn_2.load_state_dict(torch.load(
+            '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach'
+            '/Results/7_Hybrid_Both/Model_KVS_GRU_LR0_00001_Lay2_Seq25'))
+    _models.append(_model_rnn_2)
+
+    _model_rnn_3 = LSTM(
+        input_size=256,
+        hidden_size=256,
+        seq_size=25,
+        num_layers=2,
+        device=device
+    )
+    _model_rnn_3.load_state_dict(torch.load(
+            '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach'
+            '/Results/7_Hybrid_Both/Model_KVS_LSTM_LR0_00001_Lay2_Seq25'))
+    _models.append(_model_rnn_3)
+
+    _processes = []
+    for i in range(3):
+        _p = mp.Process(
+            target=trial_7_Both_Hybrid,
+            args=(_models[i], _model_identifiers[i],
+                  _train_loaders_C, _valid_loaders_C,
+                  _train_loaders_KVS, _valid_loaders_KVS,)
+        )
+        _p.start()
+        _processes.append(_p)
+        print(f'Creating Process Number: {i+1}')
+
+    for _process in _processes:
+        _process.join()
+        print('Joining Process')
+    return
+    pass
 
 
 if __name__ == "__main__":
 
-    trial_7_Both_RNN_mp()
+    trial_7_Both_Hybrid_mp():
