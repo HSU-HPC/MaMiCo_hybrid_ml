@@ -655,25 +655,35 @@ def plotPredVsTargKVS(input_1, input_2='void', file_prefix=0, file_name=0):
 
     t_axis = np.arange(1, 100+1)
 
-    pred_std_per_t = np.std(input_1[:100, 2, :, :, :], axis=(1, 2, 3))
-    targ_std_per_t = np.std(input_2[:100, 2, :, :, :], axis=(1, 2, 3))
+    pred_std_per_t = np.std(input_1[:100, 2, mid, :, mid], axis=1)
+    targ_std_per_t = np.std(input_2[:100, 2, mid, :, mid], axis=1)
     print(pred_std_per_t.shape)
     print(targ_std_per_t.shape)
 
-    pred_mean_per_t = np.mean(input_1[:100, 2, :, :, :], axis=(1, 2, 3))
-    targ_mean_per_t = np.mean(input_2[:100, 2, :, :, :], axis=(1, 2, 3))
+    pred_mean_per_t = np.mean(input_1[:100, 2, mid, :, mid], axis=1)
+    targ_mean_per_t = np.mean(input_2[:100, 2, mid, :, mid], axis=1)
     print(pred_mean_per_t.shape)
     print(targ_mean_per_t.shape)
 
     fig, axs = plt.subplots(3, sharex=True, constrained_layout=True)
-    axs[0].plot(t_axis, pred_mean_per_t, label='Prediction')
-    axs[0].plot(t_axis, targ_mean_per_t, label='Target')
-    axs[1].plot(t_axis, pred_std_per_t, label='Prediction')
-    axs[1].plot(t_axis, targ_std_per_t, label='Target')
-    axs[2].plot(t_axis, input_1[:100, 2, mid, mid, mid], label='Prediction')
-    axs[2].plot(t_axis, input_2[:100, 2, mid, mid, mid], label='Target')
-    axs[-1].set_xlabel('Timestep')
-    axs[-1].legend(ncol=2, fontsize=9)
+    axs[0].scatter(t_axis, pred_mean_per_t, s=2.5, label='Prediction')
+    axs[0].scatter(t_axis, targ_mean_per_t, s=2.5, label='Target')
+    axs[0].set_ylabel('Averaged $u_z$')
+    axs[0].grid(axis='y', alpha=0.3)
+
+    axs[1].scatter(t_axis, pred_std_per_t, s=2.5, label='Prediction')
+    axs[1].scatter(t_axis, targ_std_per_t, s=2.5, label='Target')
+    axs[1].set_ylabel('Standard Deviation of Averaged $u_z$')
+    axs[1].grid(axis='y', alpha=0.3)
+
+    axs[2].scatter(t_axis, input_1[:100, 2, mid,
+                                   mid, mid], s=2.5, label='Prediction')
+    axs[2].scatter(t_axis, input_2[:100, 2, mid, mid, mid],
+                   s=2.5, label='Target')
+    axs[2].set_ylabel('Standard Deviation of Averaged $u_z$')
+    axs[2].grid(axis='y', alpha=0.3)
+    axs[2].set_xlabel('Timestep')
+    axs[2].legend(ncol=2, fontsize=9)
 
     fig.set_size_inches(6, 10)
     if file_name != 0:
@@ -690,7 +700,7 @@ def main():
 
 if __name__ == "__main__":
 
-    a = np.random.rand(100, 3, 24, 24, 24) + 1
-    b = np.random.rand(100, 3, 24, 24, 24) + 2
+    a = np.random.rand(150, 3, 24, 24, 24) + 1
+    b = np.random.rand(150, 3, 24, 24, 24) + 2
 
     plotPredVsTargKVS(input_1=a, input_2=b)

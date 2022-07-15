@@ -52,6 +52,8 @@ def valid_HYBRID_KVS(loader, model, criterion, model_identifier, dataset_identif
     """
     _file_prefix = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/' + \
         '3_Constituent_Hybrid_approach/Results/6_Hybrid_KVS/'
+    # _file_prefix = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/' + \
+    #                 '3_Constituent_Hybrid_approach/Results/7_Hybrid_Both/'
     _epoch_loss = 0
     _timeline = []
     _preds = []
@@ -546,7 +548,7 @@ def trial_6_KVS_Hybrid(model_rnn, model_identifier, train_loaders, valid_loaders
     ).to(device)
 
     _counter = 0
-    '''
+
     _train_loss = 0
     for _loader in train_loaders:
         _loss, _ = valid_HYBRID_KVS(
@@ -554,7 +556,7 @@ def trial_6_KVS_Hybrid(model_rnn, model_identifier, train_loaders, valid_loaders
             model=_model_hybrid,
             criterion=_criterion,
             model_identifier=model_identifier,
-            dataset_identifier='KVS_' + str(_counter)
+            dataset_identifier=str(_counter)
         )
         _train_loss += _loss
         resetPipeline(_model_hybrid)
@@ -563,7 +565,6 @@ def trial_6_KVS_Hybrid(model_rnn, model_identifier, train_loaders, valid_loaders
     print('------------------------------------------------------------')
     print(f'{model_identifier} Training -> Averaged Loader Loss: '
           f'{_train_loss/len(train_loaders)}')
-    '''
 
     _valid_loss = 0
     for _loader in valid_loaders:
@@ -572,7 +573,7 @@ def trial_6_KVS_Hybrid(model_rnn, model_identifier, train_loaders, valid_loaders
             model=_model_hybrid,
             criterion=_criterion,
             model_identifier=model_identifier,
-            dataset_identifier='KVS_' + str(_counter)
+            dataset_identifier=str(_counter)
         )
         _valid_loss += _loss
         resetPipeline(_model_hybrid)
@@ -647,7 +648,7 @@ def trial_6_KVS_Hybrid_mp():
     _models.append(_model_rnn_3)
 
     _processes = []
-    for i in range(2, 3):
+    for i in range(3):
         _p = mp.Process(
             target=trial_6_KVS_Hybrid,
             args=(_models[i], _model_identifiers[i],
