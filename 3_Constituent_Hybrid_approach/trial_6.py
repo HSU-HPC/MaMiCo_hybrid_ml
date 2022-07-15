@@ -647,7 +647,7 @@ def trial_6_KVS_Hybrid_mp():
     _models.append(_model_rnn_3)
 
     _processes = []
-    for i in range(3):
+    for i in range(2, 3):
         _p = mp.Process(
             target=trial_6_KVS_Hybrid,
             args=(_models[i], _model_identifiers[i],
