@@ -702,9 +702,12 @@ if __name__ == "__main__":
         f'{_dir}20K_NE_combined_domain.csv'
     ]
     data = mamico_csv2dataset_mp(files)
+    inputs = []
+    for d in data:
+        inputs.append(d)
     plotPredVsTargKVS(
-        input_1=data[0],
-        input_2=data[1],
+        input_1=inputs[0],
+        input_2=inputs[1],
         file_prefix=0,
         file_name='test'
     )
