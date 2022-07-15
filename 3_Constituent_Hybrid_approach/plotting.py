@@ -648,57 +648,46 @@ def plotVelocityField(input_1, input_2='void', file_prefix=0, file_name=0):
     plt.show()
 
 
+def plotPredVsTargKVS(input_1, input_2='void', file_prefix=0, file_name=0):
+    t, c, x, y, z = input_1.shape
+    mid = int(x/2)
+
+    t_axis = np.arange(1, t+1)
+
+    pred_std_per_t = np.std(input_1[:, 1, :, :, :], axis=(1, 2, 3))
+    targ_std_per_t = np.std(input_2[:, 1, :, :, :], axis=(1, 2, 3))
+    print(pred_std_per_t.shape)
+    print(targ_std_per_t.shape)
+
+    pred_mean_per_t = np.std(input_1[:, 1, :, :, :], axis=(1, 2, 3))
+    targ_mean_per_t = np.std(input_2[:, 1, :, :, :], axis=(1, 2, 3))
+    print(pred_mean_per_t.shape)
+    print(targ_mean_per_t.shape)
+
+    fig, axs = plt.subplots(2, 2, constrained_layout=True)
+    axs[0, 0].plot(pred_mean_per_t, t_axis, targ_mean_per_t, t_axis)
+    axs[0, 1].plot(input_1[:, 1, mid, mid, mid], t_axis,
+                   input_2[:, 1, mid, mid, mid], t_axis)
+    axs[1, 0].plot(pred_mean_per_t, t_axis, targ_mean_per_t, t_axis)
+
+    fig.set_size_inches(6, 10)
+    if file_name != 0:
+        fig.savefig(
+            f'{file_prefix}Plot_PredVsTargKVS_{file_name}.svg')
+    plt.show()
+
+    pass
+
+
 def main():
     pass
 
 
 if __name__ == "__main__":
 
-    _file_prefix = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/5_Hybrid_KVS/'
-    _files_in = [
-        'clean_kvs_10K_NE_combined_domain.csv',
-        'clean_kvs_10K_NW_combined_domain.csv',
-        'clean_kvs_10K_SE_combined_domain.csv',
-        'clean_kvs_10K_SW_combined_domain.csv',
-        'clean_kvs_20K_NE_combined_domain.csv',
-        'clean_kvs_20K_NW_combined_domain.csv',
-        'clean_kvs_20K_SE_combined_domain.csv',
-        'clean_kvs_20K_SW_combined_domain.csv',
-        'clean_kvs_30K_NE_combined_domain.csv',
-        'clean_kvs_30K_NW_combined_domain.csv',
-        'clean_kvs_30K_SE_combined_domain.csv',
-        'clean_kvs_30K_SW_combined_domain.csv',
-        'clean_kvs_40K_NE_combined_domain.csv',
-        'clean_kvs_40K_NW_combined_domain.csv',
-        'clean_kvs_40K_SE_combined_domain.csv',
-        'clean_kvs_40K_SW_combined_domain.csv',
-    ]
-    _files_out = [
-        'kvs_10K_NE',
-        'kvs_10K_NW',
-        'kvs_10K_SE',
-        'kvs_10K_SW',
-        'kvs_20K_NE',
-        'kvs_20K_NW',
-        'kvs_20K_SE',
-        'kvs_20K_SW',
-        'kvs_30K_NE',
-        'kvs_30K_NW',
-        'kvs_30K_SE',
-        'kvs_30K_SW',
-        'kvs_40K_NE',
-        'kvs_40K_NW',
-        'kvs_40K_SE',
-        'kvs_40K_SW',
-    ]
-    _inputs = mamico_csv2dataset_mp(
-        file_names=_files_in
-    )
-
-    for i, _input in enumerate(_inputs):
-        plotVelocityField(
-            input_1=_input,
-            file_prefix=_file_prefix,
-            file_name=_files_out[i]
-        )
-    pass
+    a = np.random.rand(100, 3, 24, 24, 24)
+    b = a[:, 1, :, :, :]
+    b_std = np.mean(a[:, 1, :, :, :], axis=(1, 2, 3))
+    print(a.shape)
+    print(b.shape)
+    print(b_std.shape)

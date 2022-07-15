@@ -7,7 +7,7 @@ import torch.nn as nn
 import numpy as np
 from model import UNET_AE, RNN, GRU, LSTM, Hybrid_MD_RNN_UNET, resetPipeline
 from utils_new import get_UNET_AE_loaders, get_RNN_loaders, losses2file, get_Hybrid_loaders
-from plotting import compareAvgLoss, compareLossVsValid, plotVelocityField
+from plotting import compareAvgLoss, compareLossVsValid, plotPredVsTargKVS
 from trial_1 import train_AE, valid_AE, error_timeline, get_latentspace_AE
 from trial_2 import train_RNN, valid_RNN
 
@@ -71,7 +71,7 @@ def valid_HYBRID_KVS(loader, model, criterion, model_identifier, dataset_identif
             _targs.append(_targets.cpu().detach().numpy())
             _counter += 1
 
-    plotVelocityField(
+    plotPredVsTargKVS(
         input_1=np.vstack(_preds),
         input_2=np.vstack(_targs),
         file_prefix=_file_prefix,
@@ -546,7 +546,7 @@ def trial_6_KVS_Hybrid(model_rnn, model_identifier, train_loaders, valid_loaders
     ).to(device)
 
     _counter = 0
-
+    '''
     _train_loss = 0
     for _loader in train_loaders:
         _loss, _ = valid_HYBRID_KVS(
@@ -563,6 +563,7 @@ def trial_6_KVS_Hybrid(model_rnn, model_identifier, train_loaders, valid_loaders
     print('------------------------------------------------------------')
     print(f'{model_identifier} Training -> Averaged Loader Loss: '
           f'{_train_loss/len(train_loaders)}')
+    '''
 
     _valid_loss = 0
     for _loader in valid_loaders:
