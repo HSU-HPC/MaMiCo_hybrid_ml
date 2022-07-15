@@ -664,8 +664,7 @@ def plotPredVsTargKVS(input_1, input_2='void', file_prefix=0, file_name=0):
     p_loc = input_1[:t_max, 2, mid, mid, mid]
     t_loc = input_2[:t_max, 2, mid, mid, mid]
 
-    fig, axs = plt.subplots(2, sharex=True, sharey=True,
-                            constrained_layout=True)
+    fig, axs = plt.subplots(2, sharex=True, constrained_layout=True)
     axs[0].plot(t_axis, p_avg, linewidth=0.5, label='Prediction')
     axs[0].fill_between(t_axis, p_avg-p_std, p_avg+p_std,
                         alpha=0.2, label='Prediction')
