@@ -228,7 +228,7 @@ def compareLossVsValid(loss_files, loss_labels, file_prefix=0, file_name=0):
     ax1.set_xlabel('Epoch')
     ax1.set_ylabel('Average Loss')
     ax1.grid(axis='y', alpha=0.3)
-    ax1.legend(ncol=2, fontsize=9)
+    ax1.legend(ncol=3, fontsize=9)
     fig.set_size_inches(7, 2.5)
     if file_name != 0:
         fig.savefig(f'{file_prefix}Compare_Loss_vs_Valid_{file_name}.svg')
