@@ -423,7 +423,9 @@ def compareFlowProfile3x3(preds, targs, model_id='', dataset_id=''):
     # preds -
     # targs -
     # model_descriptor -
-    directory = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/0_UNET_AE/'
+    # directory = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/1_UNET_AE/'
+    # directory = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/5_Hybrid_Couette/'
+    directory = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/7_Hybrid_Both/'
 
     t, c, d, h, w = preds.shape
     steps = np.arange(0, d).tolist()
@@ -653,13 +655,13 @@ def plotPredVsTargKVS(input_1, input_2='void', file_prefix=0, file_name=0):
 
     t_axis = np.arange(1, t+1)
 
-    pred_std_per_t = np.std(input_1[:, 1, :, :, :], axis=(1, 2, 3))
-    targ_std_per_t = np.std(input_2[:, 1, :, :, :], axis=(1, 2, 3))
+    pred_std_per_t = np.std(input_1[:, 2, :, :, :], axis=(1, 2, 3))
+    targ_std_per_t = np.std(input_2[:, 2, :, :, :], axis=(1, 2, 3))
     print(pred_std_per_t.shape)
     print(targ_std_per_t.shape)
 
-    pred_mean_per_t = np.mean(input_1[:, 1, :, :, :], axis=(1, 2, 3))
-    targ_mean_per_t = np.mean(input_2[:, 1, :, :, :], axis=(1, 2, 3))
+    pred_mean_per_t = np.mean(input_1[:, 2, :, :, :], axis=(1, 2, 3))
+    targ_mean_per_t = np.mean(input_2[:, 2, :, :, :], axis=(1, 2, 3))
     print(pred_mean_per_t.shape)
     print(targ_mean_per_t.shape)
 
