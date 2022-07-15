@@ -1,14 +1,15 @@
 import numpy as np
 import torch
 import torch.nn as nn
-from plotting import compareAvgLossRNN, compareLossVsValidRNN, compareFlowProfile3x3, compareErrorTimeline
+# , compareErrorTimeline
+from plotting import compareAvgLossRNN, compareLossVsValidRNN, compareFlowProfile3x3, compareLossVsValid
 from model import UNET_AE, LSTM, Hybrid_MD_RNN_UNET
 from utils import get_UNET_AE_loaders, get_Hybrid_loaders
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 
-def trial_0_UNET_AE_plots():
+def trial_1_UNET_AE_plots():
     model_names = [
         'Model_UNET_AE_LR0_005',
         'Model_UNET_AE_LR0_001',
@@ -113,7 +114,7 @@ def trial_0_UNET_AE_plots():
             )
 
 
-def trial_1_RNN_plots():
+def trial_2_RNN_plots():
     _alphas = [0.001, 0.0005, 0.0001, 0.00005, 0.00001, 0.000005]
     _alpha_strings = ['0_001', '0_0005', '0_0001',
                       '0_00005', '0_00001', '0_000005']
@@ -171,7 +172,7 @@ def trial_1_RNN_plots():
     pass
 
 
-def trial_2_GRU_plots():
+def trial_3_GRU_plots():
 
     _alphas = [0.001, 0.0005, 0.0001, 0.00005, 0.00001, 0.000005]
     _alpha_strings = ['0_001', '0_0005', '0_0001',
@@ -230,7 +231,7 @@ def trial_2_GRU_plots():
     pass
 
 
-def trial_3_LSTM_plots():
+def trial_4_LSTM_plots():
     _alphas = [0.001, 0.0005, 0.0001, 0.00005, 0.00001, 0.000005]
     _alpha_strings = ['0_001', '0_0005', '0_0001',
                       '0_00005', '0_00001', '0_000005']
@@ -288,7 +289,7 @@ def trial_3_LSTM_plots():
     pass
 
 
-def trial_4_Hybrid_plots():
+def trial_5_Hybrid_plots():
     _, valid_loaders = get_Hybrid_loaders(file_names=-1)
     # _train_loader, _valid_loader = get_UNET_AE_loaders(file_names=0)
     _file_prefix = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/4_Hybrid_RNN_UNET/'
@@ -356,14 +357,40 @@ def trial_4_Hybrid_plots():
     pass
 
 
-def trial_5_Hybrid_kvs_plots():
+def trial_6_Hybrid_kvs_plots():
+    _model_directory = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/' + \
+        '3_Constituent_Hybrid_approach/Results/6_Hybrid_KVS/'
+    _lossVsValidFiles = [
+        f'{_model_directory}Losses_KVS_RNN_LR0_00001_Lay1_Seq25.csv',
+        f'{_model_directory}Valids_KVS_RNN_LR0_00001_Lay1_Seq25.csv',
+        f'{_model_directory}Losses_KVS_GRU_LR0_00001_Lay2_Seq25.csv',
+        f'{_model_directory}Valids_KVS_GRU_LR0_00001_Lay2_Seq25.csv',
+        f'{_model_directory}Losses_KVS_LSTM_LR0_00001_Lay2_Seq25.csv',
+        f'{_model_directory}Valids_KVS_LSTM_LR0_00001_Lay2_Seq25.csv',
+    ]
+    _lossVsValidLabels = [
+        'Train. Loss   RNN',
+        'Valid. Loss   RNN',
+        'Train. Loss   GRU',
+        'Valid. Loss   GRU',
+        'Train. Loss   LSTM',
+        'Valid. Loss   LSTM'
+    ]
+
+    compareLossVsValid(
+        loss_files=_lossVsValidFiles,
+        loss_labels=_lossVsValidLabels,
+        file_prefix=_model_directory,
+        file_name='Model_RNNs'
+    )
+
+    '''
     _alphas = [0.00001]
     _alpha_strings = ['0_00001']
     _rnn_depths = [1, 2, 3]
     _seq_lengths = [5, 15, 25]
     _directory = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/5_Hybrid_KVS/'
 
-    '''
     _list_of_list_f = []
     _list_of_list_l = []
     for idx, _alpha in enumerate(_alphas):
@@ -417,44 +444,4 @@ def trial_5_Hybrid_kvs_plots():
 
 
 if __name__ == "__main__":
-    # trial_5_Hybrid_kvs_plots()
-
-    _directory = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/5_Hybrid_KVS/'
-    _prefix = 'Losses_Hybrid_'
-
-    _model_identifiers = [
-        'Model_UNET_AE_LR0_0005_KVS',
-        'Hybrid_Model_KVS'
-    ]
-    _valid_identifiers = [
-        '_Valid_Error_Timeline_kvs_40K_NE',
-        '_Valid_Error_Timeline_kvs_40K_NW',
-        '_Valid_Error_Timeline_kvs_40K_SE',
-        '_Valid_Error_Timeline_kvs_40K_SW',
-    ]
-
-    _dataset_names = [
-        'kvs 40K NE',
-        'kvs 40K NW',
-        'kvs 40K SE',
-        'kvs 40K SW',
-    ]
-
-    _l_of_l_files = []
-    _l_of_labels = ['UNET AE', 'Hybrid UNET']
-
-    for _valid in _valid_identifiers:
-        _l_of_files = []
-
-        for model in _model_identifiers:
-            _l_of_files.append(f'{_directory}{model}{_valid}.csv')
-
-        _l_of_l_files.append(_l_of_files)
-
-    compareErrorTimeline(
-        l_of_l_files=_l_of_l_files,
-        l_of_l_labels=_l_of_labels,
-        l_of_titles=_dataset_names,
-        file_prefix=_directory,
-        file_name='kvs_40K_test'
-    )
+    trial_6_Hybrid_kvs_plots()
