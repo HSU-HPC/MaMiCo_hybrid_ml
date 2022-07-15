@@ -683,4 +683,4 @@ def trial_7_Both_Hybrid_mp():
 
 if __name__ == "__main__":
 
-    trial_7_Both_Hybrid_mp():
+    trial_7_Both_Hybrid_mp()
