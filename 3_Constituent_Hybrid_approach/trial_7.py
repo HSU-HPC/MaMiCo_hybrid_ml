@@ -525,7 +525,7 @@ def trial_7_Both_Hybrid(model_rnn, model_identifier, train_loaders_C, valid_load
     _counter = 0
 
     _train_loss = 0
-    '''
+
     for _loader in train_loaders_C:
         _loss, _ = valid_HYBRID_Couette(
             loader=_loader,
@@ -558,7 +558,7 @@ def trial_7_Both_Hybrid(model_rnn, model_identifier, train_loaders_C, valid_load
     print('------------------------------------------------------------')
     print(f'{model_identifier} Validation -> Averaged Loader Loss: '
           f'{_valid_loss/len(valid_loaders_C)}')
-    '''
+
     _train_loss = 0
     for _loader in train_loaders_KVS:
         _loss, _ = valid_HYBRID_KVS(
@@ -664,7 +664,7 @@ def trial_7_Both_Hybrid_mp():
     _models.append(_model_rnn_3)
 
     _processes = []
-    for i in range(2, 3):
+    for i in range(3):
         _p = mp.Process(
             target=trial_7_Both_Hybrid,
             args=(_models[i], _model_identifiers[i],
