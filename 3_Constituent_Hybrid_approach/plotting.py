@@ -652,36 +652,37 @@ def plotVelocityField(input_1, input_2='void', file_prefix=0, file_name=0):
 def plotPredVsTargKVS(input_1, input_2='void', file_prefix=0, file_name=0):
     t, c, x, y, z = input_1.shape
     mid = int(x/2)
+    t_max = 500
+    t_axis = np.arange(1, t_max+1)
 
-    t_axis = np.arange(1, t+1)
+    p_std = np.std(input_1[:t_max, 2, mid, :, mid], axis=1)
+    t_std = np.std(input_2[:t_max, 2, mid, :, mid], axis=1)
 
-    pred_std_per_t = np.std(input_1[:, 2, mid, :, mid], axis=1)
-    targ_std_per_t = np.std(input_2[:, 2, mid, :, mid], axis=1)
+    p_avg = np.mean(input_1[:t_max, 2, mid, :, mid], axis=1)
+    t_avg = np.mean(input_2[:t_max, 2, mid, :, mid], axis=1)
 
-    pred_mean_per_t = np.mean(input_1[:, 2, mid, :, mid], axis=1)
-    targ_mean_per_t = np.mean(input_2[:, 2, mid, :, mid], axis=1)
+    p_loc = input_1[:t_max, 2, mid, mid, mid]
+    t_loc = input_2[:t_max, 2, mid, mid, mid]
 
     fig, axs = plt.subplots(3, sharex=True, constrained_layout=True)
-    axs[0].scatter(t_axis, pred_mean_per_t, s=2.5, label='Prediction')
-    axs[0].scatter(t_axis, targ_mean_per_t, s=2.5, label='Target')
+    axs[0].scatter(t_axis, p_avg, s=2.5, label='Prediction')
+    axs[0].scatter(t_axis, t_avg, s=2.5, label='Target')
     axs[0].set_ylabel('Averaged $u_z$')
     axs[0].grid(axis='y', alpha=0.3)
 
-    axs[1].scatter(t_axis, pred_std_per_t, s=2.5, label='Prediction')
-    axs[1].scatter(t_axis, targ_std_per_t, s=2.5, label='Target')
+    axs[1].scatter(t_axis, p_std, s=2.5, label='Prediction')
+    axs[1].scatter(t_axis, t_std, s=2.5, label='Target')
     axs[1].set_ylabel('Standard Deviation of Averaged $u_z$')
     axs[1].grid(axis='y', alpha=0.3)
 
-    axs[2].scatter(t_axis, input_1[:, 2, mid,
-                                   mid, mid], s=2.5, label='Prediction')
-    axs[2].scatter(t_axis, input_2[:, 2, mid, mid, mid],
-                   s=2.5, label='Target')
-    axs[2].set_ylabel('Standard Deviation of Averaged $u_z$')
+    axs[2].scatter(t_axis, p_loc, s=2.5, label='Prediction')
+    axs[2].scatter(t_axis, t_loc, s=2.5, label='Target')
+    axs[2].set_ylabel(f'Local $u_z$ at [t, {mid}, {mid}, {mid}]')
     axs[2].grid(axis='y', alpha=0.3)
     axs[2].set_xlabel('Timestep')
     axs[2].legend(ncol=2, fontsize=9)
 
-    fig.set_size_inches(6, 10)
+    fig.set_size_inches(6, 6)
     if file_name != 0:
         fig.savefig(
             f'{file_prefix}Plot_PredVsTargKVS_{file_name}.svg')
@@ -695,8 +696,15 @@ def main():
 
 
 if __name__ == "__main__":
-
-    a = np.random.rand(150, 3, 24, 24, 24) + 1
-    b = np.random.rand(150, 3, 24, 24, 24) + 2
-
-    plotPredVsTargKVS(input_1=a, input_2=b)
+    _dir = '/home/lerdo/lerdo_HPC_Lab_Project/Trainingdata/CleanKVS/Training/clean_kvs_'
+    files = [
+        f'{_dir}10K_NE_combined_domain.csv',
+        f'{_dir}20K_NE_combined_domain.csv'
+    ]
+    data = mamico_csv2dataset_mp(files)
+    plotPredVsTargKVS(
+        input_1=data[0],
+        input_2=data[1],
+        file_prefix=0,
+        file_name='test'
+    )
