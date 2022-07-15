@@ -653,17 +653,13 @@ def plotPredVsTargKVS(input_1, input_2='void', file_prefix=0, file_name=0):
     t, c, x, y, z = input_1.shape
     mid = int(x/2)
 
-    t_axis = np.arange(1, 100+1)
+    t_axis = np.arange(1, t+1)
 
-    pred_std_per_t = np.std(input_1[:100, 2, mid, :, mid], axis=1)
-    targ_std_per_t = np.std(input_2[:100, 2, mid, :, mid], axis=1)
-    print(pred_std_per_t.shape)
-    print(targ_std_per_t.shape)
+    pred_std_per_t = np.std(input_1[:, 2, mid, :, mid], axis=1)
+    targ_std_per_t = np.std(input_2[:, 2, mid, :, mid], axis=1)
 
-    pred_mean_per_t = np.mean(input_1[:100, 2, mid, :, mid], axis=1)
-    targ_mean_per_t = np.mean(input_2[:100, 2, mid, :, mid], axis=1)
-    print(pred_mean_per_t.shape)
-    print(targ_mean_per_t.shape)
+    pred_mean_per_t = np.mean(input_1[:, 2, mid, :, mid], axis=1)
+    targ_mean_per_t = np.mean(input_2[:, 2, mid, :, mid], axis=1)
 
     fig, axs = plt.subplots(3, sharex=True, constrained_layout=True)
     axs[0].scatter(t_axis, pred_mean_per_t, s=2.5, label='Prediction')
@@ -676,9 +672,9 @@ def plotPredVsTargKVS(input_1, input_2='void', file_prefix=0, file_name=0):
     axs[1].set_ylabel('Standard Deviation of Averaged $u_z$')
     axs[1].grid(axis='y', alpha=0.3)
 
-    axs[2].scatter(t_axis, input_1[:100, 2, mid,
+    axs[2].scatter(t_axis, input_1[:, 2, mid,
                                    mid, mid], s=2.5, label='Prediction')
-    axs[2].scatter(t_axis, input_2[:100, 2, mid, mid, mid],
+    axs[2].scatter(t_axis, input_2[:, 2, mid, mid, mid],
                    s=2.5, label='Target')
     axs[2].set_ylabel('Standard Deviation of Averaged $u_z$')
     axs[2].grid(axis='y', alpha=0.3)
