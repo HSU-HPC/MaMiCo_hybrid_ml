@@ -51,7 +51,8 @@ def valid_HYBRID_KVS(loader, model, criterion, model_identifier, dataset_identif
           A list of numpy arrays containing model predictions.
     """
     _file_prefix = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/' + \
-                   '3_Constituent_Hybrid_approach/Results/6_Hybrid_KVS/'
+                   '3_Constituent_Hybrid_approach/Results/7_Hybrid_Both/'
+    #              '3_Constituent_Hybrid_approach/Results/6_Hybrid_KVS/'
     #                '3_Constituent_Hybrid_approach/Results/7_Hybrid_Both/'
 
     _epoch_loss = 0
