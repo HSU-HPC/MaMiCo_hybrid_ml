@@ -653,7 +653,7 @@ def plotVelocityField(input_1, input_2='void', file_prefix=0, file_name=0):
 def plotPredVsTargKVS(input_1, input_2='void', file_prefix=0, file_name=0):
     t, c, x, y, z = input_1.shape
     mid = int(x/2)
-    t_max = 250
+    t_max = 100
     t_axis = np.arange(1, t_max+1)
 
     p_std = np.std(input_1[:t_max, 2, mid, :, mid], axis=1)
