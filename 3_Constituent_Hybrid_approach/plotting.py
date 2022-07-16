@@ -494,6 +494,7 @@ def compareFlowProfile3x3(preds, targs, model_id='', dataset_id=''):
     axs[-1, -1].legend(ncol=1, fontsize=12)
     fig.savefig(
         f'{directory}CompareFlowprofile_{model_id}_{dataset_id}.svg')
+    plt.close()
     pass
 
 
@@ -686,7 +687,7 @@ def plotPredVsTargKVS(input_1, input_2='void', file_prefix=0, file_name=0):
         fig.savefig(
             f'{file_prefix}Plot_PredVsTarg_KVS_{file_name}.svg')
     # plt.show()
-
+    plt.close()
     pass
 
 
