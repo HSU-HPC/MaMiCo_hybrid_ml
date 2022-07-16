@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import matplotlib as mpl
 import torch
 from utils_new import csv2dataset, csv2dataset_mp, mamico_csv2dataset, mamico_csv2dataset_mp
-# mpl.use('Agg')
+mpl.use('Agg')
 plt.style.use(['science'])
 np.set_printoptions(precision=2)
 
