@@ -76,7 +76,7 @@ def valid_HYBRID_KVS(loader, model, criterion, model_identifier, dataset_identif
         input_1=np.vstack(_preds),
         input_2=np.vstack(_targs),
         file_prefix=_file_prefix,
-        file_name=model_identifier+dataset_identifier
+        file_name=model_identifier+str(dataset_identifier)
     )
     _avg_loss = _epoch_loss/_counter
     return _avg_loss, _predictions

@@ -525,7 +525,6 @@ def trial_7_Both_Hybrid(model_rnn, model_identifier, train_loaders_C, valid_load
     _counter = 0
 
     _train_loss = 0
-
     for _loader in train_loaders_C:
         _loss, _ = valid_HYBRID_Couette(
             loader=_loader,
@@ -539,7 +538,7 @@ def trial_7_Both_Hybrid(model_rnn, model_identifier, train_loaders_C, valid_load
         _counter += 1
 
     print('------------------------------------------------------------')
-    print(f'{model_identifier} Training -> Averaged Loader Loss: '
+    print(f'{model_identifier} Training (C) -> Averaged Loader Loss: '
           f'{_train_loss/len(train_loaders_C)}')
 
     _valid_loss = 0
@@ -556,7 +555,7 @@ def trial_7_Both_Hybrid(model_rnn, model_identifier, train_loaders_C, valid_load
         _counter += 1
 
     print('------------------------------------------------------------')
-    print(f'{model_identifier} Validation -> Averaged Loader Loss: '
+    print(f'{model_identifier} Validation (C) -> Averaged Loader Loss: '
           f'{_valid_loss/len(valid_loaders_C)}')
 
     _train_loss = 0
@@ -573,7 +572,7 @@ def trial_7_Both_Hybrid(model_rnn, model_identifier, train_loaders_C, valid_load
         _counter += 1
 
     print('------------------------------------------------------------')
-    print(f'{model_identifier} Training -> Averaged Loader Loss: '
+    print(f'{model_identifier} Training (KVS) -> Averaged Loader Loss: '
           f'{_train_loss/len(train_loaders_KVS)}')
 
     _valid_loss = 0
@@ -590,7 +589,7 @@ def trial_7_Both_Hybrid(model_rnn, model_identifier, train_loaders_C, valid_load
         _counter += 1
 
     print('------------------------------------------------------------')
-    print(f'{model_identifier} Validation -> Averaged Loader Loss: '
+    print(f'{model_identifier} Validation (KVS) -> Averaged Loader Loss: '
           f'{_valid_loss/len(valid_loaders_KVS)}')
 
     return
