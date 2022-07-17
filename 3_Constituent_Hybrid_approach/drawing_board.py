@@ -444,6 +444,7 @@ def trial_6_Hybrid_kvs_plots():
 
 
 def trial_7_Hybrid_KVS_non_UNET_plots():
+    print('Trial 7: Hybrid KVS non UNET (plotting)')
     _model_directory = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/' + \
         '3_Constituent_Hybrid_approach/Results/7_Hybrid_KVS_non_UNET/'
     _lossVsValidFiles = [
