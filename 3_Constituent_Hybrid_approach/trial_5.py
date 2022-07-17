@@ -7,7 +7,7 @@ import numpy as np
 from model import UNET_AE, RNN, GRU, LSTM, Hybrid_MD_RNN_UNET, resetPipeline
 from utils_new import get_Hybrid_loaders
 from trial_1 import error_timeline
-from plotting import compareFlowProfile3x3, compareErrorTimeline_np
+from plotting import compareFlowProfile3x3, compareErrorTimeline_np, plotPredVsTargCouette
 
 torch.manual_seed(10)
 random.seed(10)
@@ -50,6 +50,7 @@ def valid_HYBRID_Couette(loader, model, criterion, model_identifier, dataset_ide
         predictions:
           A list of numpy arrays containing model predictions.
     """
+    _file_prefix = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/5_Hybrid_Couette'
     _epoch_loss = 0
     _timeline = []
     _preds = []
@@ -68,13 +69,20 @@ def valid_HYBRID_Couette(loader, model, criterion, model_identifier, dataset_ide
             _preds.append(_predictions.cpu().detach().numpy())
             _targs.append(_targets.cpu().detach().numpy())
             _counter += 1
-
+    '''
     compareFlowProfile3x3(
         preds=np.vstack(_preds),
         targs=np.vstack(_targs),
         model_id=model_identifier,
         dataset_id=dataset_identifier
-        )
+    )
+    '''
+    plotPredVsTargCouette(
+        input_1=np.vstack(_preds),
+        input_2=np.vstack(_targs),
+        file_prefix=_file_prefix,
+        file_name=model_identifier+str(dataset_identifier)
+    )
 
     _avg_loss = _epoch_loss/_counter
     return _avg_loss, _predictions
@@ -228,7 +236,7 @@ def trial_5_Hybrid_mp():
     _models.append(_model_rnn_3)
 
     _processes = []
-    for i in range(3):
+    for i in range(2, 3):
         _p = mp.Process(
             target=trial_5_Hybrid,
             args=(_models[i], _model_identifiers[i],
@@ -355,5 +363,5 @@ def trial_5_error_timeline():
 
 
 if __name__ == "__main__":
-
+    trial_5_Hybrid_mp()
     pass
