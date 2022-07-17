@@ -374,6 +374,8 @@ def get_RNN_loaders(data_distribution, batch_size=32, seq_length=15, shuffle=Fal
         _data_tag = 'KVS'
     elif data_distribution == "get_both":
         _data_tag = 'Couette and KVS'
+    elif data_distribution == "get_AE_KVS":
+        _data_tag = 'non UNET KVS'
     elif data_distribution == "get_random":
         _data_tag = 'random'
 
@@ -400,6 +402,10 @@ def get_RNN_loaders(data_distribution, batch_size=32, seq_length=15, shuffle=Fal
     elif _data_tag == 'Couette and KVS':
         _train_files = glob.glob(f"{_directory}CleanBothLS/Training/*.csv")
         _valid_files = glob.glob(f"{_directory}CleanBothLS/Validation/*.csv")
+    elif _data_tag == 'non UNET KVS':
+        _train_files = glob.glob(f"{_directory}CleanKVS_AE_LS/Training/*.csv")
+        _valid_files = glob.glob(
+            f"{_directory}CleanKVS_AE_LS/Validation/*.csv")
     elif _data_tag == 'random':
         print('Loading ---> RANDOM <--- training datasets as loader.')
         for i in range(3):

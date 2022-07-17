@@ -371,7 +371,7 @@ def trial_7_Hybrid_KVS_RNN_mp():
     _models.append(_model_rnn_3)
 
     _t_loader_25, _v_loader_25 = get_RNN_loaders(
-        data_distribution='get_AE_KVS',
+        data_distribution="get_AE_KVS",
         batch_size=32,
         seq_length=25,
         shuffle=True
