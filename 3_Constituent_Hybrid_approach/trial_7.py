@@ -140,7 +140,7 @@ def trial_7_Both_AE_mp():
     """
     print('Starting Trial 7: AE (Both)')
     _t_loaders, _v_loaders = get_UNET_AE_loaders(
-        data_distribution='get_random',
+        data_distribution='get_KVS',
         batch_size=32,
         num_workers=0,
         shuffle=True
