@@ -443,5 +443,47 @@ def trial_6_Hybrid_kvs_plots():
     pass
 
 
+def trial_7_Hybrid_KVS_non_UNET_plots():
+    _model_directory = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/' + \
+        '3_Constituent_Hybrid_approach/Results/7_Hybrid_KVS_non_UNET/'
+    _lossVsValidFiles = [
+        f'{_model_directory}Losses_AE_Both_LR0_0005.csv',
+        f'{_model_directory}Valids_AE_Both_LR0_0005.csv',
+        f'{_model_directory}Losses_AE_Both_LR0_0001.csv',
+        f'{_model_directory}Valids_AE_Both_LR0_0001.csv',
+        f'{_model_directory}Losses_AE_Both_LR0_00005.csv',
+        f'{_model_directory}Valids_AE_Both_LR0_00005.csv',
+        f'{_model_directory}Losses_AE_Both_LR0_00001.csv',
+        f'{_model_directory}Valids_AE_Both_LR0_00001.csv',
+        f'{_model_directory}Losses_AE_Both_LR0_000005.csv',
+        f'{_model_directory}Valids_AE_Both_LR0_000005.csv',
+        f'{_model_directory}Losses_AE_Both_LR0_000001.csv',
+        f'{_model_directory}Valids_AE_Both_LR0_000001.csv',
+    ]
+    _lossVsValidLabels = [
+        'Train. Loss LR 0.0005',
+        'Valid. Loss LR 0.0005',
+        'Train. Loss LR 0.0001',
+        'Valid. Loss LR 0.0001',
+        'Train. Loss LR 0.00005',
+        'Valid. Loss LR 0.00005',
+        'Train. Loss LR 0.00001',
+        'Valid. Loss LR 0.00001',
+        'Train. Loss LR 0.000005',
+        'Valid. Loss LR 0.000005',
+        'Train. Loss LR 0.000001',
+        'Valid. Loss LR 0.000001'
+    ]
+
+    compareLossVsValid(
+        loss_files=_lossVsValidFiles,
+        loss_labels=_lossVsValidLabels,
+        file_prefix=_model_directory,
+        file_name='Model_AE_non_UNET'
+    )
+
+    pass
+
+
 if __name__ == "__main__":
-    trial_6_Hybrid_kvs_plots()
+    trial_7_Hybrid_KVS_non_UNET_plots()

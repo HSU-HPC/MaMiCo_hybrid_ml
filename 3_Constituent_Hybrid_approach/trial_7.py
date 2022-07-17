@@ -28,8 +28,8 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 NUM_WORKERS = 0
 
 
-def trial_7_Both_AE(alpha, alpha_string, train_loaders, valid_loaders):
-    """The trial_7_Both_AE function trains the given model on both the KVS and
+def trial_7_Hybrid_KVS_non_UNET(alpha, alpha_string, train_loaders, valid_loaders):
+    """The trial_7_Hybrid_KVS_non_UNET function trains the given model on both the KVS and
     Couette data distributions. It documents model progress via saving average
     training and validation losses to file and comparing them in a plot.
 
@@ -127,8 +127,8 @@ def trial_7_Both_AE(alpha, alpha_string, train_loaders, valid_loaders):
     return
 
 
-def trial_7_Both_AE_mp():
-    """The trial_7_Both_AE_mp function is essentially a helper function to
+def trial_7_Hybrid_KVS_non_UNET_mp():
+    """The trial_7_Hybrid_KVS_non_UNET_mp function is essentially a helper function to
     facilitate the training of the most promising UNET_AE model configurations
     from trial_1 on the basis of the KVS and Couette data distributions.
 
@@ -153,7 +153,7 @@ def trial_7_Both_AE_mp():
 
     for i in range(6):
         _p = mp.Process(
-            target=trial_7_Both_AE,
+            target=trial_7_Hybrid_KVS_non_UNET,
             args=(_alphas[i], _alpha_strings[i],
                   _t_loaders, _v_loaders,)
         )
