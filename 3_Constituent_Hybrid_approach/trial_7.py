@@ -228,7 +228,171 @@ def trial_7_Hybrid_KVS_non_UNET_latentspace_helper():
         )
 
 
+def trial_7_Hybrid_KVS_RNN(model, model_identifier, alpha, train_loaders, valid_loaders):
+    """The trial_7_Hybrid_KVS_RNN function trains the given model and documents
+    its progress via saving average training and validation losses to file and
+    comparing them in a plot.
+
+    Args:
+        model:
+          Object of PyTorch Module class, i.e. the model to be trained.
+        model_identifier:
+          A unique string to identify the model. Here, a combination of the
+          learning rate (_alpha), num of RNN layers (_num_layers) and sequence
+          length (_seq_length) is used.
+        alpha:
+          A double value indicating the chosen learning rate.
+        train_loaders:
+          Object of PyTorch-type DataLoader to automatically pass training
+          dataset to model.
+        valid_loaders:
+          Object of PyTorch-type DataLoader to automatically pass validation
+          dataset to model.
+
+    Returns:
+        NONE:
+          This function documents model progress by saving results to file and
+          creating meaningful plots.
+    """
+    _criterion = nn.L1Loss()
+    _file_prefix = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/' + \
+        '3_Constituent_Hybrid_approach/Results/7_Hybrid_KVS_non_UNET/'
+
+    print('Initializing training parameters.')
+    _scaler = torch.cuda.amp.GradScaler()
+    _optimizer = optim.Adam(model.parameters(), lr=alpha)
+    _epoch_losses = []
+    _epoch_valids = []
+
+    print('Beginning training.')
+    for epoch in range(150):
+        _avg_loss = 0
+        for _train_loader in train_loaders:
+            _avg_loss += train_RNN(
+                loader=_train_loader,
+                model=model,
+                optimizer=_optimizer,
+                criterion=_criterion,
+                scaler=_scaler,
+                model_identifier=model_identifier,
+                current_epoch=epoch+1
+            )
+        _avg_loss = _avg_loss/len(train_loaders)
+        print('------------------------------------------------------------')
+        print(
+            f'{model_identifier} Training Epoch: {epoch+1}-> Averaged '
+            f'Loader Loss: {_avg_loss:.3f}')
+
+        _epoch_losses.append(_avg_loss)
+
+        _avg_valid = 0
+        for _valid_loader in valid_loaders:
+            _avg_valid += valid_RNN(
+                loader=_valid_loader,
+                model=model,
+                criterion=_criterion,
+                model_identifier=model_identifier
+            )
+        _avg_valid = _avg_valid/len(valid_loaders)
+        print('------------------------------------------------------------')
+        print(f'{model_identifier} Validation -> Averaged '
+              f'Loader Loss: {_avg_valid:.3f}')
+        _epoch_valids.append(_avg_valid)
+
+    losses2file(
+        losses=_epoch_losses,
+        file_name=f'{_file_prefix}Losses_{model_identifier}'
+    )
+    losses2file(
+        losses=_epoch_valids,
+        file_name=f'{_file_prefix}Valids_{model_identifier}'
+    )
+
+    compareAvgLoss(
+        loss_files=[
+            f'{_file_prefix}Losses_{model_identifier}.csv',
+            f'{_file_prefix}Valids_{model_identifier}.csv'
+        ],
+        loss_labels=['Training', 'Validation'],
+        file_prefix=_file_prefix,
+        file_name=f'And_Valids_{model_identifier}'
+    )
+    torch.save(
+        model.state_dict(),
+        f'{_file_prefix}Model_{model_identifier}'
+    )
+
+
+def trial_7_Hybrid_KVS_RNN_mp():
+    """The trial_7_Hybrid_KVS_RNN_mp function is essentially a helper function
+    to facilitate the training of multiple concurrent models via multiprocessing
+    of the trial_7_Hybrid_KVS_RNN function. Here, 3 unique models are trained using
+    the most promising RNN/GRU/LSTM configurations from trials 2/3/4. Refer to
+    the trial_7_Hybrid_KVS_RNN function for more details.
+
+    Args:
+        NONE
+
+    Returns:
+        NONE
+    """
+    print('Starting Trial 7: RNN_mp (KVS, AE)')
+    _models = []
+    _model_identifiers = [
+        'KVS_AE_RNN_LR0_00001_Lay1_Seq25',
+        'KVS_AE_GRU_LR0_00001_Lay2_Seq25',
+        'KVS_AE_LSTM_LR0_00001_Lay2_Seq25',
+    ]
+    _alphas = [0.00001, 0.00001, 0.00001]
+
+    _model_rnn_1 = RNN(
+        input_size=256,
+        hidden_size=256,
+        seq_size=25,
+        num_layers=1,
+        device=device
+    ).to(device)
+    _models.append(_model_rnn_1)
+    _model_rnn_2 = GRU(
+        input_size=256,
+        hidden_size=256,
+        seq_size=25,
+        num_layers=2,
+        device=device
+    ).to(device)
+    _models.append(_model_rnn_2)
+    _model_rnn_3 = LSTM(
+        input_size=256,
+        hidden_size=256,
+        seq_size=25,
+        num_layers=2,
+        device=device
+    ).to(device)
+    _models.append(_model_rnn_3)
+
+    _t_loader_25, _v_loader_25 = get_RNN_loaders(
+        data_distribution='get_AE_KVS',
+        batch_size=32,
+        seq_length=25,
+        shuffle=True
+    )
+    processes = []
+
+    for i in range(3):
+        p = mp.Process(
+            target=trial_7_Hybrid_KVS_RNN,
+            args=(_models[i], _model_identifiers[i], _alphas[i],
+                  _t_loader_25, _v_loader_25,)
+        )
+        p.start()
+        processes.append(p)
+        print(f'Creating Process Number: {i+1}')
+
+    for process in processes:
+        process.join()
+        print('Joining Process')
+
 
 if __name__ == "__main__":
 
-    trial_7_Hybrid_KVS_non_UNET_latentspace_helper()
+    trial_7_Hybrid_KVS_RNN_mp()
