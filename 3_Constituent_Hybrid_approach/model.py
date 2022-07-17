@@ -53,6 +53,138 @@ class DoubleConv(nn.Module):
         return self.conv(x)
 
 
+class AE(nn.Module):
+    def __init__(self, device, in_channels=3, out_channels=3, features=[4, 6, 8, 10], activation=nn.ReLU(inplace=True)):
+        # PARAMETERS:
+        # device - used to enable CUDA
+        # in_channels - channels contained in input data
+        # out_channels - channels to be contained in output data
+        # features - corresponds to the number of applied kernels per convolution
+        # activation - enables to freely choose desired activation function
+
+        # Note that this model is concieved as an autoencoder to be used for
+        # common MaMiCo spatial dimensions such as 24x24x24 (input and output).
+        # With this, the input dimension is reduced via:
+        # 24x24x24->12x12x12->6x6x6x->3x3x3.
+        # The bottleneck signal is once more reduced to 2x2x2 for future use
+        # in an RNN.
+
+        # Moreover, this model will be trained as an autoencoder for later
+        # integratin in a hybrid model. As such, training can only be
+        # performed with a batch_size of 1.
+
+        # XXXX Dimensions have not been approved. XXXX
+
+        super(AE, self).__init__()
+        self.device = device
+        # U-Net building blocks
+        self.ups = nn.ModuleList()
+        self.downs = nn.ModuleList()
+        self.pool = nn.MaxPool3d(kernel_size=2, stride=2)
+        self.helper_down = nn.Conv3d(
+            in_channels=16, out_channels=16, kernel_size=2, stride=1, padding=0, bias=False)
+        self.activation = nn.ReLU()
+        self.helper_up_1 = nn.ConvTranspose3d(
+            in_channels=32, out_channels=32, kernel_size=2, stride=1, padding=0, bias=False)
+        self.helper_up_2 = nn.Conv3d(
+            in_channels=4, out_channels=3, kernel_size=3, stride=1, padding=1, bias=False)
+
+        # Down part of UNET
+        for feature in features:
+            self.downs.append(DoubleConv(in_channels, feature, activation))
+            in_channels = feature
+
+        # Up part of UNET
+        for feature in reversed(features):
+            self.ups.append(
+                nn.ConvTranspose3d(
+                    feature*2, feature, kernel_size=2, stride=2,
+                )
+            )
+            self.ups.append(DoubleConv(feature, feature, activation))
+
+        # This is the "deepest" part.
+        # self.bottleneck = DoubleConv(features[-1], features[-1]*2, activation)
+        self.bottleneck = DoubleConv(features[-1], features[-1]*2, activation)
+        print('Model initialized: Autoencoder.')
+
+    def forward(self, x, y=0, skip_connections=0):
+        if y == 0 or y == 'get_bottleneck':
+            # print('Size of x: ', x.size())
+            skip_connections = []
+            # The following for-loop describes the entire (left) contracting side,
+            # including storing the skip-connections:
+            for down in self.downs:
+                x = down(x)
+                # print('Size of x downs: ', x.size())
+                skip_connections.append(x)
+                x = self.pool(x)
+                # print('Size of x pools: ', x.size())
+
+            # This is the bottleneck
+            # print("This is the bottleneck:")
+            # print("Size of x before additional Conv3D: ", x.size())
+            x = self.helper_down(x)
+            # print("Size of x after additional Conv3D: ", x.size())
+            x = self.activation(x)
+            x = self.bottleneck(x)
+            # print("Size of x after bottleneck: ", x.size())
+            x = self.activation(x)
+
+            if y == 'get_bottleneck':
+                return x, skip_connections
+
+            x = self.helper_up_1(x)
+            # print("Size of x after helper_up_1: ", x.size())
+            x = self.activation(x)
+            skip_connections = skip_connections[::-1]
+
+            # The following for-loop describes the entire (right) expanding side.
+            for idx in range(0, len(self.ups), 2):
+                x = self.ups[idx](x)
+                # print('Size of x ups: ', x.size())
+                skip_connection = skip_connections[idx//2]
+                # concat_skip = torch.cat((skip_connection, x), dim=1)
+                x = self.ups[idx+1](x)
+            # print("Size of x before downsizing to MD: ", x.size())
+            # print("Size of x after expanding path: ", x.size())
+
+            x = self.helper_up_2(x)
+            # print("Size of x after helper_up2: ", x.size())
+            # x = self.activation(x)
+
+            # for i in range(2):
+            #     x = self.helper_up_3(x)
+            #     x = self.activation(x)
+            return x
+
+        if y == 'get_MD_output':
+            x = self.helper_up_1(x)
+            # print("Size of x after helper_up_1: ", x.size())
+            x = self.activation(x)
+            skip_connections = skip_connections[::-1]
+
+            # The following for-loop describes the entire (right) expanding side.
+            for idx in range(0, len(self.ups), 2):
+                x = self.ups[idx](x)
+                # print('Size of x ups1: ', x.size())
+                skip_connection = skip_connections[idx//2]
+                # concat_skip = torch.cat((skip_connection, x), dim=1)
+                x = self.ups[idx+1](x)
+                # print('Size of x ups2: ', x.size())
+            # print("Size of x before downsizing to MD: ", x.size())
+            # print("Size of x after expanding path: ", x.size())
+
+            x = self.helper_up_2(x)
+            # print("Size of x after helper_up2: ", x.size())
+            # x = self.activation(x)
+
+            # for i in range(2):
+            #     x = self.helper_up_3(x)
+            #     x = self.activation(x)
+            return x
+
+
 class UNET_AE(nn.Module):
     def __init__(self, device, in_channels=3, out_channels=3, features=[4, 6, 8, 10], activation=nn.ReLU(inplace=True)):
         # PARAMETERS:
@@ -339,7 +471,7 @@ def test_forward_overloading():
     # x_interim, skips = model(x, y=get_interim)
     # x_check_2 = model(x_interim,y=get_output, skips=skips)
 
-    model = UNET_AE(
+    model = AE(
         device=device,
         in_channels=3,
         out_channels=3,

@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import torch.optim as optim
 import torch.nn as nn
 import numpy as np
-from model import UNET_AE, RNN, GRU, LSTM, Hybrid_MD_RNN_UNET, resetPipeline
+from model import AE, UNET_AE, RNN, GRU, LSTM, Hybrid_MD_RNN_UNET, resetPipeline
 from utils_new import get_UNET_AE_loaders, get_RNN_loaders, losses2file, get_Hybrid_loaders
 from plotting import compareAvgLoss, compareLossVsValid
 from trial_1 import train_AE, valid_AE, error_timeline, get_latentspace_AE
@@ -54,8 +54,8 @@ def trial_7_Both_AE(alpha, alpha_string, train_loaders, valid_loaders):
     _file_prefix = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/' + \
         '3_Constituent_Hybrid_approach/Results/7_Hybrid_Both/'
     _model_identifier = f'LR{alpha_string}'
-    print('Initializing UNET_AE model.')
-    _model = UNET_AE(
+    print('Initializing AE model.')
+    _model = AE(
         device=device,
         in_channels=3,
         out_channels=3,
@@ -70,7 +70,7 @@ def trial_7_Both_AE(alpha, alpha_string, train_loaders, valid_loaders):
     _epoch_valids = []
 
     print('Beginning training.')
-    for epoch in range(50):
+    for epoch in range(150):
         _avg_loss = 0
         for _train_loader in train_loaders:
             _avg_loss += train_AE(
@@ -104,31 +104,31 @@ def trial_7_Both_AE(alpha, alpha_string, train_loaders, valid_loaders):
 
     losses2file(
         losses=_epoch_losses,
-        file_name=f'{_file_prefix}Losses_UNET_AE_Both_{_model_identifier}'
+        file_name=f'{_file_prefix}Losses_AE_Both_{_model_identifier}'
     )
     losses2file(
         losses=_epoch_valids,
-        file_name=f'{_file_prefix}Valids_UNET_AE_Both_{_model_identifier}'
+        file_name=f'{_file_prefix}Valids_AE_Both_{_model_identifier}'
     )
 
     compareLossVsValid(
         loss_files=[
-            f'{_file_prefix}Losses_UNET_AE_Both_{_model_identifier}.csv',
-            f'{_file_prefix}Valids_UNET_AE_Both_{_model_identifier}.csv'
+            f'{_file_prefix}Losses_AE_Both_{_model_identifier}.csv',
+            f'{_file_prefix}Valids_AE_Both_{_model_identifier}.csv'
         ],
         loss_labels=['Training', 'Validation'],
         file_prefix=_file_prefix,
-        file_name=f'UNET_AE_Both_{_model_identifier}'
+        file_name=f'_AE_Both_{_model_identifier}'
     )
     torch.save(
         _model.state_dict(),
-        f'{_file_prefix}Model_UNET_AE_Both_{_model_identifier}'
+        f'{_file_prefix}Model_AE_Both_{_model_identifier}'
     )
     return
 
 
-def trial_7_Both_AE_helper():
-    """The trial_7_Both_AE_helper function is essentially a helper function to
+def trial_7_Both_AE_mp():
+    """The trial_7_Both_AE_mp function is essentially a helper function to
     facilitate the training of the most promising UNET_AE model configurations
     from trial_1 on the basis of the KVS and Couette data distributions.
 
@@ -138,19 +138,33 @@ def trial_7_Both_AE_helper():
     Returns:
         NONE
     """
-    print('Starting Trial 7: UNET AE (Both)')
+    print('Starting Trial 7: AE (Both)')
     _t_loaders, _v_loaders = get_UNET_AE_loaders(
-        data_distribution='get_both',
+        data_distribution='get_random',
         batch_size=32,
         num_workers=0,
         shuffle=True
     )
-    trial_7_Both_AE(
-        alpha=0.0005,
-        alpha_string='0_0005',
-        train_loaders=_t_loaders,
-        valid_loaders=_v_loaders
-    )
+
+    _alphas = [0.01, 0.005, 0.001, 0.0005, 0.0001, 0.00005]
+    _alpha_strings = ['0_01', '0_005', '0_001', '0_0005', '0_0001', '0_00005']
+
+    _processes = []
+
+    for i in range(6):
+        _p = mp.Process(
+            target=trial_7_Both_AE,
+            args=(_alphas[i], _alpha_strings[i],
+                  _t_loaders, _v_loaders,)
+        )
+        _p.start()
+        _processes.append(_p)
+        print(f'Creating Process Number: {i+1}')
+
+    for _process in _processes:
+        _process.join()
+        print('Joining Process')
+    return
 
 
 def trial_7_Both_AE_latentspace_helper():
@@ -683,4 +697,4 @@ def trial_7_Both_Hybrid_mp():
 
 if __name__ == "__main__":
 
-    trial_7_Both_Hybrid_mp()
+    trial_7_Both_AE_mp()
