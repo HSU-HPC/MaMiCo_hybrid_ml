@@ -455,6 +455,43 @@ class Hybrid_MD_RNN_UNET(nn.Module):
         return x
 
 
+class Hybrid_MD_RNN_AE(nn.Module):
+    def __init__(self, device, AE_Model, RNN_Model, seq_length):
+        # PARAMETERS:
+        super(Hybrid_MD_RNN_AE, self).__init__()
+        self.device = device
+        self.AE = AE_Model.eval()
+        self.rnn = RNN_Model.eval()
+        self.seq_length = seq_length
+        self.sequence = torch.zeros(self.seq_length, 256)
+        # self.doubleConv = DoubleConv(in_channels=3, out_channels=3)
+        print('Model initialized: Hybrid_MD_RNN_AE')
+
+    def forward(self, x):
+
+        # print('Size of initial input: ', x.size())
+        x, skip_connections = self.AE(x, y='get_bottleneck')
+        # print('Size of bottleneck: ', x.size())
+
+        x_shape = x.shape
+        self.sequence = tensor_FIFO_pipe(
+            tensor=self.sequence,
+            x=torch.reshape(x, (1, 256)),
+            device=self.device).to(self.device)
+        # print('Size of self.sequence: ', self.sequence.size())
+
+        interim = torch.reshape(self.sequence, (1, self.seq_length, 256))
+        x = self.rnn(interim)
+        # print('Size of RNN Output: ', x.size())
+
+        x = torch.reshape(x, x_shape)
+        # print('Size of x after reshaping: ', x.size())
+
+        x = self.AE(x, y='get_MD_output', skip_connections=skip_connections)
+        # print('Size of x as final output: ', x.size())
+        return x
+
+
 def resetPipeline(model):
     shape = model.sequence.size()
     model.sequence = torch.zeros(shape)
