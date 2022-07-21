@@ -469,7 +469,8 @@ def get_RNN_loaders(file_names=0, sequence_length=15, batch_size=32, num_workers
         )
         dataloaders_valid.append(_dataloader)
 
-    print(f'Num Train Loaders = {len(dataloaders_train)}        Num Valid Loaders = {len(dataloaders_valid)}')
+    print(
+        f'Num Train Loaders = {len(dataloaders_train)}        Num Valid Loaders = {len(dataloaders_valid)}')
     return dataloaders_train, dataloaders_valid
 
 
