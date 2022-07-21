@@ -220,7 +220,7 @@ def analysis_1_KVS(model_rnn, model_identifier, test_loaders):
 
     _train_loss = 0
     for _loader in test_loaders:
-        _loss, _ = valid_HYBRID_Couette(
+        _loss, _ = valid_HYBRID_KVS(
             loader=_loader,
             model=_model_hybrid,
             criterion=_criterion,
