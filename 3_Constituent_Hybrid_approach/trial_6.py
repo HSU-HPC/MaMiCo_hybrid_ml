@@ -30,8 +30,8 @@ def valid_HYBRID_KVS(loader, model, criterion, model_identifier, dataset_identif
     """The valid_Hybrid_KVS function computes the average loss on a given dataset
     without updating/optimizing the learnable model parameters. Additionally,
     it passes two stacked numpy arrays containing predictions and targets,
-    respectively, to the compareFlowProfile3x3 function to create and save
-    graphical comparisons.
+    respectively, to the plotPredVsTargKVS function to compare u_z for the
+    entire dataset.
 
     Args:
         loader:
@@ -51,7 +51,7 @@ def valid_HYBRID_KVS(loader, model, criterion, model_identifier, dataset_identif
           A list of numpy arrays containing model predictions.
     """
     _file_prefix = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/' + \
-                   '3_Constituent_Hybrid_approach/Results/7_Hybrid_KVS_non_UNET/'
+                   '3_Constituent_Hybrid_approach/Results/7_Analysis_1_Testing/'
     #              '3_Constituent_Hybrid_approach/Results/6_Hybrid_KVS/'
     #                '3_Constituent_Hybrid_approach/Results/7_Hybrid_Both/'
 
