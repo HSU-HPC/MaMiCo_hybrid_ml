@@ -737,18 +737,20 @@ def main():
 
 
 if __name__ == "__main__":
-    _dir = '/home/lerdo/lerdo_HPC_Lab_Project/Trainingdata/CleanKVS/Training/clean_kvs_'
-    files = [
-        f'{_dir}10K_NE_combined_domain.csv',
-        f'{_dir}20K_NE_combined_domain.csv'
+    _dir = '/home/lerdo/lerdo_HPC_Lab_Project/Trainingdata/CleanKVS/Testing/'
+    _file_names = [
+        f'{_dir}clean_couette_test_combined_domain_6_0_bottom.csv'
+        f'{_dir}clean_couette_test_combined_domain_6_0_middle.csv'
+        f'{_dir}clean_couette_test_combined_domain_6_0_top.csv'
     ]
-    data = mamico_csv2dataset_mp(files)
-    inputs = []
-    for d in data:
-        inputs.append(d)
-    plotPredVsTargKVS(
-        input_1=inputs[0],
-        input_2=inputs[1],
-        file_prefix=0,
-        file_name='test'
+    _dataset_names = [
+        'C-6-0-B',
+        'C-6-0-M',
+        'C-6-0-T',
+    ]
+    _u_wall = [6, 6, 6]
+    visualizeMaMiCoDataset(
+        file_names=_file_names,
+        dataset_names=_dataset_names,
+        u_wall=_u_wall
     )
