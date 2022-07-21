@@ -153,7 +153,7 @@ def analysis_1_Couette_mp():
     _models.append(_model_rnn_3)
 
     _processes = []
-    for i in range(2, 3):
+    for i in range(3):
         _p = mp.Process(
             target=analysis_1_Couette,
             args=(_models[i], _model_identifiers[i],
@@ -318,5 +318,5 @@ def analysis_1_KVS_mp():
 
 
 if __name__ == "__main__":
-    analysis_1_KVS_mp()
+    analysis_1_Couette_mp()
     pass
