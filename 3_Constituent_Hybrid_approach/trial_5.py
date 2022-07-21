@@ -50,7 +50,7 @@ def valid_HYBRID_Couette(loader, model, criterion, model_identifier, dataset_ide
         predictions:
           A list of numpy arrays containing model predictions.
     """
-    _file_prefix = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/7_Analysis_1_Testing'
+    _file_prefix = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/7_Analysis_1_Testing/'
     _epoch_loss = 0
     _timeline = []
     _preds = []
