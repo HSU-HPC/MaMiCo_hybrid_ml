@@ -713,7 +713,7 @@ def get_testing_loaders(data_distribution, batch_size=1, shuffle=False, num_work
     _data_test = mamico_csv2dataset_mp(_test_files)
 
     for _data in _data_test:
-        _dataset = MyMamicoDataset_UNET_AE(_data)
+        _dataset = MyMamicoDataset_Hybrid(_data)
         _dataloader = DataLoader(
             dataset=_dataset,
             batch_size=_batch_size,
