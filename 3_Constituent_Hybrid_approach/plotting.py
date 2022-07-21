@@ -737,7 +737,7 @@ def main():
 
 
 if __name__ == "__main__":
-    _dir = '/home/lerdo/lerdo_HPC_Lab_Project/Trainingdata/CleanKVS/Testing/'
+    _dir = '/home/lerdo/lerdo_HPC_Lab_Project/Trainingdata/CleanCouette/Testing/'
     _file_names = [
         f'{_dir}clean_couette_test_combined_domain_6_0_bottom.csv',
         f'{_dir}clean_couette_test_combined_domain_6_0_middle.csv',
