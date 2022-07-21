@@ -81,7 +81,7 @@ def valid_HYBRID_Couette(loader, model, criterion, model_identifier, dataset_ide
         input_1=np.vstack(_preds),
         input_2=np.vstack(_targs),
         file_prefix=_file_prefix,
-        file_name=model_identifier+str(dataset_identifier)
+        file_name=model_identifier+'_'+str(dataset_identifier)
     )
 
     _avg_loss = _epoch_loss/_counter
