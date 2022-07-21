@@ -739,14 +739,14 @@ def main():
 if __name__ == "__main__":
     _dir = '/home/lerdo/lerdo_HPC_Lab_Project/Trainingdata/CleanKVS/Testing/'
     _file_names = [
-        f'{_dir}clean_couette_test_combined_domain_6_0_bottom.csv'
-        f'{_dir}clean_couette_test_combined_domain_6_0_middle.csv'
+        f'{_dir}clean_couette_test_combined_domain_6_0_bottom.csv',
+        f'{_dir}clean_couette_test_combined_domain_6_0_middle.csv',
         f'{_dir}clean_couette_test_combined_domain_6_0_top.csv'
     ]
     _dataset_names = [
         'C-6-0-B',
         'C-6-0-M',
-        'C-6-0-T',
+        'C-6-0-T'
     ]
     _u_wall = [6, 6, 6]
     visualizeMaMiCoDataset(
