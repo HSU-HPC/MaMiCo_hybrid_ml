@@ -747,7 +747,7 @@ def check_RNN_dataset_approach():
 
 
 if __name__ == "__main__":
-    _directory = "/home/lerdo/lerdo_HPC_Lab_Project/Trainingdata/RawCouette"
+    _directory = "/home/lerdo/lerdo_HPC_Lab_Project/Trainingdata"
     _raw_files = glob.glob(f"{_directory}/*.csv")
     _files = []
 
@@ -757,7 +757,7 @@ if __name__ == "__main__":
 
     processes = []
 
-    for i in range(15, 18):
+    for i in range(len(_raw_files)):
         p = mp.Process(
             target=clean_mamico_data,
             args=(_directory, _files[i],)
