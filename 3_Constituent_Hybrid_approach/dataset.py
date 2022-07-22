@@ -106,3 +106,49 @@ class MyMamicoDataset_Hybrid(Dataset):
         image = torch.from_numpy(self.sample_images[idx])
         mask = torch.from_numpy(self.sample_masks[idx])
         return image, mask
+
+
+class MyMamicoDataset_RNN_analysis(Dataset):
+    """This class inherits from the torch Dataset class and allows to create a
+    userdefined dataset. Here, the dataset is hardcoded to consider the UNET_AE
+    generated latent space of dimension [1000, 256] on the basis of MaMiCo
+    generated MD+outer data of dimension [1000, 3, 24, 24, 24]. In particular,
+    it creates datasets of dimension [(d_0/20) - seq_length - 1, seq_length, 256]
+    tailored to a specific seq_length and used to predict the next timestep's
+    latentspace.
+
+    Args:
+        my_images:
+          Object of type numpy array containing the timeseries of latentspaces.
+        seq_length:
+          Object of integer type specifying the number of elements to include
+          in the RNN sequence.
+    """
+
+    def __init__(self, my_images, seq_length=15):
+        self.samples = my_images[::20]
+        self.sample_masks = self.samples[seq_length:]
+        self.sample_images = np.zeros((
+            len(self.samples)-seq_length-1, seq_length, 256))
+
+        for i in range(len(self.sample_images)):
+            self.sample_images[i] = self.samples[i:seq_length+i]
+
+    def __len__(self):
+        return len(self.sample_images)
+
+    def __getitem__(self, idx):
+        image = torch.from_numpy(self.sample_images[idx])
+        mask = torch.from_numpy(self.sample_masks[idx])
+        return image, mask
+
+
+if __name__ == "__main__":
+    a = np.zeros((1000, 256))
+    for i in range(1000):
+        a[i] = a[i] + i
+    b = MyMamicoDataset_RNN_analysis(a, seq_length=10)
+    for i in range(10):
+        image, mask = b[i]
+        print(image[:, 0])
+        print('next i')
