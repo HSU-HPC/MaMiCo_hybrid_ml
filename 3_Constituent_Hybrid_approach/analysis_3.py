@@ -70,7 +70,7 @@ def analysis_3_Couette_non_UNET(alpha, alpha_string, train_loaders, valid_loader
     _epoch_valids = []
 
     print('Beginning training.')
-    for epoch in range(10):
+    for epoch in range(250):
         _avg_loss = 0
         for _train_loader in train_loaders:
             _avg_loss += train_AE(
