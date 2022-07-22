@@ -135,37 +135,6 @@ def analysis_2_Couette_RNN_mp():
     Returns:
         NONE
     """
-    print('Starting Trial 6: RNN_mp (KVS)')
-    _models = []
-    _model_identifiers = [
-        'RNN_LR0_00001_Lay1_Seq25',
-        'GRU_LR0_00001_Lay2_Seq25',
-        'LSTM_LR0_00001_Lay2_Seq25',
-    ]
-    _alphas = [0.00001, 0.00001, 0.00001]
-
-    _model_rnn_1 = RNN(
-        input_size=256,
-        hidden_size=256,
-        seq_size=25,
-        num_layers=1,
-        device=device
-    ).to(device)
-    _model_rnn_2 = GRU(
-        input_size=256,
-        hidden_size=256,
-        seq_size=25,
-        num_layers=2,
-        device=device
-    ).to(device)
-    _model_rnn_3 = LSTM(
-        input_size=256,
-        hidden_size=256,
-        seq_size=25,
-        num_layers=2,
-        device=device
-    ).to(device)
-
     print('Starting Analysis 2: RNN/GRU/LSTM (Couette)')
     _alphas = [0.001, 0.0005, 0.0001, 0.00005, 0.00001, 0.000005]
     _alpha_strings = ['0_001', '0_0005', '0_0001',
