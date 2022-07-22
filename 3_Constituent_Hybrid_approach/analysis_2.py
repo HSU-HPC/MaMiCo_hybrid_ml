@@ -232,16 +232,15 @@ def analysis_2_Couette_RNN_mp():
                 print('Joining Process')
 
 
-'''
-def trial_6_KVS_Hybrid(model_rnn, model_identifier, train_loaders, valid_loaders):
-    """The trial_6_KVS_Hybrid function creates a Hybrid_MD_RNN_UNET model on the
-    basis of a trained UNET_AE and a trained RNN/GRU/LSTM. It then documents
-    its performance w.r.t. time series prediction, i.e. performance in
-    accurately predicting the cell velocities for the next MD timestep. This is
-    done as a proof of concept merley via terminal output. In addition, this
-    function calls the valid_HYBRID_KVS function which automatically compares
-    flow profiles of model prediction and corresponding target via the
-    plotVelocityField function. Refer to valid_HYBRID_KVS for more details.
+def analysis_2_Couette_Hybrid(model_rnn, model_identifier, seq_length, train_loaders, valid_loaders):
+    """The analysis_2_Couette_Hybrid function creates a Hybrid_MD_RNN_UNET model
+    on the basis of a trained UNET_AE and a trained RNN/GRU/LSTM. It then documents
+    its performance w.r.t. time series prediction, i.e. performance in accurately
+    predicting the cell velocities for the next MD timestep. This is done as a
+    proof of concept merley via terminal output. In addition, this function calls
+    the valid_HYBRID_Couette function which automatically compares flow profiles
+    of model prediction and corresponding target via the plotPredVsTargCouette
+    function. Refer to valid_HYBRID_Couette for more details.
 
     Args:
         model_rnn:
@@ -272,22 +271,22 @@ def trial_6_KVS_Hybrid(model_rnn, model_identifier, train_loaders, valid_loaders
         activation=nn.ReLU(inplace=True)
     )
     _model_unet.load_state_dict(torch.load(
-        '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach'
-        '/Results/6_Hybrid_KVS/Model_UNET_AE_KVS_LR0_0005'))
+        '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/'
+        'Results/1_UNET_AE/Model_UNET_AE_LR0_0005'))
 
     print('Initializing Hybrid_MD_RNN_UNET model.')
     _model_hybrid = Hybrid_MD_RNN_UNET(
         device=device,
         UNET_Model=_model_unet,
         RNN_Model=model_rnn,
-        seq_length=25
+        seq_length=seq_length
     ).to(device)
 
     _counter = 0
 
     _train_loss = 0
     for _loader in train_loaders:
-        _loss, _ = valid_HYBRID_KVS(
+        _loss, _ = valid_HYBRID_Couette(
             loader=_loader,
             model=_model_hybrid,
             criterion=_criterion,
@@ -304,7 +303,7 @@ def trial_6_KVS_Hybrid(model_rnn, model_identifier, train_loaders, valid_loaders
 
     _valid_loss = 0
     for _loader in valid_loaders:
-        _loss, _ = valid_HYBRID_KVS(
+        _loss, _ = valid_HYBRID_Couette(
             loader=_loader,
             model=_model_hybrid,
             criterion=_criterion,
@@ -321,12 +320,12 @@ def trial_6_KVS_Hybrid(model_rnn, model_identifier, train_loaders, valid_loaders
     return
 
 
-def trial_6_KVS_Hybrid_mp():
-    """The trial_6_KVS_Hybrid_mp function is essentially a helper function to
-    facilitate the validation of multiple concurrent models via multiprocessing
-    of the trial_6_KVS_Hybrid function. Here, 3 unique models are validated using
-    the best performing UNET_AE (pretrained) from trial_1 and the best
-    performing RNN/GRU/LSTM (pretrained) from trials_2 - trial_4.
+def analysis_2_Couette_Hybrid_mp():
+    """The analysis_2_Couette_Hybrid_mp function is essentially a helper function
+    to facilitate the validation of multiple concurrent models via multiprocessing
+    of the analysis_2_Couette_Hybrid function. Here, 3 unique models are validated
+    using the best performing UNET_AE (pretrained) from trial_1 and the best
+    performing RNN/GRU/LSTM (pretrained) from analysis_2_Couette_RNN_mp.
 
     Args:
         NONE
@@ -334,9 +333,9 @@ def trial_6_KVS_Hybrid_mp():
     Returns:
         NONE
     """
-    print('Starting Trial 6: Hybrid MD RNN UNET (KVS)')
+    print('Starting Analysis 2: Hybrid MD RNN UNET (Couette)')
     _train_loaders, _valid_loaders = get_Hybrid_loaders(
-        data_distribution='get_KVS',
+        data_distribution='get_couette',
         batch_size=1,
         shuffle=False
     )
@@ -346,24 +345,26 @@ def trial_6_KVS_Hybrid_mp():
         'GRU_LR0_00001_Lay2_Seq25',
         'LSTM_LR0_00001_Lay2_Seq25',
     ]
-
+    _seq_lengths = [15, 15, 15]
+    _num_layers = [1, 2, 2]
+    _file_prefix = 'home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach'
+    '/Results/8_Analysis_2_Larger_Time_Intervals/'
     _model_rnn_1 = RNN(
         input_size=256,
         hidden_size=256,
-        seq_size=25,
-        num_layers=1,
+        seq_size=_seq_lengths[0],
+        num_layers=_num_layers[0],
         device=device
     )
     _model_rnn_1.load_state_dict(torch.load(
-            '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach'
-            '/Results/6_Hybrid_KVS/Model_KVS_RNN_LR0_00001_Lay1_Seq25'))
+            f'{_file_prefix}Model_KVS_RNN_LR0_00001_Lay1_Seq25'))
     _models.append(_model_rnn_1)
 
     _model_rnn_2 = GRU(
         input_size=256,
         hidden_size=256,
-        seq_size=25,
-        num_layers=2,
+        seq_size=_seq_lengths[1],
+        num_layers=_num_layers[1],
         device=device
     )
     _model_rnn_2.load_state_dict(torch.load(
@@ -374,8 +375,8 @@ def trial_6_KVS_Hybrid_mp():
     _model_rnn_3 = LSTM(
         input_size=256,
         hidden_size=256,
-        seq_size=25,
-        num_layers=2,
+        seq_size=_seq_lengths[2],
+        num_layers=_num_layers[2],
         device=device
     )
     _model_rnn_3.load_state_dict(torch.load(
@@ -386,8 +387,8 @@ def trial_6_KVS_Hybrid_mp():
     _processes = []
     for i in range(3):
         _p = mp.Process(
-            target=trial_6_KVS_Hybrid,
-            args=(_models[i], _model_identifiers[i],
+            target=analysis_2_Couette_Hybrid,
+            args=(_models[i], _model_identifiers[i], _seq_lengths[i],
                   _train_loaders, _valid_loaders,)
         )
         _p.start()
@@ -398,8 +399,7 @@ def trial_6_KVS_Hybrid_mp():
         _process.join()
         print('Joining Process')
     return
-'''
+
 
 if __name__ == "__main__":
-
     analysis_2_Couette_RNN_mp()

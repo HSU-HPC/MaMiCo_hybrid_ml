@@ -4,7 +4,7 @@ import csv
 import glob
 import torch.multiprocessing as mp
 import concurrent.futures
-from dataset import MyMamicoDataset_UNET_AE, MyMamicoDataset_RNN, MyMamicoDataset_RNN_analysis, MyMamicoDataset_Hybrid
+from dataset import MyMamicoDataset_UNET_AE, MyMamicoDataset_RNN, MyMamicoDataset_RNN_analysis, MyMamicoDataset_Hybrid, MyMamicoDataset_Hybrid_analysis
 from torch.utils.data import DataLoader
 
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -815,6 +815,155 @@ def get_Hybrid_loaders(data_distribution, batch_size=1, shuffle=False):
 
     for _data in _data_valid:
         _dataset = MyMamicoDataset_Hybrid(_data)
+        _dataloader = DataLoader(
+            dataset=_dataset,
+            batch_size=_batch_size,
+            shuffle=_shuffle,
+            num_workers=_num_workers
+            )
+        _dataloaders_valid.append(_dataloader)
+
+    print(f'Num Train Loaders = {len(_dataloaders_train)}')
+    print(f'Num Valid Loaders = {len(_dataloaders_valid)}')
+    return _dataloaders_train, _dataloaders_valid
+
+
+def get_Hybrid_loaders_analysis_2(data_distribution, batch_size=1, shuffle=False):
+    """The get_Hybrid_loaders_analysis_2 function retrieves the loaders of
+    PyTorch-type DataLoader to automatically feed datasets to the Hybrid_MD_RNN_UNET
+    model. As such image and target are timesteps with an interval of 20 coupling
+    cycles as opposed to identical timesteps as was the case for the autoencoder.
+
+    Args:
+        data_distribution:
+          Object of string type to differentiate between loading couette, kvs,
+          both or random valued datasets:
+          ['get_couette', 'get_KVS', 'get_both', 'get_random']
+        num_workers:
+          Object of integer type that will turn on multi-process data loading
+          with the specified number of loader worker processes.
+        batch_size:
+          Object of integer type that specifies the batch size.
+        shuffle:
+          Object of boolean type used to turn data shuffling on.
+
+    Returns:
+        _dataloaders_train:
+          Object of PyTorch-type DataLoader to automatically feed training datasets.
+        _dataloaders_valid:
+          Object of PyTorch-type DataLoader to automatically feed validation datasets.
+    """
+    _batch_size = batch_size
+    _shuffle = shuffle
+    _num_workers = 1
+    _data_tag = ''
+
+    if _shuffle is True:
+        switch = 'on'
+    elif _shuffle is False:
+        switch = 'off'
+        _batch_size = 1
+
+    if data_distribution == "get_couette":
+        _data_tag = 'Couette'
+    elif data_distribution == "get_KVS":
+        _data_tag = 'KVS'
+    elif data_distribution == "get_both":
+        _data_tag = 'Couette and KVS'
+    elif data_distribution == "get_random":
+        _data_tag = 'random'
+
+    print('------------------------------------------------------------')
+    print('                      Loader Summary                        ')
+    print(f'Data Dist. \t= {_data_tag}')
+    print(f'Batch size\t= {_batch_size}')
+    print(f'Num worker\t= {_num_workers}')
+    print(f'Shuffle\t\t= {switch}')
+
+    _data_train = []
+    _data_valid = []
+    _dataloaders_train = []
+    _dataloaders_valid = []
+    _directory = '/home/lerdo/lerdo_HPC_Lab_Project/Trainingdata/'
+
+    if _shuffle is True:
+        print('Shuffle is currently set to True and as such is invalid '
+              'for a hybrid model.')
+        return
+    if _batch_size != 1:
+        print('Invalid batch_size. Hybrid models can currently only deal '
+              'with batch_size = 1')
+        return
+
+    if _data_tag == 'Couette':
+        _train_files = glob.glob(f"{_directory}CleanCouette/Training/*.csv")
+        _valid_files = glob.glob(f"{_directory}CleanCouette/Validation/*.csv")
+    elif _data_tag == 'KVS':
+        _train_files = glob.glob(f"{_directory}CleanKVS/Training/*.csv")
+        _valid_files = glob.glob(f"{_directory}CleanKVS/Validation/*.csv")
+    elif _data_tag == 'Couette and KVS':
+        _train_files = glob.glob(f"{_directory}CleanCouette/Training/*.csv") + \
+                                 glob.glob(
+                                     f"{_directory}CleanKVS/Training/*.csv")
+        _valid_files = glob.glob(f"{_directory}CleanCouette/Validation/*.csv") + \
+            glob.glob(f"{_directory}CleanKVS/Validation/*.csv")
+    elif _data_tag == 'random':
+        print('Loading ---> RANDOM <--- training datasets as loader.')
+        for i in range(3):
+            _data = np.random.rand(1000, 3, 26, 26, 26)
+            # print("Utils.py - Sanity Check - Dimension of loaded dataset: ", dataset.shape)
+            _data_train.append(_data)
+        print('Completed loading ---> RANDOM <--- training datasets.')
+
+        print('Loading ---> RANDOM <--- validation datasets as loader.')
+        for i in range(1):
+            _data = np.random.rand(1000, 3, 26, 26, 26)
+            # print("Utils.py - Sanity Check - Dimension of loaded dataset: ", dataset.shape)
+            _data_valid.append(_data)
+        print('Completed loading ---> RANDOM <--- validation datasets.')
+
+        for _data in _data_train:
+            _dataset = MyMamicoDataset_UNET_AE(_data)
+            _dataloader = DataLoader(
+                dataset=_dataset,
+                batch_size=_batch_size,
+                shuffle=_shuffle,
+                num_workers=_num_workers
+                )
+            _dataloaders_train.append(_dataloader)
+
+        for _data in _data_valid:
+            _dataset = MyMamicoDataset_UNET_AE(_data)
+            _dataloader = DataLoader(
+                dataset=_dataset,
+                batch_size=_batch_size,
+                shuffle=_shuffle,
+                num_workers=_num_workers
+                )
+            _dataloaders_valid.append(_dataloader)
+
+        print(f'Num Train Loaders = {len(_dataloaders_train)}')
+        print(f'Num Valid Loaders = {len(_dataloaders_valid)}')
+        return _dataloaders_train, _dataloaders_valid
+    else:
+        print('Invalid value for function parameter: data_distribution.')
+        return
+
+    _data_train = mamico_csv2dataset_mp(_train_files)
+    _data_valid = mamico_csv2dataset_mp(_valid_files)
+
+    for _data in _data_train:
+        _dataset = MyMamicoDataset_Hybrid_analysis(_data)
+        _dataloader = DataLoader(
+            dataset=_dataset,
+            batch_size=_batch_size,
+            shuffle=_shuffle,
+            num_workers=_num_workers
+            )
+        _dataloaders_train.append(_dataloader)
+
+    for _data in _data_valid:
+        _dataset = MyMamicoDataset_Hybrid_analysis(_data)
         _dataloader = DataLoader(
             dataset=_dataset,
             batch_size=_batch_size,
