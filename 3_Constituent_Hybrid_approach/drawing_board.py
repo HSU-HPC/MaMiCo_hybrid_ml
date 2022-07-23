@@ -2,7 +2,7 @@ import numpy as np
 import torch
 import torch.nn as nn
 # , compareErrorTimeline
-from plotting import compareAvgLossRNN, compareLossVsValidRNN, compareFlowProfile3x3, compareLossVsValid
+from plotting import compareAvgLoss, compareAvgLossRNN, compareLossVsValidRNN, compareFlowProfile3x3, compareLossVsValid
 from model import UNET_AE, LSTM, Hybrid_MD_RNN_UNET
 from utils import get_UNET_AE_loaders, get_Hybrid_loaders
 
@@ -562,5 +562,50 @@ def analysis_2_plots():
     pass
 
 
+def analysis_3_plots():
+    model_names = [
+        'Model_AE_LR0_0005',
+        'Model_AE_LR0_0001',
+        'Model_AE_LR0_00005',
+        'Model_AE_LR0_00001',
+        'Model_AE_LR0_000005',
+        'Model_AE_LR0_000001',
+    ]
+
+    dataset_names = [
+        'C_3_0_T',
+        'C_3_0_M',
+        'C_3_0_B',
+        'C_5_0_T',
+        'C_5_0_M',
+        'C_5_0_B'
+    ]
+    model_directory = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/9_Analysis_3_non_UNET/AE/'
+    loss_prefix = 'Losses_AE_LR'
+
+    loss_files = [
+        f'{model_directory}{loss_prefix}0_0005.csv',
+        f'{model_directory}{loss_prefix}0_0001.csv',
+        f'{model_directory}{loss_prefix}0_00005.csv',
+        f'{model_directory}{loss_prefix}0_00001.csv',
+        f'{model_directory}{loss_prefix}0_000005.csv',
+        f'{model_directory}{loss_prefix}0_000001.csv',
+    ]
+    loss_labels = [
+        'Learning Rate = 0.0005',
+        'Learning Rate = 0.0001',
+        'Learning Rate = 0.00005',
+        'Learning Rate = 0.00001',
+        'Learning Rate = 0.000005',
+        'Learning Rate = 0.000001',
+    ]
+
+    compareAvgLoss(
+        loss_files=loss_files,
+        loss_labels=loss_labels,
+        file_prefix=model_directory,
+        file_name='NON_UNET_AE'
+    )
+
 if __name__ == "__main__":
-    analysis_2_plots()
+    analysis_3_plots()
