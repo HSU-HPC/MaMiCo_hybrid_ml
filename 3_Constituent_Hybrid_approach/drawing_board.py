@@ -568,7 +568,6 @@ def analysis_3_plots():
         'Model_AE_LR0_0001',
         'Model_AE_LR0_00005',
         'Model_AE_LR0_00001',
-        'Model_AE_LR0_000005',
         'Model_AE_LR0_000001',
     ]
 
@@ -588,7 +587,6 @@ def analysis_3_plots():
         f'{model_directory}{loss_prefix}0_0001.csv',
         f'{model_directory}{loss_prefix}0_00005.csv',
         f'{model_directory}{loss_prefix}0_00001.csv',
-        f'{model_directory}{loss_prefix}0_000005.csv',
         f'{model_directory}{loss_prefix}0_000001.csv',
     ]
     loss_labels = [
@@ -596,7 +594,6 @@ def analysis_3_plots():
         'Learning Rate = 0.0001',
         'Learning Rate = 0.00005',
         'Learning Rate = 0.00001',
-        'Learning Rate = 0.000005',
         'Learning Rate = 0.000001',
     ]
 
@@ -606,6 +603,7 @@ def analysis_3_plots():
         file_prefix=model_directory,
         file_name='NON_UNET_AE'
     )
+
 
 if __name__ == "__main__":
     analysis_3_plots()
