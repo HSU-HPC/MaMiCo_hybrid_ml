@@ -731,7 +731,8 @@ def get_RNN_loaders_analysis_3(data_distribution, batch_size=32, seq_length=15, 
     _directory = '/home/lerdo/lerdo_HPC_Lab_Project/Trainingdata/'
 
     if _data_tag == 'Couette':
-        _train_files = glob.glob(f"{_directory}CleanCouette_AE_LS/Training/*.csv")
+        _train_files = glob.glob(
+            f"{_directory}CleanCouette_AE_LS/Training/*.csv")
         _valid_files = glob.glob(
             f"{_directory}CleanCouette_AE_LS/Validation/*.csv")
     elif _data_tag == 'random':
