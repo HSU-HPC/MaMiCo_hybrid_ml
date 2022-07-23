@@ -254,7 +254,7 @@ def compareAvgLossRNN(l_of_l_files, l_of_l_labels, file_prefix=0, file_name=0):
     num_epoch = list_of_list_l[0][0].shape[0]+1
 
     x_axis = range(1, num_epoch, 1)
-
+    print(len(list_of_list_l))
     fig, axs = plt.subplots(len(list_of_list_l),
                             sharex=True, constrained_layout=True)
     axs = [axs]
