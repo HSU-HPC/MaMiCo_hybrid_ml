@@ -258,7 +258,7 @@ def analysis_3_Couette_RNN(model, model_identifier, alpha, train_loaders, valid_
     """
     _criterion = nn.L1Loss()
     _file_prefix = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/' + \
-        '3_Constituent_Hybrid_approach/Results/8_Analysis_2_Larger_Time_Intervals/'
+        '3_Constituent_Hybrid_approach/Results/9_Analysis_3_non_UNET/RNNs/'
 
     print('Initializing training parameters.')
     _scaler = torch.cuda.amp.GradScaler()
