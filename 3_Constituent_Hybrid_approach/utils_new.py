@@ -679,6 +679,163 @@ def get_RNN_loaders_analysis_2(data_distribution, batch_size=32, seq_length=15, 
     return _dataloaders_train, _dataloaders_valid
 
 
+def get_RNN_loaders_analysis_3(data_distribution, batch_size=32, seq_length=15, shuffle=False):
+    """The get_RNN_loaders_analysis_3 retrieves the loaders of PyTorch-type DataLoader to
+    automatically feed datasets to the RNN models.
+
+    Args:
+        data_distribution:
+          Object of string type to differentiate between loading couette, kvs,
+          both or random valued datasets:
+          ['get_couette', 'get_KVS', 'get_both', 'get_random']
+          with the specified number of loader worker processes.
+        batch_size:
+          Object of integer type that specifies the batch size.
+        sequence_length:
+          Object of integer type specifying the number of elements to include
+          in the RNN sequence.
+
+    Returns:
+        _dataloaders_train:
+          Object of PyTorch-type DataLoader to automatically feed training datasets.
+        _dataloaders_valid:
+          Object of PyTorch-type DataLoader to automatically feed validation datasets.
+    """
+    _batch_size = batch_size
+    _shuffle = shuffle
+    _num_workers = 1
+    _data_tag = ''
+
+    if _shuffle is True:
+        switch = 'on'
+    elif _shuffle is False:
+        switch = 'off'
+        _batch_size = 1
+
+    if data_distribution == "get_couette":
+        _data_tag = 'Couette'
+    elif data_distribution == "get_random":
+        _data_tag = 'random'
+
+    print('------------------------------------------------------------')
+    print('                      Loader Summary                        ')
+    print(f'Data Dist. \t= {_data_tag}')
+    print(f'Batch size\t= {_batch_size}')
+    print(f'Num worker\t= {_num_workers}')
+    print(f'Shuffle\t\t= {switch}')
+
+    _data_train = []
+    _data_valid = []
+    _train_files = []
+    _valid_files = []
+    _directory = '/home/lerdo/lerdo_HPC_Lab_Project/Trainingdata/'
+
+    if _data_tag == 'Couette':
+        _train_files = glob.glob(f"{_directory}CleanCouette_AE_LS/Training/*.csv")
+        _valid_files = glob.glob(
+            f"{_directory}CleanCouette_AE_LS/Validation/*.csv")
+    elif _data_tag == 'random':
+        print('Loading ---> RANDOM <--- training datasets as loader.')
+        for i in range(3):
+            data = np.random.rand(1000, 256)
+            # print("Utils.py - Sanity Check - Dimension of loaded dataset: ", dataset.shape)
+            _data_train.append(data)
+        print('Completed loading ---> RANDOM <--- training datasets.')
+
+        print('Loading ---> RANDOM <--- validation datasets as loader.')
+        for i in range(1):
+            data = np.random.rand(1000, 256)
+            # print("Utils.py - Sanity Check - Dimension of loaded dataset: ", dataset.shape)
+            _data_valid.append(data)
+        print('Completed loading ---> RANDOM <--- validation datasets.')
+
+        _dataloaders_train = []
+        _dataloaders_valid = []
+
+        for _data in _data_train:
+            _dataset = MyMamicoDataset_RNN_analysis(_data, seq_length)
+            _dataloader = DataLoader(
+                dataset=_dataset,
+                batch_size=_batch_size,
+                shuffle=_shuffle,
+                num_workers=_num_workers
+                )
+            _dataloaders_train.append(_dataloader)
+
+        for _data in _data_valid:
+            _dataset = MyMamicoDataset_RNN_analysis(_data, seq_length)
+            _dataloader = DataLoader(
+                dataset=_dataset,
+                batch_size=_batch_size,
+                shuffle=_shuffle,
+                num_workers=_num_workers
+                )
+            _dataloaders_valid.append(_dataloader)
+
+        print(f'Num Train Loaders = {len(_dataloaders_train)}')
+        print(f'Num Valid Loaders = {len(_dataloaders_valid)}')
+        return _dataloaders_train, _dataloaders_valid
+    else:
+        print('Invalid value for function parameter: data_distribution.')
+        return
+
+    _data_train = csv2dataset_mp(_train_files)
+    _data_valid = csv2dataset_mp(_valid_files)
+
+    if _shuffle is True:
+        _data_train_stack = np.vstack(_data_train)
+        _data_valid_stack = np.vstack(_data_valid)
+
+        _dataset_train = MyMamicoDataset_RNN_analysis(
+            _data_train_stack, seq_length)
+        _dataloader_train = DataLoader(
+            dataset=_dataset_train,
+            batch_size=_batch_size,
+            shuffle=_shuffle,
+            num_workers=_num_workers
+            )
+
+        _dataset_valid = MyMamicoDataset_RNN_analysis(
+            _data_train_stack, seq_length)
+        _dataloader_valid = DataLoader(
+            dataset=_dataset_valid,
+            batch_size=_batch_size,
+            shuffle=_shuffle,
+            num_workers=_num_workers
+            )
+
+        print(f'Num Train Loaders = {len([_dataloader_train])}')
+        print(f'Num Valid Loaders = {len([_dataloader_valid])}')
+        return [_dataloader_train], [_dataloader_valid]
+
+    _dataloaders_train = []
+    _dataloaders_valid = []
+
+    for _data in _data_train:
+        _dataset = MyMamicoDataset_RNN_analysis(_data, seq_length)
+        _dataloader = DataLoader(
+            dataset=_dataset,
+            batch_size=_batch_size,
+            shuffle=_shuffle,
+            num_workers=_num_workers
+        )
+        _dataloaders_train.append(_dataloader)
+
+    for _data in _data_valid:
+        _dataset = MyMamicoDataset_RNN_analysis(_data, seq_length)
+        _dataloader = DataLoader(
+            dataset=_dataset,
+            batch_size=_batch_size,
+            shuffle=_shuffle,
+            num_workers=_num_workers
+        )
+        _dataloaders_valid.append(_dataloader)
+
+    print(f'Num Train Loaders = {len(_dataloaders_train)}')
+    print(f'Num Valid Loaders = {len(_dataloaders_valid)}')
+    return _dataloaders_train, _dataloaders_valid
+
+
 def get_Hybrid_loaders(data_distribution, batch_size=1, shuffle=False):
     """The get_Hybrid_loaders retrieves the loaders of PyTorch-type DataLoader to
     automatically feed datasets to the Hybrid_MD_RNN_UNET model. As such image
