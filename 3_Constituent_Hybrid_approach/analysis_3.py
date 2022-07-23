@@ -267,7 +267,7 @@ def analysis_3_Couette_RNN(model, model_identifier, alpha, train_loaders, valid_
     _epoch_valids = []
 
     print('Beginning training.')
-    for epoch in range(250):
+    for epoch in range(10):
         _avg_loss = 0
         for _train_loader in train_loaders:
             _avg_loss += train_RNN(
