@@ -218,6 +218,7 @@ def get_UNET_AE_loaders(data_distribution, batch_size=32, shuffle=True, num_work
 
     print('------------------------------------------------------------')
     print('                      Loader Summary                        ')
+    print('Cur. Loader\t : get_UNET_AE_loaders')
     print(f'Data Dist. \t= {_data_tag}')
     print(f'Batch size\t= {_batch_size}')
     print(f'Num worker\t= {_num_workers}')
@@ -381,6 +382,7 @@ def get_RNN_loaders(data_distribution, batch_size=32, seq_length=15, shuffle=Fal
 
     print('------------------------------------------------------------')
     print('                      Loader Summary                        ')
+    print('Cur. Loader\t : get_RNN_loaders')
     print(f'Data Dist. \t= {_data_tag}')
     print(f'Batch size\t= {_batch_size}')
     print(f'Num worker\t= {_num_workers}')
@@ -552,6 +554,7 @@ def get_RNN_loaders_analysis_2(data_distribution, batch_size=32, seq_length=15, 
 
     print('------------------------------------------------------------')
     print('                      Loader Summary                        ')
+    print('Cur. Loader\t : get_RNN_loaders_analysis_2')
     print(f'Data Dist. \t= {_data_tag}')
     print(f'Batch size\t= {_batch_size}')
     print(f'Num worker\t= {_num_workers}')
@@ -719,6 +722,7 @@ def get_RNN_loaders_analysis_3(data_distribution, batch_size=32, seq_length=15, 
 
     print('------------------------------------------------------------')
     print('                      Loader Summary                        ')
+    print('Cur. Loader\t : get_RNN_loaders_analysis_3')
     print(f'Data Dist. \t= {_data_tag}')
     print(f'Batch size\t= {_batch_size}')
     print(f'Num worker\t= {_num_workers}')
@@ -884,6 +888,7 @@ def get_Hybrid_loaders(data_distribution, batch_size=1, shuffle=False):
 
     print('------------------------------------------------------------')
     print('                      Loader Summary                        ')
+    print('Cur. Loader\t : get_Hybrid_loaders')
     print(f'Data Dist. \t= {_data_tag}')
     print(f'Batch size\t= {_batch_size}')
     print(f'Num worker\t= {_num_workers}')
@@ -1033,6 +1038,7 @@ def get_Hybrid_loaders_analysis_2(data_distribution, batch_size=1, shuffle=False
 
     print('------------------------------------------------------------')
     print('                      Loader Summary                        ')
+    print('Cur. Loader\t : get_Hybrid_loaders_analysis_2')
     print(f'Data Dist. \t= {_data_tag}')
     print(f'Batch size\t= {_batch_size}')
     print(f'Num worker\t= {_num_workers}')
@@ -1173,6 +1179,7 @@ def get_testing_loaders(data_distribution, batch_size=1, shuffle=False, num_work
 
     print('------------------------------------------------------------')
     print('                      Loader Summary                        ')
+    print('Cur. Loader\t : get_testing_loaders')
     print(f'Data Dist. \t= {_data_tag}')
     print(f'Batch size\t= {_batch_size}')
     print(f'Num worker\t= {_num_workers}')
