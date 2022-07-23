@@ -813,7 +813,7 @@ def get_RNN_loaders_analysis_3(data_distribution, batch_size=32, seq_length=15, 
     _dataloaders_valid = []
 
     for _data in _data_train:
-        _dataset = MyMamicoDataset_RNN_analysis(_data, seq_length)
+        _dataset = MyMamicoDataset_RNN(_data, seq_length)
         _dataloader = DataLoader(
             dataset=_dataset,
             batch_size=_batch_size,
@@ -823,7 +823,7 @@ def get_RNN_loaders_analysis_3(data_distribution, batch_size=32, seq_length=15, 
         _dataloaders_train.append(_dataloader)
 
     for _data in _data_valid:
-        _dataset = MyMamicoDataset_RNN_analysis(_data, seq_length)
+        _dataset = MyMamicoDataset_RNN(_data, seq_length)
         _dataloader = DataLoader(
             dataset=_dataset,
             batch_size=_batch_size,
