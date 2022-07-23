@@ -486,5 +486,81 @@ def trial_7_Hybrid_KVS_non_UNET_plots():
     pass
 
 
+def analysis_2_plots():
+    _alphas = [0.001, 0.0005, 0.0001, 0.00005, 0.00001, 0.000005]
+    _alpha_strings = ['0_001', '0_0005', '0_0001',
+                      '0_00005', '0_00001', '0_000005']
+    _rnn_depths = [1, 2, 3]
+    _seq_lengths = [5, 15, 25]
+    _directory = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/8_Analysis_2_Larger_Time_Intervals/'
+
+    _list_of_list_f = []
+    _list_of_list_l = []
+
+    for idx, _alpha in enumerate(_alphas):
+        files = []
+        labels = []
+        for _rnn_depth in _rnn_depths:
+            for _seq_length in _seq_lengths:
+                files.append(
+                    f'{_directory}Losses_RNN_LR{_alpha_strings[idx]}_Lay{_rnn_depth}_Seq{_seq_length}.csv')
+                labels.append(
+                    f'Lay:{_rnn_depth} Seq:{_seq_length}')
+        _list_of_list_f.append(files)
+        _list_of_list_l.append(labels)
+
+    compareAvgLossRNN(
+        l_of_l_files=_list_of_list_f,
+        l_of_l_labels=_list_of_list_l,
+        file_prefix=_directory,
+        file_name='RNN'
+    )
+
+    _list_of_list_f = []
+    _list_of_list_l = []
+
+    for idx, _alpha in enumerate(_alphas):
+        files = []
+        labels = []
+        for _rnn_depth in _rnn_depths:
+            for _seq_length in _seq_lengths:
+                files.append(
+                    f'{_directory}Losses_GRU_LR{_alpha_strings[idx]}_Lay{_rnn_depth}_Seq{_seq_length}.csv')
+                labels.append(
+                    f'Lay:{_rnn_depth} Seq:{_seq_length}')
+        _list_of_list_f.append(files)
+        _list_of_list_l.append(labels)
+
+    compareAvgLossRNN(
+        l_of_l_files=_list_of_list_f,
+        l_of_l_labels=_list_of_list_l,
+        file_prefix=_directory,
+        file_name='GRU'
+    )
+
+    _list_of_list_f = []
+    _list_of_list_l = []
+
+    for idx, _alpha in enumerate(_alphas):
+        files = []
+        labels = []
+        for _rnn_depth in _rnn_depths:
+            for _seq_length in _seq_lengths:
+                files.append(
+                    f'{_directory}Losses_LSTM_LR{_alpha_strings[idx]}_Lay{_rnn_depth}_Seq{_seq_length}.csv')
+                labels.append(
+                    f'Lay:{_rnn_depth} Seq:{_seq_length}')
+        _list_of_list_f.append(files)
+        _list_of_list_l.append(labels)
+
+    compareAvgLossRNN(
+        l_of_l_files=_list_of_list_f,
+        l_of_l_labels=_list_of_list_l,
+        file_prefix=_directory,
+        file_name='LSTM'
+    )
+    pass
+
+
 if __name__ == "__main__":
-    trial_7_Hybrid_KVS_non_UNET_plots()
+    analysis_2_plots()
