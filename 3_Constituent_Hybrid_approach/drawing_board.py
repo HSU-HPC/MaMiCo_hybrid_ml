@@ -622,7 +622,7 @@ if __name__ == "__main__":
                     last_line = f.readlines()[-1]
                     # print(_file)
                     # print(last_line)
-                    _losses.append(last_line)
+                    _losses.append(float(last_line))
 
             _min_loss = 5
             for _loss in _losses:
