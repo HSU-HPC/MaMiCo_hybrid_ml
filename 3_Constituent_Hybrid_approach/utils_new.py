@@ -1251,7 +1251,7 @@ def get_testing_loaders_analysis_2(data_distribution, batch_size=1, shuffle=Fals
 
     print('------------------------------------------------------------')
     print('                      Loader Summary                        ')
-    print('Cur. Loader\t : get_testing_loaders')
+    print('Cur. Loader\t : get_testing_loaders_analysis_2')
     print(f'Data Dist. \t= {_data_tag}')
     print(f'Batch size\t= {_batch_size}')
     print(f'Num worker\t= {_num_workers}')
