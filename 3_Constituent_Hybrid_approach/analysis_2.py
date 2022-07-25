@@ -454,7 +454,7 @@ def analysis_2_Couette_Test(model_rnn, model_identifier, test_loaders):
             model=_model_hybrid,
             criterion=_criterion,
             model_identifier=model_identifier,
-            dataset_identifier=_counter
+            dataset_identifier=str(_counter)+'new'
         )
         _train_loss += _loss
         resetPipeline(_model_hybrid)
@@ -547,5 +547,4 @@ def analysis_2_Couette_Test_mp():
 
 
 if __name__ == "__main__":
-    analysis_2_Couette_Hybrid_mp()
     analysis_2_Couette_Test_mp()
