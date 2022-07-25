@@ -399,4 +399,4 @@ def analysis_2_Couette_Hybrid_mp():
 
 
 if __name__ == "__main__":
-    analysis_2_Couette_RNN_mp()
+    analysis_2_Couette_Hybrid_mp()
