@@ -623,7 +623,11 @@ if __name__ == "__main__":
                     # print(_file)
                     # print(last_line)
                     _losses.append(last_line)
-            _min_loss = min(_losses)
+
+            _min_loss = 5
+            for _loss in _losses:
+                if _loss < _min_loss and _loss > 0:
+                    _min_loss = _loss
             _min_indx = _losses.index(_min_loss)
             _min_name = _csv_files[_min_indx].replace(_directory, '')
             print(f'Model: {_min_name}')
