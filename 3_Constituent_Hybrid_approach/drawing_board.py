@@ -1,6 +1,7 @@
 import numpy as np
 import torch
 import torch.nn as nn
+import glob
 # , compareErrorTimeline
 from plotting import compareAvgLoss, compareAvgLossRNN, compareLossVsValidRNN, compareFlowProfile3x3, compareLossVsValid
 from model import UNET_AE, LSTM, Hybrid_MD_RNN_UNET
@@ -606,4 +607,12 @@ def analysis_3_plots():
 
 
 if __name__ == "__main__":
-    analysis_3_plots()
+    _directory = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/' + \
+                 '3_Constituent_Hybrid_approach/Results/8_Analysis_2_Larger_Time_Intervals/'
+    _csv_files = glob.glob(f"{_directory}Compare_Avg_Losses_And_Valids_RNN_LR0_0001*")
+
+    for _file in _csv_files:
+        with open('file.txt', 'r') as f:
+            last_line = f.readlines()[-1]
+            print(_file)
+            print(last_line)
