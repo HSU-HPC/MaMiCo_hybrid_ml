@@ -480,7 +480,7 @@ def analysis_3_Couette_Hybrid(model_rnn, model_identifier, seq_length, train_loa
     print('Initializing Hybrid_MD_RNN_AE model.')
     _model_hybrid = Hybrid_MD_RNN_AE(
         device=device,
-        UNET_Model=_model_ae,
+        AE_Model=_model_ae,
         RNN_Model=model_rnn,
         seq_length=seq_length
     ).to(device)
@@ -648,7 +648,7 @@ def analysis_3_Couette_Test(model_rnn, model_identifier, test_loaders):
     print('Initializing Hybrid_MD_RNN_UNET model.')
     _model_hybrid = Hybrid_MD_RNN_AE(
         device=device,
-        UNET_Model=_model_ae,
+        AE_Model=_model_ae,
         RNN_Model=model_rnn,
         seq_length=5
     ).to(device)
