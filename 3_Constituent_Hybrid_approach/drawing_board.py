@@ -615,7 +615,7 @@ if __name__ == "__main__":
     for _model in _models:
         for _item in _items:
             _csv_files = glob.glob(
-                f"{_directory}{_item}_{_model}_LR0_0001*")
+                f"{_directory}{_item}_{_model}_LR0_*")
             _losses = []
             for _file in _csv_files:
                 with open(_file, 'r') as f:
