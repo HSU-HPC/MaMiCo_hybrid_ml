@@ -1213,6 +1213,78 @@ def get_testing_loaders(data_distribution, batch_size=1, shuffle=False, num_work
     return _dataloaders_test
 
 
+def get_testing_loaders_analysis_2(data_distribution, batch_size=1, shuffle=False, num_workers=1):
+    """The get_testing_loaders retrieves the loaders of PyTorch-type DataLoader to
+    automatically feed testing datasets to the UNET_AE model.
+
+    Args:
+        data_distribution:
+          Object of string type to differentiate between loading couette or kvs
+          ['get_couette', 'get_KVS']
+        num_workers:
+          Object of integer type that will turn on multi-process data loading
+          with the specified number of loader worker processes.
+        batch_size:
+          Object of integer type that specifies the batch size.
+        shuffle:
+          Object of boolean type used to turn data shuffling on.
+
+    Returns:
+        _dataloaders_test:
+          Object of PyTorch-type DataLoader to automatically feed training datasets.
+    """
+    _batch_size = batch_size
+    _shuffle = shuffle
+    _num_workers = num_workers
+    _data_tag = ''
+
+    if _shuffle is True:
+        switch = 'on'
+    elif _shuffle is False:
+        switch = 'off'
+        _batch_size = 1
+
+    if data_distribution == "get_couette":
+        _data_tag = 'Couette'
+    elif data_distribution == "get_KVS":
+        _data_tag = 'KVS'
+
+    print('------------------------------------------------------------')
+    print('                      Loader Summary                        ')
+    print('Cur. Loader\t : get_testing_loaders')
+    print(f'Data Dist. \t= {_data_tag}')
+    print(f'Batch size\t= {_batch_size}')
+    print(f'Num worker\t= {_num_workers}')
+    print(f'Shuffle\t\t= {switch}')
+
+    _dataloaders_test = []
+    _directory = '/home/lerdo/lerdo_HPC_Lab_Project/Trainingdata/'
+
+    if _data_tag == 'Couette':
+        _test_files = glob.glob(f"{_directory}CleanCouette/Testing/*.csv")
+    elif _data_tag == 'KVS':
+        _test_files = glob.glob(f"{_directory}CleanKVS/Testing/*.csv")
+
+    else:
+        print('Invalid value for function parameter: data_distribution.')
+        return
+
+    _data_test = mamico_csv2dataset_mp(_test_files)
+
+    for _data in _data_test:
+        _dataset = MyMamicoDataset_Hybrid_analysis(_data)
+        _dataloader = DataLoader(
+            dataset=_dataset,
+            batch_size=_batch_size,
+            shuffle=_shuffle,
+            num_workers=_num_workers
+            )
+        _dataloaders_test.append(_dataloader)
+
+    print(f'Num Test Loaders = {len(_dataloaders_test)}')
+    return _dataloaders_test
+
+
 def losses2file(losses, file_name):
     """The losses2file function saves a list to a csv file.
 

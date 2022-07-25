@@ -6,7 +6,7 @@ import torch.optim as optim
 import torch.nn as nn
 import numpy as np
 from model import UNET_AE, RNN, GRU, LSTM, Hybrid_MD_RNN_UNET, resetPipeline
-from utils_new import get_Hybrid_loaders_analysis_2, get_RNN_loaders_analysis_2, losses2file
+from utils_new import get_Hybrid_loaders_analysis_2, get_RNN_loaders_analysis_2, losses2file, get_testing_loaders_analysis_2
 from plotting import compareAvgLoss
 from trial_2 import train_RNN, valid_RNN
 from trial_5 import valid_HYBRID_Couette
@@ -398,5 +398,153 @@ def analysis_2_Couette_Hybrid_mp():
     return
 
 
+def analysis_2_Couette_Test(model_rnn, model_identifier, test_loaders):
+    """The analysis_2_Couette_test function creates a Hybrid_MD_RNN_UNET modelon the
+    basis of a trained UNET_AE and a trained RNN/GRU/LSTM. It then documents
+    its performance w.r.t. time series prediction, i.e. performance in
+    accurately predicting the cell velocities for the next MD timestep. This is
+    done as a proof of concept merley via terminal output. In addition, this
+    function calls the valid_HYBRID_Couette function which automatically
+    compares flow profiles of model prediction and corresponding target via the
+    compareFlowProfile3x3 function. Refer to valid_HYBRID_Couette for more
+    details.
+
+    Args:
+        model_rnn:
+          Object of PyTorch Module class, i.e. the RNN/GRU/LSTM model to be
+          incorporated into the hybrid model.
+        model_identifier:
+          A unique string to identify the model. Here the RNN configuration is
+          used to identify the RNN model (RNN-Type/LR0_XXXLayX_SeqXX)
+        test_loaders:
+          Object of PyTorch-type DataLoader to automatically pass testing
+          dataset to model.
+
+    Returns:
+        NONE:
+          This function documents model progress by printing the average loss
+          for each training and validation set to the terminal.
+    """
+    _criterion = nn.L1Loss()
+
+    _model_unet = UNET_AE(
+        device=device,
+        in_channels=3,
+        out_channels=3,
+        features=[4, 8, 16],
+        activation=nn.ReLU(inplace=True)
+    )
+    _model_unet.load_state_dict(torch.load(
+        '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/1_UNET_AE/Model_UNET_AE_LR0_0005'))
+
+    print('Initializing Hybrid_MD_RNN_UNET model.')
+    _model_hybrid = Hybrid_MD_RNN_UNET(
+        device=device,
+        UNET_Model=_model_unet,
+        RNN_Model=model_rnn,
+        seq_length=5
+    ).to(device)
+
+    _counter = 0
+
+    _train_loss = 0
+    for _loader in test_loaders:
+        _loss, _ = valid_HYBRID_Couette(
+            loader=_loader,
+            model=_model_hybrid,
+            criterion=_criterion,
+            model_identifier=model_identifier,
+            dataset_identifier=_counter
+        )
+        _train_loss += _loss
+        resetPipeline(_model_hybrid)
+        _counter += 1
+
+    print('------------------------------------------------------------')
+    print(f'{model_identifier} Training -> Averaged Loader Loss: '
+          f'{_train_loss/len(test_loaders)}')
+
+    return
+
+
+def analysis_2_Couette_Test_mp():
+    """The analysis_1_Couette_mp function is essentially a helper function to
+    facilitate the testing of multiple concurrent models via multiprocessing
+    of the analysis_1_Couette function. Here, 3 unique models are tested using
+    the best performing UNET_AE (pretrained) from trial_1 and the best
+    performing RNN/GRU/LSTM (pretrained) from trials_2 - trial_4.
+
+    Args:
+        NONE
+
+    Returns:
+        NONE
+    """
+    print('Starting Analysis 1: Hybrid MD RNN UNET (Couette)')
+    _test_loaders = get_testing_loaders_analysis_2(
+        data_distribution='get_couette',
+        batch_size=1,
+        shuffle=False
+    )
+    _models = []
+    _model_identifiers = [
+        'RNN_LR0_0005_Lay2_Seq5',
+        'GRU_LR0_0001_Lay3_Seq5',
+        'LSTM_LR0_0005_Lay1_Seq5',
+    ]
+    _seq_lengths = [5, 5, 5]
+    _num_layers = [2, 3, 1]
+    _file_prefix = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach' + \
+        '/Results/8_Analysis_2_Larger_Time_Intervals/'
+    _model_rnn_1 = RNN(
+        input_size=256,
+        hidden_size=256,
+        seq_size=_seq_lengths[0],
+        num_layers=_num_layers[0],
+        device=device
+    )
+    _model_rnn_1.load_state_dict(torch.load(
+            f'{_file_prefix}Model_{_model_identifiers[0]}'))
+    _models.append(_model_rnn_1)
+
+    _model_rnn_2 = GRU(
+        input_size=256,
+        hidden_size=256,
+        seq_size=_seq_lengths[1],
+        num_layers=_num_layers[1],
+        device=device
+    )
+    _model_rnn_2.load_state_dict(torch.load(
+            f'{_file_prefix}Model_{_model_identifiers[1]}'))
+    _models.append(_model_rnn_2)
+
+    _model_rnn_3 = LSTM(
+        input_size=256,
+        hidden_size=256,
+        seq_size=_seq_lengths[2],
+        num_layers=_num_layers[2],
+        device=device
+    )
+    _model_rnn_3.load_state_dict(torch.load(
+            f'{_file_prefix}Model_{_model_identifiers[2]}'))
+    _models.append(_model_rnn_3)
+
+    _processes = []
+    for i in range(3):
+        _p = mp.Process(
+            target=analysis_2_Couette_Test,
+            args=(_models[i], _model_identifiers[i],
+                  _test_loaders)
+        )
+        _p.start()
+        _processes.append(_p)
+        print(f'Creating Process Number: {i+1}')
+
+    for _process in _processes:
+        _process.join()
+        print('Joining Process')
+    return
+
+
 if __name__ == "__main__":
-    analysis_2_Couette_Hybrid_mp()
+    analysis_2_Couette_Test_mp()
