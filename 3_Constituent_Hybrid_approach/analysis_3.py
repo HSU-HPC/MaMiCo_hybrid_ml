@@ -697,8 +697,8 @@ def analysis_3_Couette_Test_mp():
     ]
     _seq_lengths = [5, 5, 5]
     _num_layers = [2, 3, 1]
-    _file_prefix = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach' + \
-        '/Results/8_analysis_3_Larger_Time_Intervals/'
+    _file_prefix = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/' + \
+                   '3_Constituent_Hybrid_approach/Results/9_Analysis_3_non_UNET/RNNs/'
     _model_rnn_1 = RNN(
         input_size=256,
         hidden_size=256,
