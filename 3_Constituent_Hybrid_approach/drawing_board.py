@@ -628,3 +628,4 @@ if __name__ == "__main__":
             print(f'Min Loss: {_min_loss}')
             _min_name = _csv_files[_min_indx].replace(_directory, '')
             print(f'of Model: {_min_name}')
+            print('------------------------------------------------------------')
