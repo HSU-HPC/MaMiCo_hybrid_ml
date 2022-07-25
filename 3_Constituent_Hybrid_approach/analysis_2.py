@@ -445,7 +445,7 @@ def analysis_2_Couette_Test(model_rnn, model_identifier, test_loaders):
         seq_length=5
     ).to(device)
 
-    _counter = 0
+    _counter = 18
 
     _train_loss = 0
     for _loader in test_loaders:
@@ -547,4 +547,5 @@ def analysis_2_Couette_Test_mp():
 
 
 if __name__ == "__main__":
+    analysis_2_Couette_Hybrid_mp()
     analysis_2_Couette_Test_mp()
