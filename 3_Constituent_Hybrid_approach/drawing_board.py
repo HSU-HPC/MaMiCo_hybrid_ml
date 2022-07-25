@@ -608,7 +608,7 @@ def analysis_3_plots():
 
 if __name__ == "__main__":
     _directory = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/' + \
-                 '3_Constituent_Hybrid_approach/Results/8_Analysis_2_Larger_Time_Intervals/'
+                 '3_Constituent_Hybrid_approach/Results/9_Analysis_3_non_UNET/RNNs/'
     _models = ['RNN', 'GRU', 'LSTM']
     _items = ['Losses', 'Valids']
 
