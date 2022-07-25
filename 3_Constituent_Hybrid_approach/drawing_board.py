@@ -626,6 +626,7 @@ if __name__ == "__main__":
 
             _min_loss = 5
             for _loss in _losses:
+                _loss = float(_loss)
                 if _loss < _min_loss and _loss > 0:
                     _min_loss = _loss
             _min_indx = _losses.index(_min_loss)
