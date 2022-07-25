@@ -688,7 +688,7 @@ def analysis_3_Couette_Test_mp():
     Returns:
         NONE
     """
-    print('Starting Analysis 1: Hybrid MD RNN UNET (Couette)')
+    print('Starting Analysis 3: Hybrid MD RNN AE Test. (Couette)')
     _models = []
     _model_identifiers = [
         'RNN_LR0_0005_Lay2_Seq5',
