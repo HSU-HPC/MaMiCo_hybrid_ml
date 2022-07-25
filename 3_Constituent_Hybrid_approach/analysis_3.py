@@ -650,7 +650,7 @@ def analysis_3_Couette_Test(model_rnn, model_identifier, test_loaders):
         device=device,
         AE_Model=_model_ae,
         RNN_Model=model_rnn,
-        seq_length=5
+        seq_length=25
     ).to(device)
 
     _counter = 18
