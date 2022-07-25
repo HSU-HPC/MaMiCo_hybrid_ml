@@ -608,22 +608,10 @@ def analysis_3_plots():
 
 if __name__ == "__main__":
     _directory = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/' + \
-                 '3_Constituent_Hybrid_approach/Results/9_Analysis_3_non_UNET/AE/'
+                 '3_Constituent_Hybrid_approach/Results/9_Analysis_3_non_UNET/RNNs/'
     _models = ['RNN', 'GRU', 'LSTM']
     _items = ['Losses', 'Valids']
 
-    for _item in _items:
-        _csv_files = glob.glob(
-            f"{_directory}{_item}_*")
-        for _file in _csv_files:
-            with open(_file, 'r') as f:
-                last_line = f.readlines()[-1]
-                # print(_file)
-                print('------------------------------------------------------------')
-                print(_file.replace(_directory, ''))
-                print(float(last_line))
-
-    '''
     for _model in _models:
         for _item in _items:
             _csv_files = glob.glob(
@@ -646,4 +634,3 @@ if __name__ == "__main__":
             print(f'Model: {_min_name}')
             print(f'Min Loss: {_min_loss}')
             print('------------------------------------------------------------')
-    '''
