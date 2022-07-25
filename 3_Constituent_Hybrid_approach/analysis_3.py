@@ -689,14 +689,15 @@ def analysis_3_Couette_Test_mp():
         NONE
     """
     print('Starting Analysis 3: Hybrid MD RNN AE Test. (Couette)')
+
     _models = []
     _model_identifiers = [
-        'RNN_LR0_0005_Lay2_Seq5',
-        'GRU_LR0_0001_Lay3_Seq5',
-        'LSTM_LR0_0005_Lay1_Seq5',
+        'RNN_LR0_0001_Lay1_Seq25',
+        'GRU_LR0_0001_Lay2_Seq25',
+        'LSTM_LR0_0001_Lay2_Seq25',
     ]
-    _seq_lengths = [5, 5, 5]
-    _num_layers = [2, 3, 1]
+    _seq_lengths = [25, 25, 25]
+    _num_layers = [1, 2, 2]
     _file_prefix = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/' + \
                    '3_Constituent_Hybrid_approach/Results/9_Analysis_3_non_UNET/RNNs/'
     _model_rnn_1 = RNN(
@@ -731,6 +732,7 @@ def analysis_3_Couette_Test_mp():
     _model_rnn_3.load_state_dict(torch.load(
             f'{_file_prefix}Model_{_model_identifiers[2]}'))
     _models.append(_model_rnn_3)
+
     _test_loaders = get_testing_loaders(
         data_distribution='get_couette',
         batch_size=1,
