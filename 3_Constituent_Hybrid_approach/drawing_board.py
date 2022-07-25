@@ -616,7 +616,7 @@ if __name__ == "__main__":
             f"{_directory}Losses_{_model}_LR0_0001*")
         _losses = []
         for _file in _csv_files:
-            with open('_file', 'r') as f:
+            with open(_file, 'r') as f:
                 last_line = f.readlines()[-1]
                 print(_file)
                 print(last_line)
