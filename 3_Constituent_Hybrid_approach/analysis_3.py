@@ -8,10 +8,9 @@ import numpy as np
 from model import AE, UNET_AE, RNN, GRU, LSTM, Hybrid_MD_RNN_AE, resetPipeline
 from utils_new import get_UNET_AE_loaders, get_RNN_loaders_analysis_3, losses2file, get_Hybrid_loaders
 from plotting import compareAvgLoss, compareLossVsValid
-from trial_1 import train_AE, valid_AE, error_timeline, get_latentspace_AE
+from trial_1 import train_AE, valid_AE, get_latentspace_AE
 from trial_2 import train_RNN, valid_RNN
 from trial_5 import valid_HYBRID_Couette
-from trial_6 import valid_HYBRID_KVS
 
 torch.manual_seed(10)
 random.seed(10)

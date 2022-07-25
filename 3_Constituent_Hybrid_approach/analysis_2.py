@@ -6,9 +6,8 @@ import torch.optim as optim
 import torch.nn as nn
 import numpy as np
 from model import UNET_AE, RNN, GRU, LSTM, Hybrid_MD_RNN_UNET, resetPipeline
-from utils_new import get_Hybrid_loaders, get_RNN_loaders_analysis_2, losses2file, get_Hybrid_loaders
-from plotting import compareAvgLoss, compareLossVsValid, plotPredVsTargKVS
-from trial_1 import train_AE, valid_AE, error_timeline, get_latentspace_AE
+from utils_new import get_Hybrid_loaders_analysis_2, get_RNN_loaders_analysis_2, losses2file
+from plotting import compareAvgLoss
 from trial_2 import train_RNN, valid_RNN
 from trial_5 import valid_HYBRID_Couette
 
@@ -334,19 +333,19 @@ def analysis_2_Couette_Hybrid_mp():
         NONE
     """
     print('Starting Analysis 2: Hybrid MD RNN UNET (Couette)')
-    _train_loaders, _valid_loaders = get_Hybrid_loaders(
+    _train_loaders, _valid_loaders = get_Hybrid_loaders_analysis_2(
         data_distribution='get_couette',
         batch_size=1,
         shuffle=False
     )
     _models = []
     _model_identifiers = [
-        'RNN_LR0_00001_Lay1_Seq25',
-        'GRU_LR0_00001_Lay2_Seq25',
-        'LSTM_LR0_00001_Lay2_Seq25',
+        'RNN_LR0_0005_Lay2_Seq5',
+        'GRU_LR0_0001_Lay3_Seq5',
+        'LSTM_LR0_0005_Lay1_Seq5',
     ]
-    _seq_lengths = [15, 15, 15]
-    _num_layers = [1, 2, 2]
+    _seq_lengths = [5, 5, 5]
+    _num_layers = [2, 3, 1]
     _file_prefix = 'home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach'
     '/Results/8_Analysis_2_Larger_Time_Intervals/'
     _model_rnn_1 = RNN(
@@ -357,7 +356,7 @@ def analysis_2_Couette_Hybrid_mp():
         device=device
     )
     _model_rnn_1.load_state_dict(torch.load(
-            f'{_file_prefix}Model_KVS_RNN_LR0_00001_Lay1_Seq25'))
+            f'{_file_prefix}Model_{_model_identifiers[0]}'))
     _models.append(_model_rnn_1)
 
     _model_rnn_2 = GRU(
@@ -368,8 +367,7 @@ def analysis_2_Couette_Hybrid_mp():
         device=device
     )
     _model_rnn_2.load_state_dict(torch.load(
-            '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach'
-            '/Results/6_Hybrid_KVS/Model_KVS_GRU_LR0_00001_Lay2_Seq25'))
+            f'{_file_prefix}Model_{_model_identifiers[1]}'))
     _models.append(_model_rnn_2)
 
     _model_rnn_3 = LSTM(
@@ -380,8 +378,7 @@ def analysis_2_Couette_Hybrid_mp():
         device=device
     )
     _model_rnn_3.load_state_dict(torch.load(
-            '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach'
-            '/Results/6_Hybrid_KVS/Model_KVS_LSTM_LR0_00001_Lay2_Seq25'))
+            f'{_file_prefix}Model_{_model_identifiers[2]}'))
     _models.append(_model_rnn_3)
 
     _processes = []
