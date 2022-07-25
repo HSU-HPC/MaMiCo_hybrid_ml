@@ -626,4 +626,5 @@ if __name__ == "__main__":
             _min_loss = min(_losses)
             _min_indx = _losses.index(_min_loss)
             print(f'Min Loss: {_min_loss}')
-            print(f'of Model: {_csv_files[_min_indx].replace(_directory, '')}')
+            _min_name = _csv_files[_min_indx].replace(_directory, '')
+            print(f'of Model: {_min_name}')
