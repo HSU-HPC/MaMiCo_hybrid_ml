@@ -609,10 +609,19 @@ def analysis_3_plots():
 if __name__ == "__main__":
     _directory = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/' + \
                  '3_Constituent_Hybrid_approach/Results/8_Analysis_2_Larger_Time_Intervals/'
-    _csv_files = glob.glob(f"{_directory}Compare_Avg_Losses_And_Valids_RNN_LR0_0001*")
+    _models = ['RNN', 'GRU', 'LSTM']
 
-    for _file in _csv_files:
-        with open('file.txt', 'r') as f:
-            last_line = f.readlines()[-1]
-            print(_file)
-            print(last_line)
+    for _model in _models:
+        _csv_files = glob.glob(
+            f"{_directory}Losses_{_model}_LR0_0001*")
+        _losses = []
+        for _file in _csv_files:
+            with open('_file', 'r') as f:
+                last_line = f.readlines()[-1]
+                print(_file)
+                print(last_line)
+                _losses.append(last_line)
+        _min_loss = min(_losses)
+        _min_indx = _losses.index(_min_loss)
+        print('Min Loss: ', _min_loss)
+        print('of Model: ', _csv_files[_min_indx])
