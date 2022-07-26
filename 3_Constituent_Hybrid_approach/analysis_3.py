@@ -191,7 +191,7 @@ def analysis_3_Couette_non_UNET_latentspace_helper():
     ).to(device)
 
     _model.load_state_dict(torch.load(
-        f'{_file_prefix}Model_AE_LR0_0001'))
+        f'{_file_prefix}Model_AE_LR0_00001'))
     _model.eval()
 
     _loader_1, _loader_2_ = get_UNET_AE_loaders(
@@ -1093,4 +1093,4 @@ def rubbish():
 
 
 if __name__ == "__main__":
-    analysis_3_Couette_non_UNET_mp()
+    analysis_3_Couette_non_UNET_latentspace_helper()
