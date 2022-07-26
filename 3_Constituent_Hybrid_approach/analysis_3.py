@@ -69,7 +69,7 @@ def analysis_3_Couette_non_UNET(alpha, alpha_string, train_loaders, valid_loader
     _epoch_valids = []
 
     print('Beginning training.')
-    for epoch in range(250):
+    for epoch in range(50):
         _avg_loss = 0
         for _train_loader in train_loaders:
             _avg_loss += train_AE(
@@ -1093,5 +1093,4 @@ def rubbish():
 
 
 if __name__ == "__main__":
-    analysis_3_Couette_Hybrid_mp()
-    analysis_3_Couette_Test_mp()
+    analysis_3_Couette_non_UNET_mp()

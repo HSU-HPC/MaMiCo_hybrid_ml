@@ -109,15 +109,15 @@ class AE(nn.Module):
         print('Model initialized: Autoencoder.')
 
     def forward(self, x, y=0, skip_connections=0):
+        skip_connections = []
         if y == 0 or y == 'get_bottleneck':
             # print('Size of x: ', x.size())
-            skip_connections = []
             # The following for-loop describes the entire (left) contracting side,
             # including storing the skip-connections:
             for down in self.downs:
                 x = down(x)
                 # print('Size of x downs: ', x.size())
-                skip_connections.append(x)
+                # skip_connections.append(x)
                 x = self.pool(x)
                 # print('Size of x pools: ', x.size())
 
@@ -137,13 +137,13 @@ class AE(nn.Module):
             x = self.helper_up_1(x)
             # print("Size of x after helper_up_1: ", x.size())
             x = self.activation(x)
-            skip_connections = skip_connections[::-1]
+            # skip_connections = skip_connections[::-1]
 
             # The following for-loop describes the entire (right) expanding side.
             for idx in range(0, len(self.ups), 2):
                 x = self.ups[idx](x)
                 # print('Size of x ups: ', x.size())
-                skip_connection = skip_connections[idx//2]
+                # skip_connection = skip_connections[idx//2]
                 # concat_skip = torch.cat((skip_connection, x), dim=1)
                 x = self.ups[idx+1](x)
             # print("Size of x before downsizing to MD: ", x.size())
@@ -162,7 +162,7 @@ class AE(nn.Module):
             x = self.helper_up_1(x)
             # print("Size of x after helper_up_1: ", x.size())
             x = self.activation(x)
-            skip_connections = skip_connections[::-1]
+            # skip_connections = skip_connections[::-1]
 
             # The following for-loop describes the entire (right) expanding side.
             for idx in range(0, len(self.ups), 2):
