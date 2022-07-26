@@ -76,7 +76,7 @@ def mamico_csv2dataset(file_name):
                 dataset[int(a[0])-1, 2, int(a[1])-1, int(a[2])
                         - 1, int(a[3])-1] = float(a[6])
                 counter += 1
-
+    counter = int(counter/17576)
     dataset = dataset[:counter+1]
     print(dataset.shape)
     return dataset
