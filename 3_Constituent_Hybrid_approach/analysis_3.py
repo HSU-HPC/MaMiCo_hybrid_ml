@@ -266,7 +266,7 @@ def analysis_3_Couette_RNN(model, model_identifier, alpha, train_loaders, valid_
     _epoch_valids = []
 
     print('Beginning training.')
-    for epoch in range(250):
+    for epoch in range(2):
         _avg_loss = 0
         for _train_loader in train_loaders:
             _avg_loss += train_RNN(
@@ -338,9 +338,8 @@ def analysis_3_Couette_RNN_mp():
         NONE
     """
     print('Starting Analysis 3: RNN/GRU/LSTM (Couette)')
-    _alphas = [0.001, 0.0005, 0.0001, 0.00005, 0.00001]  # , 0.000005]
-    _alpha_strings = ['0_001', '0_0005', '0_0001',
-                      '0_00005', '0_00001']  # , '0_000005']
+    _alphas = [0.001]  # , 0.0005, 0.0001, 0.00005, 0.00001]  # , 0.000005]
+    _alpha_strings = ['0_001']  # , '0_0005', '0_0001', '0_00005', '0_00001']  # , '0_000005']
     _rnn_depths = [1, 2, 3]
     _seq_lengths = [5, 15, 25]
 
@@ -1093,4 +1092,4 @@ def rubbish():
 
 
 if __name__ == "__main__":
-    analysis_3_Couette_non_UNET_latentspace_helper()
+    analysis_3_Couette_RNN_mp()
