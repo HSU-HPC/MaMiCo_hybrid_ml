@@ -1425,5 +1425,5 @@ def check_RNN_dataset_approach():
 
 
 if __name__ == "__main__":
-    _file_name = '/home/lerdo/lerdo_HPC_Lab_Project/Trainingdata/CleanCouette/clean_couette_test_combined_domain_4_0_bottom.csv'
+    _file_name = '/home/lerdo/lerdo_HPC_Lab_Project/Trainingdata/CleanCouette/Training/clean_couette_test_combined_domain_2_0_bottom.csv'
     dataset = mamico_csv2dataset(_file_name)
