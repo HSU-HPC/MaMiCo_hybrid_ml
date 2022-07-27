@@ -1093,4 +1093,5 @@ def rubbish():
 
 
 if __name__ == "__main__":
-    analysis_3_Couette_RNN_mp()
+    analysis_3_Couette_Hybrid_mp()
+    analysis_3_Couette_Test_mp()
