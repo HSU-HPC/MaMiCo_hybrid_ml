@@ -351,19 +351,19 @@ def analysis_3_Couette_RNN_mp():
         data_distribution='get_couette',
         batch_size=32,
         seq_length=5,
-        shuffle=True
+        shuffle=False
     )
     _t_loader_15, _v_loader_15 = get_RNN_loaders_analysis_3(
         data_distribution='get_couette',
         batch_size=32,
         seq_length=15,
-        shuffle=True
+        shuffle=False
     )
     _t_loader_25, _v_loader_25 = get_RNN_loaders_analysis_3(
         data_distribution='get_couette',
         batch_size=32,
         seq_length=25,
-        shuffle=True
+        shuffle=False
     )
 
     _t_loaders = [_t_loader_05, _t_loader_15, _t_loader_25]
@@ -1093,5 +1093,4 @@ def rubbish():
 
 
 if __name__ == "__main__":
-    analysis_3_Couette_Hybrid_mp()
-    analysis_3_Couette_Test_mp()
+    analysis_3_Couette_RNN_mp()
