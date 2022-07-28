@@ -544,7 +544,7 @@ def analysis_3_Couette_Hybrid_mp():
     _model_identifiers = [
         'RNN_LR0_00001_Lay2_Seq15',
         'GRU_LR0_00001_Lay2_Seq25',
-        'LSTM_LR0_00001_Lay_Seq5',
+        'LSTM_LR0_00001_Lay1_Seq5',
     ]
     _seq_lengths = [25, 25, 25]
     _num_layers = [1, 2, 2]
