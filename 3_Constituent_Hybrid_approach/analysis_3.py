@@ -635,7 +635,7 @@ def analysis_3_Couette_Test(model_rnn, model_identifier, test_loaders):
     """
     _criterion = nn.L1Loss()
     _file_prefix = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/' + \
-                   '3_Constituent_Hybrid_approach/Results/9_Analysis_3_non_UNET/AE/'
+                   '3_Constituent_Hybrid_approach/Results/Final_Results/9_Analysis_3_non_UNET/AE/'
 
     _model_ae = AE(
         device=device,
@@ -701,7 +701,7 @@ def analysis_3_Couette_Test_mp():
     _seq_lengths = [25, 25, 25]
     _num_layers = [1, 2, 2]
     _file_prefix = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/' + \
-                   '3_Constituent_Hybrid_approach/Results/9_Analysis_3_non_UNET/RNNs/'
+                   '3_Constituent_Hybrid_approach/Results/Final_Results/9_Analysis_3_non_UNET/RNNS/'
     _model_rnn_1 = RNN(
         input_size=256,
         hidden_size=256,
@@ -1095,4 +1095,4 @@ def rubbish():
 
 
 if __name__ == "__main__":
-    analysis_3_Couette_Hybrid_mp()
+    analysis_3_Couette_Test_mp()
