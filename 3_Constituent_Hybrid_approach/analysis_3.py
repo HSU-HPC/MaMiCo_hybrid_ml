@@ -338,9 +338,11 @@ def analysis_3_Couette_RNN_mp():
         NONE
     """
     print('Starting Analysis 3: RNN/GRU/LSTM (Couette)')
-    _alphas = [0.001, 0.0005, 0.0001, 0.00005, 0.00001]  # , 0.000005]
-    _alpha_strings = ['0_001', '0_0005', '0_0001',
-                      '0_00005', '0_00001']  # , '0_000005']
+    # _alphas = [0.001, 0.0005, 0.0001, 0.00005, 0.00001, 0.000005]
+    # _alpha_strings = ['0_001', '0_0005', '0_0001', '0_00005', '0_00001', '0_000005']
+    _alphas = [0.0001]
+    _alpha_strings = ['0_0001']
+
     _rnn_depths = [1, 2, 3]
     _seq_lengths = [5, 15, 25]
 
@@ -540,9 +542,9 @@ def analysis_3_Couette_Hybrid_mp():
 
     _models = []
     _model_identifiers = [
-        'RNN_LR0_0001_Lay1_Seq25',
-        'GRU_LR0_0001_Lay2_Seq25',
-        'LSTM_LR0_0001_Lay2_Seq25',
+        'RNN_LR0_00001_Lay1_Seq25',
+        'GRU_LR0_00001_Lay2_Seq25',
+        'LSTM_LR0_00001_Lay2_Seq25',
     ]
     _seq_lengths = [25, 25, 25]
     _num_layers = [1, 2, 2]
@@ -1093,5 +1095,4 @@ def rubbish():
 
 
 if __name__ == "__main__":
-    analysis_3_Couette_Hybrid_mp()
-    analysis_3_Couette_Test_mp()
+    analysis_3_Couette_RNN_mp()
