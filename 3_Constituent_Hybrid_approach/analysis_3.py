@@ -546,8 +546,8 @@ def analysis_3_Couette_Hybrid_mp():
         'GRU_LR0_00001_Lay2_Seq25',
         'LSTM_LR0_00001_Lay1_Seq5',
     ]
-    _seq_lengths = [25, 25, 25]
-    _num_layers = [1, 2, 2]
+    _seq_lengths = [15, 25, 5]
+    _num_layers = [2, 2, 1]
     _file_prefix = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/' + \
                    '3_Constituent_Hybrid_approach/Results/9_Analysis_3_non_UNET/RNNs/'
     _model_rnn_1 = RNN(
