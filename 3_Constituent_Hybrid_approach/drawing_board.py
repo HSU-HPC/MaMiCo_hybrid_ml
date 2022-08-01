@@ -5,7 +5,7 @@ import glob
 # , compareErrorTimeline
 from plotting import compareAvgLoss, compareAvgLossRNN, compareLossVsValidRNN, compareFlowProfile3x3, compareLossVsValid
 from model import UNET_AE, LSTM, Hybrid_MD_RNN_UNET
-from utils import get_UNET_AE_loaders, get_Hybrid_loaders
+from utils_new import get_UNET_AE_loaders, get_Hybrid_loaders
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
