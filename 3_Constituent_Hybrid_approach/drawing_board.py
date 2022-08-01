@@ -74,7 +74,11 @@ def trial_1_UNET_AE_plots():
         file_name='Model_UNET_AE_LR0_001_and_LR0_0005'
     )
 
-    _, valid_loaders = get_UNET_AE_loaders(file_names=-1)
+    _, valid_loaders = get_UNET_AE_loaders(
+            data_distribution='get_couette',
+            batch_size=1,
+            shuffle=False
+        )
     for i in range(2, 3):
 
         _model = UNET_AE(
@@ -113,7 +117,6 @@ def trial_1_UNET_AE_plots():
                 model_id=model_names[i],
                 dataset_id=dataset_names[j],
             )
-
 
 
 def trial_2_RNN_plots():
