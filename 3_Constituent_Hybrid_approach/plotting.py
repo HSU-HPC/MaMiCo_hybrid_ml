@@ -423,9 +423,9 @@ def compareFlowProfile3x3(preds, targs, model_id='', dataset_id=''):
     # preds -
     # targs -
     # model_descriptor -
-    # directory = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/1_UNET_AE/'
+    directory = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/1_UNET_AE/'
     # directory = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/5_Hybrid_Couette/'
-    directory = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/7_Hybrid_Both/'
+    # directory = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/7_Hybrid_Both/'
 
     t, c, d, h, w = preds.shape
     steps = np.arange(0, d).tolist()
@@ -457,9 +457,9 @@ def compareFlowProfile3x3(preds, targs, model_id='', dataset_id=''):
     # plt.tick_params(labelcolor='none', which='both', top=False,
     #                 bottom=False, left=False, right=False)
     plt.setp(axs[-1, :], xlabel='Z-Direction')  # , fontsize=12)
-    plt.setp(axs[0, 0], ylabel='$u_x$')  # , fontsize=12)
-    plt.setp(axs[1, 0], ylabel='$u_y$')  # , fontsize=12)
-    plt.setp(axs[2, 0], ylabel='$u_z$')  # , fontsize=12)
+    plt.setp(axs[0, 0], ylabel='$u_x$', fontsize=12)
+    plt.setp(axs[1, 0], ylabel='$u_y$', fontsize=12)
+    plt.setp(axs[2, 0], ylabel='$u_z$', fontsize=12)
     fig.set_size_inches(10, 8)
     # plt.yticks(range(-2, 7, 2))
     # plt.xticks([])

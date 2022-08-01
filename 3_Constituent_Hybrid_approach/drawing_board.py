@@ -73,9 +73,9 @@ def trial_1_UNET_AE_plots():
         file_prefix=model_directory,
         file_name='Model_UNET_AE_LR0_001_and_LR0_0005'
     )
-    '''
+
     _, valid_loaders = get_UNET_AE_loaders(file_names=-1)
-    for i in range(1, 3):
+    for i in range(2, 3):
 
         _model = UNET_AE(
             device=device,
@@ -88,7 +88,7 @@ def trial_1_UNET_AE_plots():
             f'{model_directory}{model_names[i]}'))
         _model.eval()
 
-        for j in range(len(valid_loaders)):
+        for j in range(5, len(valid_loaders)):
             _preds = []
             _targs = []
             for batch_idx, (data, targets) in enumerate(valid_loaders[j]):
@@ -113,7 +113,7 @@ def trial_1_UNET_AE_plots():
                 model_id=model_names[i],
                 dataset_id=dataset_names[j],
             )
-    '''
+
 
 
 def trial_2_RNN_plots():
