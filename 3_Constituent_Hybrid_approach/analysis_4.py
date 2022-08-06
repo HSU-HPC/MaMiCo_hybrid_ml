@@ -74,6 +74,7 @@ def train_AE_MSLE(loader, model, optimizer, criterion, scaler, model_identifier,
         with torch.cuda.amp.autocast():
             _predictions = model(_data)
             _loss = criterion(_predictions.float(), _targets.float())
+            print(_loss, _loss.item())
             _epoch_loss += _loss
             _counter += 1
 
@@ -236,7 +237,7 @@ def analysis_4_KVS_non_UNET_mp():
     """
     print('Starting Analysis 4: AE (KVS)')
     _t_loaders, _v_loaders = get_UNET_AE_loaders(
-        data_distribution='get_KVS',
+        data_distribution='get_random',
         batch_size=8,
         shuffle=True
     )
