@@ -237,7 +237,7 @@ def analysis_4_KVS_non_UNET_mp():
     print('Starting Analysis 4: AE (KVS)')
     _t_loaders, _v_loaders = get_UNET_AE_loaders(
         data_distribution='get_KVS',
-        batch_size=32,
+        batch_size=8,
         shuffle=True
     )
 
