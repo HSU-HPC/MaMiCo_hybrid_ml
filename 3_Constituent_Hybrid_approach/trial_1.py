@@ -64,6 +64,7 @@ def train_AE(loader, model, optimizer, criterion, scaler, model_identifier, curr
             _predictions = model(_data)
             _loss = criterion(_predictions.float(), _targets.float())
             _epoch_loss += _loss.item()
+            print(_loss, _loss.item())
             _counter += 1
 
         _loss.backward(retain_graph=True)
