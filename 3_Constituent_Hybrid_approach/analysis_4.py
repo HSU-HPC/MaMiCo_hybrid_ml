@@ -170,7 +170,7 @@ def analysis_4_KVS_non_UNET(alpha, alpha_string, train_loaders, valid_loaders):
     for epoch in range(50):
         _avg_loss = 0
         for _train_loader in train_loaders:
-            _avg_loss += train_AE_MSLE(
+            _avg_loss += train_AE(
                 loader=_train_loader,
                 model=_model,
                 optimizer=_optimizer,
@@ -187,7 +187,7 @@ def analysis_4_KVS_non_UNET(alpha, alpha_string, train_loaders, valid_loaders):
 
         _avg_valid = 0
         for _valid_loader in valid_loaders:
-            _avg_valid += valid_AE_MSLE(
+            _avg_valid += valid_AE(
                 loader=_valid_loader,
                 model=_model,
                 criterion=_criterion,
