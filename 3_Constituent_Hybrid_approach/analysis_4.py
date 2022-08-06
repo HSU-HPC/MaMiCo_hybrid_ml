@@ -7,6 +7,7 @@ import torch.nn as nn
 import numpy as np
 from model import AE, UNET_AE, RNN, GRU, LSTM, Hybrid_MD_RNN_AE, resetPipeline
 from utils_new import get_UNET_AE_loaders, get_RNN_loaders_analysis_3, losses2file, get_Hybrid_loaders, get_testing_loaders
+from torchmetrics import MeanSquaredLogError
 from plotting import compareAvgLoss, compareLossVsValid
 from trial_1 import train_AE, valid_AE, get_latentspace_AE
 from trial_2 import train_RNN, valid_RNN
@@ -49,10 +50,11 @@ def analysis_4_KVS_non_UNET(alpha, alpha_string, train_loaders, valid_loaders):
           This function documents model progress by saving results to file and
           creating meaningful plots.
     """
-    _criterion = nn.L1Loss()
+    # _criterion = nn.L1Loss()
+    _criterion = MeanSquaredLogError()
     _file_prefix = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/' + \
         '3_Constituent_Hybrid_approach/Results/10_Analysis_4_non_UNET/AE/'
-    _model_identifier = f'LR{alpha_string}_L1'
+    _model_identifier = f'LR{alpha_string}_MSLE'
     print('Initializing AE model.')
     _model = AE(
         device=device,
@@ -150,7 +152,7 @@ def analysis_4_KVS_non_UNET_mp():
 
     _processes = []
 
-    for i in range(6):
+    for i in range(3):
         _p = mp.Process(
             target=analysis_4_KVS_non_UNET,
             args=(_alphas[i], _alpha_strings[i],
