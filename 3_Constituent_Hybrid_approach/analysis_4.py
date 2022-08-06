@@ -147,7 +147,7 @@ def analysis_4_KVS_non_UNET(alpha, alpha_string, train_loaders, valid_loaders):
           creating meaningful plots.
     """
     # _criterion = nn.L1Loss()
-    _criterion = MSLELoss().to(device)
+    _criterion = MeanSquaredLogError().to(device)
     _file_prefix = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/' + \
         '3_Constituent_Hybrid_approach/Results/10_Analysis_4_non_UNET/AE/'
     _model_identifier = f'LR{alpha_string}_MSLE'
