@@ -28,6 +28,15 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 NUM_WORKERS = 0
 
 
+class MSLELoss(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.mse = nn.MSELoss()
+
+    def forward(self, pred, actual):
+        return self.mse(torch.log(pred + 1), torch.log(actual + 1))
+
+
 def analysis_4_KVS_non_UNET(alpha, alpha_string, train_loaders, valid_loaders):
     """The analysis_4_KVS_non_UNET function trains the given model on the
     KVS based data distribution. It documents model progress via saving average
@@ -51,7 +60,7 @@ def analysis_4_KVS_non_UNET(alpha, alpha_string, train_loaders, valid_loaders):
           creating meaningful plots.
     """
     # _criterion = nn.L1Loss()
-    _criterion = MeanSquaredLogError().to(device)
+    _criterion = MSLELoss()
     _file_prefix = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/' + \
         '3_Constituent_Hybrid_approach/Results/10_Analysis_4_non_UNET/AE/'
     _model_identifier = f'LR{alpha_string}_MSLE'
