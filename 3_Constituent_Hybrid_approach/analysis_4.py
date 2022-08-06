@@ -186,7 +186,7 @@ def analysis_4_KVS_non_UNET(alpha, alpha_string, train_loaders, valid_loaders):
 
         _avg_valid = 0
         for _valid_loader in valid_loaders:
-            _avg_valid += valid_AE(
+            _avg_valid += valid_AE_MSLE(
                 loader=_valid_loader,
                 model=_model,
                 criterion=_criterion,
