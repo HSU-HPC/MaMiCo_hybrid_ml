@@ -37,6 +37,54 @@ class MSLELoss(nn.Module):
         return self.mse(torch.log(pred + 1), torch.log(actual + 1))
 
 
+def train_AE_MSLE(loader, model, optimizer, criterion, scaler, model_identifier, current_epoch):
+    """The train_AE function trains the model and computes the average loss on
+    the training set.
+
+    Args:
+        loader:
+          Object of PyTorch-type DataLoader to automatically feed dataset
+        model:
+          Object of PyTorch Module class, i.e. the model to be trained.
+        optimizer:
+          The optimization algorithm applied during training.
+        criterion:
+          The loss function applied to quantify the error.
+        scaler:
+          Object of torch.cuda.amp.GradScaler to conveniently help perform the
+          steps of gradient scaling.
+        model_identifier:
+          A unique string to identify the model. Here, the learning rate is
+          used to identify which model is being trained.
+        current_epoch:
+          A string containing the current epoch for terminal output.
+
+    Returns:
+        avg_loss:
+          A double value indicating average training loss for the current epoch.
+    """
+
+    _epoch_loss = 0
+    _counter = 0
+
+    for _batch_idx, (_data, _targets) in enumerate(loader):
+        _data = _data.float().to(device=device)
+        _targets = _targets.float().to(device=device)
+
+        with torch.cuda.amp.autocast():
+            _predictions = model(_data)
+            _loss = criterion(_predictions.float(), _targets.float())
+            _epoch_loss += _loss
+            _counter += 1
+
+        _loss.backward(retain_graph=True)
+        optimizer.step()
+        optimizer.zero_grad()
+
+    _avg_loss = _epoch_loss/_counter
+    return _avg_loss
+
+
 def analysis_4_KVS_non_UNET(alpha, alpha_string, train_loaders, valid_loaders):
     """The analysis_4_KVS_non_UNET function trains the given model on the
     KVS based data distribution. It documents model progress via saving average
@@ -83,7 +131,7 @@ def analysis_4_KVS_non_UNET(alpha, alpha_string, train_loaders, valid_loaders):
     for epoch in range(50):
         _avg_loss = 0
         for _train_loader in train_loaders:
-            _avg_loss += train_AE(
+            _avg_loss += train_AE_MSLE(
                 loader=_train_loader,
                 model=_model,
                 optimizer=_optimizer,
