@@ -682,7 +682,7 @@ def plotPredVsTargKVS(input_1, input_2='void', file_prefix=0, file_name=0):
     axs[1].set_xlabel('Timestep')
     axs[1].legend(ncol=2, fontsize=9)
 
-    fig.set_size_inches(6, 6)
+    fig.set_size_inches(6, 4)
     if file_name != 0:
         fig.savefig(
             f'{file_prefix}Plot_PredVsTarg_KVS_{file_name}.svg')
