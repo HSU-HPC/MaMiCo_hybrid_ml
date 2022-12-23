@@ -31,7 +31,7 @@ def plot_flow_profile(dataset, dataset_name):
           This function does not have a return value. Instead it generates the
           aforementioned meaningful plots.
     """
-    dataset_name = dataset_name.replace('.csv','')
+    dataset_name = dataset_name.replace('.csv', '')
     t, c, d, h, w = dataset.shape
     mid = int(h/2)
     avg_ux = []
@@ -50,16 +50,19 @@ def plot_flow_profile(dataset, dataset_name):
 
     ax1.set_xlabel("t")
     ax1.set_ylabel("$u_x$")
+    ax1.grid(axis='y', alpha=0.3)
 
     ax2.set_xlabel("t")
     ax2.set_ylabel("$u_y$")
+    ax2.grid(axis='y', alpha=0.3)
 
     ax3.set_xlabel("t")
     ax3.set_ylabel("$u_z$")
+    ax2.grid(axis='y', alpha=0.3)
 
-    ax1.plot(avg_ux)
-    ax2.plot(avg_uy)
-    ax3.plot(avg_uz)
+    ax1.plot(avg_ux, linewidth=2)
+    ax2.plot(avg_uy, linewidth=2)
+    ax3.plot(avg_uz, linewidth=2)
 
     fig.savefig(f'Plot_flow_profile_{dataset_name}.png')
     plt.close()
