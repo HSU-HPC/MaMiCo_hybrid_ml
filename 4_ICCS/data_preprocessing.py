@@ -96,7 +96,7 @@ def mamico_csv2dataset(file_name):
     dataset = np.zeros((1000, 3, 26, 26, 26))
     counter = 0
 
-    with open(_directory+file_name) as csvfile:
+    with open(file_name) as csvfile:
         csv_reader = csv.reader(csvfile, delimiter=';')
 
         for row in csv_reader:
