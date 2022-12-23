@@ -129,18 +129,21 @@ def visualize_clean_mamico_data_mp():
     """
     _directory = "/beegfs/project/MaMiCo/mamico-ml/dataset"
     _raw_files = glob.glob(f"{_directory}/clean*combined_domain*.csv")
-    _files = []
+    _file_names = []
+    _datasets = []
 
-    for _file in _raw_files:
-        _file = _file.replace(_directory+'/', '')
-        _files.append(_file)
+    for file in _raw_files:
+        _datasets.append(mamico_csv2dataset(file))
+        file_name = file.replace(_directory+'/', '')
+        print(file_name)
+        _file_names.append(file_name)
 
     processes = []
 
     for i in range(len(_raw_files)):
         p = mp.Process(
-            target=clean_mamico_data,
-            args=(_directory, _files[i],)
+            target=plot_flow_profile,
+            args=(_datasets[i], _file_names[i],)
         )
         p.start()
         processes.append(p)
@@ -153,10 +156,5 @@ def visualize_clean_mamico_data_mp():
 
 
 if __name__ == "__main__":
-    _directory = "/beegfs/project/MaMiCo/mamico-ml/dataset"
-    _raw_files = glob.glob(f"{_directory}/clean*combined_domain*.csv")
-    _files = []
-
-    for _file in _raw_files:
-        print(_file)
-        mamico_csv2dataset(_file)
+    visualize_clean_mamico_data_mp()
+    pass
