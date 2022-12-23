@@ -38,10 +38,10 @@ def plot_flow_profile(dataset, dataset_name):
     avg_uy = []
     avg_uz = []
 
-    for t in range(250):
-        avg_ux.append(dataset[t, 0, mid, :, mid].mean())
-        avg_uy.append(dataset[t, 1, mid, :, mid].mean())
-        avg_uz.append(dataset[t, 2, mid, :, mid].mean())
+    for dt in range(t):
+        avg_ux.append(dataset[dt, 0, mid, :, mid].mean())
+        avg_uy.append(dataset[dt, 1, mid, :, mid].mean())
+        avg_uz.append(dataset[dt, 2, mid, :, mid].mean())
 
     fig, (ax1, ax2, ax3) = plt.subplots(
         3, sharex=True, constrained_layout=True)
