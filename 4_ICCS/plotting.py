@@ -58,11 +58,11 @@ def plot_flow_profile(dataset, dataset_name):
 
     ax3.set_xlabel("t")
     ax3.set_ylabel("$u_z$")
-    ax2.grid(axis='y', alpha=0.3)
+    ax3.grid(axis='y', alpha=0.3)
 
-    ax1.plot(avg_ux, linewidth=2)
-    ax2.plot(avg_uy, linewidth=2)
-    ax3.plot(avg_uz, linewidth=2)
+    ax1.plot(avg_ux, linewidth=0.3)
+    ax2.plot(avg_uy, linewidth=0.3)
+    ax3.plot(avg_uz, linewidth=0.3)
 
     fig.savefig(f'Plot_flow_profile_{dataset_name}.png')
     plt.close()
