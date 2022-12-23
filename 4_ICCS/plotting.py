@@ -31,7 +31,7 @@ def plot_flow_profile(dataset, dataset_name):
           This function does not have a return value. Instead it generates the
           aforementioned meaningful plots.
     """
-
+    dataset_name = dataset_name.replace('.csv','')
     t, c, d, h, w = dataset.shape
     mid = int(h/2)
     avg_ux = []
