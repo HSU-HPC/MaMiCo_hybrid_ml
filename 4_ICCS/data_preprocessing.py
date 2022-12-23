@@ -128,7 +128,7 @@ def visualize_clean_mamico_data_mp():
           aforementioned meaningful plots.
     """
     _directory = "/beegfs/project/MaMiCo/mamico-ml/dataset"
-    _raw_files = glob.glob(f"{_directory}/*.csv")
+    _raw_files = glob.glob(f"{_directory}/clean*combined_domain*.csv")
     _files = []
 
     for _file in _raw_files:
@@ -153,4 +153,10 @@ def visualize_clean_mamico_data_mp():
 
 
 if __name__ == "__main__":
-    mamico_csv2dataset('clean_couette_test_combined_domain_1_0.csv')
+    _directory = "/beegfs/project/MaMiCo/mamico-ml/dataset"
+    _raw_files = glob.glob(f"{_directory}/clean*combined_domain*.csv")
+    _files = []
+
+    for _file in _raw_files:
+        print(_file)
+        mamico_csv2dataset(_file)
