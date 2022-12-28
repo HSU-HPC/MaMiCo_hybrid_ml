@@ -156,5 +156,6 @@ def visualize_clean_mamico_data_mp():
 
 
 if __name__ == "__main__":
+    clean_mamico_data_mp()
     visualize_clean_mamico_data_mp()
     pass
