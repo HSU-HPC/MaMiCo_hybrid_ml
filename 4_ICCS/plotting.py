@@ -64,5 +64,5 @@ def plot_flow_profile(dataset, dataset_name):
     ax2.plot(avg_uy, linewidth=0.3)
     ax3.plot(avg_uz, linewidth=0.3)
 
-    fig.savefig(f'Plot_flow_profile_{dataset_name}.png')
+    fig.savefig(f'../../../dataset/plots/Plot_flow_profile_{dataset_name}.png')
     plt.close()
