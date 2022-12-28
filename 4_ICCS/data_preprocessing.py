@@ -37,7 +37,7 @@ def clean_mamico_data(directory, file_name):
     text = open(f"{directory}/{file_name}", "r")
     text = ''.join([i for i in text]) \
         .replace(",", ";")
-    x = open(f"{directory}/clean_{file_name}", "w")
+    x = open(f"{directory}/clean/clean_{file_name}", "w")
     x.writelines(text)
     x.close()
     return
