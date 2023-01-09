@@ -51,7 +51,7 @@ def clean_mamico_data_mp():
     function in a multiprocessing manner.
     """
     _directory = "/beegfs/project/MaMiCo/mamico-ml/dataset"
-    _raw_files = glob.glob(f"{_directory}/raw/*combined*.csv")
+    _raw_files = glob.glob(f"{_directory}/raw/kvs_combined_domain_init*.csv")
     _files = []
 
     for _file in _raw_files:
@@ -132,7 +132,8 @@ def visualize_clean_mamico_data_mp():
     """
     print('Performing: visualize_clean_mamico_data_mp()')
     _directory = "/beegfs/project/MaMiCo/mamico-ml/dataset"
-    _raw_files = glob.glob(f"{_directory}/clean/*combined*.csv")
+    _raw_files = glob.glob(
+        f"{_directory}/clean/*kvs_combined_domain_init*.csv")
     _file_names = []
     _datasets = []
 
@@ -161,6 +162,6 @@ def visualize_clean_mamico_data_mp():
 
 
 if __name__ == "__main__":
-    # clean_mamico_data_mp()
+    clean_mamico_data_mp()
     visualize_clean_mamico_data_mp()
     pass
