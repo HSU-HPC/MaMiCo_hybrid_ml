@@ -32,6 +32,7 @@ def plot_flow_profile(dataset, dataset_name):
           aforementioned meaningful plots.
     """
     dataset_name = dataset_name.replace('.csv', '')
+    dataset_name = dataset_name.replace('clean/', '')
     t, c, d, h, w = dataset.shape
     mid = int(h/2)
     avg_ux = []
@@ -64,5 +65,5 @@ def plot_flow_profile(dataset, dataset_name):
     ax2.plot(avg_uy, linewidth=0.3)
     ax3.plot(avg_uz, linewidth=0.3)
 
-    fig.savefig(f'Plot_flow_profile_{dataset_name}.png')
+    fig.savefig(f'plots/Plot_flow_profile_{dataset_name}.png')
     plt.close()
