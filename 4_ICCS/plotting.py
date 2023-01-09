@@ -34,15 +34,15 @@ def plot_flow_profile(dataset, dataset_name):
     dataset_name = dataset_name.replace('.csv', '')
     dataset_name = dataset_name.replace('clean/', '')
     t, c, d, h, w = dataset.shape
-    mid = int(h/2)
+    # mid = int(h/2)
     avg_ux = []
     avg_uy = []
     avg_uz = []
 
     for dt in range(t):
-        avg_ux.append(dataset[dt, 0, mid, :, mid].mean())
-        avg_uy.append(dataset[dt, 1, mid, :, mid].mean())
-        avg_uz.append(dataset[dt, 2, mid, :, mid].mean())
+        avg_ux.append(dataset[dt, 0, :, :, :].mean())
+        avg_uy.append(dataset[dt, 1, :, :, :].mean())
+        avg_uz.append(dataset[dt, 2, :, :, :].mean())
 
     fig, (ax1, ax2, ax3) = plt.subplots(
         3, sharex=True, constrained_layout=True)
@@ -50,15 +50,15 @@ def plot_flow_profile(dataset, dataset_name):
     fig.suptitle('Average Velocity Components vs Time', fontsize=10)
 
     ax1.set_xlabel("t")
-    ax1.set_ylabel("$u_x$")
+    ax1.set_ylabel("domain averaged $u_x$")
     ax1.grid(axis='y', alpha=0.3)
 
     ax2.set_xlabel("t")
-    ax2.set_ylabel("$u_y$")
+    ax2.set_ylabel("domain averaged $u_y$")
     ax2.grid(axis='y', alpha=0.3)
 
     ax3.set_xlabel("t")
-    ax3.set_ylabel("$u_z$")
+    ax3.set_ylabel("domain averaged $u_z$")
     ax3.grid(axis='y', alpha=0.3)
 
     ax1.plot(avg_ux, linewidth=0.3)
