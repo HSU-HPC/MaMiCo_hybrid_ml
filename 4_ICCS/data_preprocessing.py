@@ -37,10 +37,10 @@ def clean_mamico_data(directory, file_name):
     """
 
     print(f'Cleaning MaMiCo Dataset: {file_name}.')
-    text = open(f"{directory}/raw/{file_name}", "r")
+    text = open(f"{directory}/01_raw/{file_name}", "r")
     text = ''.join([i for i in text]) \
         .replace(",", ";")
-    x = open(f"{directory}/clean/clean_{file_name}", "w")
+    x = open(f"{directory}/02_clean/clean_{file_name}", "w")
     x.writelines(text)
     x.close()
     return
@@ -51,11 +51,11 @@ def clean_mamico_data_mp():
     function in a multiprocessing manner.
     """
     _directory = "/beegfs/project/MaMiCo/mamico-ml/dataset"
-    _raw_files = glob.glob(f"{_directory}/raw/kvs_combined_domain_init*.csv")
+    _raw_files = glob.glob(f"{_directory}/01_raw/kvs_combined_domain_init*.csv")
     _files = []
 
     for _file in _raw_files:
-        _file = _file.replace(_directory+'/raw/', '')
+        _file = _file.replace(_directory+'/01_raw/', '')
         _files.append(_file)
 
     processes = []
@@ -93,7 +93,7 @@ def mamico_csv2dataset(file_name):
           ordinates and reference the MD cells. The dataset is hardcoded for
           d_0 = 1000, d_1 = 3, d_2 = d_3 = d_4 = 26.
     """
-    _directory = '/beegfs/project/MaMiCo/mamico-ml/dataset/clean/'
+    _directory = '/beegfs/project/MaMiCo/mamico-ml/dataset/02_clean/'
     print('Loading MaMiCo dataset from csv: ',
           file_name.replace(_directory, ''))
     dataset = np.zeros((1000, 3, 26, 26, 26))
@@ -133,7 +133,7 @@ def visualize_clean_mamico_data_mp():
     print('Performing: visualize_clean_mamico_data_mp()')
     _directory = "/beegfs/project/MaMiCo/mamico-ml/dataset"
     _raw_files = glob.glob(
-        f"{_directory}/clean/*kvs_combined_domain_init*.csv")
+        f"{_directory}/02_clean/*kvs_combined_domain_init*.csv")
     _file_names = []
     _datasets = []
 

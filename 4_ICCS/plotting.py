@@ -32,7 +32,7 @@ def plot_flow_profile(dataset, dataset_name):
           aforementioned meaningful plots.
     """
     dataset_name = dataset_name.replace('.csv', '')
-    dataset_name = dataset_name.replace('clean/', '')
+    dataset_name = dataset_name.replace('02_clean/', '')
     t, c, d, h, w = dataset.shape
     # mid = int(h/2)
     avg_ux = []
