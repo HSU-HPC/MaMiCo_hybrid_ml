@@ -97,10 +97,12 @@ def clean2dataset(file_name):
     _directory = '/beegfs/project/MaMiCo/mamico-ml/dataset/02_clean/'
     print('Loading MaMiCo dataset from csv: ',
           file_name.replace(_directory, ''))
+    _pwd = _directory + file_name
+    print(_pwd)
     dataset = np.zeros((1000, 3, 26, 26, 26))
     counter = 0
 
-    with open(file_name) as csvfile:
+    with open(_pwd) as csvfile:
         csv_reader = csv.reader(csvfile, delimiter=';')
 
         for row in csv_reader:
