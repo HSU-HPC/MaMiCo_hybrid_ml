@@ -154,7 +154,7 @@ def clean2mlready_mp():
     """
     _directory = "/beegfs/project/MaMiCo/mamico-ml/dataset"
     _raw_files = glob.glob(
-        f"{_directory}/02_clean/*kvs_combined_domain_init*.csv")
+        f"{_directory}/02_clean/*.csv")
     _files = []
 
     for _file in _raw_files:
@@ -245,8 +245,6 @@ def visualize_clean_mamico_data_mp():
 
 
 if __name__ == "__main__":
-    # clean_mamico_data_mp()
-    visualize_clean_mamico_data_mp()
-    # clean2mlready_mp()
+    clean2mlready_mp()
 
     pass
