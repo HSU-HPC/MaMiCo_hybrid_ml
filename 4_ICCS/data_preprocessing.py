@@ -244,7 +244,51 @@ def visualize_clean_mamico_data_mp():
     pass
 
 
+def visualize_mlready_dataset_mp():
+    """The visualize_mlready_dataset_mp visualizes the mlready datasets so as to
+    validate proper simulation, i.e. validate that the data makes sense. This
+    is done by generating meaningful plots to recognize characteristic flow
+    behavior (couette, couette_oscillating, KVS)
+    Args:
+
+    Returns:
+        NONE:
+          This function does not have a return value. Instead it generates the
+          aforementioned meaningful plots.
+    """
+    print('Performing: visualize_mlready_dataset_mp()')
+    _directory = "/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/4_ICCS/dataset_mlready"
+    _raw_files = glob.glob(
+        f"{_directory}/*couette*.csv")
+    _file_names = []
+    _datasets = []
+
+    for file in _raw_files:
+        print(file)
+        file_name = file.replace(_directory+'/', '')
+        print(file_name)
+        _file_names.append(file_name)
+        dataset = mlready2dataset(file_name)
+        _datasets.append(dataset)
+
+    processes = []
+
+    for i in range(len(_raw_files)):
+        p = mp.Process(
+            target=plot_flow_profile,
+            args=(_datasets[i], _file_names[i],)
+        )
+        p.start()
+        processes.append(p)
+        print(f'Creating Process Number: {i+1}')
+
+    for process in processes:
+        process.join()
+        print('Joining Process')
+    pass
+
+
 if __name__ == "__main__":
-    clean2mlready_mp()
+    # clean2mlready_mp()
 
     pass
