@@ -145,8 +145,7 @@ def clean2mlready(file_name):
     _dataset_reshaped = _dataset.reshape(_dataset.shape[0], -1)
 
     # 2) Save 2D array to file
-    np.savetxt(
-        f'~{_directory}/03_ml_ready/{file_name}', _dataset_reshaped)
+    np.savetxt(f'dataset_mlready/{file_name}', _dataset_reshaped)
 
 
 def clean2mlready_mp():
@@ -193,13 +192,12 @@ def mlready2dataset(file_name):
           Object of numpy array type containing the dataset read from file.
     """
     print(f'Loading Dataset from csv: {file_name}')
-    dataset = np.loadtxt(f'{file_name}')
+    dataset = np.loadtxt(f'dataset_mlready/{file_name}')
 
-    t, c, d, h, w = ()
+    t, c, d, h, w = (1000, 3, 26, 26, 26)
 
     original_dataset = dataset.reshape(t, c, d, h, w)
     return original_dataset
-    pass
 
 
 def visualize_clean_mamico_data_mp():
@@ -215,18 +213,19 @@ def visualize_clean_mamico_data_mp():
           aforementioned meaningful plots.
     """
     print('Performing: visualize_clean_mamico_data_mp()')
-    _directory = "/beegfs/project/MaMiCo/mamico-ml/dataset"
+    _directory = "/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/4_ICCS/dataset_mlready"
     _raw_files = glob.glob(
-        f"{_directory}/02_clean/*kvs_combined_domain_init*.csv")
+        f"{_directory}/*kvs_combined_domain_init*.csv")
     _file_names = []
     _datasets = []
 
     for file in _raw_files:
         print(file)
-        _datasets.append(clean2dataset(file))
         file_name = file.replace(_directory+'/', '')
         print(file_name)
         _file_names.append(file_name)
+        dataset = mlready2dataset(file_name)
+        _datasets.append(dataset)
 
     processes = []
 
@@ -247,6 +246,7 @@ def visualize_clean_mamico_data_mp():
 
 if __name__ == "__main__":
     # clean_mamico_data_mp()
-    # visualize_clean_mamico_data_mp()
-    clean2mlready_mp()
+    visualize_clean_mamico_data_mp()
+    # clean2mlready_mp()
+
     pass
