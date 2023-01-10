@@ -294,6 +294,6 @@ def visualize_mlready_dataset_mp():
 
 
 if __name__ == "__main__":
-    # visualize_mlready_dataset_mp()
+    visualize_mlready_dataset_mp()
 
     pass
