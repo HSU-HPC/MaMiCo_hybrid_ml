@@ -147,7 +147,8 @@ def clean2mlready(file_name):
     _dataset_reshaped = _dataset.reshape(_dataset.shape[0], -1)
 
     # 2) Save 2D array to file
-    np.savetxt(f'/dataset_mlready/dataset/03_mlready/{file_name}', _dataset_reshaped)
+    np.savetxt(
+        f'/dataset_mlready/{file_name}', _dataset_reshaped)
 
 
 def clean2mlready_mp():
