@@ -139,7 +139,7 @@ def clean2mlready(file_name):
           This function does not have a return value. Instead it saves the
           mlready dataset to file.
     """
-    _directory = "/beegfs/project/MaMiCo/mamico-ml/dataset"
+    _directory = "beegfs/project/MaMiCo/mamico-ml/dataset"
     _dataset = clean2dataset(file_name)
 
     print(f'Saving dataset to csv: {file_name}')
@@ -148,7 +148,7 @@ def clean2mlready(file_name):
 
     # 2) Save 2D array to file
     np.savetxt(
-        f'dataset_mlready/{file_name}', _dataset_reshaped)
+        f'{_directory}/03_ml_ready/{file_name}', _dataset_reshaped)
 
 
 def clean2mlready_mp():
