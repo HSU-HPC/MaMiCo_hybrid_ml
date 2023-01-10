@@ -139,7 +139,7 @@ def clean2mlready(file_name):
           This function does not have a return value. Instead it saves the
           mlready dataset to file.
     """
-    _directory = "beegfs/project/MaMiCo/mamico-ml/dataset"
+    _directory = "/beegfs/project/MaMiCo/mamico-ml/dataset"
     _dataset = clean2dataset(file_name)
 
     print(f'Saving dataset to csv: {file_name}')
@@ -148,7 +148,7 @@ def clean2mlready(file_name):
 
     # 2) Save 2D array to file
     np.savetxt(
-        f'{_directory}/03_ml_ready/{file_name}', _dataset_reshaped)
+        f'~{_directory}/03_ml_ready/{file_name}', _dataset_reshaped)
 
 
 def clean2mlready_mp():
@@ -183,6 +183,30 @@ def clean2mlready_mp():
 
 
 def mlready2dataset(file_name):
+    """The mlready2dataset function retrieves a numpy array from a csv file.
+
+    Args:
+        file_name:
+          Object of string type containing the name of the csv file to be
+          loaded as a dataset.
+        output_shape:
+          Object of tuple type containing the shape of the desired numpy
+          array.
+
+    Returns:
+        dataset:
+          Object of numpy array type containing the dataset read from file.
+    """
+    print(f'Loading Dataset from csv: {file_name}')
+    dataset = np.loadtxt(f'{file_name}')
+
+    if output_shape == 0:
+        return dataset
+
+    t, c, d, h, w = output_shape
+
+    original_dataset = dataset.reshape(t, c, d, h, w)
+    return original_dataset
     pass
 
 
