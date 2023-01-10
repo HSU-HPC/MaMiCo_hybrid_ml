@@ -14,8 +14,6 @@ import numpy as np
 import torch.multiprocessing as mp
 from plotting import plot_flow_profile
 
-print('testing')
-
 
 def clean_mamico_data(directory, file_name):
     """The clean_mamico_data cleans the raw mamico csv data. In particular,
@@ -139,7 +137,7 @@ def clean2mlready(file_name):
           This function does not have a return value. Instead it saves the
           mlready dataset to file.
     """
-    _directory = "/beegfs/project/MaMiCo/mamico-ml/dataset"
+    _directory = "beegfs/project/MaMiCo/mamico-ml/dataset"
     _dataset = clean2dataset(file_name)
 
     print(f'Saving dataset to csv: {file_name}')
@@ -189,9 +187,6 @@ def mlready2dataset(file_name):
         file_name:
           Object of string type containing the name of the csv file to be
           loaded as a dataset.
-        output_shape:
-          Object of tuple type containing the shape of the desired numpy
-          array.
 
     Returns:
         dataset:
@@ -200,10 +195,7 @@ def mlready2dataset(file_name):
     print(f'Loading Dataset from csv: {file_name}')
     dataset = np.loadtxt(f'{file_name}')
 
-    if output_shape == 0:
-        return dataset
-
-    t, c, d, h, w = output_shape
+    t, c, d, h, w = ()
 
     original_dataset = dataset.reshape(t, c, d, h, w)
     return original_dataset
