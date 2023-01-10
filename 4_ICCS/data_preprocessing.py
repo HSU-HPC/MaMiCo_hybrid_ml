@@ -154,7 +154,7 @@ def clean2mlready_mp():
     """
     _directory = "/beegfs/project/MaMiCo/mamico-ml/dataset"
     _raw_files = glob.glob(
-        f"{_directory}/02_clean/*.csv")
+        f"{_directory}/02_clean/*kvs_combined_domain_init*.csv")
     _files = []
 
     for _file in _raw_files:
@@ -263,7 +263,7 @@ def visualize_mlready_dataset_mp():
     print('Performing: visualize_mlready_dataset_mp()')
     _directory = "/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/4_ICCS/dataset_mlready"
     _raw_files = glob.glob(
-        f"{_directory}/*couette_combined*.csv")
+        f"{_directory}/*kvs_combined_domain_init*.csv")
     _file_names = []
     _datasets = []
 
@@ -293,7 +293,8 @@ def visualize_mlready_dataset_mp():
 
 
 if __name__ == "__main__":
-    # clean2mlready_mp()
+    clean_mamico_data_mp()
+    clean2mlready_mp()
     visualize_mlready_dataset_mp()
 
     pass
