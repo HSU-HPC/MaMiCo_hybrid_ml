@@ -254,6 +254,7 @@ def visualize_mlready_dataset_mp():
     is done by generating meaningful plots to recognize characteristic flow
     behavior (couette, couette_oscillating, KVS)
     Args:
+        NONE
 
     Returns:
         NONE:
@@ -263,7 +264,7 @@ def visualize_mlready_dataset_mp():
     print('Performing: visualize_mlready_dataset_mp()')
     _directory = "/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/4_ICCS/dataset_mlready"
     _raw_files = glob.glob(
-        f"{_directory}/*couette_combined_domain*.csv")
+        f"{_directory}/*couette_combined_bottom*.csv")
     _file_names = []
     _datasets = []
 
@@ -293,6 +294,6 @@ def visualize_mlready_dataset_mp():
 
 
 if __name__ == "__main__":
-    visualize_mlready_dataset_mp()
+    # visualize_mlready_dataset_mp()
 
     pass
