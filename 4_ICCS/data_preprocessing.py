@@ -51,7 +51,8 @@ def clean_mamico_data_mp():
     function in a multiprocessing manner.
     """
     _directory = "/beegfs/project/MaMiCo/mamico-ml/dataset"
-    _raw_files = glob.glob(f"{_directory}/01_raw/kvs_combined_domain_init*.csv")
+    _raw_files = glob.glob(
+        f"{_directory}/01_raw/kvs_combined_domain_init*.csv")
     _files = []
 
     for _file in _raw_files:
@@ -74,8 +75,8 @@ def clean_mamico_data_mp():
         print('Joining Process')
 
 
-def mamico_csv2dataset(file_name):
-    """The mamico_csv2dataset function reads from (cleaned) mamico
+def clean2dataset(file_name):
+    """The clean2dataset function reads from (cleaned) mamico
     generated csv files and returns the dataset in the form of a
     numpy array of shape (1000 x 3 x 26 x 26 x 26).
 
@@ -118,6 +119,70 @@ def mamico_csv2dataset(file_name):
     return dataset
 
 
+def clean2mlready(file_name):
+    """The clean2mlready function is required to further clean the MaMiCo
+    datasets such that they can be loaded more quickly. It loads the dataset
+    via the clean2dataset function. It takes the cleaned datasets and removes
+    zero-padding. Removing the padding is time consuming. This function therfor
+    creates .csv files without the zero-padding making it much quicker and
+    thus mlready.
+
+    Args:
+        file_name:
+          Object of string type containing the name of the csv file (without pwd)
+          to be loaded as a dataset.
+
+    Returns:
+        NONE:
+          This function does not have a return value. Instead it saves the
+          mlready dataset to file.
+    """
+    _directory = "/beegfs/project/MaMiCo/mamico-ml/dataset"
+    _dataset = clean2dataset(file_name)
+
+    print(f'Saving dataset to csv: {file_name}')
+    # 1) Convert 3D array to 2D array
+    _dataset_reshaped = _dataset.reshape(_dataset.shape[0], -1)
+
+    # 2) Save 2D array to file
+    np.savetxt(f'{_directory}/03_mlready/{file_name}.csv', _dataset_reshaped)
+
+
+def clean2mlready_mp():
+    """The clean2mlready_mp function is used to call the clean2mlready
+    function in a multiprocessing manner.
+    """
+    _directory = "/beegfs/project/MaMiCo/mamico-ml/dataset"
+    _raw_files = glob.glob(
+        f"{_directory}/02_clean/*kvs_combined_domain_init*.csv")
+    _files = []
+
+    for _file in _raw_files:
+        print(_file)
+        _file = _file.replace(_directory+'/02_clean/', '')
+        print(_file)
+        _files.append(_file)
+
+    processes = []
+
+    for i in range(len(_raw_files)):
+        p = mp.Process(
+            target=clean2mlready,
+            args=(_files[i],)
+        )
+        p.start()
+        processes.append(p)
+        print(f'Creating Process Number: {i+1}')
+
+    for process in processes:
+        process.join()
+        print('Joining Process')
+
+
+def mlready2dataset(file_name):
+    pass
+
+
 def visualize_clean_mamico_data_mp():
     """The visualize_clean_mamico_data visualizes the cleaned datasets so as to
     validate proper simulation, i.e. validate that the data makes sense. This
@@ -139,7 +204,7 @@ def visualize_clean_mamico_data_mp():
 
     for file in _raw_files:
         print(file)
-        _datasets.append(mamico_csv2dataset(file))
+        _datasets.append(clean2dataset(file))
         file_name = file.replace(_directory+'/', '')
         print(file_name)
         _file_names.append(file_name)
@@ -162,6 +227,7 @@ def visualize_clean_mamico_data_mp():
 
 
 if __name__ == "__main__":
-    clean_mamico_data_mp()
-    visualize_clean_mamico_data_mp()
+    # clean_mamico_data_mp()
+    # visualize_clean_mamico_data_mp()
+    clean2mlready_mp()
     pass
