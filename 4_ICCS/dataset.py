@@ -40,7 +40,7 @@ class MyMamicoDataset_AE(Dataset):
 
 class MyMamicoDataset_RNN(Dataset):
     """This class inherits from the torch Dataset class and allows to create a
-    userdefined dataset. Here, the dataset is hardcoded to consider the UNET_AE
+    userdefined dataset. Here, the dataset is hardcoded to consider the AE
     generated latent space of dimension [1000, 256] on the basis of MaMiCo
     generated MD+outer data of dimension [1000, 3, 24, 24, 24]. In particular,
     it creates datasets of dimension [d_0 - seq_length - 1, seq_length, 256]
@@ -74,7 +74,7 @@ class MyMamicoDataset_RNN(Dataset):
 
 class MyMamicoDataset_RNN_analysis(Dataset):
     """This class inherits from the torch Dataset class and allows to create a
-    userdefined dataset. Here, the dataset is hardcoded to consider the UNET_AE
+    userdefined dataset. Here, the dataset is hardcoded to consider the AE
     generated latent space of dimension [1000, 256] on the basis of MaMiCo
     generated MD+outer data of dimension [1000, 3, 24, 24, 24]. In particular,
     it creates datasets of dimension [(d_0/20) - seq_length - 1, seq_length, 256]

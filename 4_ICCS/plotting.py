@@ -54,7 +54,8 @@ def plot_flow_profile(dataset, dataset_name):
     fig, (ax1, ax2, ax3) = plt.subplots(
         3, sharex=True, constrained_layout=True)
 
-    fig.suptitle('Average Velocity Components vs Time', fontsize=10)
+    fig.suptitle(
+        f'Average Velocity Components vs Time: {dataset_name}', fontsize=10)
 
     ax1.set_xlabel("t")
     ax1.set_ylabel("domain averaged $u_x$")

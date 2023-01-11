@@ -406,7 +406,7 @@ def resetPipeline(model):
 
 
 def test_forward_overloading():
-    """The test_forward_overloading function aims to check UNET_AE's workaround
+    """The test_forward_overloading function aims to check AE's workaround
     forward overloading. This functionality is vital in order to train and save
     the model for hybrid use where a RNN is used to pass a unique bottleneck
     value. This function checks if the functionality yields identical tensors:
