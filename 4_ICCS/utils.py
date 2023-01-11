@@ -48,7 +48,7 @@ def mlready2dataset_mp(file_names):
         results:
           A list containing the corresponding datasets of type numpy array.
     """
-
+    print('currently: mlready2dataset_mp')
     with concurrent.futures.ProcessPoolExecutor() as executor:
         results = executor.map(mlready2dataset, file_names)
     return results
@@ -134,6 +134,7 @@ def get_AE_loaders(data_distribution, batch_size=32, shuffle=True, num_workers=1
     if _data_tag == 'Couette':
         _train_files = glob.glob(f"{_directory}Couette/Training/*.csv")
         _valid_files = glob.glob(f"{_directory}Couette/Validation/*.csv")
+        print(_valid_files)
     elif _data_tag == 'KVS':
         _train_files = glob.glob(f"{_directory}KVS/Training/*.csv")
         _valid_files = glob.glob(f"{_directory}KVS/Validation/*.csv")
@@ -184,7 +185,7 @@ def get_AE_loaders(data_distribution, batch_size=32, shuffle=True, num_workers=1
     else:
         print('Invalid value for function parameter: data_distribution.')
         return
-
+    print('successful data tag')
     _data_train = mlready2dataset_mp(_train_files)
     _data_valid = mlready2dataset_mp(_valid_files)
 
