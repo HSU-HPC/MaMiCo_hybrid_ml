@@ -6,6 +6,7 @@ import torch.optim as optim
 import torch.nn as nn
 import numpy as np
 from model import AE
+from torchmetrics import MeanSquaredLogError
 from utils import get_AE_loaders, losses2file, dataset2csv
 from plotting import compareLossVsValid, plot_flow_profile
 
@@ -263,7 +264,7 @@ def trial_1_AE(alpha, alpha_string, train_loaders, valid_loaders):
           This function documents model progress by saving results to file and
           creating meaningful plots.
     """
-    _criterion = nn.L1Loss()
+    _criterion = MeanSquaredLogError()
     _file_prefix = '/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/' + \
         '4_ICCS/Results/1_Conv_AE/'
     _model_identifier = f'LR{alpha_string}'
@@ -485,17 +486,17 @@ def prediction_retriever(model_directory, model_name, dataset_name, save2file_na
 
 
 if __name__ == "__main__":
-    '''
-        _alpha = 0.0001
-        _alpha_string = '0_0001'
-        _train_loaders, _valid_loaders = get_AE_loaders(
-            data_distribution='get_KVS',
-            batch_size=32,
-            shuffle=True
-        )
-        trial_1_AE(_alpha, _alpha_string, _train_loaders, _valid_loaders)
-    '''
+    print('Starting Trial 1: AE (KVS, MSLE)')
+    _alpha = 0.0001
+    _alpha_string = '0_0001'
+    _train_loaders, _valid_loaders = get_AE_loaders(
+        data_distribution='get_KVS',
+        batch_size=32,
+        shuffle=True
+    )
+    trial_1_AE(_alpha, _alpha_string, _train_loaders, _valid_loaders)
 
+    '''
     print('Starting Trial 1: Prediction Retriever (KVS)')
 
     _model_directory = '/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/4_ICCS/Results/1_Conv_AE/kvs_50_epoch'
@@ -509,3 +510,4 @@ if __name__ == "__main__":
         dataset_name=_dataset_name,
         save2file_name=_save2file_name
     )
+    '''
