@@ -314,3 +314,7 @@ def csv2dataset_mp(filenames, output_shape=0):
         results = executor.map(csv2dataset, filenames)
 
     return results
+
+
+if __name__ == '__main__':
+    pass
