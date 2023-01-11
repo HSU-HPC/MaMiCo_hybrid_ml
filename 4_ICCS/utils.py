@@ -235,3 +235,30 @@ def get_AE_loaders(data_distribution, batch_size=32, shuffle=True, num_workers=1
     print(f'Num Train Loaders = {len(_dataloaders_train)}')
     print(f'Num Valid Loaders = {len(_dataloaders_valid)}')
     return _dataloaders_train, _dataloaders_valid
+
+
+def dataset2csv(dataset, dataset_name,  model_identifier=''):
+    """The dataset2csv function saves a np.array to a csv file.
+
+    Args:
+        dataset:
+          Object of numpy array type containing the dataset of interest.
+        dataset_name:
+          Object of string type containing the name of the dataset to be saved
+          to file.
+        model_identifier:
+          A unique string to identify the model that generated the dataset.
+
+    Returns:
+        NONE:
+          This function does not have a return value. Instead it saves the
+          dataset of interest to file.
+    """
+    print(f'Saving dataset to csv: {dataset_name}')
+    # 1) Convert 3D array to 2D array
+    dataset_reshaped = dataset.reshape(dataset.shape[0], -1)
+    # 2) Save 2D array to file
+    name = dataset_name
+    if model_identifier != '':
+        name = f'{dataset_name}_model_{model_identifier}'
+    np.savetxt(f'{name}.csv', dataset_reshaped)
