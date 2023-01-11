@@ -49,6 +49,7 @@ def mlready2dataset_mp(file_names):
           A list containing the corresponding datasets of type numpy array.
     """
     print('currently: mlready2dataset_mp')
+    print(file_names)
     with concurrent.futures.ProcessPoolExecutor() as executor:
         results = executor.map(mlready2dataset, file_names)
     return results
