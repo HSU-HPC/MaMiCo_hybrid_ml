@@ -283,7 +283,7 @@ def trial_1_AE(alpha, alpha_string, train_loaders, valid_loaders):
     _epoch_valids = []
 
     print('Beginning training.')
-    for epoch in range(5):
+    for epoch in range(50):
         _avg_loss = 0
         for _train_loader in train_loaders:
             _avg_loss += train_AE(
