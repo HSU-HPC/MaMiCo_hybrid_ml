@@ -105,7 +105,9 @@ def valid_AE(loader, model, criterion, model_identifier):
 
         with torch.cuda.amp.autocast():
             _predictions = model(_data)
-            _loss = criterion(_predictions.float(), _targets.float())
+            _log_pred = torch.log(_predictions.float() + 1)
+            _log_targ = torch.log(_targets.float() + 1)
+            _loss = criterion(_log_pred, _log_targ)
             # print('Current batch loss: ', loss.item())
             _epoch_loss += _loss.item()
             _counter += 1
