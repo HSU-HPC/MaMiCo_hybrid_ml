@@ -488,6 +488,7 @@ def prediction_retriever(model_directory, model_name, dataset_name, save2file_na
 
 
 if __name__ == "__main__":
+    '''
     print('Starting Trial 1: AE (KVS, MSLE)')
     _alpha = 0.0001
     _alpha_string = '0_0001'
@@ -499,9 +500,9 @@ if __name__ == "__main__":
     trial_1_AE(_alpha, _alpha_string, _train_loaders, _valid_loaders)
 
     '''
-    print('Starting Trial 1: Prediction Retriever (KVS)')
+    print('Starting Trial 1: Prediction Retriever (KVS, MSLE)')
 
-    _model_directory = '/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/4_ICCS/Results/1_Conv_AE/kvs_50_epoch'
+    _model_directory = '/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/4_ICCS/Results/1_Conv_AE/kvs_50_msle'
     _model_name = 'Model_UNET_AE_LR0_0001'
     _dataset_name = 'get_KVS_eval'
     _save2file_name = 'pred_kvs_combined_domain_init_20000_NW'
@@ -512,4 +513,3 @@ if __name__ == "__main__":
         dataset_name=_dataset_name,
         save2file_name=_save2file_name
     )
-    '''
