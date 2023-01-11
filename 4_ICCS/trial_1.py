@@ -504,7 +504,7 @@ if __name__ == "__main__":
     _save2file_name = 'pred_kvs_combined_domain_init_20000_NW'
 
     prediction_retriever(
-        model_directory=_model_name,
+        model_directory=_model_directory,
         model_name=_model_name,
         dataset_name=_dataset_name,
         save2file_name=_save2file_name
