@@ -436,12 +436,12 @@ def trial_1_error_timeline():
 
 if __name__ == "__main__":
     # trial_1_AE_mp()
-    print('Starting Trial 1: AE (Couette)')
+    print('Starting Trial 1: AE (KVS)')
 
     _alpha = 0.0001
     _alpha_string = '0_0001'
     _train_loaders, _valid_loaders = get_AE_loaders(
-        data_distribution='get_couette',
+        data_distribution='get_KVS',
         batch_size=32,
         shuffle=True
     )

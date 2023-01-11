@@ -135,7 +135,8 @@ def get_AE_loaders(data_distribution, batch_size=32, shuffle=True, num_workers=1
 
     if _data_tag == 'Couette':
         _train_files = glob.glob(f"{_directory}Couette/Training/*0_oscil*.csv")
-        _valid_files = glob.glob(f"{_directory}Couette/Validation/*0_oscil*.csv")
+        _valid_files = glob.glob(
+            f"{_directory}Couette/Validation/*0_oscil*.csv")
     elif _data_tag == 'KVS':
         _train_files = glob.glob(f"{_directory}KVS/Training/*.csv")
         _valid_files = glob.glob(f"{_directory}KVS/Validation/*.csv")
