@@ -7,7 +7,7 @@ import torch.nn as nn
 import numpy as np
 from model import AE
 from utils import get_AE_loaders, losses2file, dataset2csv
-from plotting import compareLossVsValid
+from plotting import compareLossVsValid, plot_flow_profile
 
 torch.manual_seed(10)
 random.seed(10)
@@ -203,7 +203,7 @@ def get_latentspace_AE_helper():
 
     _model.load_state_dict(torch.load(
         '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/'
-        '3_Constituent_Hybrid_approach/Results/1_UNET_AE/Model_UNET_AE_LR0_0005'))
+        '3_Constituent_Hybrid_approach/Results/1_AE/Model_AE_LR0_0005'))
     _model.eval()
 
     _loader_1, _loader_2_ = get_AE_loaders(
@@ -267,7 +267,7 @@ def trial_1_AE(alpha, alpha_string, train_loaders, valid_loaders):
     _file_prefix = '/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/' + \
         '4_ICCS/Results/1_Conv_AE/'
     _model_identifier = f'LR{alpha_string}'
-    print('Initializing UNET_AE model.')
+    print('Initializing AE model.')
     _model = AE(
         device=device,
         in_channels=3,
@@ -317,25 +317,25 @@ def trial_1_AE(alpha, alpha_string, train_loaders, valid_loaders):
 
     losses2file(
         losses=_epoch_losses,
-        file_name=f'{_file_prefix}Losses_UNET_AE_{_model_identifier}'
+        file_name=f'{_file_prefix}Losses_AE_{_model_identifier}'
     )
     losses2file(
         losses=_epoch_valids,
-        file_name=f'{_file_prefix}Valids_UNET_AE_{_model_identifier}'
+        file_name=f'{_file_prefix}Valids_AE_{_model_identifier}'
     )
 
     compareLossVsValid(
         loss_files=[
-            f'{_file_prefix}Losses_UNET_AE_{_model_identifier}.csv',
-            f'{_file_prefix}Valids_UNET_AE_{_model_identifier}.csv'
+            f'{_file_prefix}Losses_AE_{_model_identifier}.csv',
+            f'{_file_prefix}Valids_AE_{_model_identifier}.csv'
         ],
         loss_labels=['Training', 'Validation'],
         file_prefix=_file_prefix,
-        file_name=f'UNET_AE_{_model_identifier}'
+        file_name=f'AE_{_model_identifier}'
     )
     torch.save(
         _model.state_dict(),
-        f'{_file_prefix}Model_UNET_AE_{_model_identifier}'
+        f'{_file_prefix}Model_AE_{_model_identifier}'
     )
     return
 
@@ -393,9 +393,9 @@ def trial_1_error_timeline():
     """
     print('Starting Trial 1: UNET AE Error Timeline')
 
-    _directory = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/' + \
-                 '3_Constituent_Hybrid_approach/Results/1_UNET_AE/'
-    _model_name = 'Model_UNET_AE_LR0_0005'
+    _directory = '/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/' + \
+                 '4_ICCS/Results/1_Conv_AE/'
+    _model_name = 'Model_AE_LR0_0005'
     _model = AE(
         device=device,
         in_channels=3,
@@ -434,16 +434,73 @@ def trial_1_error_timeline():
     pass
 
 
+def prediction_retriever(model_directory, model_name, dataset_name, save2file_name):
+    """The prediction_retriever function is used to evaluate model performance
+    of a trained model. This is done by loading the saved model, feeding it
+    with datasets and then saving the corresponding predictions for later
+    visual comparison.
+
+    Args:
+        model_directory:
+
+        model_name:
+
+        dataset_name:
+
+    Returns:
+        NONE
+    """
+    _, valid_loaders = get_AE_loaders(
+            data_distribution=dataset_name,
+            batch_size=1,
+            shuffle=False
+        )
+
+    _model = AE(
+        device=device,
+        in_channels=3,
+        out_channels=3,
+        features=[4, 8, 16],
+        activation=nn.ReLU(inplace=True)
+    ).to(device)
+    _model.load_state_dict(torch.load(
+        f'{model_directory}/{model_name}'))
+    _model.eval()
+
+    for i in range(len(valid_loaders)):
+        _preds = []
+        _targs = []
+        for batch_idx, (data, target) in enumerate(valid_loaders[i]):
+            data = data.float().to(device=device)
+            target = target.float().to(device=device)
+            with torch.cuda.amp.autocast():
+                data_pred = _model(data)
+                data_targ = target
+                _preds.append(data_pred.cpu().detach().numpy())
+                _targs.append(data_targ.cpu().detach().numpy())
+        _preds = np.vstack(_preds)
+        _targs = np.vstack(_targs)
+
+    plot_flow_profile(_preds, save2file_name)
+
+    pass
+
+
 if __name__ == "__main__":
-    # trial_1_AE_mp()
-    print('Starting Trial 1: AE (KVS)')
+    '''
+        _alpha = 0.0001
+        _alpha_string = '0_0001'
+        _train_loaders, _valid_loaders = get_AE_loaders(
+            data_distribution='get_KVS',
+            batch_size=32,
+            shuffle=True
+        )
+        trial_1_AE(_alpha, _alpha_string, _train_loaders, _valid_loaders)
+    '''
 
-    _alpha = 0.0001
-    _alpha_string = '0_0001'
-    _train_loaders, _valid_loaders = get_AE_loaders(
-        data_distribution='get_KVS',
-        batch_size=32,
-        shuffle=True
-    )
+    print('Starting Trial 1: Prediction Retriever (KVS)')
 
-    trial_1_AE(_alpha, _alpha_string, _train_loaders, _valid_loaders)
+    _model_directory = '/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/4_ICCS/Results/1_Conv_AE/kvs_50_epoch'
+    _model_name = 'Model_UNET_AE_LR0_0001'
+    _dataset_name = 'get_KVS_eval'
+    _save2file_name = 'pred_kvs_combined_domain_init_20000_NW'

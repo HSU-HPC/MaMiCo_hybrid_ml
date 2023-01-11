@@ -105,15 +105,19 @@ def get_AE_loaders(data_distribution, batch_size=32, shuffle=True, num_workers=1
     _data_tag = ''
 
     if _shuffle is True:
-        switch = 'on'
+        shuffle_switch = 'on'
     elif _shuffle is False:
-        switch = 'off'
+        shuffle_switch = 'off'
         _batch_size = 1
 
     if data_distribution == "get_couette":
         _data_tag = 'Couette'
+    elif data_distribution == "get_couette_eval":
+        _data_tag = 'Couette_eval'
     elif data_distribution == "get_KVS":
         _data_tag = 'KVS'
+    elif data_distribution == "get_KVS_eval":
+        _data_tag = 'KVS_eval'
     elif data_distribution == "get_both":
         _data_tag = 'Couette and KVS'
     elif data_distribution == "get_random":
@@ -125,7 +129,7 @@ def get_AE_loaders(data_distribution, batch_size=32, shuffle=True, num_workers=1
     print(f'Data Dist. \t= {_data_tag}')
     print(f'Batch size\t= {_batch_size}')
     print(f'Num worker\t= {_num_workers}')
-    print(f'Shuffle\t\t= {switch}')
+    print(f'Shuffle\t\t= {shuffle_switch}')
 
     _data_train = []
     _data_valid = []
@@ -134,12 +138,20 @@ def get_AE_loaders(data_distribution, batch_size=32, shuffle=True, num_workers=1
     _directory = '/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/4_ICCS/dataset_mlready/'
 
     if _data_tag == 'Couette':
-        _train_files = glob.glob(f"{_directory}Couette/Training/*0_oscil*.csv")
+        _train_files = glob.glob(f"{_directory}Couette/Training/.csv")
         _valid_files = glob.glob(
-            f"{_directory}Couette/Validation/*0_oscil*.csv")
+            f"{_directory}Couette/Validation/.csv")
+    elif _data_tag == 'Couette_eval':
+        _train_files = glob.glob(
+            f"{_directory}KVS/Training/*bottom_0_oscil_2_5*.csv")
+        _valid_files = glob.glob(
+            f"{_directory}KVS/Validation/*bottom_0_oscil_3_0*.csv")
     elif _data_tag == 'KVS':
         _train_files = glob.glob(f"{_directory}KVS/Training/*.csv")
         _valid_files = glob.glob(f"{_directory}KVS/Validation/*.csv")
+    elif _data_tag == 'KVS_eval':
+        _train_files = glob.glob(f"{_directory}KVS/Training/*20000_NW*.csv")
+        _valid_files = glob.glob(f"{_directory}KVS/Validation/*20000_NE*.csv")
     elif _data_tag == 'Couette and KVS':
         _train_files = glob.glob(f"{_directory}Couette/Training/*.csv") + \
                                  glob.glob(
