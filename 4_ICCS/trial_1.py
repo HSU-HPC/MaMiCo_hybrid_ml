@@ -20,7 +20,7 @@ except RuntimeError:
 # plt.style.use(['science'])
 np.set_printoptions(precision=6)
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+device = 'cuda'  # torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 NUM_WORKERS = 1
 PIN_MEMORY = True
 LOAD_MODEL = False
