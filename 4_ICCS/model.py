@@ -387,6 +387,15 @@ class Hybrid_MD_RNN_AE(nn.Module):
         return x
 
 
+class MSLELoss(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.mse = nn.MSELoss()
+
+    def forward(self, pred, actual):
+        return self.mse(torch.log(pred + 1), torch.log(actual + 1))
+
+
 def resetPipeline(model):
     """The resetPipeline function is required to reset the model.sequence
     attribute that contains the latent spaces from previous timesteps. In

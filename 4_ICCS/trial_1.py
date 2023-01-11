@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import torch.optim as optim
 import torch.nn as nn
 import numpy as np
-from model import AE
+from model import AE, MSLELoss
 from torchmetrics import MeanSquaredLogError
 from utils import get_AE_loaders, losses2file, dataset2csv
 from plotting import compareLossVsValid, plot_flow_profile
@@ -264,7 +264,7 @@ def trial_1_AE(alpha, alpha_string, train_loaders, valid_loaders):
           This function documents model progress by saving results to file and
           creating meaningful plots.
     """
-    _criterion = MeanSquaredLogError().to(device)
+    _criterion = MSLELoss().to(device)
     _file_prefix = '/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/' + \
         '4_ICCS/Results/1_Conv_AE/'
     _model_identifier = f'LR{alpha_string}'
