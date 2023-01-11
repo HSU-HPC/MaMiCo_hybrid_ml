@@ -262,3 +262,51 @@ def dataset2csv(dataset, dataset_name,  model_identifier=''):
     if model_identifier != '':
         name = f'{dataset_name}_model_{model_identifier}'
     np.savetxt(f'{name}.csv', dataset_reshaped)
+
+
+def csv2dataset(file_name, output_shape=0):
+    """The csv2dataset function retrieves a numpy array from a csv file.
+
+    Args:
+        file_name:
+          Object of string type containing the name of the csv file to be
+          loaded as a dataset.
+        output_shape:
+          Object of tuple type containing the shape of the desired numpy
+          array.
+
+    Returns:
+        dataset:
+          Object of numpy array type containing the dataset read from file.
+    """
+    print(f'Loading Dataset from csv: {file_name}')
+    dataset = np.loadtxt(f'{file_name}')
+
+    if output_shape == 0:
+        return dataset
+
+    t, c, d, h, w = output_shape
+
+    original_dataset = dataset.reshape(t, c, d, h, w)
+    return original_dataset
+
+
+def csv2dataset_mp(filenames, output_shape=0):
+    """The csv2dataset_mp function is used to call the csv2dataset function in
+    a multiprocessing manner. It takes a list of file_names and returns the
+    corresponding datasets as a list.
+
+    Args:
+        file_names:
+          Object of list type containing objects of string type containing the
+          name of the csv files to be loaded as datasets.
+    Returns:
+        results:
+          A list containing the corresponding datasets of type numpy array.
+    """
+    print('Loading Datasets from csv via Multiprocessing.')
+
+    with concurrent.futures.ProcessPoolExecutor() as executor:
+        results = executor.map(csv2dataset, filenames)
+
+    return results
