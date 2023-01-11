@@ -483,8 +483,6 @@ def prediction_retriever(model_directory, model_name, dataset_name, save2file_na
 
     plot_flow_profile(_preds, save2file_name)
 
-    pass
-
 
 if __name__ == "__main__":
     '''
@@ -504,3 +502,10 @@ if __name__ == "__main__":
     _model_name = 'Model_UNET_AE_LR0_0001'
     _dataset_name = 'get_KVS_eval'
     _save2file_name = 'pred_kvs_combined_domain_init_20000_NW'
+
+    prediction_retriever(
+        model_directory=_model_name,
+        model_name=_model_name,
+        dataset_name=_dataset_name,
+        save2file_name=_save2file_name
+    )
