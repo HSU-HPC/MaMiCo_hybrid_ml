@@ -289,7 +289,7 @@ def trial_1_AE(alpha, alpha_string, train_loaders, valid_loaders):
     _epoch_valids = []
 
     print('Beginning training.')
-    for epoch in range(50):
+    for epoch in range(4):
         _avg_loss = 0
         for _train_loader in train_loaders:
             _avg_loss += train_AE(
@@ -491,7 +491,7 @@ def prediction_retriever(model_directory, model_name, dataset_name, save2file_na
 
 
 if __name__ == "__main__":
-    '''
+
     print('Starting Trial 1: AE (KVS, MRE)')
     _alpha = 0.0001
     _alpha_string = '0_0001'
@@ -517,3 +517,4 @@ if __name__ == "__main__":
         dataset_name=_dataset_name,
         save2file_name=_save2file_name
     )
+    '''
