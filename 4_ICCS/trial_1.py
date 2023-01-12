@@ -64,7 +64,7 @@ def train_AE(loader, model, optimizer, criterion, scaler, model_identifier, curr
         with torch.cuda.amp.autocast():
             _predictions = model(_data)
             _pred_rel = _predictions.float() / _targets.float()
-            _loss = criterion(_pred_rel, 1)
+            _loss = criterion(_pred_rel, torch.ones(_pred_rel.size))
             # print('Current batch loss: ', loss.item())
             _epoch_loss += _loss.item()
             _counter += 1
