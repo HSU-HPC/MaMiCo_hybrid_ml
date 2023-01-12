@@ -205,6 +205,7 @@ def get_AE_loaders(data_distribution, batch_size=32, shuffle=True, num_workers=1
 
     if _shuffle is True:
         _data_train_stack = np.vstack(_data_train)
+        print('Training stack shape:', _data_train_stack.shape)
         _data_valid_stack = np.vstack(_data_valid)
 
         _dataset_train = MyMamicoDataset_AE(_data_train_stack)
