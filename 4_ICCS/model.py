@@ -596,42 +596,42 @@ class AE_u_y(nn.Module):
 
         if y == 0 or y == 'get_bottleneck':
             # The following for-loop describes the entire (left) contracting side,
-            for down_x in self.downs_x:
-                u_y = down_x(u_y)
-                u_y = self.pool_x(u_y)
+            for down_y in self.downs_y:
+                u_y = down_y(u_y)
+                u_y = self.pool_y(u_y)
                 # rint('Shape of u_y: ', u_y.shape)
 
             # This is the bottleneck
-            u_y = self.helper_down_x(u_y)
+            u_y = self.helper_down_y(u_y)
             u_y = self.activation(u_y)
-            u_y = self.bottleneck_x(u_y)
+            u_y = self.bottleneck_y(u_y)
             u_y = self.activation(u_y)
 
             if y == 'get_bottleneck':
                 return u_y
 
-            u_y = self.helper_up_1_x(u_y)
+            u_y = self.helper_up_1_y(u_y)
             u_y = self.activation(u_y)
 
             # The following for-loop describes the entire (right) expanding side.
-            for idx in range(0, len(self.ups_x), 2):
-                u_y = self.ups_x[idx](u_y)
-                u_y = self.ups_x[idx+1](u_y)
+            for idx in range(0, len(self.ups_y), 2):
+                u_y = self.ups_y[idx](u_y)
+                u_y = self.ups_y[idx+1](u_y)
 
-            u_y = self.helper_up_2_x(u_y)
+            u_y = self.helper_up_2_y(u_y)
 
             return u_y
 
         if y == 'get_MD_output':
-            u_y = self.helper_up_1_x(u_y)
+            u_y = self.helper_up_1_y(u_y)
             u_y = self.activation(u_y)
 
             # The following for-loop describes the entire (right) expanding side.
-            for idx in range(0, len(self.ups_x), 2):
-                u_y = self.ups_x[idx](u_y)
-                u_y = self.ups_x[idx+1](u_y)
+            for idx in range(0, len(self.ups_y), 2):
+                u_y = self.ups_y[idx](u_y)
+                u_y = self.ups_y[idx+1](u_y)
 
-            u_y = self.helper_up_2_x(u_y)
+            u_y = self.helper_up_2_y(u_y)
             return u_y
 
 
@@ -719,42 +719,42 @@ class AE_u_z(nn.Module):
 
         if y == 0 or y == 'get_bottleneck':
             # The following for-loop describes the entire (left) contracting side,
-            for down_x in self.downs_x:
-                u_z = down_x(u_z)
-                u_z = self.pool_x(u_z)
+            for down_z in self.downs_z:
+                u_z = down_z(u_z)
+                u_z = self.pool_z(u_z)
                 # rint('Shape of u_z: ', u_z.shape)
 
             # This is the bottleneck
-            u_z = self.helper_down_x(u_z)
+            u_z = self.helper_down_z(u_z)
             u_z = self.activation(u_z)
-            u_z = self.bottleneck_x(u_z)
+            u_z = self.bottleneck_z(u_z)
             u_z = self.activation(u_z)
 
             if y == 'get_bottleneck':
                 return u_z
 
-            u_z = self.helper_up_1_x(u_z)
+            u_z = self.helper_up_1_z(u_z)
             u_z = self.activation(u_z)
 
             # The following for-loop describes the entire (right) expanding side.
-            for idx in range(0, len(self.ups_x), 2):
+            for idx in range(0, len(self.ups_z), 2):
                 u_z = self.ups_x[idx](u_z)
                 u_z = self.ups_x[idx+1](u_z)
 
-            u_z = self.helper_up_2_x(u_z)
+            u_z = self.helper_up_2_z(u_z)
 
             return u_z
 
         if y == 'get_MD_output':
-            u_z = self.helper_up_1_x(u_z)
+            u_z = self.helper_up_1_z(u_z)
             u_z = self.activation(u_z)
 
             # The following for-loop describes the entire (right) expanding side.
-            for idx in range(0, len(self.ups_x), 2):
-                u_z = self.ups_x[idx](u_z)
-                u_z = self.ups_x[idx+1](u_z)
+            for idx in range(0, len(self.ups_z), 2):
+                u_z = self.ups_z[idx](u_z)
+                u_z = self.ups_z[idx+1](u_z)
 
-            u_z = self.helper_up_2_x(u_z)
+            u_z = self.helper_up_2_z(u_z)
             return u_z
 
 
