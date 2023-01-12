@@ -63,10 +63,8 @@ def train_AE(loader, model, optimizer, criterion, scaler, model_identifier, curr
 
         with torch.cuda.amp.autocast():
             _predictions = model(_data)
-            _pred_rel = _predictions.float() / (_targets.float()+0.0000001)
-
-            _loss = criterion(_pred_rel, torch.ones(
-                _pred_rel.shape).to(device))
+            _loss = criterion(torch.log(_predictions.float(
+            ) + 4).to(device), torch.log(_targets.float() + 4).to(device))
             # print('Current batch loss: ', loss.item())
             _epoch_loss += _loss.item()
             _counter += 1
@@ -491,7 +489,7 @@ def prediction_retriever(model_directory, model_name, dataset_name, save2file_na
 
 
 if __name__ == "__main__":
-    '''
+
     print('Starting Trial 1: AE (KVS, MRE)')
     _alpha = 0.0001
     _alpha_string = '0_0001'
@@ -517,3 +515,4 @@ if __name__ == "__main__":
         dataset_name=_dataset_name,
         save2file_name=_save2file_name
     )
+    '''
