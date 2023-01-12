@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import torch.optim as optim
 import torch.nn as nn
 import numpy as np
-from model import AE, MSLELoss
+from model import AE, AE_u_i
 from torchmetrics import MeanSquaredLogError
 from utils import get_AE_loaders, losses2file, dataset2csv
 from plotting import compareLossVsValid, plot_flow_profile
@@ -63,9 +63,9 @@ def train_AE(loader, model, optimizer, criterion, scaler, model_identifier, curr
 
         with torch.cuda.amp.autocast():
             _predictions = model(_data)
-            _loss = criterion(torch.log(_predictions.float(
-            ) + 4).to(device), torch.log(_targets.float() + 4).to(device))
-            # print('Current batch loss: ', loss.item())
+            _pred = _predictions.float()
+            _targ = _targets.float()
+            _loss = criterion(_pred, _targ)
             _epoch_loss += _loss.item()
             _counter += 1
 
@@ -106,9 +106,9 @@ def valid_AE(loader, model, criterion, model_identifier):
 
         with torch.cuda.amp.autocast():
             _predictions = model(_data)
-            _log_pred = torch.log(_predictions.float() + 1)
-            _log_targ = torch.log(_targets.float() + 1)
-            _loss = criterion(_log_pred, _log_targ)
+            _pred = _predictions.float()
+            _targ = _targets.float()
+            _loss = criterion(_pred, _targ)
             # print('Current batch loss: ', loss.item())
             _epoch_loss += _loss.item()
             _counter += 1
@@ -271,11 +271,11 @@ def trial_1_AE(alpha, alpha_string, train_loaders, valid_loaders):
     _file_prefix = '/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/' + \
         '4_ICCS/Results/1_Conv_AE/'
     _model_identifier = f'LR{alpha_string}'
-    print('Initializing AE model.')
-    _model = AE(
+    print('Initializing AE_u_i model.')
+    _model = AE_u_i(
         device=device,
-        in_channels=3,
-        out_channels=3,
+        in_channels=1,
+        out_channels=1,
         features=[4, 8, 16],
         activation=nn.ReLU(inplace=True)
     ).to(device)
@@ -321,25 +321,25 @@ def trial_1_AE(alpha, alpha_string, train_loaders, valid_loaders):
 
     losses2file(
         losses=_epoch_losses,
-        file_name=f'{_file_prefix}Losses_AE_{_model_identifier}'
+        file_name=f'{_file_prefix}Losses_AE_u_i_{_model_identifier}'
     )
     losses2file(
         losses=_epoch_valids,
-        file_name=f'{_file_prefix}Valids_AE_{_model_identifier}'
+        file_name=f'{_file_prefix}Valids_AE_u_i_{_model_identifier}'
     )
 
     compareLossVsValid(
         loss_files=[
-            f'{_file_prefix}Losses_AE_{_model_identifier}.csv',
-            f'{_file_prefix}Valids_AE_{_model_identifier}.csv'
+            f'{_file_prefix}Losses_AE_u_i_{_model_identifier}.csv',
+            f'{_file_prefix}Valids_AE_u_i_{_model_identifier}.csv'
         ],
         loss_labels=['Training', 'Validation'],
         file_prefix=_file_prefix,
-        file_name=f'AE_{_model_identifier}'
+        file_name=f'AE_u_i_{_model_identifier}'
     )
     torch.save(
         _model.state_dict(),
-        f'{_file_prefix}Model_AE_{_model_identifier}'
+        f'{_file_prefix}Model_AE_u_i_{_model_identifier}'
     )
     return
 
@@ -490,7 +490,7 @@ def prediction_retriever(model_directory, model_name, dataset_name, save2file_na
 
 if __name__ == "__main__":
 
-    print('Starting Trial 1: AE (KVS, MRE)')
+    print('Starting Trial 1: AE_u_i (KVS, MAE)')
     _alpha = 0.0001
     _alpha_string = '0_0001'
     _train_loaders, _valid_loaders = get_AE_loaders(

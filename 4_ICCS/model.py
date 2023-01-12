@@ -124,7 +124,7 @@ class AE(nn.Module):
         print('Model initialized: Autoencoder.')
 
     def forward(self, x, y=0, skip_connections=0):
-        """The forward method acts as a quai-overloaded method in that depending
+        """The forward method acts as a quasi-overloaded method in that depending
         on the passed flag 'y', the forward method begins and returns different
         values. This is necessary to later feed time-series latent space predictions
         back into the model.
@@ -141,8 +141,8 @@ class AE(nn.Module):
             result:
               Object of PyTorch-type tensor returning the autoencoded result.
         """
-        skip_connections = []
         if y == 0 or y == 'get_bottleneck':
+            print(x[:, 0, :, :, :].shape)
             # The following for-loop describes the entire (left) contracting side,
             for down in self.downs:
                 x = down(x)
@@ -167,6 +167,213 @@ class AE(nn.Module):
 
             x = self.helper_up_2(x)
 
+            return x
+
+        if y == 'get_MD_output':
+            x = self.helper_up_1(x)
+            x = self.activation(x)
+
+            # The following for-loop describes the entire (right) expanding side.
+            for idx in range(0, len(self.ups), 2):
+                x = self.ups[idx](x)
+                x = self.ups[idx+1](x)
+
+            x = self.helper_up_2(x)
+            return x
+
+
+class AE_u_i(nn.Module):
+    """The AE class aims at implementing a strictly convolutional autoencoder
+    very comparable to the above implemented U-Net autoencoder.
+
+    Attributes:
+        in_channels:
+          Object of integer type describing number of channels in the input data.
+        out_channels:
+          Object of integer type describing number of channels in the output data.
+        features:
+          Object of type List containing integers that correspond to the number
+          of kernels applied per convolutional
+        activation:
+          Object of PyTorch type torch.nn containing an activation function
+    """
+
+    def __init__(self, device, in_channels=1, out_channels=1, features=[4, 6, 8, 10], activation=nn.ReLU(inplace=True)):
+        super(AE_u_i, self).__init__()
+        self.device = device
+
+        self.activation = nn.ReLU()
+
+        # Generic module placeholders
+        self.ups_x = nn.ModuleList()
+        self.ups_y = nn.ModuleList()
+        self.ups_z = nn.ModuleList()
+
+        # Generic module placeholders
+        self.downs_x = nn.ModuleList()
+        self.downs_y = nn.ModuleList()
+        self.downs_z = nn.ModuleList()
+
+        # Generic 3d maxpool
+        self.pool_x = nn.MaxPool3d(kernel_size=2, stride=2)
+        self.pool_y = nn.MaxPool3d(kernel_size=2, stride=2)
+        self.pool_z = nn.MaxPool3d(kernel_size=2, stride=2)
+
+        self.helper_down_x = nn.Conv3d(in_channels=16, out_channels=16,
+                                       kernel_size=2, stride=1, padding=0, bias=False)
+        self.helper_down_y = nn.Conv3d(in_channels=16, out_channels=16,
+                                       kernel_size=2, stride=1, padding=0, bias=False)
+        self.helper_down_z = nn.Conv3d(in_channels=16, out_channels=16,
+                                       kernel_size=2, stride=1, padding=0, bias=False)
+
+        self.helper_up_1_x = nn.ConvTranspose3d(in_channels=32, out_channels=32,
+                                                kernel_size=2, stride=1, padding=0, bias=False)
+        self.helper_up_1_y = nn.ConvTranspose3d(in_channels=32, out_channels=32,
+                                                kernel_size=2, stride=1, padding=0, bias=False)
+        self.helper_up_1_z = nn.ConvTranspose3d(in_channels=32, out_channels=32,
+                                                kernel_size=2, stride=1, padding=0, bias=False)
+
+        self.helper_up_2_x = nn.Conv3d(in_channels=4, out_channels=1,
+                                       kernel_size=3, stride=1, padding=1, bias=False)
+        self.helper_up_2_y = nn.Conv3d(in_channels=4, out_channels=1,
+                                       kernel_size=3, stride=1, padding=1, bias=False)
+        self.helper_up_2_z = nn.Conv3d(in_channels=4, out_channels=1,
+                                       kernel_size=3, stride=1, padding=1, bias=False)
+        # Down part of AE
+        for feature in features:
+            self.downs_x.append(DoubleConv(in_channels, feature, activation))
+            self.downs_y.append(DoubleConv(in_channels, feature, activation))
+            self.downs_z.append(DoubleConv(in_channels, feature, activation))
+            in_channels = feature
+
+        # Up part of AE
+        for feature in reversed(features):
+            self.ups_x.append(
+                nn.ConvTranspose3d(
+                    feature*2, feature, kernel_size=2, stride=2,
+                )
+            )
+            self.ups_x.append(DoubleConv(feature, feature, activation))
+            self.ups_y.append(
+                nn.ConvTranspose3d(
+                    feature*2, feature, kernel_size=2, stride=2,
+                )
+            )
+            self.ups_y.append(DoubleConv(feature, feature, activation))
+            self.ups_z.append(
+                nn.ConvTranspose3d(
+                    feature*2, feature, kernel_size=2, stride=2,
+                )
+            )
+            self.ups_z.append(DoubleConv(feature, feature, activation))
+
+        # This is the "deepest" part.
+        self.bottleneck_x = DoubleConv(
+            features[-1], features[-1]*2, activation)
+        self.bottleneck_y = DoubleConv(
+            features[-1], features[-1]*2, activation)
+        self.bottleneck_z = DoubleConv(
+            features[-1], features[-1]*2, activation)
+        print('Model initialized: Autoencoder.')
+
+    def forward(self, x, y=0, skip_connections=0):
+        """The forward method acts as a quasi-overloaded method in that depending
+        on the passed flag 'y', the forward method begins and returns different
+        values. This is necessary to later feed time-series latent space predictions
+        back into the model.
+
+        Args:
+            x:
+              Object of PyTorch-type tensor containing the information of a timestep.
+            y:
+              Object of string type acting as a flag to choose desired forward method.
+            skip_connections:
+              Object of type list containing objects of PyTorch-type tensor that
+              contain the U-Net unique skip_connections for later concatenation.
+        Return:
+            result:
+              Object of PyTorch-type tensor returning the autoencoded result.
+        """
+        if y == 0 or y == 'get_bottleneck':
+            # The following for-loop describes the entire (left) contracting side,
+
+            t, c, h, d, w = x.shape
+            u_x = x[:, 0, :, :, :].to(device)
+            u_x = torch.reshape(u_x, (t, 1, h, d, w)).to(device)
+            print('Shape of u_x: ', u_x.shape)
+            u_y = x[:, 1, :, :, :].to(device)
+            u_y = torch.reshape(u_y, (t, 1, h, d, w)).to(device)
+            print('Shape of u_y: ', u_y.shape)
+            u_z = x[:, 2, :, :, :].to(device)
+            u_z = torch.reshape(u_z, (t, 1, h, d, w)).to(device)
+            print('Shape of u_z: ', u_z.shape)
+
+            for down_x in self.downs_x:
+                u_x = down_x(u_x)
+                u_x = self.pool_x(u_x)
+                print('Shape of u_x: ', u_x.shape)
+
+            for down_y in self.downs_y:
+                u_y = down_y(u_y)
+                u_y = self.pool_y(u_y)
+                print('Shape of u_y: ', u_y.shape)
+
+            for down_z in self.downs_z:
+                u_z = down_z(u_z)
+                u_z = self.pool_z(u_z)
+                print('Shape of u_z: ', u_z.shape)
+
+            # This is the bottleneck
+            u_x = self.helper_down_x(u_x)
+            u_y = self.helper_down_y(u_y)
+            u_z = self.helper_down_z(u_z)
+
+            u_x = self.activation(u_x)
+            u_y = self.activation(u_y)
+            u_z = self.activation(u_z)
+
+            u_x = self.bottleneck_x(u_x)
+            u_y = self.bottleneck_y(u_y)
+            u_z = self.bottleneck_z(u_z)
+
+            u_x = self.activation(u_x)
+            u_y = self.activation(u_y)
+            u_z = self.activation(u_z)
+
+            print('Shape of u_x: ', u_x.shape)
+            print('Shape of u_y: ', u_y.shape)
+            print('Shape of u_z: ', u_z.shape)
+
+            if y == 'get_bottleneck':
+                x = torch.cat((u_x, u_y, u_z), 1).to(device)
+                return x, skip_connections
+
+            u_x = self.helper_up_1_x(u_x)
+            u_y = self.helper_up_1_y(u_y)
+            u_z = self.helper_up_1_z(u_z)
+
+            print('Shape of u_x: ', u_x.shape)
+            print('Shape of u_y: ', u_y.shape)
+            print('Shape of u_z: ', u_z.shape)
+
+            u_x = self.activation(u_x)
+            u_y = self.activation(u_y)
+            u_z = self.activation(u_z)
+
+            # The following for-loop describes the entire (right) expanding side.
+            for idx in range(0, len(self.ups_x), 2):
+                u_x = self.ups_x[idx](u_x)
+                u_x = self.ups_x[idx+1](u_x)
+                u_y = self.ups_y[idx](u_y)
+                u_y = self.ups_y[idx+1](u_y)
+                u_z = self.ups_z[idx](u_z)
+                u_z = self.ups_z[idx+1](u_z)
+
+            u_x = self.helper_up_2_x(u_x)
+            u_y = self.helper_up_2_y(u_y)
+            u_z = self.helper_up_2_z(u_z)
+
+            x = torch.cat((u_x, u_y, u_z), 1).to(device)
             return x
 
         if y == 'get_MD_output':
@@ -563,4 +770,40 @@ def calculateFLOPS_ConvAE(c, d, h, w, features):
 
 
 if __name__ == "__main__":
+
+    _model = AE_u_i(
+        device=device,
+        in_channels=1,
+        out_channels=1,
+        features=[4, 8, 16],
+        activation=nn.ReLU(inplace=True)
+    ).to(device)
+
+    _data = torch.rand(16, 3, 26, 26, 26)
+
+    _out = _model(_data)
+    '''
+
+    x = torch.rand(10, 3, 3, 3, 3)
+    x_1 = x[:, 0, :, :, :]
+    x_1 = torch.reshape(x_1, (10, 1, 3, 3, 3))
+    print(x_1.shape)
+    x_2 = x[:, 1, :, :, :]
+    x_2 = torch.reshape(x_2, (10, 1, 3, 3, 3))
+    print(x_2.shape)
+    x_3 = x[:, 2, :, :, :]
+    x_3 = torch.reshape(x_3, (10, 1, 3, 3, 3))
+    print(x_3.shape)
+    x_cat = torch.cat((x_1, x_2, x_3), 1)
+    print(x_cat.shape)
+    t, c, h, d, w = x_cat.shape
+    print('t = ', t)
+    print('c = ', c)
+    print('d = ', d)
+    print('Is x == x_cat ?:')
+    if torch.equal(x, x_cat):
+        print('True')
+    else:
+        print('False')
+    '''
     pass
