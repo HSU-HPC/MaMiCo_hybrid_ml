@@ -488,8 +488,8 @@ def prediction_retriever(model_directory, model_name, dataset_name, save2file_na
 
 
 if __name__ == "__main__":
-    '''
-    print('Starting Trial 1: AE (KVS, MSLE)')
+
+    print('Starting Trial 1: AE (KVS, MLE)')
     _alpha = 0.0001
     _alpha_string = '0_0001'
     _train_loaders, _valid_loaders = get_AE_loaders(
@@ -513,3 +513,4 @@ if __name__ == "__main__":
         dataset_name=_dataset_name,
         save2file_name=_save2file_name
     )
+    '''
