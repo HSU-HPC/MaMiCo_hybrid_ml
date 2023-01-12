@@ -460,10 +460,10 @@ def prediction_retriever(model_directory, model_name, dataset_name, save2file_na
             shuffle=False
         )
 
-    _model = AE(
+    _model = AE_u_i(
         device=device,
-        in_channels=3,
-        out_channels=3,
+        in_channels=1,
+        out_channels=1,
         features=[4, 8, 16],
         activation=nn.ReLU(inplace=True)
     ).to(device)
