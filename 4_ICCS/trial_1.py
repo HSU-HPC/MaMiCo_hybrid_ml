@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import torch.optim as optim
 import torch.nn as nn
 import numpy as np
-from model import AE, AE_u_i
+from model import AE, AE_u_i, AE_u_x, AE_u_y, AE_u_z
 from torchmetrics import MeanSquaredLogError
 from utils import get_AE_loaders, losses2file, dataset2csv
 from plotting import compareLossVsValid, plot_flow_profile
@@ -77,6 +77,83 @@ def train_AE(loader, model, optimizer, criterion, scaler, model_identifier, curr
     return _avg_loss
 
 
+def train_AE_u_i(loader, model_x, model_y, model_z,
+                 optimizer_x, optimizer_y, optimizer_z,
+                 model_identifier_x, model_identifier_y, model_identifier_z,
+                 criterion, scaler, current_epoch):
+    """The train_AE function trains the model and computes the average loss on
+    the training set.
+
+    Args:
+        loader:
+          Object of PyTorch-type DataLoader to automatically feed dataset
+        model:
+          Object of PyTorch Module class, i.e. the model to be trained.
+        optimizer:
+          The optimization algorithm applied during training.
+        criterion:
+          The loss function applied to quantify the error.
+        scaler:
+          Object of torch.cuda.amp.GradScaler to conveniently help perform the
+          steps of gradient scaling.
+        model_identifier:
+          A unique string to identify the model. Here, the learning rate is
+          used to identify which model is being trained.
+        current_epoch:
+          A string containing the current epoch for terminal output.
+
+    Returns:
+        avg_loss:
+          A double value indicating average training loss for the current epoch.
+    """
+
+    _epoch_loss_x = 0
+    _epoch_loss_y = 0
+    _epoch_loss_z = 0
+    _counter = 0
+
+    for _batch_idx, (_data, _targets) in enumerate(loader):
+        _data = _data.float().to(device=device)
+        _targets = _targets.float().to(device=device)
+        t, c, h, d, w = _data.shape
+
+        with torch.cuda.amp.autocast():
+            _preds_x = model_x(_data).float().to(device=device)
+            _preds_y = model_y(_data).float().to(device=device)
+            _preds_z = model_z(_data).float().to(device=device)
+
+            _targs_x = torch.reshape(
+                _targets[:, 0, :, :, :].float(), (t, 1, h, d, w)).to(device=device)
+            _targs_y = torch.reshape(
+                _targets[:, 1, :, :, :].float(), (t, 1, h, d, w)).to(device=device)
+            _targs_z = torch.reshape(
+                _targets[:, 2, :, :, :].float(), (t, 1, h, d, w)).to(device=device)
+
+            _loss_x = criterion(_preds_x, _targs_x)
+            _loss_y = criterion(_preds_y, _targs_y)
+            _loss_z = criterion(_preds_z, _targs_z)
+
+            _epoch_loss_x += _loss_x.item()
+            _epoch_loss_y += _loss_y.item()
+            _epoch_loss_z += _loss_z.item()
+            _counter += 1
+
+        _loss_x.backward(retain_graph=True)
+        _loss_y.backward(retain_graph=True)
+        _loss_z.backward(retain_graph=True)
+        optimizer_x.step()
+        optimizer_y.step()
+        optimizer_z.step()
+        optimizer_x.zero_grad()
+        optimizer_y.zero_grad()
+        optimizer_z.zero_grad()
+
+    _avg_loss_x = _epoch_loss_x/_counter
+    _avg_loss_y = _epoch_loss_y/_counter
+    _avg_loss_z = _epoch_loss_z/_counter
+    return _avg_loss_x, _avg_loss_y, _avg_loss_z
+
+
 def valid_AE(loader, model, criterion, model_identifier):
     """The valid_AE function computes the average loss on a given dataset
     without updating/optimizing the learnable model parameters.
@@ -115,6 +192,73 @@ def valid_AE(loader, model, criterion, model_identifier):
 
     _avg_loss = _epoch_loss/_counter
     return _avg_loss
+
+
+def valid_AE_u_i(loader, model_x, model_y, model_z,
+                 optimizer_x, optimizer_y, optimizer_z,
+                 model_identifier_x, model_identifier_y, model_identifier_z,
+                 criterion, scaler, current_epoch):
+    """The valid_AE function computes the average loss on a given dataset
+    without updating/optimizing the learnable model parameters.
+
+    Args:
+        loader:
+          Object of PyTorch-type DataLoader to automatically feed dataset
+        model:
+          Object of PyTorch Module class, i.e. the model to be trained.
+        optimizer:
+          The optimization algorithm applied during training.
+        criterion:
+          The loss function applied to quantify the error.
+        scaler:
+          Object of torch.cuda.amp.GradScaler to conveniently help perform the
+          steps of gradient scaling.
+        model_identifier:
+          A unique string to identify the model. Here, the learning rate is
+          used to identify which model is being trained.
+        current_epoch:
+          A string containing the current epoch for terminal output.
+
+    Returns:
+        avg_loss:
+          A double value indicating average training loss for the current epoch.
+    """
+
+    _epoch_loss_x = 0
+    _epoch_loss_y = 0
+    _epoch_loss_z = 0
+    _counter = 0
+
+    for _batch_idx, (_data, _targets) in enumerate(loader):
+        _data = _data.float().to(device=device)
+        _targets = _targets.float().to(device=device)
+        t, c, h, d, w = _data.shape
+
+        with torch.cuda.amp.autocast():
+            _preds_x = model_x(_data).float().to(device=device)
+            _preds_y = model_y(_data).float().to(device=device)
+            _preds_z = model_z(_data).float().to(device=device)
+
+            _targs_x = torch.reshape(
+                _targets[:, 0, :, :, :].float(), (t, 1, h, d, w)).to(device=device)
+            _targs_y = torch.reshape(
+                _targets[:, 1, :, :, :].float(), (t, 1, h, d, w)).to(device=device)
+            _targs_z = torch.reshape(
+                _targets[:, 2, :, :, :].float(), (t, 1, h, d, w)).to(device=device)
+
+            _loss_x = criterion(_preds_x, _targs_x)
+            _loss_y = criterion(_preds_y, _targs_y)
+            _loss_z = criterion(_preds_z, _targs_z)
+
+            _epoch_loss_x += _loss_x.item()
+            _epoch_loss_y += _loss_y.item()
+            _epoch_loss_z += _loss_z.item()
+            _counter += 1
+
+    _avg_loss_x = _epoch_loss_x/_counter
+    _avg_loss_y = _epoch_loss_y/_counter
+    _avg_loss_z = _epoch_loss_z/_counter
+    return _avg_loss_x, _avg_loss_y, _avg_loss_z
 
 
 def error_timeline(loader, model, criterion):
@@ -344,6 +488,168 @@ def trial_1_AE(alpha, alpha_string, train_loaders, valid_loaders):
     return
 
 
+def trial_1_AE_u_i(alpha, alpha_string, train_loaders, valid_loaders):
+    """The trial_1_AE function trains the given model and documents its
+    progress via saving average training and validation losses to file and
+    comparing them in a plot.
+
+    Args:
+        alpha:
+          A double value indicating the chosen learning rate.
+        alpha_string:
+          Object of type string used as a model identifier.
+        train_loaders:
+          Object of PyTorch-type DataLoader to automatically pass training
+          dataset to model.
+        valid_loaders:
+          Object of PyTorch-type DataLoader to automatically pass validation
+          dataset to model.
+
+    Returns:
+        NONE:
+          This function documents model progress by saving results to file and
+          creating meaningful plots.
+    """
+    _criterion = nn.L1Loss().to(device)
+    _file_prefix = '/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/' + \
+        '4_ICCS/Results/1_Conv_AE/'
+
+    _model_identifier_x = f'LR{alpha_string}_x'
+    _model_identifier_y = f'LR{alpha_string}_y'
+    _model_identifier_z = f'LR{alpha_string}_z'
+
+    print('Initializing AE_u_x/y/z model.')
+
+    _model_x = AE_u_x(
+        device=device,
+        in_channels=1,
+        out_channels=1,
+        features=[4, 8, 16],
+        activation=nn.ReLU(inplace=True)
+    ).to(device)
+    _model_y = AE_u_y(
+        device=device,
+        in_channels=1,
+        out_channels=1,
+        features=[4, 8, 16],
+        activation=nn.ReLU(inplace=True)
+    ).to(device)
+    _model_z = AE_u_z(
+        device=device,
+        in_channels=1,
+        out_channels=1,
+        features=[4, 8, 16],
+        activation=nn.ReLU(inplace=True)
+    ).to(device)
+
+    print('Initializing training parameters.')
+    _scaler = torch.cuda.amp.GradScaler()
+    _optimizer_x = optim.Adam(_model_x.parameters(), lr=alpha)
+    _optimizer_y = optim.Adam(_model_y.parameters(), lr=alpha)
+    _optimizer_z = optim.Adam(_model_z.parameters(), lr=alpha)
+
+    print('Beginning training.')
+    for epoch in range(2):
+        _avg_loss_x = 0
+        _avg_loss_y = 0
+        _avg_loss_z = 0
+
+        for _train_loader in train_loaders:
+            _loss_x, _loss_y, _loss_z = train_AE_u_i(
+                loader=_train_loader,
+                model_x=_model_x,
+                model_y=_model_y,
+                model_z=_model_z,
+                optimizer_x=_optimizer_x,
+                optimizer_y=_optimizer_y,
+                optimizer_z=_optimizer_z,
+                model_identifier_x=_model_identifier_x,
+                model_identifier_y=_model_identifier_y,
+                model_identifier_z=_model_identifier_z,
+                criterion=_criterion,
+                scaler=_scaler,
+                current_epoch=epoch+1
+            )
+            _avg_loss_x += _loss_x
+            _avg_loss_y += _loss_y
+            _avg_loss_z += _loss_z
+
+        _avg_loss_x = _avg_loss_x/len(train_loaders)
+        _avg_loss_y = _avg_loss_y/len(train_loaders)
+        _avg_loss_z = _avg_loss_z/len(train_loaders)
+        print('------------------------------------------------------------')
+        print(f'Training Epoch: {epoch+1}')
+        print(f'-> Avg u_x {_avg_loss_x:.3f}')
+        print(f'-> Avg u_y {_avg_loss_y:.3f}')
+        print(f'-> Avg u_z {_avg_loss_z:.3f}')
+
+        _sum_loss_x = 0
+        _sum_loss_y = 0
+        _sum_loss_z = 0
+        for _valid_loader in valid_loaders:
+            _loss_x, _loss_y, _loss_z = valid_AE_u_i(
+                loader=_train_loader,
+                model_x=_model_x,
+                model_y=_model_y,
+                model_z=_model_z,
+                optimizer_x=_optimizer_x,
+                optimizer_y=_optimizer_y,
+                optimizer_z=_optimizer_z,
+                model_identifier_x=_model_identifier_x,
+                model_identifier_y=_model_identifier_y,
+                model_identifier_z=_model_identifier_z,
+                criterion=_criterion,
+                scaler=_scaler,
+                current_epoch=epoch+1
+            )
+            _sum_loss_x += _loss_x
+            _sum_loss_y += _loss_y
+            _sum_loss_z += _loss_z
+
+        _avg_valid_x = _sum_loss_x/len(train_loaders)
+        _avg_valid_y = _sum_loss_y/len(train_loaders)
+        _avg_valid_z = _sum_loss_z/len(train_loaders)
+        print('------------------------------------------------------------')
+        print(f'Validation Epoch: {epoch+1}')
+        print(f'-> Avg u_x {_avg_valid_x:.3f}')
+        print(f'-> Avg u_y {_avg_valid_y:.3f}')
+        print(f'-> Avg u_z {_avg_valid_z:.3f}')
+
+    '''
+    losses2file(
+        losses=_epoch_losses,
+        file_name=f'{_file_prefix}Losses_AE_u_i_{_model_identifier}'
+    )
+    losses2file(
+        losses=_epoch_valids,
+        file_name=f'{_file_prefix}Valids_AE_u_i_{_model_identifier}'
+    )
+
+    compareLossVsValid(
+        loss_files=[
+            f'{_file_prefix}Losses_AE_u_i_{_model_identifier}.csv',
+            f'{_file_prefix}Valids_AE_u_i_{_model_identifier}.csv'
+        ],
+        loss_labels=['Training', 'Validation'],
+        file_prefix=_file_prefix,
+        file_name=f'AE_u_i_{_model_identifier}'
+    )
+    '''
+    torch.save(
+        _model_x.state_dict(),
+        f'{_file_prefix}Model_AE_u_i_{_model_identifier_x}'
+    )
+    torch.save(
+        _model_y.state_dict(),
+        f'{_file_prefix}Model_AE_u_i_{_model_identifier_y}'
+    )
+    torch.save(
+        _model_z.state_dict(),
+        f'{_file_prefix}Model_AE_u_i_{_model_identifier_z}'
+    )
+    return
+
+
 def trial_1_AE_mp():
     """The trial_1_AE_mp function is essentially a helper function to
     facilitate the training of multiple concurrent models via multiprocessing
@@ -468,7 +774,7 @@ def prediction_retriever(model_directory, model_name, dataset_name, save2file_na
         activation=nn.ReLU(inplace=True)
     ).to(device)
     _model.load_state_dict(torch.load(
-        f'{model_directory}/{model_name}', map_location ='cpu'))
+        f'{model_directory}/{model_name}', map_location='cpu'))
     _model.eval()
 
     for i in range(len(valid_loaders)):
@@ -489,18 +795,17 @@ def prediction_retriever(model_directory, model_name, dataset_name, save2file_na
 
 
 if __name__ == "__main__":
-    '''
     print('Starting Trial 1: AE_u_i (KVS, MAE)')
     _alpha = 0.0001
     _alpha_string = '0_0001'
     _train_loaders, _valid_loaders = get_AE_loaders(
-        data_distribution='get_KVS',
+        data_distribution='get_random',
         batch_size=32,
         shuffle=True
     )
-    trial_1_AE(_alpha, _alpha_string, _train_loaders, _valid_loaders)
-    '''
+    trial_1_AE_u_i(_alpha, _alpha_string, _train_loaders, _valid_loaders)
 
+    '''
     print('Starting Trial 1: Prediction Retriever (KVS, MRE)')
 
     _model_directory = '/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/4_ICCS/Results/1_Conv_AE/kvs_50_mae_u_i'
@@ -514,3 +819,4 @@ if __name__ == "__main__":
         dataset_name=_dataset_name,
         save2file_name=_save2file_name
     )
+    '''
