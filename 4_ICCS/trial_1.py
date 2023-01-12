@@ -468,7 +468,7 @@ def prediction_retriever(model_directory, model_name, dataset_name, save2file_na
         activation=nn.ReLU(inplace=True)
     ).to(device)
     _model.load_state_dict(torch.load(
-        f'{model_directory}/{model_name}'))
+        f'{model_directory}/{model_name}', map_location ='cpu'))
     _model.eval()
 
     for i in range(len(valid_loaders)):
