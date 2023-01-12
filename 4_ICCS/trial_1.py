@@ -489,7 +489,7 @@ def prediction_retriever(model_directory, model_name, dataset_name, save2file_na
 
 if __name__ == "__main__":
 
-    '''
+
     print('Starting Trial 1: AE (KVS, MLE)')
     _alpha = 0.0001
     _alpha_string = '0_0001'
@@ -515,3 +515,4 @@ if __name__ == "__main__":
         dataset_name=_dataset_name,
         save2file_name=_save2file_name
     )
+    '''
