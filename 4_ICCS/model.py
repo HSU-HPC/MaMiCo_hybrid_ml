@@ -528,11 +528,11 @@ class AE_u_y(nn.Module):
           Object of PyTorch type torch.nn containing an activation function
     """
 
-    def __init__(self, device, in_channels=1, out_channels=1, features=[4, 6, 8, 10], activation=nn.ReLU(inplace=True)):
+    def __init__(self, device, in_channels=1, out_channels=1, features=[4, 6, 8, 10], activation=torch.nn.LeakyReLU(negative_slope=0.1, inplace=False)):
         super(AE_u_y, self).__init__()
         self.device = device
 
-        self.activation = nn.ReLU()
+        self.activation = torch.nn.LeakyReLU(negative_slope=0.1, inplace=False)
 
         # Generic module placeholders
         self.ups_y = nn.ModuleList()
@@ -651,11 +651,11 @@ class AE_u_z(nn.Module):
           Object of PyTorch type torch.nn containing an activation function
     """
 
-    def __init__(self, device, in_channels=1, out_channels=1, features=[4, 6, 8, 10], activation=nn.ReLU(inplace=True)):
+    def __init__(self, device, in_channels=1, out_channels=1, features=[4, 6, 8, 10], activation=torch.nn.LeakyReLU(negative_slope=0.1, inplace=False)):
         super(AE_u_z, self).__init__()
         self.device = device
 
-        self.activation = nn.ReLU()
+        self.activation = torch.nn.LeakyReLU(negative_slope=0.1, inplace=False)
 
         # Generic module placeholders
         self.ups_z = nn.ModuleList()
