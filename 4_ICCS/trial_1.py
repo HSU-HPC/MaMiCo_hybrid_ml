@@ -794,7 +794,79 @@ def prediction_retriever(model_directory, model_name, dataset_name, save2file_na
     plot_flow_profile(_preds, save2file_name)
 
 
+def prediction_retriever_u_i(model_directory, model_name_x, model_name_y,
+                             model_name_z, dataset_name, save2file_name):
+    """The prediction_retriever function is used to evaluate model performance
+    of a trained model. This is done by loading the saved model, feeding it
+    with datasets and then saving the corresponding predictions for later
+    visual comparison.
+
+    Args:
+        model_directory:
+
+        model_name:
+
+        dataset_name:
+
+    Returns:
+        NONE
+    """
+    _, valid_loaders = get_AE_loaders(
+            data_distribution=dataset_name,
+            batch_size=1,
+            shuffle=False
+        )
+
+    _model_x = AE_u_x(
+        device=device,
+        in_channels=1,
+        out_channels=1,
+        features=[4, 8, 16],
+        activation=nn.ReLU(inplace=True)
+    ).to(device)
+    _model_y = AE_u_y(
+        device=device,
+        in_channels=1,
+        out_channels=1,
+        features=[4, 8, 16],
+        activation=nn.ReLU(inplace=True)
+    ).to(device)
+    _model_z = AE_u_z(
+        device=device,
+        in_channels=1,
+        out_channels=1,
+        features=[4, 8, 16],
+        activation=nn.ReLU(inplace=True)
+    ).to(device)
+
+    _model_x.load_state_dict(torch.load(
+        f'{model_directory}/{model_name_x}', map_location='cpu'))
+    _model_x.eval()
+    _model_y.load_state_dict(torch.load(
+        f'{model_directory}/{model_name_y}', map_location='cpu'))
+    _model_y.eval()
+    _model_z.load_state_dict(torch.load(
+        f'{model_directory}/{model_name_z}', map_location='cpu'))
+    _model_z.eval()
+
+    for i in range(len(valid_loaders)):
+        _preds = []
+        for batch_idx, (data, target) in enumerate(valid_loaders[i]):
+            data = data.float().to(device=device)
+            with torch.cuda.amp.autocast():
+                data_pred_x = _model_x(data)
+                data_pred_y = _model_y(data)
+                data_pred_z = _model_z(data)
+                data_pred = torch.cat(
+                    (data_pred_x, data_pred_y, data_pred_z), 1).to(device)
+                _preds.append(data_pred.cpu().detach().numpy())
+        _preds = np.vstack(_preds)
+
+    plot_flow_profile(_preds, save2file_name)
+
+
 if __name__ == "__main__":
+    '''
     print('Starting Trial 1: AE_u_i (KVS, MAE)')
     _alpha = 0.0001
     _alpha_string = '0_0001'
@@ -806,17 +878,20 @@ if __name__ == "__main__":
     trial_1_AE_u_i(_alpha, _alpha_string, _train_loaders, _valid_loaders)
 
     '''
-    print('Starting Trial 1: Prediction Retriever (KVS, MRE)')
+    print('Starting Trial 1: Prediction Retriever (KVS, MRE, AE_u_i)')
 
     _model_directory = '/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/4_ICCS/Results/1_Conv_AE/kvs_50_mae_u_i'
-    _model_name = 'Model_AE_u_i_LR0_0001'
+    _model_name_x = 'Model_AE_u_i_LR0_0001_x'
+    _model_name_y = 'Model_AE_u_i_LR0_0001_y'
+    _model_name_z = 'Model_AE_u_i_LR0_0001_z'
     _dataset_name = 'get_KVS_eval'
     _save2file_name = 'pred_kvs_combined_domain_init_20000_NW'
 
-    prediction_retriever(
+    prediction_retriever_u_i(
         model_directory=_model_directory,
-        model_name=_model_name,
+        model_name_x=_model_name_x,
+        model_name_y=_model_name_y,
+        model_name_z=_model_name_z,
         dataset_name=_dataset_name,
         save2file_name=_save2file_name
     )
-    '''
