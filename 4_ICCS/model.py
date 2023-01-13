@@ -738,8 +738,8 @@ class AE_u_z(nn.Module):
 
             # The following for-loop describes the entire (right) expanding side.
             for idx in range(0, len(self.ups_z), 2):
-                u_z = self.ups_x[idx](u_z)
-                u_z = self.ups_x[idx+1](u_z)
+                u_z = self.ups_z[idx](u_z)
+                u_z = self.ups_z[idx+1](u_z)
 
             u_z = self.helper_up_2_z(u_z)
 
