@@ -866,12 +866,12 @@ def prediction_retriever_u_i(model_directory, model_name_x, model_name_y,
 
 
 if __name__ == "__main__":
-    '''
-    print('Starting Trial 1: AE_u_i (KVS, MAE, LRLU)')
+
+    print('Starting Trial 1: AE_u_i (Both, MAE, LRLU)')
     _alpha = 0.0001
     _alpha_string = '0_0001'
     _train_loaders, _valid_loaders = get_AE_loaders(
-        data_distribution='get_KVS',
+        data_distribution='get_both',
         batch_size=32,
         shuffle=True
     )
@@ -895,3 +895,4 @@ if __name__ == "__main__":
         dataset_name=_dataset_name,
         save2file_name=_save2file_name
     )
+'''
