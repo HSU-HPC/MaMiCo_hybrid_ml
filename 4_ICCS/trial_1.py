@@ -549,7 +549,7 @@ def trial_1_AE_u_i(alpha, alpha_string, train_loaders, valid_loaders):
     _optimizer_z = optim.Adam(_model_z.parameters(), lr=alpha)
 
     print('Beginning training.')
-    for epoch in range(50):
+    for epoch in range(10):
         _avg_loss_x = 0
         _avg_loss_y = 0
         _avg_loss_z = 0
