@@ -319,6 +319,7 @@ def mlready2augmented(file_name):
     t, c, d, h, w = (1000, 3, 26, 26, 26)
 
     original_dataset = dataset.reshape(t, c, d, h, w)
+    original_dataset = torch.from_numpy(original_dataset)
     augmented_1 = torch.cat(
         (original_dataset[:, 1, :, :, :], original_dataset[:, 2, :, :, :],
          original_dataset[:, 0, :, :, :]), 1)
