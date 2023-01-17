@@ -334,11 +334,15 @@ def mlready2augmented_mp():
     function in a multiprocessing manner.
     """
     _directory = "/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/4_ICCS/dataset_mlready"
-    _files = glob.glob(
+    _raw_files = glob.glob(
         f"{_directory}/**/*.csv", recursive=True)
+    _files = []
 
-    for _file in _files:
-        _file = _file.replace('.csv', '')
+    for file in _raw_files:
+        print(file)
+        _file = file.replace('.csv', '')
+        print(_file)
+        _files.append(_file)
 
     processes = []
 
