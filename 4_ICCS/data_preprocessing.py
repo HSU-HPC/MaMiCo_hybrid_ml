@@ -290,7 +290,6 @@ def visualize_mlready_dataset_mp():
     for process in processes:
         process.join()
         print('Joining Process')
-    pass
 
 
 def mlready2augmented(file_name):
@@ -310,8 +309,8 @@ def mlready2augmented(file_name):
         NONE:
           This function saves the augmented datasets to file.
     """
-    print(f'Loading Dataset from csv: {file_name}')
-    dataset = np.loadtxt(f'dataset_mlready/{file_name}')
+    print(f'Loading Dataset from csv: {file_name} [.csv]')
+    dataset = np.loadtxt(f'{file_name}.csv')
 
     if dataset.size != (1000 * 3 * 26 * 26 * 26):
         print("Incorrect dimensions:", dataset.size, file_name)
@@ -326,9 +325,8 @@ def mlready2augmented(file_name):
     augmented_2 = torch.cat(
         (original_dataset[:, 2, :, :, :], original_dataset[:, 0, :, :, :],
          original_dataset[:, 1, :, :, :]), 1)
-    np.savetxt(f'dataset_mlready/{file_name}_1', augmented_1)
-    np.savetxt(f'dataset_mlready/{file_name}_2', augmented_2)
-    pass
+    np.savetxt(f'{file_name}_1.csv', augmented_1)
+    np.savetxt(f'{file_name}_2.csv', augmented_2)
 
 
 def mlready2augmented_mp():
@@ -336,29 +334,26 @@ def mlready2augmented_mp():
     function in a multiprocessing manner.
     """
     _directory = "/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/4_ICCS/dataset_mlready"
-    _raw_files = glob.glob(
+    _files = glob.glob(
         f"{_directory}/**/*.csv", recursive=True)
-    _files = []
 
-    for _file in _raw_files:
-        print(_file)
-        '''
-        _file = _file.replace(_directory+'/02_clean/', '')
-        print(_file)
-        _files.append(_file)
-        '''
-    '''
+    for _file in _files:
+        _file = _file.replace('.csv', '')
+
     processes = []
 
-    for i in range(len(_raw_files)):
+    for idx, file in enumerate(_files):
         p = mp.Process(
-            target=clean2mlready,
-            args=(_files[i],)
+            target=mlready2augmented,
+            args=(file,)
         )
         p.start()
         processes.append(p)
-        print(f'Creating Process Number: {i+1}')
-    '''
+        print(f'Creating Process Number: {idx+1}')
+
+    for process in processes:
+        process.join()
+        print('Joining Process')
 
 
 if __name__ == "__main__":
