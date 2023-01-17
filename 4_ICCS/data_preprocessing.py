@@ -293,8 +293,77 @@ def visualize_mlready_dataset_mp():
     pass
 
 
+def mlready2augmented(file_name):
+    """The mlready2augmented function retrieves a numpy array from a csv file
+    and augments it such that the channels are swapped and then saved as new
+    datasets. Here, the augmented datasets are fitted with suffixes inorder to
+    understand the augmentation.
+    _1: The original channels are shifted by 1 [0]->[1], [1]->[2], [2]->[0]
+    _2: The original channels are shifted by 1 [0]->[2], [1]->[0], [2]->[1]
+
+    Args:
+        file_name:
+          Object of string type containing the name of the csv file as the
+          basis of augmentation.
+
+    Returns:
+        NONE:
+          This function saves the augmented datasets to file.
+    """
+    print(f'Loading Dataset from csv: {file_name}')
+    dataset = np.loadtxt(f'dataset_mlready/{file_name}')
+
+    if dataset.size != (1000 * 3 * 26 * 26 * 26):
+        print("Incorrect dimensions:", dataset.size, file_name)
+        return
+
+    t, c, d, h, w = (1000, 3, 26, 26, 26)
+
+    original_dataset = dataset.reshape(t, c, d, h, w)
+    augmented_1 = torch.cat(
+        (original_dataset[:, 1, :, :, :], original_dataset[:, 2, :, :, :],
+         original_dataset[:, 0, :, :, :]), 1)
+    augmented_2 = torch.cat(
+        (original_dataset[:, 2, :, :, :], original_dataset[:, 0, :, :, :],
+         original_dataset[:, 1, :, :, :]), 1)
+    np.savetxt(f'dataset_mlready/{file_name}_1', augmented_1)
+    np.savetxt(f'dataset_mlready/{file_name}_2', augmented_2)
+    pass
+
+
+def mlready2augmented_mp():
+    """The mlready2augmented_mp function is used to call the mlready2augmented
+    function in a multiprocessing manner.
+    """
+    _directory = "/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/4_ICCS/dataset_mlready"
+    _raw_files = glob.glob(
+        f"{_directory}/**/*.csv", recursive=True)
+    _files = []
+
+    for _file in _raw_files:
+        print(_file)
+        '''
+        _file = _file.replace(_directory+'/02_clean/', '')
+        print(_file)
+        _files.append(_file)
+        '''
+    '''
+    processes = []
+
+    for i in range(len(_raw_files)):
+        p = mp.Process(
+            target=clean2mlready,
+            args=(_files[i],)
+        )
+        p.start()
+        processes.append(p)
+        print(f'Creating Process Number: {i+1}')
+    '''
+
+
 if __name__ == "__main__":
     # visualize_mlready_dataset_mp()
-    clean2mlready_mp()
+    # clean2mlready_mp()
+    mlready2augmented_mp()
 
     pass
