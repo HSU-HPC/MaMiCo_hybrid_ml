@@ -365,20 +365,6 @@ def mlready2augmented_mp():
 if __name__ == "__main__":
     # visualize_mlready_dataset_mp()
     # clean2mlready_mp()
-    # mlready2augmented_mp()
+    mlready2augmented_mp()
 
-    a = np.zeros((1, 3, 2, 2, 2))
-    a[:, 0, :, :, :] = a[:, 0, :, :, :] + 1
-    a[:, 1, :, :, :] = a[:, 1, :, :, :] + 2
-    a[:, 2, :, :, :] = a[:, 2, :, :, :] + 3
-
-    x = np.concatenate(
-        (a[:, 1, :, :, :].reshape((1, 1, 2, 2, 2)),
-         a[:, 2, :, :, :].reshape((1, 1, 2, 2, 2)),
-         a[:, 0, :, :, :].reshape((1, 1, 2, 2, 2))), 1)
-
-    print(a)
-    print(x)
-    print(a.shape)
-    print(x.shape)
     pass
