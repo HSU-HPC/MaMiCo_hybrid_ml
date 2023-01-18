@@ -332,8 +332,11 @@ def mlready2augmented(file_name):
         (original_dataset[:, 2, :, :, :].reshape((t, 1, d, h, w)),
          original_dataset[:, 0, :, :, :].reshape((t, 1, d, h, w)),
          original_dataset[:, 1, :, :, :].reshape((t, 1, d, h, w))), 1)
-    np.savetxt(f'{file_name}_1.csv', augmented_1)
-    np.savetxt(f'{file_name}_2.csv', augmented_2)
+
+    augmented_1_reshaped = augmented_1.reshape(augmented_1.shape[0], -1)
+    augmented_2_reshaped = augmented_2.reshape(augmented_2.shape[0], -1)
+    np.savetxt(f'{file_name}_1.csv', augmented_1_reshaped)
+    np.savetxt(f'{file_name}_2.csv', augmented_2_reshaped)
 
 
 def mlready2augmented_mp():
