@@ -1139,6 +1139,7 @@ def calculateFLOPS_ConvAE(c, d, h, w, features):
 
 
 if __name__ == "__main__":
+    '''
 
     _model = AE_u_i(
         device=device,
@@ -1174,5 +1175,6 @@ if __name__ == "__main__":
         print('True')
     else:
         print('False')
-    '''
+    x = torch.cat((x, x_cat), 0)
+    print(x.shape)
     pass

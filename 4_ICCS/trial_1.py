@@ -57,14 +57,31 @@ def train_AE(loader, model, optimizer, criterion, scaler, model_identifier, curr
     _epoch_loss = 0
     _counter = 0
 
-    for _batch_idx, (_data, _targets) in enumerate(loader):
-        _data = _data.float().to(device=device)
-        _targets = _targets.float().to(device=device)
+    for _batch_idx, (_data_0, _targ_0) in enumerate(loader):
+        t, c, h, d, w = _data_0.shape
+        _data_u_x = torch.reshape(
+            _data_0[:, 0, :, :, :].float(), (t, 1, h, d, w)).to(device=device)
+        _data_u_y = torch.reshape(
+            _data_0[:, 1, :, :, :].float(), (t, 1, h, d, w)).to(device=device)
+        _data_u_z = torch.reshape(
+            _data_0[:, 2, :, :, :].float(), (t, 1, h, d, w)).to(device=device)
+        _targ_u_x = torch.reshape(
+            _targ_0[:, 0, :, :, :].float(), (t, 1, h, d, w)).to(device=device)
+        _targ_u_y = torch.reshape(
+            _targ_0[:, 1, :, :, :].float(), (t, 1, h, d, w)).to(device=device)
+        _targ_u_z = torch.reshape(
+            _targ_0[:, 2, :, :, :].float(), (t, 1, h, d, w)).to(device=device)
+
+        _data_1 = torch.cat((_data_u_y, _data_u_z, _data_u_x), 1).to(device)
+        _data_2 = torch.cat((_data_u_z, _data_u_x, _data_u_y), 1).to(device)
+        _targ_1 = torch.cat((_targ_u_y, _targ_u_z, _targ_u_x), 1).to(device)
+        _targ_2 = torch.cat((_targ_u_z, _targ_u_x, _targ_u_y), 1).to(device)
+
+        _data = torch.cat((_data_0, _data_1, _data_2), 0).to(device)
+        _targ = torch.cat((_targ_0, _targ_1, _targ_2), 0).to(device)
 
         with torch.cuda.amp.autocast():
-            _predictions = model(_data)
-            _pred = _predictions.float()
-            _targ = _targets.float()
+            _pred = model(_data).float().to(device)
             _loss = criterion(_pred, _targ)
             _epoch_loss += _loss.item()
             _counter += 1
