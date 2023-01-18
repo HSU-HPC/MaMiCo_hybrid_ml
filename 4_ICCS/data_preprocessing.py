@@ -262,7 +262,7 @@ def visualize_mlready_dataset_mp():
           aforementioned meaningful plots.
     """
     print('Performing: visualize_mlready_dataset_mp()')
-    _directory = "/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/4_ICCS/dataset_mlready/KVS/Validation"
+    _directory = "/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/4_ICCS/"
     _raw_files = glob.glob(
         f"{_directory}/*_1.csv")
     _raw_files += glob.glob(
