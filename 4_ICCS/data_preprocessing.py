@@ -262,19 +262,19 @@ def visualize_mlready_dataset_mp():
           aforementioned meaningful plots.
     """
     print('Performing: visualize_mlready_dataset_mp()')
-    _directory = "/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/4_ICCS/dataset_mlready"
+    _directory = "/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/4_ICCS/dataset_mlready/KVS/Validation"
     _raw_files = glob.glob(
-        f"{_directory}/*couette_combined_*.csv")
+        f"{_directory}/*_1.csv")
+    _raw_files += glob.glob(
+        f"{_directory}/*_2.csv")
     _file_names = []
     _datasets = []
 
     for file in _raw_files:
-        # print(file)
-        file_name = file.replace(_directory+'/', '')
-        # print(file_name)
-        _file_names.append(file_name)
-        dataset = mlready2dataset(file_name)
-        _datasets.append(dataset)
+        _file_name = file.replace(_directory+'/', '')
+        _file_names.append(_file_name)
+        _dataset = mlready2dataset(_file_name)
+        _datasets.append(_dataset)
 
     processes = []
 
@@ -371,8 +371,9 @@ def mlready2augmented_mp():
 
 
 if __name__ == "__main__":
-    # visualize_mlready_dataset_mp()
+    print('Starting Data Preprocessing: Visualization of Augmented Datasets')
+    visualize_mlready_dataset_mp()
     # clean2mlready_mp()
-    mlready2augmented_mp()
+    # mlready2augmented_mp()
 
     pass
