@@ -785,12 +785,12 @@ def prediction_retriever(model_directory, model_name, dataset_name, save2file_na
             shuffle=False
         )
 
-    _model = AE_u_i(
+    _model = AE(
         device=device,
-        in_channels=1,
-        out_channels=1,
+        in_channels=3,
+        out_channels=3,
         features=[4, 8, 16],
-        activation=nn.ReLU(inplace=True)
+        activation=nn.LeakyReLU(negative_slope=0.1, inplace=True)
     ).to(device)
     _model.load_state_dict(torch.load(
         f'{model_directory}/{model_name}', map_location='cpu'))
