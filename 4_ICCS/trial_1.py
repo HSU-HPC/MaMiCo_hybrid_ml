@@ -131,10 +131,30 @@ def train_AE_u_i(loader, model_x, model_y, model_z,
     _epoch_loss_z = 0
     _counter = 0
 
-    for _batch_idx, (_data, _targets) in enumerate(loader):
-        _data = _data.float().to(device=device)
-        _targets = _targets.float().to(device=device)
-        t, c, h, d, w = _data.shape
+    for _batch_idx, (_data_0, _targ_0) in enumerate(loader):
+        t, c, h, d, w = _data_0.shape
+        _data_u_x = torch.reshape(
+            _data_0[:, 0, :, :, :], (t, 1, h, d, w)).to(device=device)
+        _data_u_y = torch.reshape(
+            _data_0[:, 1, :, :, :], (t, 1, h, d, w)).to(device=device)
+        _data_u_z = torch.reshape(
+            _data_0[:, 2, :, :, :], (t, 1, h, d, w)).to(device=device)
+        _targ_u_x = torch.reshape(
+            _targ_0[:, 0, :, :, :], (t, 1, h, d, w)).to(device=device)
+        _targ_u_y = torch.reshape(
+            _targ_0[:, 1, :, :, :], (t, 1, h, d, w)).to(device=device)
+        _targ_u_z = torch.reshape(
+            _targ_0[:, 2, :, :, :], (t, 1, h, d, w)).to(device=device)
+
+        _data_1 = torch.cat((_data_u_y, _data_u_z, _data_u_x), 1).to(device)
+        _data_2 = torch.cat((_data_u_z, _data_u_x, _data_u_y), 1).to(device)
+        _targ_1 = torch.cat((_targ_u_y, _targ_u_z, _targ_u_x), 1).to(device)
+        _targ_2 = torch.cat((_targ_u_z, _targ_u_x, _targ_u_y), 1).to(device)
+
+        _data = torch.cat((_data_0.to(device), _data_1.to(
+            device), _data_2.to(device)), 0).float().to(device)
+        _targ = torch.cat((_targ_0.to(device), _targ_1.to(
+            device), _targ_2.to(device)), 0).float().to(device)
 
         with torch.cuda.amp.autocast():
             _preds_x = model_x(_data).float().to(device=device)
@@ -142,11 +162,11 @@ def train_AE_u_i(loader, model_x, model_y, model_z,
             _preds_z = model_z(_data).float().to(device=device)
 
             _targs_x = torch.reshape(
-                _targets[:, 0, :, :, :].float(), (t, 1, h, d, w)).to(device=device)
+                _targ[:, 0, :, :, :].float(), (t, 1, h, d, w)).to(device=device)
             _targs_y = torch.reshape(
-                _targets[:, 1, :, :, :].float(), (t, 1, h, d, w)).to(device=device)
+                _targ[:, 1, :, :, :].float(), (t, 1, h, d, w)).to(device=device)
             _targs_z = torch.reshape(
-                _targets[:, 2, :, :, :].float(), (t, 1, h, d, w)).to(device=device)
+                _targ[:, 2, :, :, :].float(), (t, 1, h, d, w)).to(device=device)
 
             _loss_x = criterion(_preds_x, _targs_x)
             _loss_y = criterion(_preds_y, _targs_y)
@@ -898,16 +918,6 @@ if __name__ == "__main__":
 
     trial_1_AE(_alpha, _alpha_string, _train_loaders, _valid_loaders)
 
-    print('Starting Trial 1: AE_u_i (Both, MAE, LRLU)')
-    _alpha = 0.0001
-    _alpha_string = '0_0001'
-    _train_loaders, _valid_loaders = get_AE_loaders(
-        data_distribution='get_both',
-        batch_size=32,
-        shuffle=True
-    )
-    trial_1_AE_u_i(_alpha, _alpha_string, _train_loaders, _valid_loaders)
-    '''
     print('Starting Trial 1: Prediction Retriever (KVS + Aug, MAE, LReLU, AE)')
 
     _model_directory = '/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/4_ICCS/Results/1_Conv_AE/kvs_aug_04_mae_lrelu/'
@@ -921,3 +931,15 @@ if __name__ == "__main__":
         dataset_name=_dataset_name,
         save2file_name=_save2file_name
     )
+    '''
+
+    print('Starting Trial 1: AE_u_i (KVS + Aug, MAE, ReLU)')
+    _alpha = 0.0001
+    _alpha_string = '0_0001'
+    _train_loaders, _valid_loaders = get_AE_loaders(
+        data_distribution='get_random',
+        batch_size=32,
+        shuffle=True
+    )
+
+    trial_1_AE_u_i(_alpha, _alpha_string, _train_loaders, _valid_loaders)
