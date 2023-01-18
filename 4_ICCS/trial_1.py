@@ -954,7 +954,7 @@ if __name__ == "__main__":
     _dataset_name = 'get_KVS_eval'
     _save2file_name = 'pred_10_lrelu_kvs_aug_combined_domain_init_20000_NW'
 
-    prediction_retriever(
+    prediction_retriever_u_i(
         model_directory=_model_directory,
         model_name_x=_model_name_x,
         model_name_y=_model_name_y,
