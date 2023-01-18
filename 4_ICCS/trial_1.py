@@ -418,7 +418,7 @@ def trial_1_AE(alpha, alpha_string, train_loaders, valid_loaders):
     print('Initializing AE model.')
     _model = AE(
         device=device,
-        in_channels=1,
+        in_channels=3,
         out_channels=3,
         features=[4, 8, 16],
         activation=nn.LeakyReLU(negative_slope=0.1, inplace=True)
