@@ -142,7 +142,7 @@ class AE(nn.Module):
               Object of PyTorch-type tensor returning the autoencoded result.
         """
         if y == 0 or y == 'get_bottleneck':
-            print(x[:, 0, :, :, :].shape)
+            print(x.shape)
             # The following for-loop describes the entire (left) contracting side,
             for down in self.downs:
                 x = down(x)
