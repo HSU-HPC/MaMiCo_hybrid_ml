@@ -421,7 +421,7 @@ def trial_1_AE(alpha, alpha_string, train_loaders, valid_loaders):
         in_channels=1,
         out_channels=1,
         features=[4, 8, 16],
-        activation=nn.LeakyReLU(negative_slope=0.1, inplace=False)
+        activation=nn.LeakyReLU(negative_slope=0.1, inplace=True)
     ).to(device)
 
     print('Initializing training parameters.')
