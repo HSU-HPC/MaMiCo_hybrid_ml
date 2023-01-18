@@ -932,7 +932,7 @@ if __name__ == "__main__":
         save2file_name=_save2file_name
     )
     '''
-
+    '''
     print('Starting Trial 1: AE_u_i (KVS + Aug, MAE, ReLU)')
     _alpha = 0.0001
     _alpha_string = '0_0001'
@@ -943,3 +943,22 @@ if __name__ == "__main__":
     )
 
     trial_1_AE_u_i(_alpha, _alpha_string, _train_loaders, _valid_loaders)
+    '''
+
+    print('Starting Trial 1: Prediction Retriever (KVS + Aug, MAE, LReLU, AE_u_i)')
+
+    _model_directory = '/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/4_ICCS/Results/1_Conv_AE/kvs_aug_10_mae_lrelu/'
+    _model_name_x = 'Model_AE_u_i_LR0_0001_x'
+    _model_name_y = 'Model_AE_u_i_LR0_0001_y'
+    _model_name_z = 'Model_AE_u_i_LR0_0001_z'
+    _dataset_name = 'get_KVS_eval'
+    _save2file_name = 'pred_10_lrelu_kvs_aug_combined_domain_init_20000_NW'
+
+    prediction_retriever(
+        model_directory=_model_directory,
+        model_name_x=_model_name_x,
+        model_name_y=_model_name_y,
+        model_name_z=_model_name_z,
+        dataset_name=_dataset_name,
+        save2file_name=_save2file_name
+    )
