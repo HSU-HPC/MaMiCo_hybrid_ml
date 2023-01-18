@@ -1153,7 +1153,7 @@ if __name__ == "__main__":
 
     _out = _model(_data)
     '''
-
+    '''
     x = torch.rand(10, 3, 3, 3, 3)
     x_1 = x[:, 0, :, :, :]
     x_1 = torch.reshape(x_1, (10, 1, 3, 3, 3))
@@ -1177,4 +1177,11 @@ if __name__ == "__main__":
         print('False')
     x = torch.cat((x, x_cat), 0)
     print(x.shape)
+    '''
+    x = torch.ones(10, 3, 3, 3, 3)
+    x = torch.add(x, 0.3)
+    print(x[0, :, :, :, :])
+    x = torch.add(x, -0.3)
+    print(x[0, :, :, :, :])
+
     pass
