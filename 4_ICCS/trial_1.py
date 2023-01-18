@@ -907,22 +907,17 @@ if __name__ == "__main__":
         shuffle=True
     )
     trial_1_AE_u_i(_alpha, _alpha_string, _train_loaders, _valid_loaders)
+    '''
+    print('Starting Trial 1: Prediction Retriever (KVS + Aug, MAE, LReLU, AE)')
 
-    print('Starting Trial 1: Prediction Retriever (KVS, MRE, LReLU, AE_u_i)')
-
-    _model_directory = '/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/4_ICCS/Results/1_Conv_AE/kvs_10_mae_lrelu_u_i/'
-    _model_name_x = 'Model_AE_u_i_LR0_0001_x'
-    _model_name_y = 'Model_AE_u_i_LR0_0001_y'
-    _model_name_z = 'Model_AE_u_i_LR0_0001_z'
+    _model_directory = '/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/4_ICCS/Results/kvs_aug_04_mae_lrelu/'
+    _model_name = 'Model_AE_u_i_LR0_0001'
     _dataset_name = 'get_KVS_eval'
-    _save2file_name = 'pred_10_lrelu_kvs_combined_domain_init_20000_NW'
+    _save2file_name = 'pred_10_lrelu_kvs_aug_combined_domain_init_20000_NW'
 
-    prediction_retriever_u_i(
+    prediction_retriever(
         model_directory=_model_directory,
-        model_name_x=_model_name_x,
-        model_name_y=_model_name_y,
-        model_name_z=_model_name_z,
+        model_name=_model_name,
         dataset_name=_dataset_name,
         save2file_name=_save2file_name
     )
-    '''
