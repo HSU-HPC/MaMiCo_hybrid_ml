@@ -564,21 +564,21 @@ def trial_1_AE_u_i(alpha, alpha_string, train_loaders, valid_loaders):
         in_channels=1,
         out_channels=1,
         features=[4, 8, 16],
-        activation=nn.ReLU(inplace=True)
+        activation=nn.LeakyReLU(negative_slope=0.3, inplace=True)
     ).to(device)
     _model_y = AE_u_y(
         device=device,
         in_channels=1,
         out_channels=1,
         features=[4, 8, 16],
-        activation=nn.ReLU(inplace=True)
+        activation=nn.LeakyReLU(negative_slope=0.3, inplace=True)
     ).to(device)
     _model_z = AE_u_z(
         device=device,
         in_channels=1,
         out_channels=1,
         features=[4, 8, 16],
-        activation=nn.ReLU(inplace=True)
+        activation=nn.LeakyReLU(negative_slope=0.3, inplace=True)
     ).to(device)
 
     print('Initializing training parameters.')
@@ -861,21 +861,21 @@ def prediction_retriever_u_i(model_directory, model_name_x, model_name_y,
         in_channels=1,
         out_channels=1,
         features=[4, 8, 16],
-        activation=nn.ReLU(inplace=True)
+        activation=nn.LeakyReLU(negative_slope=0.3, inplace=True)
     ).to(device)
     _model_y = AE_u_y(
         device=device,
         in_channels=1,
         out_channels=1,
         features=[4, 8, 16],
-        activation=nn.ReLU(inplace=True)
+        activation=nn.LeakyReLU(negative_slope=0.3, inplace=True)
     ).to(device)
     _model_z = AE_u_z(
         device=device,
         in_channels=1,
         out_channels=1,
         features=[4, 8, 16],
-        activation=nn.ReLU(inplace=True)
+        activation=nn.LeakyReLU(negative_slope=0.3, inplace=True)
     ).to(device)
 
     _model_x.load_state_dict(torch.load(
@@ -932,8 +932,8 @@ if __name__ == "__main__":
         save2file_name=_save2file_name
     )
     '''
-    '''
-    print('Starting Trial 1: AE_u_i (KVS + Aug, MAE, ReLU)')
+
+    print('Starting Trial 1: AE_u_i (KVS + Aug, MAE, LReLU[0.3])')
     _alpha = 0.0001
     _alpha_string = '0_0001'
     _train_loaders, _valid_loaders = get_AE_loaders(
@@ -962,3 +962,4 @@ if __name__ == "__main__":
         dataset_name=_dataset_name,
         save2file_name=_save2file_name
     )
+    '''
