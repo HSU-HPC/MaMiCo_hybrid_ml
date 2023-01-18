@@ -313,7 +313,7 @@ def mlready2augmented(file_name):
     _directory = "/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/4_ICCS/"
     _dummy = file_name.replace(_directory, '')
     print(_dummy)
-    dataset = np.loadtxt(f'{_dummy}.csv')
+    dataset = np.loadtxt(f'./{_dummy}.csv')
 
     if dataset.size != (1000 * 3 * 26 * 26 * 26):
         print("Incorrect dimensions:", dataset.size, file_name)
