@@ -264,7 +264,7 @@ def visualize_mlready_dataset_mp():
     print('Performing: visualize_mlready_dataset_mp()')
     _directory = "/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/4_ICCS/dataset_mlready"
     _raw_files = glob.glob(
-        f"{_directory}/**/*_1.csv", recursive=True)
+        f"{_directory}/**/*domain_1.csv", recursive=True)
     _file_names = []
     _datasets = []
 
