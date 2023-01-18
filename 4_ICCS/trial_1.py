@@ -78,7 +78,7 @@ def train_AE(loader, model, optimizer, criterion, scaler, model_identifier, curr
         _targ_2 = torch.cat((_targ_u_z, _targ_u_x, _targ_u_y), 1).to(device)
 
         _data = torch.cat((_data_0.to(device), _data_1.to(
-            device), _data_2.to(device)), 0).to(device)
+            device), _data_2.to(device)), 0).float().to(device)
         _targ = torch.cat((_targ_0.to(device), _targ_1.to(
             device), _targ_2.to(device)), 0).float().to(device)
 
