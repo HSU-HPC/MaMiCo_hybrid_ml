@@ -72,15 +72,13 @@ def train_AE(loader, model, optimizer, criterion, scaler, model_identifier, curr
         _targ_u_z = torch.reshape(
             _targ_0[:, 2, :, :, :].float(), (t, 1, h, d, w)).to(device=device)
 
-        _data_0.to(device)
         _data_1 = torch.cat((_data_u_y, _data_u_z, _data_u_x), 1).to(device)
         _data_2 = torch.cat((_data_u_z, _data_u_x, _data_u_y), 1).to(device)
-        _targ_0.to(device)
         _targ_1 = torch.cat((_targ_u_y, _targ_u_z, _targ_u_x), 1).to(device)
         _targ_2 = torch.cat((_targ_u_z, _targ_u_x, _targ_u_y), 1).to(device)
 
-        _data = torch.cat((_data_0, _data_1, _data_2), 0).to(device)
-        _targ = torch.cat((_targ_0, _targ_1, _targ_2), 0).to(device)
+        _data = torch.cat((_data_0.to(device), _data_1.to(device), _data_2.to(device)), 0).to(device)
+        _targ = torch.cat((_targ_0.to(device), _targ_1.to(device), _targ_2.to(device)), 0).to(device)
 
         with torch.cuda.amp.autocast():
             _pred = model(_data).float().to(device)
