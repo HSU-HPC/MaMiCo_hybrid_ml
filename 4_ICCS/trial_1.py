@@ -890,7 +890,7 @@ if __name__ == "__main__":
     _alpha = 0.0001
     _alpha_string = '0_0001'
     _train_loaders, _valid_loaders = get_AE_loaders(
-        data_distribution='get_KVS',
+        data_distribution='get_random',
         batch_size=32,
         shuffle=True
     )
