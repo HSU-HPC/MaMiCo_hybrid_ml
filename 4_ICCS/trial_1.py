@@ -166,8 +166,6 @@ def train_AE_u_i(loader, model_x, model_y, model_z,
             _preds_y = torch.add(_preds_y, -0.2).float().to(device=device)
             _preds_z = torch.add(_preds_z, -0.2).float().to(device=device)
 
-            _preds_x = model_x(_data).float().to(device=device)
-
             _targs_x = torch.reshape(
                 _targ[:, 0, :, :, :].float(), (3*t, 1, h, d, w)).to(device=device)
             _targs_y = torch.reshape(
@@ -595,7 +593,7 @@ def trial_1_AE_u_i(alpha, alpha_string, train_loaders, valid_loaders):
     _optimizer_z = optim.Adam(_model_z.parameters(), lr=alpha)
 
     print('Beginning training.')
-    for epoch in range(10):
+    for epoch in range(100):
         _avg_loss_x = 0
         _avg_loss_y = 0
         _avg_loss_z = 0
@@ -939,7 +937,7 @@ if __name__ == "__main__":
         save2file_name=_save2file_name
     )
     '''
-    '''
+
     print('Starting Trial 1: AE_u_i (KVS + Aug, MAE, ReLU, torch.add())')
     _alpha = 0.0001
     _alpha_string = '0_0001'
@@ -968,3 +966,4 @@ if __name__ == "__main__":
         dataset_name=_dataset_name,
         save2file_name=_save2file_name
     )
+    '''
