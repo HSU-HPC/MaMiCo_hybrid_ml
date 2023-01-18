@@ -885,6 +885,7 @@ def prediction_retriever_u_i(model_directory, model_name_x, model_name_y,
 
 
 if __name__ == "__main__":
+    '''
     print('Starting Trial 1: AE (KVS + Aug, MAE, LRLU)')
 
     _alpha = 0.0001
@@ -897,7 +898,6 @@ if __name__ == "__main__":
 
     trial_1_AE(_alpha, _alpha_string, _train_loaders, _valid_loaders)
 
-    '''
     print('Starting Trial 1: AE_u_i (Both, MAE, LRLU)')
     _alpha = 0.0001
     _alpha_string = '0_0001'
