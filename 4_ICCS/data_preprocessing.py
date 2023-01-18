@@ -319,13 +319,14 @@ def mlready2augmented(file_name):
     t, c, d, h, w = (1000, 3, 26, 26, 26)
 
     original_dataset = dataset.reshape(t, c, d, h, w)
-    original_dataset = torch.from_numpy(original_dataset)
-    augmented_1 = torch.cat(
-        (original_dataset[:, 1, :, :, :], original_dataset[:, 2, :, :, :],
-         original_dataset[:, 0, :, :, :]), 1)
-    augmented_2 = torch.cat(
-        (original_dataset[:, 2, :, :, :], original_dataset[:, 0, :, :, :],
-         original_dataset[:, 1, :, :, :]), 1)
+    augmented_1 = np.concatenate(
+        (original_dataset[:, 1, :, :, :].reshape((t, 1, d, h, w)),
+         original_dataset[:, 2, :, :, :].reshape((t, 1, d, h, w)),
+         original_dataset[:, 0, :, :, :].reshape((t, 1, d, h, w))), 1)
+    augmented_2 = np.concatenate(
+        (original_dataset[:, 2, :, :, :].reshape((t, 1, d, h, w)),
+         original_dataset[:, 0, :, :, :].reshape((t, 1, d, h, w)),
+         original_dataset[:, 1, :, :, :].reshape((t, 1, d, h, w))), 1)
     np.savetxt(f'{file_name}_1.csv', augmented_1)
     np.savetxt(f'{file_name}_2.csv', augmented_2)
 
@@ -364,6 +365,20 @@ def mlready2augmented_mp():
 if __name__ == "__main__":
     # visualize_mlready_dataset_mp()
     # clean2mlready_mp()
-    mlready2augmented_mp()
+    # mlready2augmented_mp()
 
+    a = np.zeros((1, 3, 2, 2, 2))
+    a[:, 0, :, :, :] = a[:, 0, :, :, :] + 1
+    a[:, 1, :, :, :] = a[:, 1, :, :, :] + 2
+    a[:, 2, :, :, :] = a[:, 2, :, :, :] + 3
+
+    x = np.concatenate(
+        (a[:, 1, :, :, :].reshape((1, 1, 2, 2, 2)),
+         a[:, 2, :, :, :].reshape((1, 1, 2, 2, 2)),
+         a[:, 0, :, :, :].reshape((1, 1, 2, 2, 2))), 1)
+
+    print(a)
+    print(x)
+    print(a.shape)
+    print(x.shape)
     pass
