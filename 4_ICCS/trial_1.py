@@ -415,13 +415,13 @@ def trial_1_AE(alpha, alpha_string, train_loaders, valid_loaders):
     _file_prefix = '/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/' + \
         '4_ICCS/Results/1_Conv_AE/'
     _model_identifier = f'LR{alpha_string}'
-    print('Initializing AE_u_i model.')
-    _model = AE_u_i(
+    print('Initializing AE model.')
+    _model = AE(
         device=device,
         in_channels=1,
         out_channels=1,
         features=[4, 8, 16],
-        activation=nn.ReLU(inplace=True)
+        activation=nn.LeakyReLU(negative_slope=0.1, inplace=False)
     ).to(device)
 
     print('Initializing training parameters.')
@@ -866,6 +866,18 @@ def prediction_retriever_u_i(model_directory, model_name_x, model_name_y,
 
 
 if __name__ == "__main__":
+    print('Starting Trial 1: AE (Both + Aug, MAE, LRLU)')
+
+    _alpha = 0.0001
+    _alpha_string = '0_0001'
+    _train_loaders, _valid_loaders = get_AE_loaders(
+        data_distribution='get_both',
+        batch_size=32,
+        shuffle=True
+    )
+
+    trial_1_AE(_alpha, _alpha_string, _train_loaders, _valid_loaders)
+
     '''
     print('Starting Trial 1: AE_u_i (Both, MAE, LRLU)')
     _alpha = 0.0001
@@ -877,7 +889,6 @@ if __name__ == "__main__":
     )
     trial_1_AE_u_i(_alpha, _alpha_string, _train_loaders, _valid_loaders)
 
-    '''
     print('Starting Trial 1: Prediction Retriever (KVS, MRE, LReLU, AE_u_i)')
 
     _model_directory = '/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/4_ICCS/Results/1_Conv_AE/kvs_10_mae_lrelu_u_i/'
@@ -895,3 +906,4 @@ if __name__ == "__main__":
         dataset_name=_dataset_name,
         save2file_name=_save2file_name
     )
+    '''
