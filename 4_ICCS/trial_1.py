@@ -910,7 +910,7 @@ if __name__ == "__main__":
     '''
     print('Starting Trial 1: Prediction Retriever (KVS + Aug, MAE, LReLU, AE)')
 
-    _model_directory = '/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/4_ICCS/Results/kvs_aug_04_mae_lrelu/'
+    _model_directory = '/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/4_ICCS/Results/1_Conv_AE/kvs_aug_04_mae_lrelu/'
     _model_name = 'Model_AE_u_i_LR0_0001'
     _dataset_name = 'get_KVS_eval'
     _save2file_name = 'pred_10_lrelu_kvs_aug_combined_domain_init_20000_NW'
