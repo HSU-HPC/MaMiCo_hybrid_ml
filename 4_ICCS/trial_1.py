@@ -162,11 +162,11 @@ def train_AE_u_i(loader, model_x, model_y, model_z,
             _preds_z = model_z(_data).float().to(device=device)
 
             _targs_x = torch.reshape(
-                _targ[:, 0, :, :, :].float(), (t, 1, h, d, w)).to(device=device)
+                _targ[:, 0, :, :, :].float(), (3*t, 1, h, d, w)).to(device=device)
             _targs_y = torch.reshape(
-                _targ[:, 1, :, :, :].float(), (t, 1, h, d, w)).to(device=device)
+                _targ[:, 1, :, :, :].float(), (3*t, 1, h, d, w)).to(device=device)
             _targs_z = torch.reshape(
-                _targ[:, 2, :, :, :].float(), (t, 1, h, d, w)).to(device=device)
+                _targ[:, 2, :, :, :].float(), (3*t, 1, h, d, w)).to(device=device)
 
             _loss_x = criterion(_preds_x, _targs_x)
             _loss_y = criterion(_preds_y, _targs_y)
