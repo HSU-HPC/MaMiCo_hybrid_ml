@@ -279,9 +279,11 @@ def visualize_mlready_dataset_mp():
     processes = []
 
     for i in range(len(_raw_files)):
+        _local_file_name = _file_names[i].replace('KVS/Validation/', '')
+        _local_file_name = _file_names[i].replace('KVS/Training/', '')
         p = mp.Process(
             target=plot_flow_profile,
-            args=(_datasets[i], _file_names[i],)
+            args=(_datasets[i], _local_file_name,)
         )
         p.start()
         processes.append(p)
