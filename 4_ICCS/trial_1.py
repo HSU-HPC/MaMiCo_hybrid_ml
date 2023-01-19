@@ -937,7 +937,7 @@ if __name__ == "__main__":
         save2file_name=_save2file_name
     )
     '''
-
+    '''
     print('Starting Trial 1: AE_u_i (KVS + Aug, MAE, ReLU, torch.add())')
     _alpha = 0.0001
     _alpha_string = '0_0001'
@@ -951,12 +951,12 @@ if __name__ == "__main__":
     '''
     print('Starting Trial 1: Prediction Retriever (KVS + Aug, MAE, LReLU, AE_u_i, torch.add())')
 
-    _model_directory = '/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/4_ICCS/Results/1_Conv_AE/kvs_aug_10_mae_relu_upshift/'
+    _model_directory = '/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/4_ICCS/Results/1_Conv_AE/kvs_aug_100_mae_relu_upshift/'
     _model_name_x = 'Model_AE_u_i_LR0_0001_x'
     _model_name_y = 'Model_AE_u_i_LR0_0001_y'
     _model_name_z = 'Model_AE_u_i_LR0_0001_z'
     _dataset_name = 'get_KVS_eval'
-    _save2file_name = 'pred_10_relu_kvs_aug_upshift_combined_domain_init_20000_NW'
+    _save2file_name = 'pred_100_relu_kvs_aug_upshift_combined_domain_init_20000_NW'
 
     prediction_retriever_u_i(
         model_directory=_model_directory,
@@ -966,4 +966,3 @@ if __name__ == "__main__":
         dataset_name=_dataset_name,
         save2file_name=_save2file_name
     )
-    '''
