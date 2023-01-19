@@ -897,12 +897,15 @@ def prediction_retriever_u_i(model_directory, model_name_x, model_name_y,
         _preds = []
         for batch_idx, (data, target) in enumerate(valid_loaders[i]):
             data = data.float().to(device=device)
+            data = torch.add(data, 0.2).float().to(device=device)
             with torch.cuda.amp.autocast():
                 data_pred_x = _model_x(data)
                 data_pred_y = _model_y(data)
                 data_pred_z = _model_z(data)
                 data_pred = torch.cat(
                     (data_pred_x, data_pred_y, data_pred_z), 1).to(device)
+                data_pred = torch.add(
+                    data_pred, -0.2).float().to(device=device)
                 _preds.append(data_pred.cpu().detach().numpy())
         _preds = np.vstack(_preds)
 
