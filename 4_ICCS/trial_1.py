@@ -967,7 +967,7 @@ if __name__ == "__main__":
     _model_name_z = 'Model_AE_u_i_LR0_0001_z'
     _dataset_name = 'get_KVS_eval'
     _save2file_prefix = 'Model_100_relu_kvs_aug_upshift'
-    _save2file_name = '22000_NW'
+    _save2file_name = '22000_NW_no_std'
 
     prediction_retriever_u_i(
         model_directory=_model_directory,
