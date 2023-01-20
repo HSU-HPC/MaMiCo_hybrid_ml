@@ -105,3 +105,85 @@ def compareLossVsValid(loss_files, loss_labels, file_prefix=0, file_name=0):
         fig.savefig(f'{file_prefix}Compare_Loss_vs_Valid_{file_name}.svg')
 
     plt.close()
+
+
+def plotPredVsTargKVS(input_1, input_2='void', file_prefix=0, file_name=0):
+    """The plotPredVsTargKVS function aims to graphically compare model
+    performance via plotting domain-wise averaged predicted and target
+    velocities vs time. The standard deviations are additionally included for
+    better comparison.
+
+    Args:
+        input_1:
+          Object of type PyTorch-Tensor containing the predicted dataset
+        input_2:
+          Object of type PyTorch-Tensor containing the target dataset
+        file_prefix:
+          Object of type string containing
+        file_name:
+          Object of type string containing
+
+    Returns:
+        NONE:
+          This function saves the graphical comparison to file.
+    """
+
+    if input_2 == 'void':
+        print('Invalid input_2.')
+
+    t, c, x, y, z = input_1.shape
+    t_max = 100
+    t_axis = np.arange(1, t_max+1)
+
+    p_std_x = np.std(input_1[:, 0, :, :, :], axis=1)
+    t_std_x = np.std(input_2[:, 0, :, :, :], axis=1)
+    p_std_y = np.std(input_1[:, 1, :, :, :], axis=1)
+    t_std_y = np.std(input_2[:, 1, :, :, :], axis=1)
+    p_std_z = np.std(input_1[:, 2, :, :, :], axis=1)
+    t_std_z = np.std(input_2[:, 2, :, :, :], axis=1)
+
+    p_avg_x = np.mean(input_1[:, 0, :, :, :], axis=1)
+    t_avg_x = np.mean(input_2[:, 0, :, :, :], axis=1)
+    p_avg_y = np.mean(input_1[:, 1, :, :, :], axis=1)
+    t_avg_y = np.mean(input_2[:, 1, :, :, :], axis=1)
+    p_avg_z = np.mean(input_1[:, 2, :, :, :], axis=1)
+    t_avg_z = np.mean(input_2[:, 2, :, :, :], axis=1)
+
+    fig, axs = plt.subplots(3, sharex=True, constrained_layout=True)
+    axs[0].plot(t_axis, p_avg_x, linewidth=0.5, label='Prediction')
+    axs[0].fill_between(t_axis, p_avg_x-p_std_x, p_avg_x+p_std_x,
+                        alpha=0.2, label='Prediction')
+    axs[0].plot(t_axis, t_avg_x, linewidth=0.5, label='Target')
+    axs[0].fill_between(t_axis, t_avg_x-t_std_x, t_avg_x+t_std_x,
+                        alpha=0.2, label='Prediction')
+    axs[0].set_ylabel('Averaged $u_x$')
+    axs[0].grid(axis='y', alpha=0.3)
+
+    axs[1].plot(t_axis, p_avg_y, linewidth=0.5, label='Prediction')
+    axs[1].fill_between(t_axis, p_avg_y-p_std_y, p_avg_y+p_std_y,
+                        alpha=0.2, label='Prediction')
+    axs[1].plot(t_axis, t_avg_y, linewidth=0.5, label='Target')
+    axs[1].fill_between(t_axis, t_avg_y-t_std_y, t_avg_y+t_std_y,
+                        alpha=0.2, label='Prediction')
+    axs[1].set_ylabel('Averaged $u_y$')
+    axs[1].grid(axis='y', alpha=0.3)
+
+    axs[2].plot(t_axis, p_avg_z, linewidth=0.5, label='Prediction')
+    axs[2].fill_between(t_axis, p_avg_z-p_std_z, p_avg_z+p_std_z,
+                        alpha=0.2, label='Prediction')
+    axs[2].plot(t_axis, t_avg_z, linewidth=0.5, label='Target')
+    axs[2].fill_between(t_axis, t_avg_z-t_std_z, t_avg_z+t_std_z,
+                        alpha=0.2, label='Prediction')
+    axs[2].set_ylabel('Averaged $u_z$')
+    axs[2].grid(axis='y', alpha=0.3)
+
+    axs[2].set_xlabel('Timestep')
+    axs[2].legend(ncol=2, fontsize=9)
+
+    fig.set_size_inches(6, 4)
+    if file_name != 0:
+        fig.savefig(
+            f'{file_prefix}Plot_PredVsTarg_KVS_{file_name}.svg')
+    # plt.show()
+    plt.close()
+    pass

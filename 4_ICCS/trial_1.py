@@ -8,7 +8,7 @@ import numpy as np
 from model import AE, AE_u_i, AE_u_x, AE_u_y, AE_u_z
 from torchmetrics import MeanSquaredLogError
 from utils import get_AE_loaders, losses2file, dataset2csv
-from plotting import compareLossVsValid, plot_flow_profile
+from plotting import compareLossVsValid, plot_flow_profile, plotPredVsTargKVS
 
 torch.manual_seed(10)
 random.seed(10)
@@ -839,7 +839,8 @@ def prediction_retriever(model_directory, model_name, dataset_name, save2file_na
 
 
 def prediction_retriever_u_i(model_directory, model_name_x, model_name_y,
-                             model_name_z, dataset_name, save2file_name):
+                             model_name_z, dataset_name, save2file_prefix,
+                             save2file_name):
     """The prediction_retriever function is used to evaluate model performance
     of a trained model. This is done by loading the saved model, feeding it
     with datasets and then saving the corresponding predictions for later
@@ -895,6 +896,7 @@ def prediction_retriever_u_i(model_directory, model_name_x, model_name_y,
 
     for i in range(len(valid_loaders)):
         _preds = []
+        _targs = []
         for batch_idx, (data, target) in enumerate(valid_loaders[i]):
             data = data.float().to(device=device)
             data = torch.add(data, 0.2).float().to(device=device)
@@ -907,9 +909,13 @@ def prediction_retriever_u_i(model_directory, model_name_x, model_name_y,
                 data_pred = torch.add(
                     data_pred, -0.2).float().to(device=device)
                 _preds.append(data_pred.cpu().detach().numpy())
+                _targs.append(target.cpu().detach().numpy())
         _preds = np.vstack(_preds)
+        _targs = np.vstack(_targs)
 
-    plot_flow_profile(_preds, save2file_name)
+    plotPredVsTargKVS(input_1=_preds, input_2=_targs,
+                      file_prefix=save2file_prefix, file_name=save2file_name)
+    # plot_flow_profile(_preds, save2file_name)
 
 
 if __name__ == "__main__":
@@ -960,7 +966,8 @@ if __name__ == "__main__":
     _model_name_y = 'Model_AE_u_i_LR0_0001_y'
     _model_name_z = 'Model_AE_u_i_LR0_0001_z'
     _dataset_name = 'get_KVS_eval'
-    _save2file_name = 'pred_100_relu_kvs_aug_upshift_combined_domain_init_22000_NW'
+    _save2file_prefix = 'Model_100_relu_kvs_aug_upshift'
+    _save2file_name = '22000_NW'
 
     prediction_retriever_u_i(
         model_directory=_model_directory,
@@ -968,5 +975,6 @@ if __name__ == "__main__":
         model_name_y=_model_name_y,
         model_name_z=_model_name_z,
         dataset_name=_dataset_name,
+        save2file_prefix=_save2file_prefix,
         save2file_name=_save2file_name
     )
