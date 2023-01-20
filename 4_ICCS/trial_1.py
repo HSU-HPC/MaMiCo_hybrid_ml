@@ -897,7 +897,7 @@ def prediction_retriever_u_i(model_directory, model_name_x, model_name_y,
         _preds = []
         for batch_idx, (data, target) in enumerate(valid_loaders[i]):
             data = data.float().to(device=device)
-            data = torch.add(data, 1.0).float().to(device=device)
+            data = torch.add(data, 0.2).float().to(device=device)
             with torch.cuda.amp.autocast():
                 data_pred_x = _model_x(data)
                 data_pred_y = _model_y(data)
@@ -905,7 +905,7 @@ def prediction_retriever_u_i(model_directory, model_name_x, model_name_y,
                 data_pred = torch.cat(
                     (data_pred_x, data_pred_y, data_pred_z), 1).to(device)
                 data_pred = torch.add(
-                    data_pred, -1.0).float().to(device=device)
+                    data_pred, -0.2).float().to(device=device)
                 _preds.append(data_pred.cpu().detach().numpy())
         _preds = np.vstack(_preds)
 
@@ -940,6 +940,7 @@ if __name__ == "__main__":
         save2file_name=_save2file_name
     )
     '''
+    '''
     print('Starting Trial 1: AE_u_i (KVS + Aug, MAE, ReLU, torch.add(1.0))')
     _alpha = 0.0001
     _alpha_string = '0_0001'
@@ -950,6 +951,7 @@ if __name__ == "__main__":
     )
 
     trial_1_AE_u_i(_alpha, _alpha_string, _train_loaders, _valid_loaders)
+
     '''
     print('Starting Trial 1: Prediction Retriever (KVS + Aug, MAE, LReLU, AE_u_i, torch.add())')
 
@@ -958,7 +960,7 @@ if __name__ == "__main__":
     _model_name_y = 'Model_AE_u_i_LR0_0001_y'
     _model_name_z = 'Model_AE_u_i_LR0_0001_z'
     _dataset_name = 'get_KVS_eval'
-    _save2file_name = 'pred_100_relu_kvs_aug_upshift_combined_domain_init_20000_NW'
+    _save2file_name = 'pred_100_relu_kvs_aug_upshift_combined_domain_init_22000_NW'
 
     prediction_retriever_u_i(
         model_directory=_model_directory,
@@ -968,4 +970,3 @@ if __name__ == "__main__":
         dataset_name=_dataset_name,
         save2file_name=_save2file_name
     )
-    '''
