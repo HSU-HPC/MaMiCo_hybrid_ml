@@ -132,45 +132,50 @@ def plotPredVsTargKVS(input_1, input_2='void', file_prefix=0, file_name=0):
         print('Invalid input_2.')
 
     t, c, x, y, z = input_1.shape
+    t_max = t
+    t_axis = np.arange(1, t_max+1)
 
-    p_std_x = np.std(input_1[:, 0, :, :, :], axis=1)
-    t_std_x = np.std(input_2[:, 0, :, :, :], axis=1)
-    p_std_y = np.std(input_1[:, 1, :, :, :], axis=1)
-    t_std_y = np.std(input_2[:, 1, :, :, :], axis=1)
-    p_std_z = np.std(input_1[:, 2, :, :, :], axis=1)
-    t_std_z = np.std(input_2[:, 2, :, :, :], axis=1)
+    p_std_x = np.std(input_1[:, 0, :, :, :], axis=(1, 2, 3))
+    t_std_x = np.std(input_2[:, 0, :, :, :], axis=(1, 2, 3))
+    p_std_y = np.std(input_1[:, 1, :, :, :], axis=(1, 2, 3))
+    t_std_y = np.std(input_2[:, 1, :, :, :], axis=(1, 2, 3))
+    p_std_z = np.std(input_1[:, 2, :, :, :], axis=(1, 2, 3))
+    t_std_z = np.std(input_2[:, 2, :, :, :], axis=(1, 2, 3))
 
-    p_avg_x = np.mean(input_1[:, 0, :, :, :], axis=1)
-    t_avg_x = np.mean(input_2[:, 0, :, :, :], axis=1)
-    p_avg_y = np.mean(input_1[:, 1, :, :, :], axis=1)
-    t_avg_y = np.mean(input_2[:, 1, :, :, :], axis=1)
-    p_avg_z = np.mean(input_1[:, 2, :, :, :], axis=1)
-    t_avg_z = np.mean(input_2[:, 2, :, :, :], axis=1)
+    p_avg_x = np.mean(input_1[:, 0, :, :, :], axis=(1, 2, 3))
+    t_avg_x = np.mean(input_2[:, 0, :, :, :], axis=(1, 2, 3))
+    p_avg_y = np.mean(input_1[:, 1, :, :, :], axis=(1, 2, 3))
+    t_avg_y = np.mean(input_2[:, 1, :, :, :], axis=(1, 2, 3))
+    p_avg_z = np.mean(input_1[:, 2, :, :, :], axis=(1, 2, 3))
+    t_avg_z = np.mean(input_2[:, 2, :, :, :], axis=(1, 2, 3))
+
+    print('std array shape: ', t_std_z.shape)
+    print('avg array shape: ', t_avg_z.shape)
 
     fig, axs = plt.subplots(3, sharex=True, constrained_layout=True)
-    axs[0].plot(p_avg_x, linewidth=0.5, label='Prediction')
-    axs[0].fill_between(p_avg_x-p_std_x, p_avg_x+p_std_x,
+    axs[0].plot(t_axis, p_avg_x, linewidth=0.5, label='Prediction')
+    axs[0].fill_between(t_axis, p_avg_x-p_std_x, p_avg_x+p_std_x,
                         alpha=0.2, label='Prediction')
-    axs[0].plot(t_avg_x, linewidth=0.5, label='Target')
-    axs[0].fill_between(t_avg_x-t_std_x, t_avg_x+t_std_x,
+    axs[0].plot(t_axis, t_avg_x, linewidth=0.5, label='Target')
+    axs[0].fill_between(t_axis, t_avg_x-t_std_x, t_avg_x+t_std_x,
                         alpha=0.2, label='Prediction')
     axs[0].set_ylabel('Averaged $u_x$')
     axs[0].grid(axis='y', alpha=0.3)
 
-    axs[1].plot(p_avg_y, linewidth=0.5, label='Prediction')
-    axs[1].fill_between(p_avg_y-p_std_y, p_avg_y+p_std_y,
+    axs[1].plot(t_axis, p_avg_y, linewidth=0.5, label='Prediction')
+    axs[1].fill_between(t_axis, p_avg_y-p_std_y, p_avg_y+p_std_y,
                         alpha=0.2, label='Prediction')
-    axs[1].plot(t_avg_y, linewidth=0.5, label='Target')
-    axs[1].fill_between(t_avg_y-t_std_y, t_avg_y+t_std_y,
+    axs[1].plot(t_axis, t_avg_y, linewidth=0.5, label='Target')
+    axs[1].fill_between(t_axis, t_avg_y-t_std_y, t_avg_y+t_std_y,
                         alpha=0.2, label='Prediction')
     axs[1].set_ylabel('Averaged $u_y$')
     axs[1].grid(axis='y', alpha=0.3)
 
-    axs[2].plot(p_avg_z, linewidth=0.5, label='Prediction')
-    axs[2].fill_between(p_avg_z-p_std_z, p_avg_z+p_std_z,
+    axs[2].plot(t_axis, p_avg_z, linewidth=0.5, label='Prediction')
+    axs[2].fill_between(t_axis, p_avg_z-p_std_z, p_avg_z+p_std_z,
                         alpha=0.2, label='Prediction')
-    axs[2].plot(t_avg_z, linewidth=0.5, label='Target')
-    axs[2].fill_between(t_avg_z-t_std_z, t_avg_z+t_std_z,
+    axs[2].plot(t_axis, t_avg_z, linewidth=0.5, label='Target')
+    axs[2].fill_between(t_axis, t_avg_z-t_std_z, t_avg_z+t_std_z,
                         alpha=0.2, label='Prediction')
     axs[2].set_ylabel('Averaged $u_z$')
     axs[2].grid(axis='y', alpha=0.3)
@@ -182,6 +187,12 @@ def plotPredVsTargKVS(input_1, input_2='void', file_prefix=0, file_name=0):
     if file_name != 0:
         fig.savefig(
             f'{file_prefix}Plot_PredVsTarg_KVS_{file_name}.svg')
-    # plt.show()
+    #plt.show()
     plt.close()
     pass
+
+
+if __name__ == "__main__":
+    pred = np.random.rand(1000, 3, 24, 24, 24) + 1
+    targ = np.random.rand(1000, 3, 24, 24, 24) + 2.2
+    plotPredVsTargKVS(input_1=pred, input_2=targ, file_name='test')
