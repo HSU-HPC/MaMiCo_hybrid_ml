@@ -153,7 +153,7 @@ def train_AE_u_i(loader, model_x, model_y, model_z,
 
         _data = torch.cat((_data_0.to(device), _data_1.to(
             device), _data_2.to(device)), 0).float().to(device)
-        _data = torch.add(_data, 0.2).float().to(device)
+        _data = torch.add(_data, 1.0).float().to(device)
         _targ = torch.cat((_targ_0.to(device), _targ_1.to(
             device), _targ_2.to(device)), 0).float().to(device)
 
@@ -162,9 +162,9 @@ def train_AE_u_i(loader, model_x, model_y, model_z,
             _preds_y = model_y(_data).float().to(device=device)
             _preds_z = model_z(_data).float().to(device=device)
 
-            _preds_x = torch.add(_preds_x, -0.2).float().to(device=device)
-            _preds_y = torch.add(_preds_y, -0.2).float().to(device=device)
-            _preds_z = torch.add(_preds_z, -0.2).float().to(device=device)
+            _preds_x = torch.add(_preds_x, -1.0).float().to(device=device)
+            _preds_y = torch.add(_preds_y, -1.0).float().to(device=device)
+            _preds_z = torch.add(_preds_z, -1.0).float().to(device=device)
 
             _targs_x = torch.reshape(
                 _targ[:, 0, :, :, :].float(), (3*t, 1, h, d, w)).to(device=device)
@@ -897,7 +897,7 @@ def prediction_retriever_u_i(model_directory, model_name_x, model_name_y,
         _preds = []
         for batch_idx, (data, target) in enumerate(valid_loaders[i]):
             data = data.float().to(device=device)
-            data = torch.add(data, 0.2).float().to(device=device)
+            data = torch.add(data, 1.0).float().to(device=device)
             with torch.cuda.amp.autocast():
                 data_pred_x = _model_x(data)
                 data_pred_y = _model_y(data)
@@ -905,7 +905,7 @@ def prediction_retriever_u_i(model_directory, model_name_x, model_name_y,
                 data_pred = torch.cat(
                     (data_pred_x, data_pred_y, data_pred_z), 1).to(device)
                 data_pred = torch.add(
-                    data_pred, -0.2).float().to(device=device)
+                    data_pred, -1.0).float().to(device=device)
                 _preds.append(data_pred.cpu().detach().numpy())
         _preds = np.vstack(_preds)
 
@@ -940,8 +940,7 @@ if __name__ == "__main__":
         save2file_name=_save2file_name
     )
     '''
-    '''
-    print('Starting Trial 1: AE_u_i (KVS + Aug, MAE, ReLU, torch.add())')
+    print('Starting Trial 1: AE_u_i (KVS + Aug, MAE, ReLU, torch.add(1.0))')
     _alpha = 0.0001
     _alpha_string = '0_0001'
     _train_loaders, _valid_loaders = get_AE_loaders(
@@ -969,3 +968,4 @@ if __name__ == "__main__":
         dataset_name=_dataset_name,
         save2file_name=_save2file_name
     )
+    '''
