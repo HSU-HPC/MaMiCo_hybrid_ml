@@ -336,7 +336,7 @@ def get_RNN_loaders(data_distribution, batch_size=32, shuffle=True, num_workers=
 
     print('------------------------------------------------------------')
     print('                      Loader Summary                        ')
-    print('Cur. Loader\t : get_AE_loaders')
+    print('Cur. Loader\t : get_RNN_loaders')
     print(f'Data Dist. \t= {_data_tag}')
     print(f'Batch size\t= {_batch_size}')
     print(f'Num worker\t= {_num_workers}')
@@ -350,8 +350,7 @@ def get_RNN_loaders(data_distribution, batch_size=32, shuffle=True, num_workers=
 
     if _data_tag == 'KVS_eval':
         _train_files = glob.glob(f"{_directory}KVS/Latentspace/*20000_NW*.csv")
-        _valid_files = glob.glob(
-            f"{_directory}KVS/Latentspace/*22000_NW*_0.csv")
+        _valid_files = glob.glob(f"{_directory}KVS/Latentspace/*22000_NW*_0.csv")
 
     elif _data_tag == 'random':
         print('Loading ---> RANDOM <--- training datasets as loader.')
@@ -528,7 +527,7 @@ def csv2dataset_mp(filenames, output_shape=0):
 if __name__ == '__main__':
 
     _loader_1, _loader_2_ = get_RNN_loaders(
-        data_distribution='get_KVS',
+        data_distribution='KVS_eval',
         batch_size=1,
         shuffle=False
     )
