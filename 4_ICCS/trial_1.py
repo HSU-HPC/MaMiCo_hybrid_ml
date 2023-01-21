@@ -96,10 +96,7 @@ def train_AE(loader, model, optimizer, criterion, scaler, model_identifier, curr
     return _avg_loss
 
 
-def train_AE_u_i(loader, model_x, model_y, model_z,
-                 optimizer_x, optimizer_y, optimizer_z,
-                 model_identifier_x, model_identifier_y, model_identifier_z,
-                 criterion, scaler, current_epoch):
+def train_AE_u_i(loader, model_x, model_y, model_z, optimizer_x, optimizer_y, optimizer_z, model_identifier_x, model_identifier_y, model_identifier_z, criterion, scaler, current_epoch):
     """The train_AE function trains the model and computes the average loss on
     the training set.
 
@@ -238,10 +235,7 @@ def valid_AE(loader, model, criterion, model_identifier):
     return _avg_loss
 
 
-def valid_AE_u_i(loader, model_x, model_y, model_z,
-                 optimizer_x, optimizer_y, optimizer_z,
-                 model_identifier_x, model_identifier_y, model_identifier_z,
-                 criterion, scaler, current_epoch):
+def valid_AE_u_i(loader, model_x, model_y, model_z, optimizer_x, optimizer_y, optimizer_z, model_identifier_x, model_identifier_y, model_identifier_z, criterion, scaler, current_epoch):
     """The valid_AE function computes the average loss on a given dataset
     without updating/optimizing the learnable model parameters.
 
@@ -305,37 +299,7 @@ def valid_AE_u_i(loader, model_x, model_y, model_z,
     return _avg_loss_x, _avg_loss_y, _avg_loss_z
 
 
-def error_timeline(loader, model, criterion):
-    """The error_timeline function computes the individual errors on a dataset
-    and returns a list containing all errors in chronological order.
-
-    Args:
-        loader:
-          Object of PyTorch-type DataLoader to automatically feed dataset
-        model:
-          Object of PyTorch MOdule class, i.e. the model to be trained.
-        criterion:
-          The loss function applied to quantify the error.
-
-    Returns:
-        losses:
-          A list containing all individual errors in chronological order.
-    """
-
-    losses = []
-    for batch_idx, (data, targets) in enumerate(loader):
-        data = data.float().to(device=device)
-        targets = targets.float().to(device=device)
-
-        with torch.cuda.amp.autocast():
-            predictions = model(data)
-            loss = criterion(predictions.float(), targets.float())
-            losses.append(loss.item())
-
-    return losses
-
-
-def get_latentspace_AE(loader, model, out_file_name):
+def get_latentspace_AE_u_i(loader, model_x, model_y, model_z, out_file_name):
     """The get_latentspace_AE function extracts the model-specific latentspace
     for a given dataset and saves it to file.
 
@@ -353,25 +317,107 @@ def get_latentspace_AE(loader, model, out_file_name):
           This function does not have a return value. Instead it saves the
           latentspace to file.
     """
-    latentspace = []
+    latentspace_x_0 = []
+    latentspace_x_1 = []
+    latentspace_x_2 = []
+    latentspace_y_0 = []
+    latentspace_y_1 = []
+    latentspace_y_2 = []
+    latentspace_z_0 = []
+    latentspace_z_1 = []
+    latentspace_z_2 = []
 
-    for batch_idx, (data, targets) in enumerate(loader):
-        data = data.float().to(device=device)
-        targets = targets.float().to(device=device)
+    for batch_idx, (_data_0, _) in enumerate(loader):
+        t, c, h, d, w = _data_0.shape
+        _data_u_x = torch.reshape(
+            _data_0[:, 0, :, :, :], (t, 1, h, d, w)).to(device=device)
+        _data_u_y = torch.reshape(
+            _data_0[:, 1, :, :, :], (t, 1, h, d, w)).to(device=device)
+        _data_u_z = torch.reshape(
+            _data_0[:, 2, :, :, :], (t, 1, h, d, w)).to(device=device)
+
+        _data_0 = _data_0.float().to(device)
+        _data_1 = torch.cat(
+            (_data_u_y, _data_u_z, _data_u_x), 1).float().to(device)
+        _data_2 = torch.cat(
+            (_data_u_z, _data_u_x, _data_u_y), 1).float().to(device)
 
         with torch.cuda.amp.autocast():
-            bottleneck, _ = model(data,  y='get_bottleneck')
-            latentspace.append(bottleneck.cpu().detach().numpy())
+            bottleneck_x_0, _ = model_x(_data_0,  y='get_bottleneck')
+            bottleneck_x_1, _ = model_x(_data_1,  y='get_bottleneck')
+            bottleneck_x_2, _ = model_x(_data_2,  y='get_bottleneck')
+            latentspace_x_0.append(bottleneck_x_0.cpu().detach().numpy())
+            latentspace_x_1.append(bottleneck_x_1.cpu().detach().numpy())
+            latentspace_x_2.append(bottleneck_x_2.cpu().detach().numpy())
 
-    np_latentspace = np.vstack(latentspace)
+            bottleneck_y_0, _ = model_y(_data_0,  y='get_bottleneck')
+            bottleneck_y_1, _ = model_y(_data_1,  y='get_bottleneck')
+            bottleneck_y_2, _ = model_y(_data_2,  y='get_bottleneck')
+            latentspace_y_0.append(bottleneck_y_0.cpu().detach().numpy())
+            latentspace_y_1.append(bottleneck_y_1.cpu().detach().numpy())
+            latentspace_y_2.append(bottleneck_y_2.cpu().detach().numpy())
+
+            bottleneck_z_0, _ = model_z(_data_0,  y='get_bottleneck')
+            bottleneck_z_1, _ = model_z(_data_1,  y='get_bottleneck')
+            bottleneck_z_2, _ = model_z(_data_2,  y='get_bottleneck')
+            latentspace_z_0.append(bottleneck_z_0.cpu().detach().numpy())
+            latentspace_z_1.append(bottleneck_z_1.cpu().detach().numpy())
+            latentspace_z_2.append(bottleneck_z_2.cpu().detach().numpy())
+
+    np_latentspace_x_0 = np.vstack(latentspace_x_0)
+    np_latentspace_x_1 = np.vstack(latentspace_x_1)
+    np_latentspace_x_2 = np.vstack(latentspace_x_2)
+
     dataset2csv(
-        dataset=np_latentspace,
-        dataset_name=f'{out_file_name}'
+        dataset=np_latentspace_x_0,
+        dataset_name=f'{out_file_name}_x_0'
+    )
+    dataset2csv(
+        dataset=np_latentspace_x_1,
+        dataset_name=f'{out_file_name}_x_1'
+    )
+    dataset2csv(
+        dataset=np_latentspace_x_2,
+        dataset_name=f'{out_file_name}_x_2'
+    )
+
+    np_latentspace_y_0 = np.vstack(latentspace_y_0)
+    np_latentspace_y_1 = np.vstack(latentspace_y_1)
+    np_latentspace_y_2 = np.vstack(latentspace_y_2)
+
+    dataset2csv(
+        dataset=np_latentspace_y_0,
+        dataset_name=f'{out_file_name}_y_0'
+    )
+    dataset2csv(
+        dataset=np_latentspace_y_1,
+        dataset_name=f'{out_file_name}_y_1'
+    )
+    dataset2csv(
+        dataset=np_latentspace_y_2,
+        dataset_name=f'{out_file_name}_y_2'
+    )
+
+    np_latentspace_z_0 = np.vstack(latentspace_z_0)
+    np_latentspace_z_1 = np.vstack(latentspace_z_1)
+    np_latentspace_z_2 = np.vstack(latentspace_z_2)
+
+    dataset2csv(
+        dataset=np_latentspace_z_0,
+        dataset_name=f'{out_file_name}_z_0'
+    )
+    dataset2csv(
+        dataset=np_latentspace_z_1,
+        dataset_name=f'{out_file_name}_z_1'
+    )
+    dataset2csv(
+        dataset=np_latentspace_z_2,
+        dataset_name=f'{out_file_name}_z_2'
     )
     return
 
 
-def get_latentspace_AE_helper():
+def get_latentspace_AE_u_i_helper():
     """The get_latentspace_AE_helper function contains the additional steps to
     create the model-specific latentspace. It loads an already trained model in
     model.eval() mode, loads the dataset loaders and calls the get_latentspace_AE
@@ -384,52 +430,76 @@ def get_latentspace_AE_helper():
     Returns:
         NONE:
     """
-    print('Starting Trial 1: Get Latentspace (Couette)')
-    _model = AE(
+    print('Starting Trial 1: Get Latentspace (KVS)')
+
+    model_directory = '/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/4_ICCS/Results/1_Conv_AE/kvs_aug_100_mae_relu_upshift'
+    model_name_x = 'Model_AE_u_i_LR0_0001_x'
+    model_name_y = 'Model_AE_u_i_LR0_0001_y'
+    model_name_z = 'Model_AE_u_i_LR0_0001_z'
+    _model_x = AE_u_x(
         device=device,
-        in_channels=3,
-        out_channels=3,
+        in_channels=1,
+        out_channels=1,
         features=[4, 8, 16],
-        activation=torch.nn.ReLU(inplace=True)
+        activation=nn.ReLU(inplace=True)
+    ).to(device)
+    _model_y = AE_u_y(
+        device=device,
+        in_channels=1,
+        out_channels=1,
+        features=[4, 8, 16],
+        activation=nn.ReLU(inplace=True)
+    ).to(device)
+    _model_z = AE_u_z(
+        device=device,
+        in_channels=1,
+        out_channels=1,
+        features=[4, 8, 16],
+        activation=nn.ReLU(inplace=True)
     ).to(device)
 
-    _model.load_state_dict(torch.load(
-        '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/'
-        '3_Constituent_Hybrid_approach/Results/1_AE/Model_AE_LR0_0005'))
-    _model.eval()
+    _model_x.load_state_dict(torch.load(
+        f'{model_directory}/{model_name_x}', map_location='cpu'))
+    _model_x.eval()
+    _model_y.load_state_dict(torch.load(
+        f'{model_directory}/{model_name_y}', map_location='cpu'))
+    _model_y.eval()
+    _model_z.load_state_dict(torch.load(
+        f'{model_directory}/{model_name_z}', map_location='cpu'))
+    _model_z.eval()
 
     _loader_1, _loader_2_ = get_AE_loaders(
-        data_distribution='get_couette',
+        data_distribution='get_KVS',
         batch_size=1,
         shuffle=False
     )
     _loaders = _loader_1 + _loader_2_
-    _out_directory = '/home/lerdo/lerdo_HPC_Lab_Project/Trainingdata/Latentspace_Dataset'
+    _out_directory = '/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/4_ICCS/dataset_mlready/KVS/Latentspace'
+
     _out_file_names = [
-        '_C_0_5_T',
-        '_C_0_5_M',
-        '_C_0_5_B',
-        '_C_1_0_T',
-        '_C_1_0_M',
-        '_C_1_0_B',
-        '_C_2_0_T',
-        '_C_2_0_M',
-        '_C_2_0_B',
-        '_C_3_0_T',
-        '_C_3_0_M',
-        '_C_3_0_B',
-        '_C_4_0_T',
-        '_C_4_0_M',
-        '_C_4_0_B',
-        '_C_5_0_T',
-        '_C_5_0_M',
-        '_C_5_0_B',
+        'kvs_latentspace_20000_NW',
+        'kvs_latentspace_20000_SE',
+        'kvs_latentspace_20000_SW',
+        'kvs_latentspace_22000_SE',
+        'kvs_latentspace_22000_SW',
+        'kvs_latentspace_24000_SW',
+        'kvs_latentspace_26000_NE',
+        'kvs_latentspace_26000_NW',
+        'kvs_latentspace_26000_SE',
+        'kvs_latentspace_28000_NE',
+        'kvs_latentspace_28000_NW',
+        'kvs_latentspace_20000_NE',
+        'kvs_latentspace_22000_NW',
+        'kvs_latentspace_24000_SE',
+        'kvs_latentspace_26000_SW',
     ]
     for idx, _loader in enumerate(_loaders):
-        get_latentspace_AE(
+        get_latentspace_AE_u_i(
             loader=_loader,
-            model=_model,
-            out_file_name=f'{_out_directory}{_out_file_names[idx]}'
+            model_x=_model_x,
+            model_y=_model_y,
+            model_z=_model_z,
+            out_file_name=f'{_out_directory}/{_out_file_names[idx]}'
         )
 
 
@@ -734,60 +804,6 @@ def trial_1_AE_mp():
     return
 
 
-def trial_1_error_timeline():
-    """The trial_1_error_timeline function is essentially a helper function to
-    facilitate the error_timeline function with the desired model and datasets.
-    Refer to the error_timeline function for more details.
-
-    Args:
-        NONE
-
-    Returns:
-        NONE
-    """
-    print('Starting Trial 1: UNET AE Error Timeline')
-
-    _directory = '/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/' + \
-                 '4_ICCS/Results/1_Conv_AE/'
-    _model_name = 'Model_AE_LR0_0005'
-    _model = AE(
-        device=device,
-        in_channels=3,
-        out_channels=3,
-        features=[4, 8, 16],
-        activation=nn.ReLU(inplace=True)
-    ).to(device)
-    _model.load_state_dict(torch.load(f'{_directory}{_model_name}'))
-    _criterion = nn.L1Loss()
-    _, _valid_loaders = get_AE_loaders(
-        data_distribution='get_couette',
-        batch_size=1,
-        shuffle=False
-    )
-
-    _datasets = [
-        'C_3_0_T',
-        'C_3_0_M',
-        'C_3_0_B',
-        'C_5_0_T',
-        'C_5_0_M',
-        'C_5_0_B'
-    ]
-
-    for idx, _loader in enumerate(_valid_loaders):
-        _losses = error_timeline(
-            loader=_loader,
-            model=_model,
-            criterion=_criterion
-        )
-        losses2file(
-            losses=_losses,
-            file_name=f'{_directory}{_model_name}_Valid_Error_Timeline_{_datasets[idx]}'
-        )
-
-    pass
-
-
 def prediction_retriever(model_directory, model_name, dataset_name, save2file_name):
     """The prediction_retriever function is used to evaluate model performance
     of a trained model. This is done by loading the saved model, feeding it
@@ -838,9 +854,7 @@ def prediction_retriever(model_directory, model_name, dataset_name, save2file_na
     plot_flow_profile(_preds, save2file_name)
 
 
-def prediction_retriever_u_i(model_directory, model_name_x, model_name_y,
-                             model_name_z, dataset_name, save2file_prefix,
-                             save2file_name):
+def prediction_retriever_u_i(model_directory, model_name_x, model_name_y, model_name_z, dataset_name, save2file_prefix, save2file_name):
     """The prediction_retriever function is used to evaluate model performance
     of a trained model. This is done by loading the saved model, feeding it
     with datasets and then saving the corresponding predictions for later
@@ -958,7 +972,7 @@ if __name__ == "__main__":
 
     trial_1_AE_u_i(_alpha, _alpha_string, _train_loaders, _valid_loaders)
 
-    '''
+
     print('Starting Trial 1: Prediction Retriever (KVS + Aug, MAE, LReLU, AE_u_i, torch.add())')
 
     _model_directory = '/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/4_ICCS/Results/1_Conv_AE/kvs_aug_100_mae_relu_upshift/'
@@ -978,3 +992,5 @@ if __name__ == "__main__":
         save2file_prefix=_save2file_prefix,
         save2file_name=_save2file_name
     )
+    '''
+    get_latentspace_AE_u_i_helper()
