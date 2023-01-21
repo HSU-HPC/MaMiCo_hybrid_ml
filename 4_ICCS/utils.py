@@ -200,10 +200,10 @@ def get_AE_loaders(data_distribution, batch_size=32, shuffle=True, num_workers=1
         print('Invalid value for function parameter: data_distribution.')
         return
     print('successful data tag')
-    _data_train = mlready2dataset_mp(_train_files)
-    _data_valid = mlready2dataset_mp(_valid_files)
 
     if _shuffle is True:
+        _data_train = mlready2dataset_mp(_train_files)
+        _data_valid = mlready2dataset_mp(_valid_files)
         _data_train_stack = np.vstack(_data_train)
         print('Training stack shape:', _data_train_stack.shape)
         _data_valid_stack = np.vstack(_data_valid)
@@ -228,29 +228,36 @@ def get_AE_loaders(data_distribution, batch_size=32, shuffle=True, num_workers=1
         print(f'Num Valid Loaders = {len([_dataloader_valid])}')
         return [_dataloader_train], [_dataloader_valid]
 
-    for _data in _data_train:
-        _dataset = MyMamicoDataset_AE(_data)
-        _dataloader = DataLoader(
-            dataset=_dataset,
-            batch_size=_batch_size,
-            shuffle=_shuffle,
-            num_workers=_num_workers
-            )
-        _dataloaders_train.append(_dataloader)
+    else:
+        for file in _train_files:
+            print(file)
+        '''
+        _data_train = mlready2dataset_mp(_train_files)
+        _data_valid = mlready2dataset_mp(_valid_files)
+        for _data in _data_train:
+            _dataset = MyMamicoDataset_AE(_data)
+            _dataloader = DataLoader(
+                dataset=_dataset,
+                batch_size=_batch_size,
+                shuffle=_shuffle,
+                num_workers=_num_workers
+                )
+            _dataloaders_train.append(_dataloader)
 
-    for _data in _data_valid:
-        _dataset = MyMamicoDataset_AE(_data)
-        _dataloader = DataLoader(
-            dataset=_dataset,
-            batch_size=_batch_size,
-            shuffle=_shuffle,
-            num_workers=_num_workers
-            )
-        _dataloaders_valid.append(_dataloader)
+        for _data in _data_valid:
+            _dataset = MyMamicoDataset_AE(_data)
+            _dataloader = DataLoader(
+                dataset=_dataset,
+                batch_size=_batch_size,
+                shuffle=_shuffle,
+                num_workers=_num_workers
+                )
+            _dataloaders_valid.append(_dataloader)
 
-    print(f'Num Train Loaders = {len(_dataloaders_train)}')
-    print(f'Num Valid Loaders = {len(_dataloaders_valid)}')
-    return _dataloaders_train, _dataloaders_valid
+        print(f'Num Train Loaders = {len(_dataloaders_train)}')
+        print(f'Num Valid Loaders = {len(_dataloaders_valid)}')
+        return _dataloaders_train, _dataloaders_valid
+        '''
 
 
 def dataset2csv(dataset, dataset_name,  model_identifier=''):
@@ -329,4 +336,11 @@ def csv2dataset_mp(filenames, output_shape=0):
 
 
 if __name__ == '__main__':
+
+    _loader_1, _loader_2_ = get_AE_loaders(
+        data_distribution='get_KVS',
+        batch_size=1,
+        shuffle=False
+    )
+
     pass
