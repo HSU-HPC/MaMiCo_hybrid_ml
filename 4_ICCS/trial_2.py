@@ -249,6 +249,12 @@ def prediction_retriever_latentspace_u_i(model_directory, model_name_x, model_na
             shuffle=False
         )
 
+    _, targ_loaders = get_AE_loaders(
+            data_distribution=dataset_name,
+            batch_size=1,
+            shuffle=False
+        )
+
     _model_x = AE_u_x(
         device=device,
         in_channels=1,
@@ -281,28 +287,47 @@ def prediction_retriever_latentspace_u_i(model_directory, model_name_x, model_na
         f'{model_directory}/{model_name_z}', map_location='cpu'))
     _model_z.eval()
 
-    for i in range(len(valid_loaders)):
-        _preds = []
-        _targs = []
-        for batch_idx, (data, target) in enumerate(valid_loaders[i]):
-            data = data.float().to(device=device)
-            data = torch.add(data, 0.2).float().to(device=device)
-            with torch.cuda.amp.autocast():
-                data_pred_x = _model_x(data)
-                data_pred_y = _model_y(data)
-                data_pred_z = _model_z(data)
-                data_pred = torch.cat(
-                    (data_pred_x, data_pred_y, data_pred_z), 1).to(device)
-                data_pred = torch.add(
-                    data_pred, -0.2).float().to(device=device)
-                _preds.append(data_pred.cpu().detach().numpy())
-                _targs.append(target.cpu().detach().numpy())
-        _preds = np.vstack(_preds)
-        _targs = np.vstack(_targs)
+    data_preds_x = torch.zeros(1, 1, 24, 24, 24)
+    data_preds_y = torch.zeros(1, 1, 24, 24, 24)
+    data_preds_z = torch.zeros(1, 1, 24, 24, 24)
+    targs = []
 
-    plotPredVsTargKVS(input_1=_preds, input_2=_targs,
+    for data, target in valid_loaders[0]:
+        data = data.float().to(device=device)
+        with torch.cuda.amp.autocast():
+            data_pred_x = _model_x(data, 'get_MD_output')
+            data_preds_x = torch.cat((data_preds_x, data_pred_x), 0).to(device)
+
+    for data, target in valid_loaders[1]:
+        data = data.float().to(device=device)
+        with torch.cuda.amp.autocast():
+            data_pred_y = _model_y(data, 'get_MD_output')
+            data_preds_y = torch.cat((data_preds_y, data_pred_y), 0).to(device)
+
+    for data, target in valid_loaders[0]:
+        data = data.float().to(device=device)
+        with torch.cuda.amp.autocast():
+            data_pred_z = _model_z(data, 'get_MD_output')
+            data_preds_z = torch.cat((data_preds_z, data_pred_z), 0).to(device)
+
+    for data, target in targ_loaders[0]:
+        data = data.float().to(device=device)
+        with torch.cuda.amp.autocast():
+            data_pred_x = _model_x(data)
+            data_preds_x = torch.cat((data_preds_x, data_pred_x), 0).to(device)
+
+    for data, target in targ_loaders[0]:
+        with torch.cuda.amp.autocast():
+            targs.append(target.cpu().detach().numpy())
+
+    targs = np.vstack(targs)
+
+    preds = torch.cat((data_preds_x, data_preds_y, data_preds_z), 1).to(device)
+    preds = torch.add(preds, -0.2).float().to(device=device)
+    preds = preds[1:, :, :, :, :].cpu().detach().numpy()
+
+    plotPredVsTargKVS(input_1=preds, input_2=targs,
                       file_prefix=save2file_prefix, file_name=save2file_name)
-    # plot_flow_profile(_preds, save2file_name)
 
 
 if __name__ == "__main__":

@@ -349,7 +349,8 @@ def get_RNN_loaders(data_distribution, batch_size=32, shuffle=True, num_workers=
     _directory = '/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/4_ICCS/dataset_mlready/'
 
     if _data_tag == 'KVS_eval':
-        _train_files = glob.glob(f"{_directory}KVS/Latentspace/*20000_NW*_0.csv")
+        _train_files = glob.glob(
+            f"{_directory}KVS/Latentspace/*20000_NW*_0.csv")
         _valid_files = glob.glob(
             f"{_directory}KVS/Latentspace/*22000_NW*_0.csv")
 
