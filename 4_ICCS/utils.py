@@ -231,6 +231,8 @@ def get_AE_loaders(data_distribution, batch_size=32, shuffle=True, num_workers=1
     else:
         for file in _train_files:
             print(file)
+        for file in _valid_files:
+            print(file)
         '''
         _data_train = mlready2dataset_mp(_train_files)
         _data_valid = mlready2dataset_mp(_valid_files)
