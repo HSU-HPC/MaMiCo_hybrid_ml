@@ -483,6 +483,7 @@ class AE_u_x(nn.Module):
             u_x = self.activation(u_x)
             u_x = self.bottleneck_x(u_x)
             u_x = self.activation(u_x)
+            print('Bottleneck Shape: ', u_x.shape)
 
             if y == 'get_bottleneck':
                 return u_x
@@ -1178,10 +1179,15 @@ if __name__ == "__main__":
     x = torch.cat((x, x_cat), 0)
     print(x.shape)
     '''
-    x = torch.ones(10, 3, 3, 3, 3)
-    x = torch.add(x, 0.3)
-    print(x[0, :, :, :, :])
-    x = torch.add(x, -0.3)
-    print(x[0, :, :, :, :])
+    _x = torch.ones(1000, 3, 24, 24, 24)
+    _model_x = AE_u_x(
+        device=device,
+        in_channels=1,
+        out_channels=1,
+        features=[4, 8, 16],
+        activation=nn.ReLU(inplace=True)
+    ).to(device)
+
+    _x_pred = _model_x(_x)
 
     pass
