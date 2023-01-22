@@ -305,17 +305,11 @@ def prediction_retriever_latentspace_u_i(model_directory, model_name_x, model_na
             data_pred_y = _model_y(data, 'get_MD_output').to(device=device)
             data_preds_y = torch.cat((data_preds_y, data_pred_y), 0).to(device)
 
-    for data, target in valid_loaders[0]:
+    for data, target in valid_loaders[2]:
         data = data.float().to(device=device)
         with torch.cuda.amp.autocast():
             data_pred_z = _model_z(data, 'get_MD_output').to(device=device)
             data_preds_z = torch.cat((data_preds_z, data_pred_z), 0).to(device)
-
-    for data, target in targ_loaders[0]:
-        data = data.float().to(device=device)
-        with torch.cuda.amp.autocast():
-            data_pred_x = _model_x(data)
-            data_preds_x = torch.cat((data_preds_x, data_pred_x), 0).to(device)
 
     for data, target in targ_loaders[0]:
         with torch.cuda.amp.autocast():
