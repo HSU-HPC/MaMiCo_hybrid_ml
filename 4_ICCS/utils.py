@@ -428,7 +428,7 @@ def get_RNN_loaders(data_distribution, batch_size=32, shuffle=True, num_workers=
         for _file in _train_files:
             print(_file)
             _data_train = mlready2latentspace(_file)
-            _dataset_train = MyMamicoDataset_AE(_data_train)
+            _dataset_train = MyMamicoDataset_RNN_verification(_data_train)
             _dataloader_train = DataLoader(
                 dataset=_dataset_train,
                 batch_size=_batch_size,
@@ -439,7 +439,7 @@ def get_RNN_loaders(data_distribution, batch_size=32, shuffle=True, num_workers=
         for _file in _valid_files:
             print(_file)
             _data_valid = mlready2latentspace(_file)
-            _dataset_valid = MyMamicoDataset_AE(_data_valid)
+            _dataset_valid = MyMamicoDataset_RNN_verification(_data_valid)
             _dataloader_valid = DataLoader(
                 dataset=_dataset_valid,
                 batch_size=_batch_size,
