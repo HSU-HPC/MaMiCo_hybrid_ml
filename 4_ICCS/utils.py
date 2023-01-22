@@ -319,22 +319,13 @@ def get_RNN_loaders(data_distribution, batch_size=32, shuffle=True, num_workers=
         shuffle_switch = 'off'
         _batch_size = 1
 
-    '''
-    if data_distribution == "get_couette":
-        _data_tag = 'Couette'
-    elif data_distribution == "get_couette_eval":
-        _data_tag = 'Couette_eval'
-    elif data_distribution == "get_KVS":
+    if data_distribution == "get_KVS":
         _data_tag = 'KVS'
-    '''
-    if data_distribution == "get_KVS_eval":
+
+    elif data_distribution == "get_KVS_eval":
         _data_tag = 'KVS_eval'
     elif data_distribution == "get_random":
         _data_tag = 'random'
-    '''
-    elif data_distribution == "get_both":
-        _data_tag = 'Couette and KVS'
-    '''
 
     print('------------------------------------------------------------')
     print('                      Loader Summary                        ')
@@ -344,113 +335,198 @@ def get_RNN_loaders(data_distribution, batch_size=32, shuffle=True, num_workers=
     print(f'Num worker\t= {_num_workers}')
     print(f'Shuffle\t\t= {shuffle_switch}')
 
-    _data_train = []
-    _data_valid = []
-    _dataloaders_train = []
-    _dataloaders_valid = []
+    _data_train_x = []
+    _data_train_y = []
+    _data_train_z = []
+
+    _data_valid_x = []
+    _data_valid_y = []
+    _data_valid_z = []
+
+    _dataloaders_train_x = []
+    _dataloaders_train_y = []
+    _dataloaders_train_z = []
+
+    _dataloaders_valid_x = []
+    _dataloaders_valid_y = []
+    _dataloaders_valid_z = []
+
     _directory = '/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/4_ICCS/dataset_mlready/'
 
-    if _data_tag == 'KVS_eval':
-        _train_files = glob.glob(
-            f"{_directory}KVS/Latentspace/*20000_NW*_0.csv")
-        _valid_files = glob.glob(
-            f"{_directory}KVS/Latentspace/*22000_NW*_0.csv")
+    if _data_tag == 'KVS':
+        _train_files_x = glob.glob(
+            f"{_directory}KVS/Latentspace/Training/*_x_*.csv")
+        _train_files_y = glob.glob(
+            f"{_directory}KVS/Latentspace/Training/*_y_*.csv")
+        _train_files_z = glob.glob(
+            f"{_directory}KVS/Latentspace/Training/*_z_*.csv")
+        _valid_files_x = glob.glob(
+            f"{_directory}KVS/Latentspace/Validation/*_x_*.csv")
+        _valid_files_y = glob.glob(
+            f"{_directory}KVS/Latentspace/Validation/*_y_*.csv")
+        _valid_files_z = glob.glob(
+            f"{_directory}KVS/Latentspace/Validation/*_z_*.csv")
+    elif _data_tag == 'KVS_eval':
+        _train_files_x = glob.glob(
+            f"{_directory}KVS/Latentspace/Training/*_x_*.csv")
+        _train_files_y = glob.glob(
+            f"{_directory}KVS/Latentspace/Training/*_y_*.csv")
+        _train_files_z = glob.glob(
+            f"{_directory}KVS/Latentspace/Training/*_z_*.csv")
+        _valid_files_x = glob.glob(
+            f"{_directory}KVS/Latentspace/Validation/*22000_NW_x_0.csv")
+        _valid_files_y = glob.glob(
+            f"{_directory}KVS/Latentspace/Validation/*22000_NW_y_0.csv")
+        _valid_files_z = glob.glob(
+            f"{_directory}KVS/Latentspace/Validation/*22000_NW_z_0.csv")
 
     elif _data_tag == 'random':
         print('Loading ---> RANDOM <--- training datasets as loader.')
-        for i in range(3):
-            _data = np.random.rand(1000, 32, 2, 2, 2)
-            _data_train.append(_data)
+        _data_x = np.random.rand(1000, 32, 2, 2, 2)
+        _data_train_x.append(_data_x)
+        _data_y = np.random.rand(1000, 32, 2, 2, 2)
+        _data_train_y.append(_data_y)
+        _data_z = np.random.rand(1000, 32, 2, 2, 2)
+        _data_train_z.append(_data_z)
         print('Completed loading ---> RANDOM <--- training datasets.')
 
         print('Loading ---> RANDOM <--- validation datasets as loader.')
-        for i in range(1):
-            _data = np.random.rand(1000, 32, 2, 2, 2)
-            _data_valid.append(_data)
+        _data_x = np.random.rand(1000, 32, 2, 2, 2)
+        _data_valid_x.append(_data_x)
+        _data_y = np.random.rand(1000, 32, 2, 2, 2)
+        _data_valid_y.append(_data_y)
+        _data_z = np.random.rand(1000, 32, 2, 2, 2)
+        _data_valid_z.append(_data_z)
         print('Completed loading ---> RANDOM <--- validation datasets.')
 
-        for _data in _data_train:
-            _dataset = MyMamicoDataset_RNN_verification(_data)
-            _dataloader = DataLoader(
-                dataset=_dataset,
+        for idx, _data in enumerate(_data_train_x):
+            _dataset_x = MyMamicoDataset_RNN(_data_train_x[idx])
+            _dataloader_x = DataLoader(
+                dataset=_dataset_x,
                 batch_size=_batch_size,
                 shuffle=_shuffle,
                 num_workers=_num_workers
                 )
-            _dataloaders_train.append(_dataloader)
+            _dataloaders_train_x.append(_dataloader_x)
 
-        for _data in _data_valid:
-            _dataset = MyMamicoDataset_RNN_verification(_data)
-            _dataloader = DataLoader(
-                dataset=_dataset,
+            _dataset_y = MyMamicoDataset_RNN(_data_train_y[idx])
+            _dataloader_y = DataLoader(
+                dataset=_dataset_y,
                 batch_size=_batch_size,
                 shuffle=_shuffle,
                 num_workers=_num_workers
                 )
-            _dataloaders_valid.append(_dataloader)
+            _dataloaders_train_y.append(_dataloader_y)
 
-        print(f'Num Train Loaders = {len(_dataloaders_train)}')
-        print(f'Num Valid Loaders = {len(_dataloaders_valid)}')
-        return _dataloaders_train, _dataloaders_valid
+            _dataset_z = MyMamicoDataset_RNN(_data_train_z[idx])
+            _dataloader_z = DataLoader(
+                dataset=_dataset_z,
+                batch_size=_batch_size,
+                shuffle=_shuffle,
+                num_workers=_num_workers
+                )
+            _dataloaders_train_z.append(_dataloader_z)
+
+        for idx, _data in enumerate(_data_valid_x):
+            _dataset_x = MyMamicoDataset_RNN_verification(_data_valid_x[idx])
+            _dataloader_x = DataLoader(
+                dataset=_dataset_x,
+                batch_size=_batch_size,
+                shuffle=_shuffle,
+                num_workers=_num_workers
+                )
+            _dataloaders_valid_x.append(_dataloader_x)
+
+            _dataset_y = MyMamicoDataset_RNN_verification(_data_valid_y[idx])
+            _dataloader_y = DataLoader(
+                dataset=_dataset_y,
+                batch_size=_batch_size,
+                shuffle=_shuffle,
+                num_workers=_num_workers
+                )
+            _dataloaders_valid_y.append(_dataloader_y)
+
+            _dataset_z = MyMamicoDataset_RNN_verification(_data_valid_z[idx])
+            _dataloader_z = DataLoader(
+                dataset=_dataset_z,
+                batch_size=_batch_size,
+                shuffle=_shuffle,
+                num_workers=_num_workers
+                )
+            _dataloaders_valid_z.append(_dataloader_z)
+
+        print(f'Num Train Loaders = {len(_dataloaders_train_x)}')
+        print(f'Num Valid Loaders = {len(_dataloaders_valid_x)}')
+        return _dataloaders_train_x, _dataloaders_train_y, _dataloaders_train_z, _dataloaders_valid_x, _dataloaders_valid_y, _dataloaders_valid_z
     else:
         print('Invalid value for function parameter: data_distribution.')
         return
+
     print('successful data tag')
 
-    if _shuffle is True:
-        _data_train = mlready2dataset_mp(_train_files)
-        _data_valid = mlready2dataset_mp(_valid_files)
-        _data_train_stack = np.vstack(_data_train)
-        print('Training stack shape:', _data_train_stack.shape)
-        _data_valid_stack = np.vstack(_data_valid)
-
-        _dataset_train = MyMamicoDataset_AE(_data_train_stack)
-        _dataloader_train = DataLoader(
-            dataset=_dataset_train,
+    for idx, _file in enumerate(_train_files_x):
+        _data_train_x = mlready2latentspace(_train_files_x[idx])
+        _dataset_x = MyMamicoDataset_RNN(_data_train_x)
+        _dataloader_x = DataLoader(
+            dataset=_dataset_x,
             batch_size=_batch_size,
             shuffle=_shuffle,
             num_workers=_num_workers
             )
+        _dataloaders_train_x.append(_dataloader_x)
 
-        _dataset_valid = MyMamicoDataset_AE(_data_valid_stack)
-        _dataloader_valid = DataLoader(
-            dataset=_dataset_valid,
+        _data_train_y = mlready2latentspace(_train_files_y[idx])
+        _dataset_y = MyMamicoDataset_RNN(_data_train_y)
+        _dataloader_y = DataLoader(
+            dataset=_dataset_y,
             batch_size=_batch_size,
             shuffle=_shuffle,
             num_workers=_num_workers
             )
+        _dataloaders_train_y.append(_dataloader_y)
 
-        print(f'Num Train Loaders = {len([_dataloader_train])}')
-        print(f'Num Valid Loaders = {len([_dataloader_valid])}')
-        return [_dataloader_train], [_dataloader_valid]
+        _data_train_z = mlready2latentspace(_train_files_z[idx])
+        _dataset_z = MyMamicoDataset_RNN(_data_train_z)
+        _dataloader_z = DataLoader(
+            dataset=_dataset_z,
+            batch_size=_batch_size,
+            shuffle=_shuffle,
+            num_workers=_num_workers
+            )
+        _dataloaders_train_z.append(_dataloader_z)
 
-    else:
-        for _file in _train_files:
-            print(_file)
-            _data_train = mlready2latentspace(_file)
-            _dataset_train = MyMamicoDataset_RNN_verification(_data_train)
-            _dataloader_train = DataLoader(
-                dataset=_dataset_train,
-                batch_size=_batch_size,
-                shuffle=_shuffle,
-                num_workers=_num_workers
-                )
-            _dataloaders_train.append(_dataloader_train)
-        for _file in _valid_files:
-            print(_file)
-            _data_valid = mlready2latentspace(_file)
-            _dataset_valid = MyMamicoDataset_RNN_verification(_data_valid)
-            _dataloader_valid = DataLoader(
-                dataset=_dataset_valid,
-                batch_size=_batch_size,
-                shuffle=_shuffle,
-                num_workers=_num_workers
-                )
-            _dataloaders_valid.append(_dataloader_valid)
+    for idx, _file in enumerate(_valid_files_x):
+        _data_valid_x = mlready2latentspace(_valid_files_x[idx])
+        _dataset_x = MyMamicoDataset_RNN(_data_valid_x)
+        _dataloader_x = DataLoader(
+            dataset=_dataset_x,
+            batch_size=_batch_size,
+            shuffle=_shuffle,
+            num_workers=_num_workers
+            )
+        _dataloaders_valid_x.append(_dataloader_x)
 
-        print(f'Num Train Loaders = {len(_dataloaders_train)}')
-        print(f'Num Valid Loaders = {len(_dataloaders_valid)}')
-        return _dataloaders_train, _dataloaders_valid
+        _data_valid_y = mlready2latentspace(_valid_files_y[idx])
+        _dataset_y = MyMamicoDataset_RNN(_data_valid_y)
+        _dataloader_y = DataLoader(
+            dataset=_dataset_y,
+            batch_size=_batch_size,
+            shuffle=_shuffle,
+            num_workers=_num_workers
+            )
+        _dataloaders_valid_y.append(_dataloader_y)
+
+        _data_valid_z = mlready2latentspace(_valid_files_z[idx])
+        _dataset_z = MyMamicoDataset_RNN(_data_valid_z)
+        _dataloader_z = DataLoader(
+            dataset=_dataset_z,
+            batch_size=_batch_size,
+            shuffle=_shuffle,
+            num_workers=_num_workers
+            )
+        _dataloaders_valid_z.append(_dataloader_z)
+
+    return _dataloaders_train_x, _dataloaders_train_y, _dataloaders_train_z, _dataloaders_valid_x, _dataloaders_valid_y, _dataloaders_valid_z
 
 
 def dataset2csv(dataset, dataset_name,  model_identifier=''):
