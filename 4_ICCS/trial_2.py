@@ -561,11 +561,13 @@ def trial_2_train_RNN():
         _avg_loss_x = 0
         _avg_loss_y = 0
         _avg_loss_z = 0
-        for idx, _train_loader in enumerate(_train_x):
+        for idx, _loader_x in enumerate(_train_x):
+            _loader_y = next(iter(_train_y))
+            _loader_z = next(iter(_train_z))
             loss_x, loss_y, loss_z = train_RNN_u_i(
-                loader_x=_train_x[idx],
-                loader_y=_train_y[idx],
-                loader_z=_train_z[idx],
+                loader_x=_loader_x,
+                loader_y=_loader_y,
+                loader_z=_loader_z,
                 model_x=_model_x,
                 model_y=_model_y,
                 model_z=_model_z,
