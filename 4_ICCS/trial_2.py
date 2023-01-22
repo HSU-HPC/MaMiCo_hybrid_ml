@@ -509,7 +509,7 @@ def trial_2_train_RNN():
 
     print('Initializing RNN datasets.')
     _train_x, _train_y, _train_z, _valid_x, _valid_y, _valid_z = get_RNN_loaders(
-        data_distribution='get_random')
+        data_distribution='get_KVS')
 
     print('Initializing training parameters.')
 
