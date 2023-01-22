@@ -483,7 +483,7 @@ class AE_u_x(nn.Module):
             u_x = self.activation(u_x)
             u_x = self.bottleneck_x(u_x)
             u_x = self.activation(u_x)
-            print('Bottleneck Shape: ', u_x.shape)
+            # print('Bottleneck Shape: ', u_x.shape)
 
             if y == 'get_bottleneck':
                 return u_x
