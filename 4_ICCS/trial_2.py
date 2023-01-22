@@ -330,6 +330,8 @@ def prediction_retriever_latentspace_u_i(model_directory, model_name_x, model_na
 
 
 if __name__ == "__main__":
+    get_latentspace_AE_u_i_helper()
+    '''
     print('Starting Trial 2: Prediction Retriever (KVS + Aug, MAE, LReLU, AE_u_i, torch.add())')
 
     _model_directory = '/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/4_ICCS/Results/1_Conv_AE/kvs_aug_100_mae_relu_upshift/'
@@ -349,3 +351,4 @@ if __name__ == "__main__":
         save2file_prefix=_save2file_prefix,
         save2file_name=_save2file_name
     )
+    '''
