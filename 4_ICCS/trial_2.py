@@ -57,16 +57,15 @@ def train_RNN_u_i(loader_x, loader_y, loader_z, model_x, model_y, model_z, optim
     _epoch_loss_z = 0
     _counter = 0
 
-    for _batch_idx, (_data_0, _targ_0) in enumerate(loader_x):
-        _data_x, _targ_x = loader_x[_batch_idx]
+    for _data_x, _targ_x in loader_x:
         _data_x = _data_x.float().to(device)
         _targ_x = _targ_x.float().to(device)
 
-        _data_y, _targ_y = loader_y[_batch_idx]
+        _data_y, _targ_y = next(iter(loader_y))
         _data_y = _data_y.float().to(device)
         _targ_y = _targ_y.float().to(device)
 
-        _data_z, _targ_z = loader_z[_batch_idx]
+        _data_z, _targ_z = next(iter(loader_z))
         _data_z = _data_z.float().to(device)
         _targ_z = _targ_z.float().to(device)
 
@@ -133,16 +132,15 @@ def valid_RNN_u_i(loader_x, loader_y, loader_z, model_x, model_y, model_z, model
     _epoch_loss_z = 0
     _counter = 0
 
-    for _batch_idx, (_data_0, _targ_0) in enumerate(loader_x):
-        _data_x, _targ_x = loader_x[_batch_idx]
+    for _data_x, _targ_x in loader_x:
         _data_x = _data_x.float().to(device)
         _targ_x = _targ_x.float().to(device)
 
-        _data_y, _targ_y = loader_y[_batch_idx]
+        _data_y, _targ_y = next(iter(loader_y))
         _data_y = _data_y.float().to(device)
         _targ_y = _targ_y.float().to(device)
 
-        _data_z, _targ_z = loader_z[_batch_idx]
+        _data_z, _targ_z = next(iter(loader_z))
         _data_z = _data_z.float().to(device)
         _targ_z = _targ_z.float().to(device)
 
