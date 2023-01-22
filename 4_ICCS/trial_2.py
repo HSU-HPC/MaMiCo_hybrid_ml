@@ -58,6 +58,7 @@ def train_RNN_u_i(loader_x, loader_y, loader_z, model_x, model_y, model_z, optim
     _counter = 0
 
     for _data_x, _targ_x in loader_x:
+        print('In training loop.')
         _data_x = _data_x.float().to(device)
         _targ_x = _targ_x.float().to(device)
 
@@ -78,6 +79,7 @@ def train_RNN_u_i(loader_x, loader_y, loader_z, model_x, model_y, model_z, optim
             _loss_y = criterion(_preds_y, _targ_y)
             _loss_z = criterion(_preds_z, _targ_z)
 
+            print(_loss_x.item())
             _epoch_loss_x += _loss_x.item()
             _epoch_loss_y += _loss_y.item()
             _epoch_loss_z += _loss_z.item()
