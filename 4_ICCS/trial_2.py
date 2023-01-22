@@ -507,6 +507,8 @@ def trial_2_train_RNN():
           This function documents model progress by saving results to file and
           creating meaningful plots.
     """
+    print('Starting Trial 2: Train RNN (Random, MAE, RNN_u_i)')
+
     print('Initializing RNN datasets.')
     _train_x, _train_y, _train_z, _valid_x, _valid_y, _valid_z = get_RNN_loaders(
         data_distribution='get_random')
@@ -635,4 +637,5 @@ def trial_2_train_RNN():
 
 
 if __name__ == "__main__":
+    trial_2_train_RNN()
     pass
