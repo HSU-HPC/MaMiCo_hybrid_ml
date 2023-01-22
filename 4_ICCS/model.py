@@ -501,7 +501,7 @@ class AE_u_x(nn.Module):
             return u_x
 
         if y == 'get_MD_output':
-            u_x = self.helper_up_1_x(u_x)
+            u_x = self.helper_up_1_x(x)
             u_x = self.activation(u_x)
 
             # The following for-loop describes the entire (right) expanding side.
@@ -624,7 +624,7 @@ class AE_u_y(nn.Module):
             return u_y
 
         if y == 'get_MD_output':
-            u_y = self.helper_up_1_y(u_y)
+            u_y = self.helper_up_1_y(x)
             u_y = self.activation(u_y)
 
             # The following for-loop describes the entire (right) expanding side.
@@ -747,7 +747,7 @@ class AE_u_z(nn.Module):
             return u_z
 
         if y == 'get_MD_output':
-            u_z = self.helper_up_1_z(u_z)
+            u_z = self.helper_up_1_z(x)
             u_z = self.activation(u_z)
 
             # The following for-loop describes the entire (right) expanding side.
