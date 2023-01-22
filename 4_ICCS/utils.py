@@ -71,6 +71,7 @@ def mlready2latentspace(file_name):
     print('currently: mlready2dataset')
     print(f'Loading Dataset from csv: {file_name}')
     dataset = np.loadtxt(f'{file_name}')
+    print(dataset.shape)
 
     if dataset.size != (1000 * 32 * 2 * 2 * 2):
         print("Incorrect dimensions:", dataset.size, file_name)
@@ -79,6 +80,7 @@ def mlready2latentspace(file_name):
     t, c, d, h, w = (1000, 32, 2, 2, 2)
 
     latentspace = dataset.reshape(t, c, d, h, w)
+    print(latentspace.shape)
     return latentspace
 
 
