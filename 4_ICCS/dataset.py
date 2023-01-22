@@ -86,8 +86,8 @@ class MyMamicoDataset_RNN_verification(Dataset):
     """
 
     def __init__(self, my_images):
-        self.sample_images = my_images[:, :]
-        self.sample_masks = my_images[:, :]
+        self.sample_images = my_images[:, :, :, :, :]
+        self.sample_masks = my_images[:, :, :, :, :]
 
     def __len__(self):
         return len(self.sample_images)
@@ -172,11 +172,4 @@ class MyMamicoDataset_Hybrid_analysis(Dataset):
 
 
 if __name__ == "__main__":
-    a = np.zeros((1000, 256))
-    for i in range(1000):
-        a[i] = a[i] + i
-    b = MyMamicoDataset_RNN_analysis(a, seq_length=10)
-    for i in range(10):
-        image, mask = b[i]
-        print(image[:, 0])
-        print('next i')
+    pass
