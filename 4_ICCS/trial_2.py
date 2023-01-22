@@ -323,6 +323,9 @@ def prediction_retriever_latentspace_u_i(model_directory, model_name_x, model_na
 
     targs = np.vstack(targs)
 
+    print('data_preds_x.shape: ', data_preds_x.shape)
+    print('data_preds_y.shape: ', data_preds_y.shape)
+    print('data_preds_z.shape: ', data_preds_z.shape)
     preds = torch.cat((data_preds_x, data_preds_y, data_preds_z), 1).to(device)
     preds = torch.add(preds, -0.2).float().to(device=device)
     preds = preds[1:, :, :, :, :].cpu().detach().numpy()
