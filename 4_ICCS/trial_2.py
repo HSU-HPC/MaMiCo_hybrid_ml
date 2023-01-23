@@ -925,11 +925,11 @@ def trial_2_train_LSTM_single():
           This function documents model progress by saving results to file and
           creating meaningful plots.
     """
-    print('Starting Trial 2: Train LSTM (Random, MAE, single LSTM)')
+    print('Starting Trial 2: Train LSTM (KVS + Aug, MAE, single LSTM)')
 
     print('Initializing RNN datasets.')
     _train_x, _train_y, _train_z, _valid_x, _valid_y, _valid_z = get_RNN_loaders(
-        data_distribution='get_random')
+        data_distribution='get_KVS')
 
     print('Initializing training parameters.')
 
