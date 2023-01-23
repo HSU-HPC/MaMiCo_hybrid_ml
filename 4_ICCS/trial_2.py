@@ -925,24 +925,24 @@ def trial_2_train_LSTM_single():
           This function documents model progress by saving results to file and
           creating meaningful plots.
     """
-    print('Starting Trial 2: Train LSTM (Random, MAE, RNN_u_i)')
+    print('Starting Trial 2: Train LSTM (Random, MAE, single LSTM)')
 
     print('Initializing RNN datasets.')
     _train_x, _train_y, _train_z, _valid_x, _valid_y, _valid_z = get_RNN_loaders(
-        data_distribution='get_KVS')
+        data_distribution='get_random')
 
     print('Initializing training parameters.')
 
     _criterion = nn.L1Loss()
     _file_prefix = '/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/4_ICCS/Results/2_RNN/'
-    _alpha_string = '1e-3'
+    _alpha_string = '1e-5'
     _alpha = 1e-5
     _num_layers = 1
     _seq_length = 25
-    _model_identifier = f'RNN_LR{_alpha_string}_Lay{_num_layers}_Seq{_seq_length}'
-    print('Initializing RNN model.')
+    _model_identifier = f'LSTM_LR{_alpha_string}_Lay{_num_layers}_Seq{_seq_length}'
+    print('Initializing LSTM model.')
 
-    _model_x = RNN(
+    _model_x = LSTM(
         input_size=256,
         hidden_size=256,
         seq_size=_seq_length,
@@ -1023,6 +1023,6 @@ def trial_2_RNN_single_verification():
 
 
 if __name__ == "__main__":
-    trial_2_train_RNN_single()
+    trial_2_train_LSTM_single()
 
     pass
