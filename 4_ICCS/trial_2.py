@@ -188,9 +188,9 @@ def train_RNN_u_i_single_Piet(loader_x, model_x, model_AE, optimizer_x, model_id
         with torch.cuda.amp.autocast():
             _pred_x = model_x(_data_x).to(device=device)
             _pred_x = torch.reshape(
-                _pred_x, (1, 32, 2, 2, 2)).to(device=device)
+                _pred_x, (32, 32, 2, 2, 2)).to(device=device)
             _targ_x = torch.reshape(
-                _targ_x, (1, 32, 2, 2, 2)).to(device=device)
+                _targ_x, (32, 32, 2, 2, 2)).to(device=device)
             _vel_pred = model_AE(_pred_x, y='get_MD_output').to(device=device)
             _vel_targ = model_AE(_targ_x, y='get_MD_output').to(device=device)
             _loss_x = criterion(_vel_pred, _vel_targ)
