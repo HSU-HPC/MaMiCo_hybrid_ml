@@ -610,8 +610,8 @@ def prediction_retriever_hybrid(model_AE_directory, model_name_x, model_name_y, 
         activation=nn.ReLU(inplace=True)
     ).to(device)
 
-    _num_layers = 2
-    _seq_length = 15
+    _num_layers = 1
+    _seq_length = 25
     _model_RNN = RNN(
         input_size=256,
         hidden_size=256,
