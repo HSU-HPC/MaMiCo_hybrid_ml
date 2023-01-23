@@ -187,7 +187,7 @@ def train_RNN_u_i_single_Piet(loader_x, model_x, model_AE, optimizer_x, model_id
 
         with torch.cuda.amp.autocast():
             _pred_x = model_x(_data_x).to(device=device)
-            n = _pred_x.size / 256
+            n = torch.numel(_pred_x) / 256
             _pred_x = torch.reshape(
                 _pred_x, (n, 32, 2, 2, 2)).to(device=device)
             _targ_x = torch.reshape(
