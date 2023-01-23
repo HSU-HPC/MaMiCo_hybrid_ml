@@ -644,7 +644,7 @@ def prediction_retriever_hybrid(model_AE_directory, model_name_x, model_name_y, 
         seq_length=15
     ).to(device)
 
-    _preds = torch.zeros(1, 1, 24, 24, 24).to(device=device)
+    _preds = torch.zeros(1, 3, 24, 24, 24).to(device=device)
     _targs = []
 
     for data, target in targ_loaders:
