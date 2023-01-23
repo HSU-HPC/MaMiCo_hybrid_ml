@@ -945,7 +945,7 @@ class Hybrid_MD_RNN_AE_u_i(nn.Module):
         self.rnn_x = RNN_Model_x.eval().to(self.device)
         self.rnn_y = RNN_Model_y.eval().to(self.device)
         self.rnn_z = RNN_Model_z.eval().to(self.device)
-        self.seq_length = seq_length.to(self.device)
+        self.seq_length = seq_length
         self.sequence_x = torch.zeros(self.seq_length, 256).to(self.device)
         self.sequence_y = torch.zeros(self.seq_length, 256).to(self.device)
         self.sequence_z = torch.zeros(self.seq_length, 256).to(self.device)
@@ -957,19 +957,19 @@ class Hybrid_MD_RNN_AE_u_i(nn.Module):
         u_y = self.AE_y(x, y='get_bottleneck').to(self.device)
         u_z = self.AE_z(x, y='get_bottleneck').to(self.device)
 
-        u_x_shape = u_x.shape.to(self.device)
+        u_x_shape = u_x.shape
         self.sequence_x = tensor_FIFO_pipe(
             tensor=self.sequence_x,
             x=torch.reshape(u_x, (1, 256)),
             device=self.device).to(self.device)
 
-        u_y_shape = u_y.shape.to(self.device)
+        u_y_shape = u_y.shape
         self.sequence_y = tensor_FIFO_pipe(
             tensor=self.sequence_y,
             x=torch.reshape(u_y, (1, 256)),
             device=self.device).to(self.device)
 
-        u_z_shape = u_z.shape.to(self.device)
+        u_z_shape = u_z.shape
         self.sequence_z = tensor_FIFO_pipe(
             tensor=self.sequence_z,
             x=torch.reshape(u_z, (1, 256)),
