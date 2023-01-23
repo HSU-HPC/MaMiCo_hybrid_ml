@@ -851,8 +851,8 @@ def trial_2_train_RNN_single():
 
     _criterion = nn.L1Loss()
     _file_prefix = '/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/4_ICCS/Results/2_RNN/'
-    _alpha_string = '1e-5'
-    _alpha = 1e-5
+    _alpha_string = '1e-3'
+    _alpha = 1e-3
     _num_layers = 1
     _seq_length = 25
     _model_identifier = f'RNN_LR{_alpha_string}_Lay{_num_layers}_Seq{_seq_length}'
@@ -871,7 +871,7 @@ def trial_2_train_RNN_single():
     _scaler = torch.cuda.amp.GradScaler()
 
     print('Beginning training.')
-    for epoch in range(15):
+    for epoch in range(50):
         _avg_loss_x = 0
         for idx, _train_loader in enumerate(_train_x):
             loss_x = train_RNN_u_i_single(
@@ -1023,6 +1023,6 @@ def trial_2_RNN_single_verification():
 
 
 if __name__ == "__main__":
-    trial_2_train_LSTM_single()
+    trial_2_train_RNN_single()
 
     pass
