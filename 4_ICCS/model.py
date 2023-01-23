@@ -952,16 +952,20 @@ class Hybrid_MD_RNN_AE_u_i(nn.Module):
         print('Model initialized: Hybrid_MD_RNN_AE_u_i')
 
     def forward(self, x):
+        print('Shape [x]: ', x.shape)
 
         u_x = self.AE_x(x, y='get_bottleneck').to(self.device)
         u_y = self.AE_y(x, y='get_bottleneck').to(self.device)
         u_z = self.AE_z(x, y='get_bottleneck').to(self.device)
 
         u_x_shape = u_x.shape
+        print('Shape [latentspace_x]: ', u_x.shape)
+        ()
         self.sequence_x = tensor_FIFO_pipe(
             tensor=self.sequence_x,
             x=torch.reshape(u_x, (1, 256)),
             device=self.device).to(self.device)
+        print('Shape [sequence_x]: ', self.sequence_x.shape)
 
         u_y_shape = u_y.shape
         self.sequence_y = tensor_FIFO_pipe(
@@ -977,6 +981,7 @@ class Hybrid_MD_RNN_AE_u_i(nn.Module):
 
         interim_x = torch.reshape(
             self.sequence_x, (1, self.seq_length, 256)).to(self.device)
+        print('Shape [interim_x]: ', interim_x.shape)
         interim_y = torch.reshape(
             self.sequence_y, (1, self.seq_length, 256)).to(self.device)
         interim_z = torch.reshape(
