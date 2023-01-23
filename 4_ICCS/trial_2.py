@@ -652,23 +652,8 @@ def prediction_retriever_hybrid(model_AE_directory, model_name_x, model_name_y, 
         data = torch.add(data, 0.2).float().to(device=device)
         # print('model_x(data) -> shape: ', data.shape)
         with torch.cuda.amp.autocast():
-            latentspace_x = _model_x(data, 'get_bottleneck').to(device=device)
-            latentspace_y = _model_y(data, 'get_bottleneck').to(device=device)
-            latentspace_z = _model_z(data, 'get_bottleneck').to(device=device)
-
-            latentspace_x_t_plus_1 = _model_RNN(
-                latentspace_x).to(device=device)
-            latentspace_y_t_plus_1 = _model_RNN(
-                latentspace_y).to(device=device)
-            latentspace_z_t_plus_1 = _model_RNN(
-                latentspace_z).to(device=device)
-
-            u_x_t_plus_1 = _model_x(latentspace_x_t_plus_1, y='get_MD_output')
-            u_y_t_plus_1 = _model_y(latentspace_y_t_plus_1, y='get_MD_output')
-            u_z_t_plus_1 = _model_z(latentspace_z_t_plus_1, y='get_MD_output')
-
-            _preds = torch.cat((u_x_t_plus_1, u_y_t_plus_1,
-                               u_z_t_plus_1), 1).to(device)
+            _pred = _model_Hybrid(data)
+            _preds = torch.cat((_preds, _pred), 0).to(device)
             _targs.append(target.cpu().detach().numpy())
 
     _preds = torch.add(_preds, -0.2).float().to(device=device)
