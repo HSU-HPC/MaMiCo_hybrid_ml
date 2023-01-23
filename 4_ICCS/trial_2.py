@@ -610,8 +610,8 @@ def prediction_retriever_hybrid(model_AE_directory, model_name_x, model_name_y, 
         activation=nn.ReLU(inplace=True)
     ).to(device)
 
-    _num_layers = 1
-    _seq_length = 25
+    _num_layers = 2
+    _seq_length = 15
     _model_RNN = RNN(
         input_size=256,
         hidden_size=256,
@@ -641,7 +641,7 @@ def prediction_retriever_hybrid(model_AE_directory, model_name_x, model_name_y, 
         RNN_Model_x=_model_RNN,
         RNN_Model_y=_model_RNN,
         RNN_Model_z=_model_RNN,
-        seq_length=15
+        seq_length=_seq_length,
     ).to(device)
 
     _preds = torch.zeros(1, 3, 24, 24, 24).to(device=device)
@@ -1000,13 +1000,13 @@ def trial_2_RNN_single_verification():
     print('Starting Trial 2: Prediction Retriever (KVS + Aug, MAE, ReLU, AE_u_i, torch.add())')
 
     _model_AE_directory = '/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/4_ICCS/Results/1_Conv_AE/kvs_aug_100_mae_relu_upshift/'
-    _model_RNN_directory = '/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/4_ICCS/Results/2_RNN/kvs_aug_15_mae_single_LSTM/'
+    _model_RNN_directory = '/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/4_ICCS/Results/2_RNN/kvs_aug_15_mae_single_RNN/'
     _model_name_x = 'Model_AE_u_i_LR0_0001_x'
     _model_name_y = 'Model_AE_u_i_LR0_0001_y'
     _model_name_z = 'Model_AE_u_i_LR0_0001_z'
-    _model_name_RNN = 'Model_LSTM_LR1e-5_Lay1_Seq25x'
+    _model_name_RNN = 'Model_LR1e-3_Lay2_Seq15x'
     _dataset_name = 'get_KVS_eval'
-    _save2file_prefix = 'Model_100_relu_kvs_aug_upshift_Hybrid_LSTM'
+    _save2file_prefix = 'Model_100_relu_kvs_aug_upshift_Hybrid_RNN_Piet'
     _save2file_name = '22000_NW_no_std'
 
     prediction_retriever_hybrid(
