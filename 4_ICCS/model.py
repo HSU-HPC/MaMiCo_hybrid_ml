@@ -986,11 +986,11 @@ class Hybrid_MD_RNN_AE_u_i(nn.Module):
             self.sequence_y, (1, self.seq_length, 256)).to(self.device)
         interim_z = torch.reshape(
             self.sequence_z, (1, self.seq_length, 256)).to(self.device)
-        '''
+        
         u_x = self.rnn_x(interim_x).to(self.device)
         u_y = self.rnn_y(interim_y).to(self.device)
         u_z = self.rnn_z(interim_z).to(self.device)
-        '''
+
         u_x = interim_x[0, -1, :]
         u_y = interim_y[0, -1, :]
         u_z = interim_z[0, -1, :]
