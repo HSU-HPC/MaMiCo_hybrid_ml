@@ -55,7 +55,7 @@ class MyMamicoDataset_RNN(Dataset):
           in the RNN sequence.
     """
 
-    def __init__(self, my_images, seq_length=15):
+    def __init__(self, my_images, seq_length=25):
         t, c, d, h, w = my_images.shape
         my_images = my_images.reshape(t, c*d*h*w)
         self.sample_masks = my_images[seq_length:]
