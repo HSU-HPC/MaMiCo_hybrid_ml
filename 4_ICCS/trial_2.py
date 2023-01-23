@@ -58,7 +58,7 @@ def train_RNN_u_i(loader_x, loader_y, loader_z, model_x, model_y, model_z, optim
     _counter = 0
 
     for _data_x, _targ_x in loader_x:
-        print('In training loop.')
+        # print('In training loop.')
         _data_x = _data_x.float().to(device)
         _targ_x = _targ_x.float().to(device)
 
@@ -517,10 +517,10 @@ def trial_2_train_RNN():
 
     _criterion = nn.L1Loss()
     _file_prefix = '/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/4_ICCS/Results/2_RNN/'
-    _alpha_string = '1e-4'
-    _alpha = 1e-4
+    _alpha_string = '1e-3'
+    _alpha = 1e-3
     _num_layers = 2
-    _seq_length = 25
+    _seq_length = 15
     _model_identifier = f'LR{_alpha_string}_Lay{_num_layers}_Seq{_seq_length}'
     print('Initializing RNN model.')
 
@@ -557,7 +557,7 @@ def trial_2_train_RNN():
     _scaler = torch.cuda.amp.GradScaler()
 
     print('Beginning training.')
-    for epoch in range(75):
+    for epoch in range(15):
         _avg_loss_x = 0
         _avg_loss_y = 0
         _avg_loss_z = 0
