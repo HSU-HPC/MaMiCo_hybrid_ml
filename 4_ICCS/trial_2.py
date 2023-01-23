@@ -794,7 +794,7 @@ def trial_2_train_RNN_single():
         _avg_loss_x = 0
 
         for idx, _valid_loader in enumerate(_valid_x):
-            loss_x, loss_y, loss_z = valid_RNN_u_i_single(
+            loss_x = valid_RNN_u_i_single(
                 loader_x=_train_x[idx],
                 model_x=_model_x,
                 model_identifier_x=_model_identifier_x,
