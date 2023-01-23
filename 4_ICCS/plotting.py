@@ -153,13 +153,15 @@ def plotPredVsTargKVS(input_1, input_2='void', file_prefix=0, file_name=0):
     p_loc_x = input_1[:, 0, mid, mid, mid]
     p_loc_y = input_1[:, 1, mid, mid, mid]
     p_loc_z = input_1[:, 2, mid, mid, mid]
+    t_loc_x = input_2[:, 0, mid, mid, mid]
+    t_loc_y = input_2[:, 1, mid, mid, mid]
+    t_loc_z = input_2[:, 2, mid, mid, mid]
 
     print('std array shape: ', t_std_z.shape)
     print('avg array shape: ', t_avg_z.shape)
 
     fig, axs = plt.subplots(3, sharex=True, constrained_layout=True)
     axs[0].plot(t_axis, p_avg_x, linewidth=0.5, label='Prediction')
-    axs[0].plot(t_axis, p_loc_x, linewidth=0.5, label='Local cell')
     axs[0].fill_between(t_axis, p_avg_x-p_std_x, p_avg_x
                         + p_std_x, alpha=0.2, label='Prediction')
     axs[0].plot(t_axis, t_avg_x, linewidth=0.5, label='Target')
@@ -169,22 +171,24 @@ def plotPredVsTargKVS(input_1, input_2='void', file_prefix=0, file_name=0):
     axs[0].grid(axis='y', alpha=0.3)
 
     axs[1].plot(t_axis, p_avg_y, linewidth=0.5, label='Prediction')
-    axs[1].plot(t_axis, p_loc_y, linewidth=0.5, label='Local cell')
     axs[1].fill_between(t_axis, p_avg_y-p_std_y, p_avg_y
                         + p_std_y, alpha=0.2, label='Prediction')
     axs[1].plot(t_axis, t_avg_y, linewidth=0.5, label='Target')
     axs[1].fill_between(t_axis, t_avg_y-t_std_y, t_avg_y
                         + t_std_y, alpha=0.2, label='Target')
+    axs[1].plot(t_axis, p_loc_y, linewidth=0.5, label='[P] Central Cell')
+    axs[1].plot(t_axis, t_loc_y, linewidth=0.5, label='[T] Central Cell')
     axs[1].set_ylabel('Averaged $u_y$')
     axs[1].grid(axis='y', alpha=0.3)
 
     axs[2].plot(t_axis, p_avg_z, linewidth=0.5, label='Prediction')
-    axs[2].plot(t_axis, p_loc_z, linewidth=0.5, label='Local cell')
     axs[2].fill_between(t_axis, p_avg_z-p_std_z, p_avg_z
                         + p_std_z, alpha=0.2, label='Prediction')
     axs[2].plot(t_axis, t_avg_z, linewidth=0.5, label='Target')
     axs[2].fill_between(t_axis, t_avg_z-t_std_z, t_avg_z
                         + t_std_z, alpha=0.2, label='Target')
+    axs[2].plot(t_axis, p_loc_z, linewidth=0.5, label='[P] Central Cell')
+    axs[2].plot(t_axis, t_loc_z, linewidth=0.5, label='[T] Central Cell')
     axs[2].set_ylabel('Averaged $u_z$')
     axs[2].grid(axis='y', alpha=0.3)
 
