@@ -999,7 +999,9 @@ class Hybrid_MD_RNN_AE_u_i(nn.Module):
         u_y = self.AE_y(u_y, y='get_MD_output').to(self.device)
         u_z = self.AE_z(u_z, y='get_MD_output').to(self.device)
 
-        return torch.cat((u_x, u_y, u_z), 1).to(device)
+        out = torch.cat((u_x, u_y, u_z), 1).to(device)
+        print('Shape [out]: ', out.shape)
+        return out
 
 
 class MSLELoss(nn.Module):
