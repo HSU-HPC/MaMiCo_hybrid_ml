@@ -6,7 +6,7 @@
 #SBATCH --partition=small_gpu #
 #SBATCH --gpus=2
 #SBATCH --cpus-per-task=1    # number of cores per process
-#SBATCH --time=03:00:00
+#SBATCH --time=12:00:00
 #SBATCH --output=/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/4_ICCS/trial_2_RNN_%j.log
 # commands to be executed
 
