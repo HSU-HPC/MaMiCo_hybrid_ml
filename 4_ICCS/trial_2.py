@@ -936,7 +936,7 @@ def trial_2_train_RNN_single():
 
     _model_AE.load_state_dict(torch.load(
         f'{_file_prefix_AE}/{_model_identifier_AE}', map_location='cpu'))
-    _model_x.eval()
+    _model_AE.eval()
 
     print('Beginning training.')
     for epoch in range(10):
