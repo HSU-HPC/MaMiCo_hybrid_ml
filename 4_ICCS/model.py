@@ -938,7 +938,7 @@ class Hybrid_MD_RNN_AE_u_i(nn.Module):
 
     def __init__(self, device, AE_Model_x, AE_Model_y, AE_Model_z, RNN_Model_x, RNN_Model_y, RNN_Model_z, seq_length=15):
         super(Hybrid_MD_RNN_AE_u_i, self).__init__()
-        self.device = device.to(self.device)
+        self.device = device
         self.AE_x = AE_Model_x.eval().to(self.device)
         self.AE_y = AE_Model_y.eval().to(self.device)
         self.AE_z = AE_Model_z.eval().to(self.device)
