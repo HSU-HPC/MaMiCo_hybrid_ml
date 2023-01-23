@@ -841,7 +841,91 @@ def trial_2_train_RNN_single():
           This function documents model progress by saving results to file and
           creating meaningful plots.
     """
-    print('Starting Trial 2: Train RNN (Random, MAE, RNN_u_i)')
+    print('Starting Trial 2: Train RNN (KVS, MAE, single RNN)')
+
+    print('Initializing RNN datasets.')
+    _train_x, _train_y, _train_z, _valid_x, _valid_y, _valid_z = get_RNN_loaders(
+        data_distribution='get_KVS')
+
+    print('Initializing training parameters.')
+
+    _criterion = nn.L1Loss()
+    _file_prefix = '/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/4_ICCS/Results/2_RNN/'
+    _alpha_string = '1e-5'
+    _alpha = 1e-5
+    _num_layers = 1
+    _seq_length = 25
+    _model_identifier = f'RNN_LR{_alpha_string}_Lay{_num_layers}_Seq{_seq_length}'
+    print('Initializing RNN model.')
+
+    _model_x = RNN(
+        input_size=256,
+        hidden_size=256,
+        seq_size=_seq_length,
+        num_layers=_num_layers,
+        device=device
+    ).to(device)
+    _optimizer_x = optim.Adam(_model_x.parameters(), lr=_alpha)
+    _model_identifier_x = _model_identifier + '_x'
+
+    _scaler = torch.cuda.amp.GradScaler()
+
+    print('Beginning training.')
+    for epoch in range(15):
+        _avg_loss_x = 0
+        for idx, _train_loader in enumerate(_train_x):
+            loss_x = train_RNN_u_i_single(
+                loader_x=_train_x[idx],
+                model_x=_model_x,
+                optimizer_x=_optimizer_x,
+                model_identifier_x=_model_identifier_x,
+                criterion=_criterion,
+                scaler=_scaler,
+                current_epoch=epoch
+            )
+            _avg_loss_x += loss_x
+        _avg_loss_x = _avg_loss_x/len(_train_x)
+        print('------------------------------------------------------------')
+        print(f'Training Epoch: {epoch+1}')
+        print(f'-> Avg u_x {_avg_loss_x:.3f}')
+
+        _avg_loss_x = 0
+
+        for idx, _valid_loader in enumerate(_valid_x):
+            loss_x = valid_RNN_u_i_single(
+                loader_x=_train_x[idx],
+                model_x=_model_x,
+                model_identifier_x=_model_identifier_x,
+                criterion=_criterion,
+                scaler=_scaler,
+                current_epoch=epoch
+            )
+            _avg_loss_x += loss_x
+        _avg_loss_x = _avg_loss_x/len(_train_x)
+        print('------------------------------------------------------------')
+        print(f'Validation Epoch: {epoch+1}')
+        print(f'-> Avg u_x {_avg_loss_x:.3f}')
+
+    torch.save(
+        _model_x.state_dict(),
+        f'{_file_prefix}Model_{_model_identifier_x}'
+    )
+
+
+def trial_2_train_LSTM_single():
+    """The trial_2_train_LSTM_single function trains an LSTM model and documents its
+    progress via saving average training and validation losses to file and
+    comparing them in a plot.
+
+    Args:
+        NONE
+
+    Returns:
+        NONE:
+          This function documents model progress by saving results to file and
+          creating meaningful plots.
+    """
+    print('Starting Trial 2: Train LSTM (Random, MAE, RNN_u_i)')
 
     print('Initializing RNN datasets.')
     _train_x, _train_y, _train_z, _valid_x, _valid_y, _valid_z = get_RNN_loaders(
