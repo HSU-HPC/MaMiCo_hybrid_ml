@@ -980,12 +980,12 @@ class Hybrid_MD_RNN_AE_u_i(nn.Module):
             device=self.device).to(self.device)
 
         interim_x = torch.reshape(
-            self.sequence_x, (1, self.seq_length, 256)).to(self.device)
+            self.sequence_x, (self.seq_length, 256)).to(self.device)
         print('Shape [interim_x]: ', interim_x.shape)
         interim_y = torch.reshape(
-            self.sequence_y, (1, self.seq_length, 256)).to(self.device)
+            self.sequence_y, (self.seq_length, 256)).to(self.device)
         interim_z = torch.reshape(
-            self.sequence_z, (1, self.seq_length, 256)).to(self.device)
+            self.sequence_z, (self.seq_length, 256)).to(self.device)
 
         u_x = self.rnn(interim_x).to(self.device)
         u_y = self.rnn(interim_y).to(self.device)
