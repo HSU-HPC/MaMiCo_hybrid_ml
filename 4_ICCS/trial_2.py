@@ -955,7 +955,7 @@ def trial_2_train_LSTM_single():
     _scaler = torch.cuda.amp.GradScaler()
 
     print('Beginning training.')
-    for epoch in range(15):
+    for epoch in range(100):
         _avg_loss_x = 0
         for idx, _train_loader in enumerate(_train_x):
             loss_x = train_RNN_u_i_single(
@@ -1023,6 +1023,6 @@ def trial_2_RNN_single_verification():
 
 
 if __name__ == "__main__":
-    trial_2_train_RNN_single()
+    trial_2_train_LSTM_single()
 
     pass
