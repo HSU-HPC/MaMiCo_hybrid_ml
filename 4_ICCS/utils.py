@@ -282,7 +282,7 @@ def get_AE_loaders(data_distribution, batch_size=32, shuffle=True, num_workers=1
 
         print(f'Num Train Loaders = {len(_dataloaders_train)}')
         print(f'Num Valid Loaders = {len(_dataloaders_valid)}')
-        return _dataloaders_train, _dataloaders_valid
+        return _dataloaders_train[0], _dataloaders_valid[0]
 
 
 def get_RNN_loaders(data_distribution, batch_size=32, shuffle=True, num_workers=1):
