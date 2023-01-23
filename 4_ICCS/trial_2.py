@@ -101,6 +101,55 @@ def train_RNN_u_i(loader_x, loader_y, loader_z, model_x, model_y, model_z, optim
     return _avg_loss_x, _avg_loss_y, _avg_loss_z
 
 
+def train_RNN_u_i_single(loader_x, model_x, optimizer_x, model_identifier_x, criterion, scaler, current_epoch):
+    """The train_RNN_u_i_single function trains the model (!!) and computes the average
+        loss on the training set.
+
+        Args:
+            loader:
+              Object of PyTorch-type DataLoader to automatically feed dataset
+            model:
+              Object of PyTorch Module class, i.e. the models to be trained.
+            optimizer:
+              The optimization algorithm applied during training.
+            criterion:
+              The loss function applied to quantify the error.
+            scaler:
+              Object of torch.cuda.amp.GradScaler to conveniently help perform the
+              steps of gradient scaling.
+            model_identifier:
+              A unique string to identify the model. Here, the learning rate is
+              used to identify which model is being trained.
+            current_epoch:
+              A string containing the current epoch for terminal output.
+
+        Returns:
+            avg_loss:
+              A double value indicating average training loss for the current epoch
+              and model.
+        """
+
+    _epoch_loss_x = 0
+    _counter = 0
+
+    for _data_x, _targ_x in loader_x:
+        _data_x = _data_x.float().to(device)
+        _targ_x = _targ_x.float().to(device)
+
+        with torch.cuda.amp.autocast():
+            _preds_x = model_x(_data_x).float().to(device=device)
+            _loss_x = criterion(_preds_x, _targ_x)
+            _epoch_loss_x += _loss_x.item()
+            _counter += 1
+
+        _loss_x.backward(retain_graph=True)
+        optimizer_x.step()
+        optimizer_x.zero_grad()
+
+    _avg_loss_x = _epoch_loss_x/_counter
+    return _avg_loss_x
+
+
 def valid_RNN_u_i(loader_x, loader_y, loader_z, model_x, model_y, model_z, model_identifier_x, model_identifier_y, model_identifier_z, criterion, scaler, current_epoch):
     """The train_RNN_u_i function trains the models and computes the average
     loss on the training set.
@@ -164,6 +213,51 @@ def valid_RNN_u_i(loader_x, loader_y, loader_z, model_x, model_y, model_z, model
     _avg_loss_y = _epoch_loss_y/_counter
     _avg_loss_z = _epoch_loss_z/_counter
     return _avg_loss_x, _avg_loss_y, _avg_loss_z
+
+
+def valid_RNN_u_i_single(loader_x, model_x, model_identifier_x, criterion, scaler, current_epoch):
+    """The valid_RNN_u_i_single function validates the models and computes the average
+    loss on the validation set.
+
+    Args:
+        loader:
+          Object of PyTorch-type DataLoader to automatically feed dataset
+        model:
+          Object of PyTorch Module class, i.e. the models to be trained.
+        optimizer:
+          The optimization algorithm applied during training.
+        criterion:
+          The loss function applied to quantify the error.
+        scaler:
+          Object of torch.cuda.amp.GradScaler to conveniently help perform the
+          steps of gradient scaling.
+        model_identifier:
+          A unique string to identify the model. Here, the learning rate is
+          used to identify which model is being trained.
+        current_epoch:
+          A string containing the current epoch for terminal output.
+
+    Returns:
+        avg_loss:
+          A double value indicating average training loss for the current epoch
+          and model.
+    """
+
+    _epoch_loss_x = 0
+    _counter = 0
+
+    for _data_x, _targ_x in loader_x:
+        _data_x = _data_x.float().to(device)
+        _targ_x = _targ_x.float().to(device)
+
+        with torch.cuda.amp.autocast():
+            _preds_x = model_x(_data_x).float().to(device=device)
+            _loss_x = criterion(_preds_x, _targ_x)
+            _epoch_loss_x += _loss_x.item()
+            _counter += 1
+
+    _avg_loss_x = _epoch_loss_x/_counter
+    return _avg_loss_x
 
 
 def get_latentspace_AE_u_i(loader, model_x, model_y, model_z, out_file_name):
@@ -636,6 +730,90 @@ def trial_2_train_RNN():
     )
 
 
+def trial_2_train_RNN_single():
+    """The trial_2_train_RNN_single function trains an RNN model and documents its
+    progress via saving average training and validation losses to file and
+    comparing them in a plot.
+
+    Args:
+        NONE
+
+    Returns:
+        NONE:
+          This function documents model progress by saving results to file and
+          creating meaningful plots.
+    """
+    print('Starting Trial 2: Train RNN (Random, MAE, RNN_u_i)')
+
+    print('Initializing RNN datasets.')
+    _train_x, _train_y, _train_z, _valid_x, _valid_y, _valid_z = get_RNN_loaders(
+        data_distribution='get_random')
+
+    print('Initializing training parameters.')
+
+    _criterion = nn.L1Loss()
+    _file_prefix = '/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/4_ICCS/Results/2_RNN/'
+    _alpha_string = '1e-3'
+    _alpha = 1e-3
+    _num_layers = 2
+    _seq_length = 15
+    _model_identifier = f'LR{_alpha_string}_Lay{_num_layers}_Seq{_seq_length}'
+    print('Initializing RNN model.')
+
+    _model_x = RNN(
+        input_size=256,
+        hidden_size=256,
+        seq_size=_seq_length,
+        num_layers=_num_layers,
+        device=device
+    ).to(device)
+    _optimizer_x = optim.Adam(_model_x.parameters(), lr=_alpha)
+    _model_identifier_x = _model_identifier + 'x'
+
+    _scaler = torch.cuda.amp.GradScaler()
+
+    print('Beginning training.')
+    for epoch in range(15):
+        _avg_loss_x = 0
+        for idx, _train_loader in enumerate(_train_x):
+            loss_x = train_RNN_u_i_single(
+                loader_x=_train_x[idx],
+                model_x=_model_x,
+                optimizer_x=_optimizer_x,
+                model_identifier_x=_model_identifier_x,
+                criterion=_criterion,
+                scaler=_scaler,
+                current_epoch=epoch
+            )
+            _avg_loss_x += loss_x
+        _avg_loss_x = _avg_loss_x/len(_train_x)
+        print('------------------------------------------------------------')
+        print(f'Training Epoch: {epoch+1}')
+        print(f'-> Avg u_x {_avg_loss_x:.3f}')
+
+        _avg_loss_x = 0
+
+        for idx, _valid_loader in enumerate(_valid_x):
+            loss_x, loss_y, loss_z = valid_RNN_u_i(
+                loader_x=_train_x[idx],
+                model_x=_model_x,
+                model_identifier_x=_model_identifier_x,
+                criterion=_criterion,
+                scaler=_scaler,
+                current_epoch=epoch
+            )
+            _avg_loss_x += loss_x
+        _avg_loss_x = _avg_loss_x/len(_train_x)
+        print('------------------------------------------------------------')
+        print(f'Validation Epoch: {epoch+1}')
+        print(f'-> Avg u_x {_avg_loss_x:.3f}')
+
+    torch.save(
+        _model_x.state_dict(),
+        f'{_file_prefix}Model_{_model_identifier_x}'
+    )
+
+
 if __name__ == "__main__":
-    trial_2_train_RNN()
+    trial_2_train_RNN_single()
     pass
