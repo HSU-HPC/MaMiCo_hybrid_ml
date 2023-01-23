@@ -150,6 +150,57 @@ def train_RNN_u_i_single(loader_x, model_x, optimizer_x, model_identifier_x, cri
     return _avg_loss_x
 
 
+def train_RNN_u_i_single_Piet(loader_x, model_x, model_AE, optimizer_x, model_identifier_x, criterion, scaler, current_epoch):
+    """The train_RNN_u_i_single function trains the model (!!) and computes the average
+        loss on the training set.
+
+        Args:
+            loader:
+              Object of PyTorch-type DataLoader to automatically feed dataset
+            model:
+              Object of PyTorch Module class, i.e. the models to be trained.
+            optimizer:
+              The optimization algorithm applied during training.
+            criterion:
+              The loss function applied to quantify the error.
+            scaler:
+              Object of torch.cuda.amp.GradScaler to conveniently help perform the
+              steps of gradient scaling.
+            model_identifier:
+              A unique string to identify the model. Here, the learning rate is
+              used to identify which model is being trained.
+            current_epoch:
+              A string containing the current epoch for terminal output.
+
+        Returns:
+            avg_loss:
+              A double value indicating average training loss for the current epoch
+              and model.
+        """
+
+    _epoch_loss_x = 0
+    _counter = 0
+
+    for _data_x, _targ_x in loader_x:
+        _data_x = _data_x.float().to(device)
+        _targ_x = _targ_x.float().to(device)
+
+        with torch.cuda.amp.autocast():
+            _pred_x = model_x(_data_x).to(device=device)
+            _vel_pred = model_AE(_pred_x, y='get_MD_output').to(device=device)
+            _vel_targ = model_AE(_targ_x, y='get_MD_output').to(device=device)
+            _loss_x = criterion(_vel_pred, _vel_targ)
+            _epoch_loss_x += _loss_x.item()
+            _counter += 1
+
+        _loss_x.backward(retain_graph=True)
+        optimizer_x.step()
+        optimizer_x.zero_grad()
+
+    _avg_loss_x = _epoch_loss_x/_counter
+    return _avg_loss_x
+
+
 def valid_RNN_u_i(loader_x, loader_y, loader_z, model_x, model_y, model_z, model_identifier_x, model_identifier_y, model_identifier_z, criterion, scaler, current_epoch):
     """The train_RNN_u_i function trains the models and computes the average
     loss on the training set.
@@ -851,11 +902,13 @@ def trial_2_train_RNN_single():
 
     _criterion = nn.L1Loss()
     _file_prefix = '/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/4_ICCS/Results/2_RNN/'
+    _file_prefix_AE = '/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/4_ICCS/Results/1_Conv_AE/kvs_aug_100_mae_relu_upshift/'
     _alpha_string = '1e-5'
     _alpha = 1e-5
     _num_layers = 1
     _seq_length = 25
     _model_identifier = f'RNN_LR{_alpha_string}_Lay{_num_layers}_Seq{_seq_length}'
+    _model_identifier_AE = 'Model_AE_u_i_LR0_0001_x'
     print('Initializing RNN model.')
 
     _model_x = RNN(
@@ -867,16 +920,28 @@ def trial_2_train_RNN_single():
     ).to(device)
     _optimizer_x = optim.Adam(_model_x.parameters(), lr=_alpha)
     _model_identifier_x = _model_identifier + '_x'
-
     _scaler = torch.cuda.amp.GradScaler()
 
+    _model_AE = AE_u_x(
+        device=device,
+        in_channels=1,
+        out_channels=1,
+        features=[4, 8, 16],
+        activation=nn.ReLU(inplace=True)
+    ).to(device)
+
+    _model_AE.load_state_dict(torch.load(
+        f'{_file_prefix_AE}/{_model_identifier_AE}', map_location='cpu'))
+    _model_x.eval()
+
     print('Beginning training.')
-    for epoch in range(100):
+    for epoch in range(10):
         _avg_loss_x = 0
         for idx, _train_loader in enumerate(_train_x):
-            loss_x = train_RNN_u_i_single(
+            loss_x = train_RNN_u_i_single_Piet(
                 loader_x=_train_x[idx],
                 model_x=_model_x,
+                model_AE=_model_AE,
                 optimizer_x=_optimizer_x,
                 model_identifier_x=_model_identifier_x,
                 criterion=_criterion,
@@ -1024,6 +1089,6 @@ def trial_2_RNN_single_verification():
 
 if __name__ == "__main__":
     # trial_2_train_LSTM_single()
-    trial_2_RNN_single_verification()
+    trial_2_train_RNN_single()
 
     pass
