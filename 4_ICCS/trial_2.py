@@ -852,7 +852,7 @@ def trial_2_train_RNN_single():
     _criterion = nn.L1Loss()
     _file_prefix = '/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/4_ICCS/Results/2_RNN/'
     _alpha_string = '1e-3'
-    _alpha = 1e-3
+    _alpha = 1e-5
     _num_layers = 1
     _seq_length = 25
     _model_identifier = f'RNN_LR{_alpha_string}_Lay{_num_layers}_Seq{_seq_length}'
