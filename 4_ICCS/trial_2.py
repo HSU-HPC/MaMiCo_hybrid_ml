@@ -4,7 +4,7 @@ import torch.multiprocessing as mp
 import torch.optim as optim
 import torch.nn as nn
 import numpy as np
-from model import AE_u_x, AE_u_y, AE_u_z, RNN, GRU, LSTM
+from model import AE_u_x, AE_u_y, AE_u_z, RNN, GRU, LSTM, Hybrid_MD_RNN_AE_u_i
 from utils import get_AE_loaders, get_RNN_loaders, dataset2csv
 from plotting import plotPredVsTargKVS
 
@@ -566,8 +566,121 @@ def prediction_retriever_latentspace_u_i(model_directory, model_name_x, model_na
                       file_prefix=save2file_prefix, file_name=save2file_name)
 
 
+def prediction_retriever_hybrid(model_AE_directory, model_name_x, model_name_y, model_name_z, model_RNN_directory, model_name_RNN, dataset_name, save2file_prefix, save2file_name):
+    """The prediction_retriever function is used to evaluate model performance
+    of a trained model. This is done by loading the saved model, feeding it
+    with datasets and then saving the corresponding predictions for later
+    visual comparison.
+
+    Args:
+        model_directory:
+
+        model_name:
+
+        dataset_name:
+
+    Returns:
+        NONE
+    """
+    _, targ_loaders = get_AE_loaders(
+            data_distribution=dataset_name,
+            batch_size=1,
+            shuffle=False
+        )
+
+    _model_x = AE_u_x(
+        device=device,
+        in_channels=1,
+        out_channels=1,
+        features=[4, 8, 16],
+        activation=nn.ReLU(inplace=True)
+    ).to(device)
+    _model_y = AE_u_y(
+        device=device,
+        in_channels=1,
+        out_channels=1,
+        features=[4, 8, 16],
+        activation=nn.ReLU(inplace=True)
+    ).to(device)
+    _model_z = AE_u_z(
+        device=device,
+        in_channels=1,
+        out_channels=1,
+        features=[4, 8, 16],
+        activation=nn.ReLU(inplace=True)
+    ).to(device)
+
+    _num_layers = 2
+    _seq_length = 15
+    _model_RNN = RNN(
+        input_size=256,
+        hidden_size=256,
+        seq_size=_seq_length,
+        num_layers=_num_layers,
+        device=device
+    ).to(device)
+
+    _model_x.load_state_dict(torch.load(
+        f'{model_AE_directory}/{model_name_x}', map_location='cpu'))
+    _model_x.eval()
+    _model_y.load_state_dict(torch.load(
+        f'{model_AE_directory}/{model_name_y}', map_location='cpu'))
+    _model_y.eval()
+    _model_z.load_state_dict(torch.load(
+        f'{model_AE_directory}/{model_name_z}', map_location='cpu'))
+    _model_z.eval()
+    _model_RNN.load_state_dict(torch.load(
+        f'{model_RNN_directory}/{model_name_RNN}', map_location='cpu'))
+    _model_RNN.eval()
+
+    _model_Hybrid = Hybrid_MD_RNN_AE_u_i(
+        device=device,
+        AE_Model_x=_model_x,
+        AE_Model_y=_model_y,
+        AE_Model_z=_model_z,
+        RNN_Model_x=_model_RNN,
+        RNN_Model_y=_model_RNN,
+        RNN_Model_z=_model_RNN,
+        seq_length=15
+    ).to(device)
+
+    _preds = torch.zeros(1, 1, 24, 24, 24).to(device=device)
+    _targs = []
+
+    for data, target in targ_loaders:
+        data = data.float().to(device=device)
+        data = torch.add(data, 0.2).float().to(device=device)
+        # print('model_x(data) -> shape: ', data.shape)
+        with torch.cuda.amp.autocast():
+            latentspace_x = _model_x(data, 'get_bottleneck').to(device=device)
+            latentspace_y = _model_y(data, 'get_bottleneck').to(device=device)
+            latentspace_z = _model_z(data, 'get_bottleneck').to(device=device)
+
+            latentspace_x_t_plus_1 = _model_RNN(
+                latentspace_x).to(device=device)
+            latentspace_y_t_plus_1 = _model_RNN(
+                latentspace_y).to(device=device)
+            latentspace_z_t_plus_1 = _model_RNN(
+                latentspace_z).to(device=device)
+
+            u_x_t_plus_1 = _model_x(latentspace_x_t_plus_1, y='get_MD_output')
+            u_y_t_plus_1 = _model_y(latentspace_y_t_plus_1, y='get_MD_output')
+            u_z_t_plus_1 = _model_z(latentspace_z_t_plus_1, y='get_MD_output')
+
+            _preds = torch.cat((u_x_t_plus_1, u_y_t_plus_1,
+                               u_z_t_plus_1), 1).to(device)
+            _targs.append(target.cpu().detach().numpy())
+
+    _preds = torch.add(_preds, -0.2).float().to(device=device)
+    _preds = _preds[1:, :, :, :, :].cpu().detach().numpy()
+    _targs = np.vstack(_targs)
+
+    plotPredVsTargKVS(input_1=_preds, input_2=_targs,
+                      file_prefix=save2file_prefix, file_name=save2file_name)
+
+
 def trial_2_preliminary_verifications():
-    print('Starting Trial 2: Prediction Retriever (KVS + Aug, MAE, LReLU, AE_u_i, torch.add())')
+    print('Starting Trial 2: Prediction Retriever (KVS + Aug, MAE, ReLU, AE_u_i, torch.add())')
 
     _model_directory = '/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/4_ICCS/Results/1_Conv_AE/kvs_aug_100_mae_relu_upshift/'
     _model_name_x = 'Model_AE_u_i_LR0_0001_x'
@@ -814,6 +927,33 @@ def trial_2_train_RNN_single():
     )
 
 
+def trial_2_RNN_single_verification():
+    print('Starting Trial 2: Prediction Retriever (KVS + Aug, MAE, ReLU, AE_u_i, torch.add())')
+
+    _model_AE_directory = '/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/4_ICCS/Results/1_Conv_AE/kvs_aug_100_mae_relu_upshift/'
+    _model_RNN_directory = '/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/4_ICCS/Results/2_RNN/kvs_aug_15_mae_single_RNN/'
+    _model_name_x = 'Model_AE_u_i_LR0_0001_x'
+    _model_name_y = 'Model_AE_u_i_LR0_0001_y'
+    _model_name_z = 'Model_AE_u_i_LR0_0001_z'
+    _model_name_RNN = 'Model_LR1e-3_Lay2_Seq15x'
+    _dataset_name = 'get_KVS_eval'
+    _save2file_prefix = 'Model_100_relu_kvs_aug_upshift_Hybrid'
+    _save2file_name = '22000_NW_no_std'
+
+    prediction_retriever_hybrid(
+        model_AE_directory=_model_AE_directory,
+        model_name_x=_model_name_x,
+        model_name_y=_model_name_y,
+        model_name_z=_model_name_z,
+        model_RNN_directory=_model_RNN_directory,
+        model_name_RNN=_model_name_RNN,
+        dataset_name=_dataset_name,
+        save2file_prefix=_save2file_prefix,
+        save2file_name=_save2file_name
+    )
+
+
 if __name__ == "__main__":
-    trial_2_train_RNN_single()
+    trial_2_RNN_single_verification()
+
     pass

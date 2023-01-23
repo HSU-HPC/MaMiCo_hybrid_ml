@@ -917,7 +917,7 @@ class LSTM(nn.Module):
         return out
 
 
-class Hybrid_MD_RNN_AE(nn.Module):
+class Hybrid_MD_RNN_AE_u_i(nn.Module):
     """The Hybrid_MD_RNN_AE class aims at implementing the strictly convolutional
     autoencoder and RNN based hybrid model for time-series prediction of MD
     velocity distributions.
@@ -936,32 +936,65 @@ class Hybrid_MD_RNN_AE(nn.Module):
           considered in the time-series sequence of latent spaces.
     """
 
-    def __init__(self, device, AE_Model, RNN_Model, seq_length):
-        super(Hybrid_MD_RNN_AE, self).__init__()
-        self.device = device
-        self.AE = AE_Model.eval()
-        self.rnn = RNN_Model.eval()
-        self.seq_length = seq_length
-        self.sequence = torch.zeros(self.seq_length, 256)
-        print('Model initialized: Hybrid_MD_RNN_AE')
+    def __init__(self, device, AE_Model_x, AE_Model_y, AE_Model_z, RNN_Model_x, RNN_Model_y, RNN_Model_z, seq_length=15):
+        super(Hybrid_MD_RNN_AE_u_i, self).__init__()
+        self.device = device.to(self.device)
+        self.AE_x = AE_Model_x.eval().to(self.device)
+        self.AE_y = AE_Model_y.eval().to(self.device)
+        self.AE_z = AE_Model_z.eval().to(self.device)
+        self.rnn_x = RNN_Model_x.eval().to(self.device)
+        self.rnn_y = RNN_Model_y.eval().to(self.device)
+        self.rnn_z = RNN_Model_z.eval().to(self.device)
+        self.seq_length = seq_length.to(self.device)
+        self.sequence_x = torch.zeros(self.seq_length, 256).to(self.device)
+        self.sequence_y = torch.zeros(self.seq_length, 256).to(self.device)
+        self.sequence_z = torch.zeros(self.seq_length, 256).to(self.device)
+        print('Model initialized: Hybrid_MD_RNN_AE_u_i')
 
     def forward(self, x):
 
-        x, skip_connections = self.AE(x, y='get_bottleneck')
+        u_x = self.AE_x(x, y='get_bottleneck').to(self.device)
+        u_y = self.AE_y(x, y='get_bottleneck').to(self.device)
+        u_z = self.AE_z(x, y='get_bottleneck').to(self.device)
 
-        x_shape = x.shape
-        self.sequence = tensor_FIFO_pipe(
-            tensor=self.sequence,
-            x=torch.reshape(x, (1, 256)),
+        u_x_shape = u_x.shape.to(self.device)
+        self.sequence_x = tensor_FIFO_pipe(
+            tensor=self.sequence_x,
+            x=torch.reshape(u_x, (1, 256)),
             device=self.device).to(self.device)
 
-        interim = torch.reshape(self.sequence, (1, self.seq_length, 256))
-        x = self.rnn(interim)
+        u_y_shape = u_y.shape.to(self.device)
+        self.sequence_y = tensor_FIFO_pipe(
+            tensor=self.sequence_y,
+            x=torch.reshape(u_y, (1, 256)),
+            device=self.device).to(self.device)
 
-        x = torch.reshape(x, x_shape)
+        u_z_shape = u_z.shape.to(self.device)
+        self.sequence_z = tensor_FIFO_pipe(
+            tensor=self.sequence_z,
+            x=torch.reshape(u_z, (1, 256)),
+            device=self.device).to(self.device)
 
-        x = self.AE(x, y='get_MD_output', skip_connections=skip_connections)
-        return x
+        interim_x = torch.reshape(
+            self.sequence_x, (1, self.seq_length, 256)).to(self.device)
+        interim_y = torch.reshape(
+            self.sequence_y, (1, self.seq_length, 256)).to(self.device)
+        interim_z = torch.reshape(
+            self.sequence_z, (1, self.seq_length, 256)).to(self.device)
+
+        u_x = self.rnn(interim_x).to(self.device)
+        u_y = self.rnn(interim_y).to(self.device)
+        u_z = self.rnn(interim_z).to(self.device)
+
+        u_x = torch.reshape(u_x, u_x_shape).to(self.device)
+        u_y = torch.reshape(u_y, u_y_shape).to(self.device)
+        u_z = torch.reshape(u_z, u_z_shape).to(self.device)
+
+        u_x = self.AE_x(u_x, y='get_MD_output').to(self.device)
+        u_y = self.AE_y(u_y, y='get_MD_output').to(self.device)
+        u_z = self.AE_z(u_z, y='get_MD_output').to(self.device)
+
+        return torch.cat((u_x, u_y, u_z), 1).to(device)
 
 
 class MSLELoss(nn.Module):
