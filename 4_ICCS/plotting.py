@@ -168,8 +168,8 @@ def plotPredVsTargKVS(input_1, input_2='void', file_prefix=0, file_name=0):
     axs[0].plot(t_axis, t_avg_x, linewidth=0.5, label='Target')
     axs[0].fill_between(t_axis, t_avg_x-t_std_x, t_avg_x
                         + t_std_x, alpha=0.2, label='Target')
-    axs[0].plot(t_axis, p_loc_x, linewidth=0.5, label='[P] Central Cell')
-    axs[0].plot(t_axis, t_loc_x, linewidth=0.5, label='[T] Central Cell')
+    axs[0].scatter(t_axis, p_loc_x, s=0.5, label='[P] Central Cell')
+    axs[0].scatter(t_axis, t_loc_x, s=0.5, label='[T] Central Cell')
     axs[0].set_ylabel('Averaged $u_x$')
     axs[0].grid(axis='y', alpha=0.3)
 
