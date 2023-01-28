@@ -297,14 +297,18 @@ def plotPredVsTargKVS_new(input_1, input_2='void', file_prefix=0, file_name=0):
     axs[0, 0].set_ylabel('Averaged $u_x$')
     axs[0, 0].grid(axis='y', alpha=0.3)
 
-    axs[0, 1].plot(t_axis, p_avg_x_NE, linewidth=0.5, label='NE')
-    axs[0, 1].plot(t_axis, p_avg_x_NW, linewidth=0.5, label='NW')
-    axs[0, 1].plot(t_axis, p_avg_x_SE, linewidth=0.5, label='SE')
-    axs[0, 1].plot(t_axis, p_avg_x_SW, linewidth=0.5, label='SW')
-    axs[0, 1].plot(t_axis, t_avg_x_NE, linestyle='dotted', linewidth=0.5, label='NE')
-    axs[0, 1].plot(t_axis, t_avg_x_NW, linestyle='dotted', linewidth=0.5, label='NW')
-    axs[0, 1].plot(t_axis, t_avg_x_SE, linestyle='dotted', linewidth=0.5, label='SE')
-    axs[0, 1].plot(t_axis, t_avg_x_SW, linestyle='dotted', linewidth=0.5, label='SW')
+    axs[0, 1].plot(t_axis, p_avg_x_NE, color='green', linewidth=0.5, label='NE')
+    axs[0, 1].plot(t_axis, p_avg_x_NW, color='blue', linewidth=0.5, label='NW')
+    axs[0, 1].plot(t_axis, p_avg_x_SE, color='magenta', linewidth=0.5, label='SE')
+    axs[0, 1].plot(t_axis, p_avg_x_SW, color='red', linewidth=0.5, label='SW')
+    axs[0, 1].plot(t_axis, t_avg_x_NE, linestyle='dotted',
+                   color='green', linewidth=0.5, label='NE')
+    axs[0, 1].plot(t_axis, t_avg_x_NW, linestyle='dotted',
+                   color='blue', linewidth=0.5, label='NW')
+    axs[0, 1].plot(t_axis, t_avg_x_SE, linestyle='dotted',
+                   color='magenta', linewidth=0.5, label='SE')
+    axs[0, 1].plot(t_axis, t_avg_x_SW, linestyle='dotted',
+                   color='red', linewidth=0.5, label='SW')
     axs[0, 1].set_ylabel('Averaged $u_x$')
     axs[0, 1].grid(axis='y', alpha=0.3)
 
@@ -317,14 +321,18 @@ def plotPredVsTargKVS_new(input_1, input_2='void', file_prefix=0, file_name=0):
     axs[1, 0].set_ylabel('Averaged $u_y$')
     axs[1, 0].grid(axis='y', alpha=0.3)
 
-    axs[1, 1].plot(t_axis, p_avg_y_NE, linewidth=0.5, label='NE')
-    axs[1, 1].plot(t_axis, p_avg_y_NW, linewidth=0.5, label='NW')
-    axs[1, 1].plot(t_axis, p_avg_y_SE, linewidth=0.5, label='SE')
-    axs[1, 1].plot(t_axis, p_avg_y_SW, linewidth=0.5, label='SW')
-    axs[1, 1].plot(t_axis, t_avg_y_NE, linestyle='dotted', linewidth=0.5, label='NE')
-    axs[1, 1].plot(t_axis, t_avg_y_NW, linestyle='dotted', linewidth=0.5, label='NW')
-    axs[1, 1].plot(t_axis, t_avg_y_SE, linestyle='dotted', linewidth=0.5, label='SE')
-    axs[1, 1].plot(t_axis, t_avg_y_SW, linestyle='dotted', linewidth=0.5, label='SW')
+    axs[1, 1].plot(t_axis, p_avg_y_NE, color='green', linewidth=0.5, label='NE')
+    axs[1, 1].plot(t_axis, p_avg_y_NW, color='blue', linewidth=0.5, label='NW')
+    axs[1, 1].plot(t_axis, p_avg_y_SE, color='magenta', linewidth=0.5, label='SE')
+    axs[1, 1].plot(t_axis, p_avg_y_SW, color='red', linewidth=0.5, label='SW')
+    axs[1, 1].plot(t_axis, t_avg_y_NE, linestyle='dotted',
+                   color='green', linewidth=0.5, label='NE')
+    axs[1, 1].plot(t_axis, t_avg_y_NW, linestyle='dotted',
+                   color='blue', linewidth=0.5, label='NW')
+    axs[1, 1].plot(t_axis, t_avg_y_SE, linestyle='dotted',
+                   color='magenta', linewidth=0.5, label='SE')
+    axs[1, 1].plot(t_axis, t_avg_y_SW, linestyle='dotted',
+                   color='red', linewidth=0.5, label='SW')
     axs[1, 1].set_ylabel('Averaged $u_y$')
     axs[1, 1].grid(axis='y', alpha=0.3)
 
@@ -339,14 +347,18 @@ def plotPredVsTargKVS_new(input_1, input_2='void', file_prefix=0, file_name=0):
 
     axs[2, 0].set_xlabel('Timestep')
 
-    axs[2, 1].plot(t_axis, p_avg_z_NE, linewidth=0.5, label='NE')
-    axs[2, 1].plot(t_axis, p_avg_z_NW, linewidth=0.5, label='NW')
-    axs[2, 1].plot(t_axis, p_avg_z_SE, linewidth=0.5, label='SE')
-    axs[2, 1].plot(t_axis, p_avg_z_SW, linewidth=0.5, label='SW')
-    axs[2, 1].plot(t_axis, t_avg_z_NE, linestyle='dotted', linewidth=0.5, label='NE')
-    axs[2, 1].plot(t_axis, t_avg_z_NW, linestyle='dotted', linewidth=0.5, label='NW')
-    axs[2, 1].plot(t_axis, t_avg_z_SE, linestyle='dotted', linewidth=0.5, label='SE')
-    axs[2, 1].plot(t_axis, t_avg_z_SW, linestyle='dotted', linewidth=0.5, label='SW')
+    axs[2, 1].plot(t_axis, p_avg_z_NE, color='green', linewidth=0.5, label='NE')
+    axs[2, 1].plot(t_axis, p_avg_z_NW, color='blue', linewidth=0.5, label='NW')
+    axs[2, 1].plot(t_axis, p_avg_z_SE, color='magenta', linewidth=0.5, label='SE')
+    axs[2, 1].plot(t_axis, p_avg_z_SW, color='red', linewidth=0.5, label='SW')
+    axs[2, 1].plot(t_axis, t_avg_z_NE, linestyle='dotted',
+                   color='green', linewidth=0.5, label='NE')
+    axs[2, 1].plot(t_axis, t_avg_z_NW, linestyle='dotted',
+                   color='blue', linewidth=0.5, label='NW')
+    axs[2, 1].plot(t_axis, t_avg_z_SE, linestyle='dotted',
+                   color='magenta', linewidth=0.5, label='SE')
+    axs[2, 1].plot(t_axis, t_avg_z_SW, linestyle='dotted',
+                   color='red', linewidth=0.5, label='SW')
     axs[2, 1].set_ylabel('Averaged $u_z$')
     axs[2, 1].grid(axis='y', alpha=0.3)
 
