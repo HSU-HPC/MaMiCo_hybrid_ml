@@ -638,7 +638,7 @@ def prediction_retriever_hybrid(model_AE_directory, model_name_x, model_name_y, 
     Returns:
         NONE
     """
-    _, targ_loaders = get_AE_loaders(
+    train_loaders, valid_loaders = get_AE_loaders(
             data_distribution=dataset_name,
             batch_size=1,
             shuffle=False
@@ -703,7 +703,7 @@ def prediction_retriever_hybrid(model_AE_directory, model_name_x, model_name_y, 
     _preds = torch.zeros(1, 3, 24, 24, 24).to(device=device)
     _targs = []
 
-    for data, target in targ_loaders:
+    for data, target in train_loaders:
         data = data.float().to(device=device)
         data = torch.add(data, 0.2).float().to(device=device)
         # print('model_x(data) -> shape: ', data.shape)
@@ -1077,7 +1077,7 @@ def trial_2_RNN_single_verification():
     _model_name_RNN = 'Model_RNN_LR1e-5_Lay1_Seq25_x'
     _dataset_name = 'get_KVS_eval'
     _save2file_prefix = 'Model_100_relu_kvs_aug_upshift_Hybrid_RNN_Piet_10'
-    _save2file_name = '22000_NW_no_std'
+    _save2file_name = '20000_NW_no_std'
 
     prediction_retriever_hybrid(
         model_AE_directory=_model_AE_directory,
