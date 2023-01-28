@@ -207,6 +207,159 @@ def plotPredVsTargKVS(input_1, input_2='void', file_prefix=0, file_name=0):
     pass
 
 
+def plotPredVsTargKVS_new(input_1, input_2='void', file_prefix=0, file_name=0):
+    """The plotPredVsTargKVS function aims to graphically compare model
+    performance via plotting domain-wise averaged predicted and target
+    velocities vs time. The standard deviations are additionally included for
+    better comparison.
+
+    Args:
+        input_1:
+          Object of type PyTorch-Tensor containing the predicted dataset
+        input_2:
+          Object of type PyTorch-Tensor containing the target dataset
+        file_prefix:
+          Object of type string containing
+        file_name:
+          Object of type string containing
+
+    Returns:
+        NONE:
+          This function saves the graphical comparison to file.
+    """
+
+    if input_2 == 'void':
+        print('Invalid input_2.')
+
+    t, c, x, y, z = input_1.shape
+    mid = y//2
+    t_max = t
+    t_axis = np.arange(1, t_max+1)
+
+    p_std_x = np.std(input_1[:, 0, :, :, :], axis=(1, 2, 3))
+    t_std_x = np.std(input_2[:, 0, :, :, :], axis=(1, 2, 3))
+    p_std_y = np.std(input_1[:, 1, :, :, :], axis=(1, 2, 3))
+    t_std_y = np.std(input_2[:, 1, :, :, :], axis=(1, 2, 3))
+    p_std_z = np.std(input_1[:, 2, :, :, :], axis=(1, 2, 3))
+    t_std_z = np.std(input_2[:, 2, :, :, :], axis=(1, 2, 3))
+
+    p_avg_x = np.mean(input_1[:, 0, :, :, :], axis=(1, 2, 3))
+    t_avg_x = np.mean(input_2[:, 0, :, :, :], axis=(1, 2, 3))
+    p_avg_x_NE = np.mean(input_1[:, 0, mid:, mid:, :], axis=(1, 2, 3))
+    t_avg_x_NE = np.mean(input_2[:, 0, mid:, mid:, :], axis=(1, 2, 3))
+    p_avg_x_NW = np.mean(input_1[:, 0, :mid, mid:, :], axis=(1, 2, 3))
+    t_avg_x_NW = np.mean(input_2[:, 0, :mid, mid:, :], axis=(1, 2, 3))
+    p_avg_x_SE = np.mean(input_1[:, 0, mid:, :mid, :], axis=(1, 2, 3))
+    t_avg_x_SE = np.mean(input_2[:, 0, mid:, :mid, :], axis=(1, 2, 3))
+    p_avg_x_SW = np.mean(input_1[:, 0, :mid, :mid, :], axis=(1, 2, 3))
+    t_avg_x_SW = np.mean(input_2[:, 0, :mid, :mid, :], axis=(1, 2, 3))
+
+    p_avg_y = np.mean(input_1[:, 1, :, :, :], axis=(1, 2, 3))
+    t_avg_y = np.mean(input_2[:, 1, :, :, :], axis=(1, 2, 3))
+    p_avg_y_NE = np.mean(input_1[:, 1, mid:, mid:, :], axis=(1, 2, 3))
+    t_avg_y_NE = np.mean(input_2[:, 1, mid:, mid:, :], axis=(1, 2, 3))
+    p_avg_y_NW = np.mean(input_1[:, 1, :mid, mid:, :], axis=(1, 2, 3))
+    t_avg_y_NW = np.mean(input_2[:, 1, :mid, mid:, :], axis=(1, 2, 3))
+    p_avg_y_SE = np.mean(input_1[:, 1, mid:, :mid, :], axis=(1, 2, 3))
+    t_avg_y_SE = np.mean(input_2[:, 1, mid:, :mid, :], axis=(1, 2, 3))
+    p_avg_y_SW = np.mean(input_1[:, 1, :mid, :mid, :], axis=(1, 2, 3))
+    t_avg_y_SW = np.mean(input_2[:, 1, :mid, :mid, :], axis=(1, 2, 3))
+
+    p_avg_z = np.mean(input_1[:, 2, :, :, :], axis=(1, 2, 3))
+    t_avg_z = np.mean(input_2[:, 2, :, :, :], axis=(1, 2, 3))
+    p_avg_z_NE = np.mean(input_1[:, 2, mid:, mid:, :], axis=(1, 2, 3))
+    t_avg_z_NE = np.mean(input_2[:, 2, mid:, mid:, :], axis=(1, 2, 3))
+    p_avg_z_NW = np.mean(input_1[:, 2, :mid, mid:, :], axis=(1, 2, 3))
+    t_avg_z_NW = np.mean(input_2[:, 2, :mid, mid:, :], axis=(1, 2, 3))
+    p_avg_z_SE = np.mean(input_1[:, 2, mid:, :mid, :], axis=(1, 2, 3))
+    t_avg_z_SE = np.mean(input_2[:, 2, mid:, :mid, :], axis=(1, 2, 3))
+    p_avg_z_SW = np.mean(input_1[:, 2, :mid, :mid, :], axis=(1, 2, 3))
+    t_avg_z_SW = np.mean(input_2[:, 2, :mid, :mid, :], axis=(1, 2, 3))
+
+    p_loc_x = np.mean(input_1[:, 0, :, mid, mid], axis=(1))
+    print('p_loc_x.shape: ', p_loc_x.shape)
+    p_loc_y = np.mean(input_1[:, 1, :, mid, mid], axis=(1))
+    p_loc_z = np.mean(input_1[:, 2, :, mid, mid], axis=(1))
+    t_loc_x = np.mean(input_2[:, 0, :, mid, mid], axis=(1))
+    t_loc_y = np.mean(input_2[:, 1, :, mid, mid], axis=(1))
+    t_loc_z = np.mean(input_2[:, 2, :, mid, mid], axis=(1))
+
+    print('std array shape: ', t_std_z.shape)
+    print('avg array shape: ', t_avg_z.shape)
+
+    fig, axs = plt.subplots(3, 2, sharex=True, constrained_layout=True)
+    axs[0, 0].plot(t_axis, p_avg_x, linewidth=0.5, label='Prediction')
+    axs[0, 0].fill_between(t_axis, p_avg_x-p_std_x, p_avg_x
+                           + p_std_x, alpha=0.2, label='Prediction')
+    axs[0, 0].plot(t_axis, t_avg_x, linewidth=0.5, label='Target')
+    axs[0, 0].fill_between(t_axis, t_avg_x-t_std_x, t_avg_x
+                           + t_std_x, alpha=0.2, label='Target')
+    axs[0, 0].set_ylabel('Averaged $u_x$')
+    axs[0, 0].grid(axis='y', alpha=0.3)
+
+    axs[0, 1].plot(t_axis, p_avg_x_NE, linewidth=0.5, label='[P] NE')
+    axs[0, 1].plot(t_axis, p_avg_x_NW, linewidth=0.5, label='[P] NW')
+    axs[0, 1].plot(t_axis, p_avg_x_SE, linewidth=0.5, label='[P] SE')
+    axs[0, 1].plot(t_axis, p_avg_x_SW, linewidth=0.5, label='[P] SW')
+    axs[0, 1].plot(t_axis, t_avg_x_NE, linewidth=0.5, label='[T] NE')
+    axs[0, 1].plot(t_axis, t_avg_x_NW, linewidth=0.5, label='[T] NW')
+    axs[0, 1].plot(t_axis, t_avg_x_SE, linewidth=0.5, label='[T] SE')
+    axs[0, 1].plot(t_axis, t_avg_x_SW, linewidth=0.5, label='[T] SW')
+    axs[0, 1].set_ylabel('Averaged $u_x$')
+    axs[0, 1].grid(axis='y', alpha=0.3)
+
+    axs[1, 0].plot(t_axis, p_avg_y, linewidth=0.5, label='Prediction')
+    axs[1, 0].fill_between(t_axis, p_avg_y-p_std_y, p_avg_y
+                           + p_std_y, alpha=0.2, label='Prediction')
+    axs[1, 0].plot(t_axis, t_avg_y, linewidth=0.5, label='Target')
+    axs[1, 0].fill_between(t_axis, t_avg_y-t_std_y, t_avg_y
+                           + t_std_y, alpha=0.2, label='Target')
+    axs[1, 0].set_ylabel('Averaged $u_y$')
+    axs[1, 0].grid(axis='y', alpha=0.3)
+
+    axs[1, 1].plot(t_axis, p_avg_y_NE, linewidth=0.5, label='[P] NE')
+    axs[1, 1].plot(t_axis, p_avg_y_NW, linewidth=0.5, label='[P] NW')
+    axs[1, 1].plot(t_axis, p_avg_y_SE, linewidth=0.5, label='[P] SE')
+    axs[1, 1].plot(t_axis, p_avg_y_SW, linewidth=0.5, label='[P] SW')
+    axs[1, 1].plot(t_axis, t_avg_y_NE, linewidth=0.5, label='[T] NE')
+    axs[1, 1].plot(t_axis, t_avg_y_NW, linewidth=0.5, label='[T] NW')
+    axs[1, 1].plot(t_axis, t_avg_y_SE, linewidth=0.5, label='[T] SE')
+    axs[1, 1].plot(t_axis, t_avg_y_SW, linewidth=0.5, label='[T] SW')
+    axs[1, 1].set_ylabel('Averaged $u_y$')
+    axs[1, 1].grid(axis='y', alpha=0.3)
+
+    axs[2, 0].plot(t_axis, p_avg_z, linewidth=0.5, label='Prediction')
+    axs[2, 0].fill_between(t_axis, p_avg_z-p_std_z, p_avg_z
+                           + p_std_z, alpha=0.2, label='Prediction')
+    axs[2, 0].plot(t_axis, t_avg_z, linewidth=0.5, label='Target')
+    axs[2, 0].fill_between(t_axis, t_avg_z-t_std_z, t_avg_z
+                           + t_std_z, alpha=0.2, label='Target')
+    axs[2, 0].set_ylabel('Averaged $u_z$')
+    axs[2, 0].grid(axis='y', alpha=0.3)
+
+    axs[2, 0].set_xlabel('Timestep')
+    axs[2, 0].legend(ncol=3, fontsize=9)
+
+    axs[2, 1].plot(t_axis, p_avg_z_NE, linewidth=0.5, label='[P] NE')
+    axs[2, 1].plot(t_axis, p_avg_z_NW, linewidth=0.5, label='[P] NW')
+    axs[2, 1].plot(t_axis, p_avg_z_SE, linewidth=0.5, label='[P] SE')
+    axs[2, 1].plot(t_axis, p_avg_z_SW, linewidth=0.5, label='[P] SW')
+    axs[2, 1].plot(t_axis, t_avg_z_NE, linewidth=0.5, label='[T] NE')
+    axs[2, 1].plot(t_axis, t_avg_z_NW, linewidth=0.5, label='[T] NW')
+    axs[2, 1].plot(t_axis, t_avg_z_SE, linewidth=0.5, label='[T] SE')
+    axs[2, 1].plot(t_axis, t_avg_z_SW, linewidth=0.5, label='[T] SW')
+    axs[2, 1].set_ylabel('Averaged $u_z$')
+    axs[2, 1].grid(axis='y', alpha=0.3)
+
+    fig.set_size_inches(12, 4)
+    if file_name != 0:
+        fig.savefig(
+            f'{file_prefix}Plot_PredVsTarg_KVS_{file_name}.svg')
+    #plt.show()
+    plt.close()
+    pass
+
+
 if __name__ == "__main__":
     pred = np.random.rand(1000, 3, 24, 24, 24) + 1
     targ = np.random.rand(1000, 3, 24, 24, 24) + 2.2

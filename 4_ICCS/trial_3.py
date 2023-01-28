@@ -6,7 +6,7 @@ import torch.nn as nn
 import numpy as np
 from model import AE_u_x, AE_u_y, AE_u_z, RNN, GRU, LSTM, Hybrid_MD_RNN_AE_u_i
 from utils import get_AE_loaders, get_RNN_loaders, dataset2csv
-from plotting import plotPredVsTargKVS, plotPredVsTargKVS_new
+from plotting import plotPredVsTargKVS
 
 torch.manual_seed(10)
 random.seed(10)
@@ -24,15 +24,15 @@ PIN_MEMORY = True
 LOAD_MODEL = False
 
 
-def train_RNN_u_i(loader_x, loader_y, loader_z, model_x, model_y, model_z, optimizer_x, optimizer_y, optimizer_z, model_identifier_x, model_identifier_y, model_identifier_z, criterion, scaler, current_epoch):
-    """The train_RNN_u_i function trains the models and computes the average
-    loss on the training set.
+def train_AE_u_i_single(loader_x, model_x, optimizer_x, model_identifier_x, criterion, scaler, current_epoch):
+    """The train_AE function trains the model and computes the average loss on
+    the training set.
 
     Args:
         loader:
           Object of PyTorch-type DataLoader to automatically feed dataset
         model:
-          Object of PyTorch Module class, i.e. the models to be trained.
+          Object of PyTorch Module class, i.e. the model to be trained.
         optimizer:
           The optimization algorithm applied during training.
         criterion:
@@ -48,57 +48,54 @@ def train_RNN_u_i(loader_x, loader_y, loader_z, model_x, model_y, model_z, optim
 
     Returns:
         avg_loss:
-          A double value indicating average training loss for the current epoch
-          and model.
+          A double value indicating average training loss for the current epoch.
     """
 
     _epoch_loss_x = 0
-    _epoch_loss_y = 0
-    _epoch_loss_z = 0
     _counter = 0
 
-    for _data_x, _targ_x in loader_x:
-        # print('In training loop.')
-        _data_x = _data_x.float().to(device)
-        _targ_x = _targ_x.float().to(device)
+    for _batch_idx, (_data_0, _targ_0) in enumerate(loader_x):
+        t, c, h, d, w = _data_0.shape
+        _data_u_x = torch.reshape(
+            _data_0[:, 0, :, :, :], (t, 1, h, d, w)).to(device=device)
+        _data_u_y = torch.reshape(
+            _data_0[:, 1, :, :, :], (t, 1, h, d, w)).to(device=device)
+        _data_u_z = torch.reshape(
+            _data_0[:, 2, :, :, :], (t, 1, h, d, w)).to(device=device)
+        _targ_u_x = torch.reshape(
+            _targ_0[:, 0, :, :, :], (t, 1, h, d, w)).to(device=device)
+        _targ_u_y = torch.reshape(
+            _targ_0[:, 1, :, :, :], (t, 1, h, d, w)).to(device=device)
+        _targ_u_z = torch.reshape(
+            _targ_0[:, 2, :, :, :], (t, 1, h, d, w)).to(device=device)
 
-        _data_y, _targ_y = next(iter(loader_y))
-        _data_y = _data_y.float().to(device)
-        _targ_y = _targ_y.float().to(device)
+        _data_1 = torch.cat((_data_u_y, _data_u_z, _data_u_x), 1).to(device)
+        _data_2 = torch.cat((_data_u_z, _data_u_x, _data_u_y), 1).to(device)
+        _targ_1 = torch.cat((_targ_u_y, _targ_u_z, _targ_u_x), 1).to(device)
+        _targ_2 = torch.cat((_targ_u_z, _targ_u_x, _targ_u_y), 1).to(device)
 
-        _data_z, _targ_z = next(iter(loader_z))
-        _data_z = _data_z.float().to(device)
-        _targ_z = _targ_z.float().to(device)
+        _data = torch.cat((_data_0.to(device), _data_1.to(
+            device), _data_2.to(device)), 0).float().to(device)
+        _data = torch.add(_data, 1.0).float().to(device)
+        _targ = torch.cat((_targ_0.to(device), _targ_1.to(
+            device), _targ_2.to(device)), 0).float().to(device)
 
         with torch.cuda.amp.autocast():
-            _preds_x = model_x(_data_x).float().to(device=device)
-            _preds_y = model_y(_data_y).float().to(device=device)
-            _preds_z = model_z(_data_z).float().to(device=device)
+            _preds_x = model_x(_data).float().to(device=device)
+            _preds_x = torch.add(_preds_x, -1.0).float().to(device=device)
+            _targs_x = torch.reshape(
+                _targ[:, 0, :, :, :].float(), (3*t, 1, h, d, w)).to(device=device)
+            _loss_x = criterion(_preds_x, _targs_x)
 
-            _loss_x = criterion(_preds_x, _targ_x)
-            _loss_y = criterion(_preds_y, _targ_y)
-            _loss_z = criterion(_preds_z, _targ_z)
-
-            print(_loss_x.item())
             _epoch_loss_x += _loss_x.item()
-            _epoch_loss_y += _loss_y.item()
-            _epoch_loss_z += _loss_z.item()
             _counter += 1
 
         _loss_x.backward(retain_graph=True)
-        _loss_y.backward(retain_graph=True)
-        _loss_z.backward(retain_graph=True)
         optimizer_x.step()
-        optimizer_y.step()
-        optimizer_z.step()
         optimizer_x.zero_grad()
-        optimizer_y.zero_grad()
-        optimizer_z.zero_grad()
 
     _avg_loss_x = _epoch_loss_x/_counter
-    _avg_loss_y = _epoch_loss_y/_counter
-    _avg_loss_z = _epoch_loss_z/_counter
-    return _avg_loss_x, _avg_loss_y, _avg_loss_z
+    return _avg_loss_x
 
 
 def train_RNN_u_i_single(loader_x, model_x, optimizer_x, model_identifier_x, criterion, scaler, current_epoch):
@@ -716,7 +713,7 @@ def prediction_retriever_hybrid(model_AE_directory, model_name_x, model_name_y, 
     _preds = _preds[1:, :, :, :, :].cpu().detach().numpy()
     _targs = np.vstack(_targs)
 
-    plotPredVsTargKVS_new(input_1=_preds, input_2=_targs,
+    plotPredVsTargKVS(input_1=_preds, input_2=_targs,
                       file_prefix=save2file_prefix, file_name=save2file_name)
 
 
@@ -1076,7 +1073,7 @@ def trial_2_RNN_single_verification():
     _model_name_z = 'Model_AE_u_i_LR0_0001_z'
     _model_name_RNN = 'Model_RNN_LR1e-5_Lay1_Seq25_x'
     _dataset_name = 'get_KVS_eval'
-    _save2file_prefix = 'Model_100_relu_kvs_aug_upshift_Hybrid_RNN_Piet_10'
+    _save2file_prefix = 'Model_100_relu_kvs_aug_upshift_Hybrid_RNN_Piet_9'
     _save2file_name = '22000_NW_no_std'
 
     prediction_retriever_hybrid(

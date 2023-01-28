@@ -469,34 +469,40 @@ class AE_u_x(nn.Module):
         x.to(device)
         u_x = x[:, 0, :, :, :].to(device)
         u_x = torch.reshape(u_x, (t, 1, h, d, w)).to(device)
-        # print('Shape of u_x: ', u_x.shape)
+        print('Shape of u_x: ', u_x.shape)
 
         if y == 0 or y == 'get_bottleneck':
             # The following for-loop describes the entire (left) contracting side,
             for down_x in self.downs_x:
                 u_x = down_x(u_x)
+                print('Double Conv Down: ', u_x.shape)
                 u_x = self.pool_x(u_x)
-                # rint('Shape of u_x: ', u_x.shape)
+                print('Pooling Down: ', u_x.shape)
 
             # This is the bottleneck
             u_x = self.helper_down_x(u_x)
             u_x = self.activation(u_x)
+            print('Helper Down Shape: ', u_x.shape)
             u_x = self.bottleneck_x(u_x)
             u_x = self.activation(u_x)
-            # print('Bottleneck Shape: ', u_x.shape)
+            print('Bottleneck Shape: ', u_x.shape)
 
             if y == 'get_bottleneck':
                 return u_x
 
             u_x = self.helper_up_1_x(u_x)
             u_x = self.activation(u_x)
+            print('Helper Up [1] Shape: ', u_x.shape)
 
             # The following for-loop describes the entire (right) expanding side.
             for idx in range(0, len(self.ups_x), 2):
                 u_x = self.ups_x[idx](u_x)
+                print('DeConv Shape: ', u_x.shape)
                 u_x = self.ups_x[idx+1](u_x)
+                print('DoubleConv Up Shape: ', u_x.shape)
 
             u_x = self.helper_up_2_x(u_x)
+            print('Helper Up [2] Shape: ', u_x.shape)
 
             return u_x
 
@@ -1223,7 +1229,7 @@ if __name__ == "__main__":
     x = torch.cat((x, x_cat), 0)
     print(x.shape)
     '''
-    _x = torch.ones(1000, 3, 24, 24, 24)
+    _x = torch.ones(1, 3, 24, 24, 24)
     _model_x = AE_u_x(
         device=device,
         in_channels=1,
