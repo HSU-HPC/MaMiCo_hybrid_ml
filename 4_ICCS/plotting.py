@@ -351,7 +351,7 @@ def plotPredVsTargKVS_new(input_1, input_2='void', file_prefix=0, file_name=0):
     axs[2, 1].grid(axis='y', alpha=0.3)
 
     axs[2, 0].legend(ncol=3, fontsize=9)
-    axs[2, 1].legend(ncol=3, fontsize=9)
+    axs[2, 1].legend(ncol=4, fontsize=9)
 
     fig.set_size_inches(12, 4)
     if file_name != 0:
