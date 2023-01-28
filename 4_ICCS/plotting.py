@@ -297,9 +297,11 @@ def plotPredVsTargKVS_new(input_1, input_2='void', file_prefix=0, file_name=0):
     axs[0, 0].set_ylabel('Averaged $u_x$')
     axs[0, 0].grid(axis='y', alpha=0.3)
 
-    axs[0, 1].plot(t_axis, p_avg_x_NE, color='green', linewidth=0.5, label='NE')
+    axs[0, 1].plot(t_axis, p_avg_x_NE, color='green',
+                   linewidth=0.5, label='NE')
     axs[0, 1].plot(t_axis, p_avg_x_NW, color='blue', linewidth=0.5, label='NW')
-    axs[0, 1].plot(t_axis, p_avg_x_SE, color='magenta', linewidth=0.5, label='SE')
+    axs[0, 1].plot(t_axis, p_avg_x_SE, color='magenta',
+                   linewidth=0.5, label='SE')
     axs[0, 1].plot(t_axis, p_avg_x_SW, color='red', linewidth=0.5, label='SW')
     axs[0, 1].plot(t_axis, t_avg_x_NE, linestyle='dotted',
                    color='green', linewidth=0.5, label='NE')
@@ -321,9 +323,11 @@ def plotPredVsTargKVS_new(input_1, input_2='void', file_prefix=0, file_name=0):
     axs[1, 0].set_ylabel('Averaged $u_y$')
     axs[1, 0].grid(axis='y', alpha=0.3)
 
-    axs[1, 1].plot(t_axis, p_avg_y_NE, color='green', linewidth=0.5, label='NE')
+    axs[1, 1].plot(t_axis, p_avg_y_NE, color='green',
+                   linewidth=0.5, label='NE')
     axs[1, 1].plot(t_axis, p_avg_y_NW, color='blue', linewidth=0.5, label='NW')
-    axs[1, 1].plot(t_axis, p_avg_y_SE, color='magenta', linewidth=0.5, label='SE')
+    axs[1, 1].plot(t_axis, p_avg_y_SE, color='magenta',
+                   linewidth=0.5, label='SE')
     axs[1, 1].plot(t_axis, p_avg_y_SW, color='red', linewidth=0.5, label='SW')
     axs[1, 1].plot(t_axis, t_avg_y_NE, linestyle='dotted',
                    color='green', linewidth=0.5, label='NE')
@@ -347,9 +351,11 @@ def plotPredVsTargKVS_new(input_1, input_2='void', file_prefix=0, file_name=0):
 
     axs[2, 0].set_xlabel('Timestep')
 
-    axs[2, 1].plot(t_axis, p_avg_z_NE, color='green', linewidth=0.5, label='NE')
+    axs[2, 1].plot(t_axis, p_avg_z_NE, color='green',
+                   linewidth=0.5, label='NE')
     axs[2, 1].plot(t_axis, p_avg_z_NW, color='blue', linewidth=0.5, label='NW')
-    axs[2, 1].plot(t_axis, p_avg_z_SE, color='magenta', linewidth=0.5, label='SE')
+    axs[2, 1].plot(t_axis, p_avg_z_SE, color='magenta',
+                   linewidth=0.5, label='SE')
     axs[2, 1].plot(t_axis, p_avg_z_SW, color='red', linewidth=0.5, label='SW')
     axs[2, 1].plot(t_axis, t_avg_z_NE, linestyle='dotted',
                    color='green', linewidth=0.5, label='NE')
