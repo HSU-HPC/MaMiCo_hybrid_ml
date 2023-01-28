@@ -1076,7 +1076,7 @@ def trial_2_RNN_single_verification():
     _model_name_z = 'Model_AE_u_i_LR0_0001_z'
     _model_name_RNN = 'Model_RNN_LR1e-5_Lay1_Seq25_x'
     _dataset_name = 'get_KVS_eval'
-    _save2file_prefix = 'Model_100_relu_kvs_aug_upshift_Hybrid_RNN_Piet_10'
+    _save2file_prefix = 'Model_100_relu_kvs_aug_upshift_Hybrid_RNN_Piet_11'
     _save2file_name = '20000_NW_no_std'
 
     prediction_retriever_hybrid(
