@@ -338,7 +338,6 @@ def plotPredVsTargKVS_new(input_1, input_2='void', file_prefix=0, file_name=0):
     axs[2, 0].grid(axis='y', alpha=0.3)
 
     axs[2, 0].set_xlabel('Timestep')
-    axs[2, 0].legend(ncol=3, fontsize=9)
 
     axs[2, 1].plot(t_axis, p_avg_z_NE, linewidth=0.5, label='[P] NE')
     axs[2, 1].plot(t_axis, p_avg_z_NW, linewidth=0.5, label='[P] NW')
@@ -350,6 +349,8 @@ def plotPredVsTargKVS_new(input_1, input_2='void', file_prefix=0, file_name=0):
     axs[2, 1].plot(t_axis, t_avg_z_SW, linewidth=0.5, label='[T] SW')
     axs[2, 1].set_ylabel('Averaged $u_z$')
     axs[2, 1].grid(axis='y', alpha=0.3)
+
+    axs[2, 0].legend(ncol=3, fontsize=9)
 
     fig.set_size_inches(12, 4)
     if file_name != 0:
