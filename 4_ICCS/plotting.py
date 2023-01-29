@@ -150,7 +150,7 @@ def plotPredVsTargKVS(input_1, input_2='void', file_prefix=0, file_name=0):
     p_avg_z = np.mean(input_1[:, 2, :, :, :], axis=(1, 2, 3))
     t_avg_z = np.mean(input_2[:, 2, :, :, :], axis=(1, 2, 3))
 
-    my_s = 0.1
+    my_s = 0.25
 
     p_loc_x = input_1[:, 0, mid, mid, mid]
     p_loc_y = input_1[:, 1, mid, mid, mid]
