@@ -703,7 +703,7 @@ def prediction_retriever_hybrid(model_AE_directory, model_name_x, model_name_y, 
     _preds = torch.zeros(1, 3, 24, 24, 24).to(device=device)
     _targs = []
 
-    for data, target in train_loaders:
+    for data, target in valid_loaders:
         data = data.float().to(device=device)
         data = torch.add(data, 0.2).float().to(device=device)
         # print('model_x(data) -> shape: ', data.shape)
@@ -716,7 +716,7 @@ def prediction_retriever_hybrid(model_AE_directory, model_name_x, model_name_y, 
     _preds = _preds[1:, :, :, :, :].cpu().detach().numpy()
     _targs = np.vstack(_targs)
 
-    plotPredVsTargKVS_new(input_1=_preds, input_2=_targs,
+    plotPredVsTargKVS(input_1=_preds[:200], input_2=_targs[:200],
                           file_prefix=save2file_prefix, file_name=save2file_name)
 
 
@@ -1076,8 +1076,8 @@ def trial_2_RNN_single_verification():
     _model_name_z = 'Model_AE_u_i_LR0_0001_z'
     _model_name_RNN = 'Model_RNN_LR1e-5_Lay1_Seq25_x'
     _dataset_name = 'get_KVS_eval'
-    _save2file_prefix = 'Model_100_relu_kvs_aug_upshift_Hybrid_RNN_Piet_11'
-    _save2file_name = 'bottom_0_oscil_2_0_u_wall'
+    _save2file_prefix = 'Model_100_relu_kvs_aug_upshift_Hybrid_RNN_Piet_12'
+    _save2file_name = 'KVS_22000_NW'
 
     prediction_retriever_hybrid(
         model_AE_directory=_model_AE_directory,

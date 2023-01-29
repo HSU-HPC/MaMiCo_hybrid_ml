@@ -150,13 +150,12 @@ def plotPredVsTargKVS(input_1, input_2='void', file_prefix=0, file_name=0):
     p_avg_z = np.mean(input_1[:, 2, :, :, :], axis=(1, 2, 3))
     t_avg_z = np.mean(input_2[:, 2, :, :, :], axis=(1, 2, 3))
 
-    p_loc_x = np.mean(input_1[:, 0, :, mid, mid], axis=(1))
-    print('p_loc_x.shape: ', p_loc_x.shape)
-    p_loc_y = np.mean(input_1[:, 1, :, mid, mid], axis=(1))
-    p_loc_z = np.mean(input_1[:, 2, :, mid, mid], axis=(1))
-    t_loc_x = np.mean(input_2[:, 0, :, mid, mid], axis=(1))
-    t_loc_y = np.mean(input_2[:, 1, :, mid, mid], axis=(1))
-    t_loc_z = np.mean(input_2[:, 2, :, mid, mid], axis=(1))
+    p_loc_x = input_1[:, 0, mid, mid, mid]
+    p_loc_y = input_1[:, 1, mid, mid, mid]
+    p_loc_z = input_1[:, 2, mid, mid, mid]
+    t_loc_x = input_2[:, 0, mid, mid, mid]
+    t_loc_y = input_2[:, 1, mid, mid, mid]
+    t_loc_z = input_2[:, 2, mid, mid, mid]
 
     print('std array shape: ', t_std_z.shape)
     print('avg array shape: ', t_avg_z.shape)
