@@ -107,7 +107,7 @@ def compareLossVsValid(loss_files, loss_labels, file_prefix=0, file_name=0):
     plt.close()
 
 
-def plotPredVsTargKVS(input_1, input_2='void', file_prefix=0, file_name=0):
+def plotPredVsTargKVS(input_1, input_2='void', input_3='void', file_prefix=0, file_name=0):
     """The plotPredVsTargKVS function aims to graphically compare model
     performance via plotting domain-wise averaged predicted and target
     velocities vs time. The standard deviations are additionally included for
@@ -132,7 +132,9 @@ def plotPredVsTargKVS(input_1, input_2='void', file_prefix=0, file_name=0):
         print('Invalid input_2.')
 
     t, c, x, y, z = input_1.shape
-    mid = y//2
+
+    #  mid = y//2
+    mid = 6
     t_max = t
     t_axis = np.arange(1, t_max+1)
 
@@ -157,6 +159,7 @@ def plotPredVsTargKVS(input_1, input_2='void', file_prefix=0, file_name=0):
     p_loc_z = input_1[:, 2, mid, mid, mid]
     t_loc_x = input_2[:, 0, mid, mid, mid]
     t_loc_y = input_2[:, 1, mid, mid, mid]
+    lbm_loc_y = input_3[:, 2]
     t_loc_z = input_2[:, 2, mid, mid, mid]
 
     print('std array shape: ', t_std_z.shape)
@@ -173,7 +176,7 @@ def plotPredVsTargKVS(input_1, input_2='void', file_prefix=0, file_name=0):
     '''
     axs[0].scatter(t_axis, p_loc_x, s=my_s, label='[P] Central Cell')
     axs[0].scatter(t_axis, t_loc_x, s=my_s, label='[T] Central Cell')
-    axs[0].set_ylabel('Averaged $u_x$')
+    axs[0].set_ylabel('Local $u_x$')
     axs[0].grid(axis='y', alpha=0.3)
 
     '''
@@ -186,7 +189,7 @@ def plotPredVsTargKVS(input_1, input_2='void', file_prefix=0, file_name=0):
     '''
     axs[1].scatter(t_axis, p_loc_y, s=my_s, label='[P] Central Cell')
     axs[1].scatter(t_axis, t_loc_y, s=my_s, label='[T] Central Cell')
-    axs[1].set_ylabel('Averaged $u_y$')
+    axs[1].set_ylabel('Local $u_y$')
     axs[1].grid(axis='y', alpha=0.3)
 
     '''
@@ -197,9 +200,9 @@ def plotPredVsTargKVS(input_1, input_2='void', file_prefix=0, file_name=0):
     axs[2].fill_between(t_axis, t_avg_z-t_std_z, t_avg_z
                         + t_std_z, alpha=0.2, label='Target')
     '''
-    axs[2].scatter(t_axis, p_loc_z, s=my_s, label='[P] Central Cell')
-    axs[2].scatter(t_axis, t_loc_z, s=my_s, label='[T] Central Cell')
-    axs[2].set_ylabel('Averaged $u_z$')
+    axs[2].scatter(t_axis, p_loc_y, s=my_s, label='[P] Central Cell')
+    axs[2].scatter(t_axis, lbm_loc_y, s=my_s, label='[T] lbm')
+    axs[2].set_ylabel('Local $u_y$')
     axs[2].grid(axis='y', alpha=0.3)
 
     axs[2].set_xlabel('Timestep')
@@ -390,4 +393,5 @@ def plotPredVsTargKVS_new(input_1, input_2='void', file_prefix=0, file_name=0):
 if __name__ == "__main__":
     pred = np.random.rand(1000, 3, 24, 24, 24) + 1
     targ = np.random.rand(1000, 3, 24, 24, 24) + 2.2
-    plotPredVsTargKVS(input_1=pred, input_2=targ, file_name='test')
+    lbm = np.random.rand(1000,3)
+    plotPredVsTargKVS(input_1=pred, input_2=targ, input_3=lbm, file_name='test')
