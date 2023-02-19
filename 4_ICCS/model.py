@@ -469,40 +469,40 @@ class AE_u_x(nn.Module):
         x.to(device)
         u_x = x[:, 0, :, :, :].to(device)
         u_x = torch.reshape(u_x, (t, 1, h, d, w)).to(device)
-        print('Shape of u_x: ', u_x.shape)
+        # print('Shape of u_x: ', u_x.shape)
 
         if y == 0 or y == 'get_bottleneck':
             # The following for-loop describes the entire (left) contracting side,
             for down_x in self.downs_x:
                 u_x = down_x(u_x)
-                print('Double Conv Down: ', u_x.shape)
+                # print('Double Conv Down: ', u_x.shape)
                 u_x = self.pool_x(u_x)
-                print('Pooling Down: ', u_x.shape)
+                # print('Pooling Down: ', u_x.shape)
 
             # This is the bottleneck
             u_x = self.helper_down_x(u_x)
             u_x = self.activation(u_x)
-            print('Helper Down Shape: ', u_x.shape)
+            # print('Helper Down Shape: ', u_x.shape)
             u_x = self.bottleneck_x(u_x)
             u_x = self.activation(u_x)
-            print('Bottleneck Shape: ', u_x.shape)
+            # print('Bottleneck Shape: ', u_x.shape)
 
             if y == 'get_bottleneck':
                 return u_x
 
             u_x = self.helper_up_1_x(u_x)
             u_x = self.activation(u_x)
-            print('Helper Up [1] Shape: ', u_x.shape)
+            # print('Helper Up [1] Shape: ', u_x.shape)
 
             # The following for-loop describes the entire (right) expanding side.
             for idx in range(0, len(self.ups_x), 2):
                 u_x = self.ups_x[idx](u_x)
-                print('DeConv Shape: ', u_x.shape)
+                # print('DeConv Shape: ', u_x.shape)
                 u_x = self.ups_x[idx+1](u_x)
-                print('DoubleConv Up Shape: ', u_x.shape)
+                # print('DoubleConv Up Shape: ', u_x.shape)
 
             u_x = self.helper_up_2_x(u_x)
-            print('Helper Up [2] Shape: ', u_x.shape)
+            # print('Helper Up [2] Shape: ', u_x.shape)
 
             return u_x
 
@@ -958,20 +958,20 @@ class Hybrid_MD_RNN_AE_u_i(nn.Module):
         print('Model initialized: Hybrid_MD_RNN_AE_u_i')
 
     def forward(self, x):
-        print('Shape [x]: ', x.shape)
+        # print('Shape [x]: ', x.shape)
 
         u_x = self.AE_x(x, y='get_bottleneck').to(self.device)
         u_y = self.AE_y(x, y='get_bottleneck').to(self.device)
         u_z = self.AE_z(x, y='get_bottleneck').to(self.device)
 
         u_x_shape = u_x.shape
-        print('Shape [latentspace_x]: ', u_x.shape)
+        # # print('Shape [latentspace_x]: ', u_x.shape)
         ()
         self.sequence_x = tensor_FIFO_pipe(
             tensor=self.sequence_x,
             x=torch.reshape(u_x, (1, 256)),
             device=self.device).to(self.device)
-        print('Shape [sequence_x]: ', self.sequence_x.shape)
+        # print('Shape [sequence_x]: ', self.sequence_x.shape)
 
         u_y_shape = u_y.shape
         self.sequence_y = tensor_FIFO_pipe(
@@ -987,7 +987,7 @@ class Hybrid_MD_RNN_AE_u_i(nn.Module):
 
         interim_x = torch.reshape(
             self.sequence_x, (1, self.seq_length, 256)).to(self.device)
-        print('Shape [interim_x]: ', interim_x.shape)
+        # print('Shape [interim_x]: ', interim_x.shape)
         interim_y = torch.reshape(
             self.sequence_y, (1, self.seq_length, 256)).to(self.device)
         interim_z = torch.reshape(
@@ -1010,7 +1010,7 @@ class Hybrid_MD_RNN_AE_u_i(nn.Module):
         u_z = self.AE_z(u_z, y='get_MD_output').to(self.device)
 
         out = torch.cat((u_x, u_y, u_z), 1).to(device)
-        print('Shape [out]: ', out.shape)
+        # print('Shape [out]: ', out.shape)
         return out
 
 
