@@ -393,5 +393,6 @@ def plotPredVsTargKVS_new(input_1, input_2='void', file_prefix=0, file_name=0):
 if __name__ == "__main__":
     pred = np.random.rand(1000, 3, 24, 24, 24) + 1
     targ = np.random.rand(1000, 3, 24, 24, 24) + 2.2
-    lbm = np.random.rand(1000,3)
-    plotPredVsTargKVS(input_1=pred, input_2=targ, input_3=lbm, file_name='test')
+    lbm = np.random.rand(1000, 3)
+    plotPredVsTargKVS(input_1=pred, input_2=targ,
+                      input_3=lbm, file_name='test')
