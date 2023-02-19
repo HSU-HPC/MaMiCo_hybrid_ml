@@ -715,7 +715,7 @@ def prediction_retriever_hybrid(model_AE_directory, model_name_x, model_name_y, 
     _preds = torch.add(_preds, -0.2).float().to(device=device)
     _preds = _preds[1:, :, :, :, :].cpu().detach().numpy()
     _targs = np.vstack(_targs)
-    _lbm = np.loadtxt('dataset_mlready/kvs_22000_NW_lbm.csv')
+    _lbm = np.loadtxt('dataset_mlready/kvs_22000_NW_lbm.csv', delimiter=";")
     _lbm = _lbm.reshape(1000, 3)
 
     plotPredVsTargKVS(input_1=_preds[:200], input_2=_targs[:200], input_3=_lbm[:200],
@@ -1097,8 +1097,6 @@ def trial_2_RNN_single_verification():
 if __name__ == "__main__":
     # trial_2_train_LSTM_single()
     # trial_2_train_RNN_single()
-    # trial_2_RNN_single_verification()
-    _lbm = np.loadtxt('dataset_mlready/kvs_22000_NW_lbm.csv', delimiter = ";")
-    _lbm = _lbm.reshape(1000, 3)
+    trial_2_RNN_single_verification()
 
     pass
