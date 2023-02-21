@@ -390,9 +390,53 @@ def plotPredVsTargKVS_new(input_1, input_2='void', file_prefix=0, file_name=0):
     pass
 
 
+def plotlbm(lbm_input, file_directory, file_id):
+    """The plotPredVsTargKVS function aims to graphically compare model
+    performance via plotting domain-wise averaged predicted and target
+    velocities vs time. The standard deviations are additionally included for
+    better comparison.
+
+    Args:
+        input_1:
+          Object of type PyTorch-Tensor containing the predicted dataset
+        input_2:
+          Object of type PyTorch-Tensor containing the target dataset
+        file_prefix:
+          Object of type string containing
+        file_name:
+          Object of type string containing
+
+    Returns:
+        NONE:
+          This function saves the graphical comparison to file.
+    """
+    t_max = 1000
+    t_axis = np.arange(1, t_max+1)
+    lbm_loc_ux = lbm_input[:, 1]
+    lbm_loc_uy = lbm_input[:, 2]
+
+    fig, axs = plt.subplots(2, sharex=True, constrained_layout=True)
+
+    axs[0].plot(t_axis, lbm_loc_ux, label='lbm local u_x')
+    axs[0].set_ylabel('Local $u_x$')
+    axs[0].grid(axis='y', alpha=0.3)
+
+    axs[1].plot(t_axis, lbm_loc_uy, label='lbm local u_y')
+    axs[1].set_ylabel('Local $u_y$')
+    axs[1].grid(axis='y', alpha=0.3)
+
+    fig.set_size_inches(4, 4)
+    if file_id != 0:
+        fig.savefig(
+            f'{file_directory}quick_and_dirty_lbm_verification_{file_id}.svg')
+    plt.close()
+    pass
+
+
 if __name__ == "__main__":
-    pred = np.random.rand(1000, 3, 24, 24, 24) + 1
-    targ = np.random.rand(1000, 3, 24, 24, 24) + 2.2
-    lbm = np.random.rand(1000, 3)
-    plotPredVsTargKVS(input_1=pred, input_2=targ,
-                      input_3=lbm, file_name='test')
+    _lbm = np.loadtxt('dataset_mlready/kvs_20000_NE_lbm.csv', delimiter=";")
+    _lbm = _lbm.reshape(1000, 3)
+    _file_directory = 'plots/'
+    _file_id = 'kvs_20000_NE'
+
+    plotlbm(_lbm, _file_directory, _file_id)
