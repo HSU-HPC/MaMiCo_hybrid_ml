@@ -373,7 +373,8 @@ def mlready2augmented_mp():
 
 
 def visualize_lbm_dataset(file_directory, file_id):
-    _lbm = np.loadtxt(f'dataset_mlready/{file_id}', delimiter=";")
+    _lbm = np.loadtxt(
+        f'dataset_mlready/01_raw_lbm/{file_id}.csv', delimiter=";")
     _lbm = _lbm.reshape(1000, 3)
     _file_directory = 'plots/'
     _file_id = file_id
@@ -394,16 +395,18 @@ def visualize_lbm_dataset_mp():
         print(file)
         _file = file.replace('.csv', '')
         print(_file)
-        _file = _file.replace(f'{_directory}', '')
+        _file = _file.replace(f'{_directory}/', '')
         print(_file)
         _files.append(_file)
 
     processes = []
-    '''
+
     for idx, file in enumerate(_files):
+        _file_directory =
+        _file_id =
         p = mp.Process(
-            target=mlready2augmented,
-            args=(file,)
+            target=visualize_lbm_dataset,
+            args=(_file_directory, _file_id,)
         )
         p.start()
         processes.append(p)
@@ -412,8 +415,6 @@ def visualize_lbm_dataset_mp():
     for process in processes:
         process.join()
         print('Joining Process')
-    '''
-    pass
 
 
 if __name__ == "__main__":

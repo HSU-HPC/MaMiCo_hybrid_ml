@@ -428,7 +428,7 @@ def plotlbm(lbm_input, file_directory, file_id):
     fig.set_size_inches(6, 3)
     if file_id != 0:
         fig.savefig(
-            f'{file_directory}quick_and_dirty_lbm_verification_{file_id}.svg')
+            f'{file_directory}quick_and_dirty_verification_{file_id}.svg')
     plt.close()
     pass
 
