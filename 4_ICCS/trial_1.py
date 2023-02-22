@@ -605,8 +605,8 @@ def trial_1_AE_u_i(alpha, alpha_string, train_loaders, valid_loaders):
 
         _avg_loss = _avg_loss/len(train_loaders)
         print('------------------------------------------------------------')
-        print(f'Training Epoch: {epoch+1}')
-        print(f'-> Avg u_i {_avg_loss:.3f}')
+        print(f'[{_model_identifier_i}] Training Epoch: {epoch+1}')
+        print(f'[{_model_identifier_i}] -> Avg u_i {_avg_loss:.3f}')
 
         _sum_loss = 0
 
@@ -624,8 +624,8 @@ def trial_1_AE_u_i(alpha, alpha_string, train_loaders, valid_loaders):
 
         _avg_valid = _sum_loss/len(train_loaders)
         print('------------------------------------------------------------')
-        print(f'Validation Epoch: {epoch+1}')
-        print(f'-> Avg u_i {_avg_valid:.3f}')
+        print(f'[{_model_identifier_i}] Validation Epoch: {epoch+1}')
+        print(f'[{_model_identifier_i}] -> Avg u_i {_avg_valid:.3f}')
 
     torch.save(
         _model_i.state_dict(),
