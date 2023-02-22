@@ -50,8 +50,10 @@ def plot_flow_profile(file_name, dataset_md, dataset_lbm=None):
     avg_uy = []
 
     for dt in range(t):
-        avg_ux.append(dataset_md[dt, 0, :, :, :].mean())
-        avg_uy.append(dataset_md[dt, 1, :, :, :].mean())
+        avg_ux.append(dataset_md[dt, 0, 6, 6, 6])
+        avg_uy.append(dataset_md[dt, 1, 6, 6, 6])
+        # avg_ux.append(dataset_md[dt, 0, :, :, :].mean())
+        # avg_uy.append(dataset_md[dt, 1, :, :, :].mean())
 
     fig, axs = plt.subplots(
         2, sharex=True, constrained_layout=True)
@@ -76,7 +78,7 @@ def plot_flow_profile(file_name, dataset_md, dataset_lbm=None):
 
     axs[0].legend(ncol=1, fontsize=9)
     axs[1].legend(ncol=1, fontsize=9)
-    fig.savefig(f'plots/Plot_avg_flow_profile_{dataset_name}.png')
+    fig.savefig(f'plots/Plot_loc_flow_profile_{dataset_name}.png')
     plt.close()
 
 
