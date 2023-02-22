@@ -39,8 +39,7 @@ def plot_flow_profile(file_name, dataset_md, dataset_lbm=None):
           aforementioned meaningful plots.
     """
     dataset_name = file_name.replace('.csv', '')
-    dataset_name = dataset_name.replace('02_clean/', '')
-    dataset_name = dataset_name.replace('/', '')
+    dataset_name = dataset_name.replace('01_clean_lbm/', '')
     t, c, d, h, w = dataset_md.shape
     # mid = int(h/2)t_max = 1000
     t_max = 1000
@@ -77,7 +76,7 @@ def plot_flow_profile(file_name, dataset_md, dataset_lbm=None):
 
     axs[0].legend(ncol=1, fontsize=9)
     axs[1].legend(ncol=1, fontsize=9)
-    fig.savefig(f'plots/Plot_flow_profile_{dataset_name}.png')
+    fig.savefig(f'plots/Plot_avg_flow_profile_{dataset_name}.png')
     plt.close()
 
 
