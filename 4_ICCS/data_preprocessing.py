@@ -248,7 +248,17 @@ def visualize_clean_mamico_data_mp():
     pass
 
 
-def visualize_mlready_dataset(file_name):
+def visualize_mlready_dataset(md_file_name, lbm_file_name):
+
+    _dataset_md = mlready2dataset(md_file_name)
+    _dataset_lbm = np.loadtxt(
+        f'dataset_mlready/{lbm_file_name}', delimiter=";")
+    _dataset_lbm = _dataset_lbm.reshape(1000, 3)
+    _file_name = lbm_file_name.replace('dataset_mlready/01_clean_lbm', '')
+    _file_name = _file_name.replace('_lbm.csv', '')
+
+    plot_flow_profile(file_name=_file_name, dataset_md=_dataset_md,
+                      dataset_lbm=_dataset_lbm)
     pass
 
 
@@ -280,27 +290,26 @@ def visualize_mlready_dataset_mp():
         print(f'New file: {_file_name}')
         _md_file_names.append(_file_name)
 
-        '''
-        _dataset = mlready2dataset(_file_name)
-        _datasets.append(_dataset)
+    for file in _raw_lbm_files:
+        print(f'Raw file: {file}')
+        _file_name = file.replace(_directory+'/', '')
+        print(f'New file: {_file_name}')
+        _lbm_file_names.append(_file_name)
 
     processes = []
 
-    for i in range(len(_raw_files)):
-        _local_file_name = _file_names[i].replace('KVS/Validation/', '')
-        _local_file_name = _file_names[i].replace('KVS/Training/', '')
+    for idx, _ in enumerate(_md_file_names):
         p = mp.Process(
-            target=plot_flow_profile,
-            args=(_datasets[i], _local_file_name,)
+            target=visualize_mlready_dataset,
+            args=(_md_file_names[idx], _lbm_file_names[idx],)
         )
         p.start()
         processes.append(p)
-        print(f'Creating Process Number: {i+1}')
+        print(f'Creating Process Number: {idx+1}')
 
     for process in processes:
         process.join()
         print('Joining Process')
-        '''
 
 
 def mlready2augmented(file_name):
