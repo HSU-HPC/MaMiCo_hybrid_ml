@@ -425,7 +425,7 @@ def plotlbm(lbm_input, file_directory, file_id):
     axs[1].set_ylabel('Local $u_y$')
     axs[1].grid(axis='y', alpha=0.3)
 
-    fig.set_size_inches(4, 4)
+    fig.set_size_inches(6, 3)
     if file_id != 0:
         fig.savefig(
             f'{file_directory}quick_and_dirty_lbm_verification_{file_id}.svg')

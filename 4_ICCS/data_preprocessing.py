@@ -12,7 +12,7 @@ import csv
 import glob
 import numpy as np
 import torch.multiprocessing as mp
-from plotting import plot_flow_profile
+from plotting import plot_flow_profile, plotlbm
 
 
 def clean_mamico_data(directory, file_name):
@@ -154,7 +154,7 @@ def clean2mlready_mp():
     """
     _directory = "/beegfs/project/MaMiCo/mamico-ml/dataset"
     _raw_files = glob.glob(
-        f"{_directory}/02_clean/*couette_combined*.csv")
+        f"{_directory}/02_clean/*kvs_combined*.csv")
     _files = []
 
     for _file in _raw_files:
@@ -372,10 +372,53 @@ def mlready2augmented_mp():
         print('Joining Process')
 
 
+def visualize_lbm_dataset(file_directory, file_id):
+    _lbm = np.loadtxt(f'dataset_mlready/{file_id}', delimiter=";")
+    _lbm = _lbm.reshape(1000, 3)
+    _file_directory = 'plots/'
+    _file_id = file_id
+
+    plotlbm(_lbm, _file_directory, _file_id)
+
+
+def visualize_lbm_dataset_mp():
+    """The visualize_lbm_dataset_mp function is used to call the visualize_lbm_dataset
+    function in a multiprocessing manner.
+    """
+    _directory = "/beegfs/project/MaMiCo/mamico-ml/dataset/01_raw_lbm"
+    _raw_files = glob.glob(
+        f"{_directory}/*.csv", recursive=True)
+    _files = []
+
+    for file in _raw_files:
+        print(file)
+        _file = file.replace('.csv', '')
+        print(_file)
+        _files.append(_file)
+
+    processes = []
+    '''
+    for idx, file in enumerate(_files):
+        p = mp.Process(
+            target=mlready2augmented,
+            args=(file,)
+        )
+        p.start()
+        processes.append(p)
+        print(f'Creating Process Number: {idx+1}')
+
+    for process in processes:
+        process.join()
+        print('Joining Process')
+    '''
+    pass
+
+
 if __name__ == "__main__":
-    print('Starting Data Preprocessing: Visualization of Augmented Datasets')
-    visualize_mlready_dataset_mp()
+    # print('Starting Data Preprocessing: Visualization of Augmented Datasets')
+    # visualize_mlready_dataset_mp()
     # clean2mlready_mp()
     # mlready2augmented_mp()
+    visualize_lbm_dataset_mp()
 
     pass
