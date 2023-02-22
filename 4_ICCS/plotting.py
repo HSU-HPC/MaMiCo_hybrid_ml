@@ -18,7 +18,7 @@ def getColor(c, N, idx):
     return cmap(norm(idx))
 
 
-def plot_flow_profile(dataset, dataset_name):
+def plot_flow_profile(file_name, dataset_md, dataset_lbm=0):
     """The plot_flow_profile function visualizes datasets via 2D flow profiles
     and as such is used to validate proper simulation/prediction. For our
     purposes, we create 3 subplots to validate couette and KVS based simulations.
@@ -38,41 +38,44 @@ def plot_flow_profile(dataset, dataset_name):
           This function does not have a return value. Instead it generates the
           aforementioned meaningful plots.
     """
-    dataset_name = dataset_name.replace('.csv', '')
+    dataset_name = file_name.replace('.csv', '')
     dataset_name = dataset_name.replace('02_clean/', '')
-    t, c, d, h, w = dataset.shape
-    mid = int(h/2)
+    t, c, d, h, w = dataset_md.shape
+    # mid = int(h/2)t_max = 1000
+    t_max = 1000
+    t_axis = np.arange(1, t_max+1)
+    lbm_loc_ux = dataset_lbm[:, 1]
+    lbm_loc_uy = dataset_lbm[:, 2]
     avg_ux = []
     avg_uy = []
-    avg_uz = []
 
     for dt in range(t):
-        avg_ux.append(dataset[dt, 0, :, :, :].mean())
-        avg_uy.append(dataset[dt, 1, :, :, :].mean())
-        avg_uz.append(dataset[dt, 2, :, :, :].mean())
+        avg_ux.append(dataset_md[dt, 0, :, :, :].mean())
+        avg_uy.append(dataset_md[dt, 1, :, :, :].mean())
 
-    fig, (ax1, ax2, ax3) = plt.subplots(
-        3, sharex=True, constrained_layout=True)
+    fig, axs = plt.subplots(
+        2, sharex=True, constrained_layout=True)
 
     fig.suptitle(
         f'Average Velocity Components vs Time: {dataset_name}', fontsize=10)
 
-    ax1.set_xlabel("t")
-    ax1.set_ylabel("domain averaged $u_x$")
-    ax1.grid(axis='y', alpha=0.3)
+    axs[0].set_xlabel("t")
+    axs[0].set_ylabel("$u_x$")
+    axs[0].grid(axis='y', alpha=0.3)
 
-    ax2.set_xlabel("t")
-    ax2.set_ylabel("domain averaged $u_y$")
-    ax2.grid(axis='y', alpha=0.3)
+    axs[1].set_xlabel("t")
+    axs[1].set_ylabel("$u_y$")
+    axs[1].grid(axis='y', alpha=0.3)
 
-    ax3.set_xlabel("t")
-    ax3.set_ylabel("domain averaged $u_z$")
-    ax3.grid(axis='y', alpha=0.3)
+    axs[0].plot(t_axis, avg_ux, linewidth=0.3, label='md avg u_x')
+    axs[1].plot(t_axis, avg_uy, linewidth=0.3, label='md avg u_y')
 
-    ax1.plot(avg_ux, linewidth=0.3)
-    ax2.plot(avg_uy, linewidth=0.3)
-    ax3.plot(avg_uz, linewidth=0.3)
+    if dataset_lbm != 0:
+        axs[0].plot(t_axis, lbm_loc_ux, linewidth=0.3, label='lbm local u_x')
+        axs[1].plot(t_axis, lbm_loc_uy, linewidth=0.3, label='lbm local u_y')
 
+    axs[0].legend(ncol=1, fontsize=9)
+    axs[1].legend(ncol=1, fontsize=9)
     fig.savefig(f'plots/Plot_flow_profile_{dataset_name}.png')
     plt.close()
 
