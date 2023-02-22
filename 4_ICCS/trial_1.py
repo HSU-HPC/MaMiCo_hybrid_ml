@@ -851,7 +851,7 @@ if __name__ == "__main__":
     _save2file_name_1 = '20000_NE'
     _save2file_name_2 = '28000_SW'
 
-    prediction_retriever(
+    prediction_retriever_u_i(
         model_directory=_model_directory,
         model_name=_model_name,
         dataset_name=_dataset_name,
