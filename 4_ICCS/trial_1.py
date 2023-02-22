@@ -588,7 +588,7 @@ def trial_1_AE_u_i(alpha, alpha_string, train_loaders, valid_loaders):
     _optimizer_i = optim.Adam(_model_i.parameters(), lr=alpha)
 
     print('Beginning training.')
-    for epoch in range(100):
+    for epoch in range(50):
         _avg_loss = 0
 
         for _train_loader in train_loaders:
@@ -648,8 +648,8 @@ def trial_1_AE_mp():
         NONE
     """
     print('Starting Trial 1: AE_u_i_mp (KVS)')
-    _alphas = [0.01, 0.005, 0.001, 0.0005, 0.0001, 0.00005]
-    _alpha_strings = ['0_01', '0_005', '0_001', '0_0005', '0_0001', '0_00005']
+    _alphas = [0.001, 0.0005, 0.0001, 0.00005]
+    _alpha_strings = ['0_001', '0_0005', '0_0001', '0_00005']
     _train_loaders, _valid_loaders = get_AE_loaders(
         data_distribution='get_KVS',
         batch_size=32,
@@ -724,7 +724,7 @@ def prediction_retriever(model_directory, model_name, dataset_name, save2file_na
     plot_flow_profile(_preds, save2file_name)
 
 
-def prediction_retriever_u_i(model_directory, model_name_x, model_name_y, model_name_z, dataset_name, save2file_prefix, save2file_name):
+def prediction_retriever_u_i(model_directory, model_name_i, dataset_name, save2file_prefix, save2file_name):
     """The prediction_retriever function is used to evaluate model performance
     of a trained model. This is done by loading the saved model, feeding it
     with datasets and then saving the corresponding predictions for later
@@ -753,14 +753,14 @@ def prediction_retriever_u_i(model_directory, model_name_x, model_name_y, model_
         features=[4, 8, 16],
         activation=nn.ReLU(inplace=True)
     ).to(device)
-    _model_y = AE_u_y(
+    _model_y = AE_u_i(
         device=device,
         in_channels=1,
         out_channels=1,
         features=[4, 8, 16],
         activation=nn.ReLU(inplace=True)
     ).to(device)
-    _model_z = AE_u_z(
+    _model_z = AE_u_i(
         device=device,
         in_channels=1,
         out_channels=1,
@@ -769,13 +769,13 @@ def prediction_retriever_u_i(model_directory, model_name_x, model_name_y, model_
     ).to(device)
 
     _model_x.load_state_dict(torch.load(
-        f'{model_directory}/{model_name_x}', map_location='cpu'))
+        f'{model_directory}/{model_name_i}', map_location='cpu'))
     _model_x.eval()
     _model_y.load_state_dict(torch.load(
-        f'{model_directory}/{model_name_y}', map_location='cpu'))
+        f'{model_directory}/{model_name_i}', map_location='cpu'))
     _model_y.eval()
     _model_z.load_state_dict(torch.load(
-        f'{model_directory}/{model_name_z}', map_location='cpu'))
+        f'{model_directory}/{model_name_i}', map_location='cpu'))
     _model_z.eval()
 
     for i in range(len(valid_loaders)):
@@ -783,15 +783,15 @@ def prediction_retriever_u_i(model_directory, model_name_x, model_name_y, model_
         _targs = []
         for batch_idx, (data, target) in enumerate(valid_loaders[i]):
             data = data.float().to(device=device)
-            data = torch.add(data, 0.2).float().to(device=device)
+            data = torch.add(data, 1.0).float().to(device=device)
             with torch.cuda.amp.autocast():
-                data_pred_x = _model_x(data)
-                data_pred_y = _model_y(data)
-                data_pred_z = _model_z(data)
+                data_pred_x = _model_x(data[:, 0, :, :, :])
+                data_pred_y = _model_y(data[:, 1, :, :, :])
+                data_pred_z = _model_z(data[:, 2, :, :, :])
                 data_pred = torch.cat(
                     (data_pred_x, data_pred_y, data_pred_z), 1).to(device)
                 data_pred = torch.add(
-                    data_pred, -0.2).float().to(device=device)
+                    data_pred, -1.0).float().to(device=device)
                 _preds.append(data_pred.cpu().detach().numpy())
                 _targs.append(target.cpu().detach().numpy())
         _preds = np.vstack(_preds)
@@ -799,7 +799,6 @@ def prediction_retriever_u_i(model_directory, model_name_x, model_name_y, model_
 
     plotPredVsTargKVS(input_1=_preds, input_2=_targs,
                       file_prefix=save2file_prefix, file_name=save2file_name)
-    # plot_flow_profile(_preds, save2file_name)
 
 
 if __name__ == "__main__":
