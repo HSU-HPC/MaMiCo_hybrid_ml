@@ -420,6 +420,7 @@ if __name__ == "__main__":
     # visualize_mlready_dataset_mp()
     # clean2mlready_mp()
     # mlready2augmented_mp()
-    visualize_lbm_dataset_mp()
+    # visualize_lbm_dataset_mp()
+    clean_mamico_data_mp()
 
     pass
