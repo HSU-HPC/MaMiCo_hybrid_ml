@@ -853,7 +853,7 @@ if __name__ == "__main__":
 
     prediction_retriever_u_i(
         model_directory=_model_directory,
-        model_name=_model_name,
+        model_name_i=_model_name,
         dataset_name=_dataset_name,
         save2file_name_1=_save2file_name_1,
         save2file_name_2=_save2file_name_2
