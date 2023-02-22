@@ -18,7 +18,7 @@ def getColor(c, N, idx):
     return cmap(norm(idx))
 
 
-def plot_flow_profile(file_name, dataset_md, dataset_lbm=0):
+def plot_flow_profile(file_name, dataset_md, dataset_lbm=None):
     """The plot_flow_profile function visualizes datasets via 2D flow profiles
     and as such is used to validate proper simulation/prediction. For our
     purposes, we create 3 subplots to validate couette and KVS based simulations.
@@ -70,7 +70,7 @@ def plot_flow_profile(file_name, dataset_md, dataset_lbm=0):
     axs[0].plot(t_axis, avg_ux, linewidth=0.3, label='md avg u_x')
     axs[1].plot(t_axis, avg_uy, linewidth=0.3, label='md avg u_y')
 
-    if dataset_lbm != 0:
+    if dataset_lbm is not None:
         axs[0].plot(t_axis, lbm_loc_ux, linewidth=0.3, label='lbm local u_x')
         axs[1].plot(t_axis, lbm_loc_uy, linewidth=0.3, label='lbm local u_y')
 
