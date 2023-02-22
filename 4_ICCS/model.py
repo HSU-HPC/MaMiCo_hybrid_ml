@@ -182,6 +182,7 @@ class AE(nn.Module):
             return x
 
 
+'''
 class AE_u_i(nn.Module):
     """The AE class aims at implementing a strictly convolutional autoencoder
     very comparable to the above implemented U-Net autoencoder.
@@ -387,9 +388,10 @@ class AE_u_i(nn.Module):
 
             x = self.helper_up_2(x)
             return x
+'''
 
 
-class AE_u_x(nn.Module):
+class AE_u_i(nn.Module):
     """The AE class aims at implementing a strictly convolutional autoencoder
     very comparable to the above implemented U-Net autoencoder.
 
@@ -406,44 +408,44 @@ class AE_u_x(nn.Module):
     """
 
     def __init__(self, device, in_channels=1, out_channels=1, features=[4, 6, 8, 10], activation=nn.ReLU(inplace=True)):
-        super(AE_u_x, self).__init__()
+        super(AE_u_i, self).__init__()
         self.device = device
 
         self.activation = nn.ReLU()
 
         # Generic module placeholders
-        self.ups_x = nn.ModuleList()
+        self.ups_i = nn.ModuleList()
 
         # Generic module placeholders
-        self.downs_x = nn.ModuleList()
+        self.downs_i = nn.ModuleList()
 
         # Generic 3d maxpool
-        self.pool_x = nn.MaxPool3d(kernel_size=2, stride=2)
+        self.pool_i = nn.MaxPool3d(kernel_size=2, stride=2)
 
-        self.helper_down_x = nn.Conv3d(in_channels=16, out_channels=16,
+        self.helper_down_i = nn.Conv3d(in_channels=16, out_channels=16,
                                        kernel_size=2, stride=1, padding=0, bias=False)
 
-        self.helper_up_1_x = nn.ConvTranspose3d(in_channels=32, out_channels=32,
+        self.helper_up_1_i = nn.ConvTranspose3d(in_channels=32, out_channels=32,
                                                 kernel_size=2, stride=1, padding=0, bias=False)
 
-        self.helper_up_2_x = nn.Conv3d(in_channels=4, out_channels=1,
+        self.helper_up_2_i = nn.Conv3d(in_channels=4, out_channels=1,
                                        kernel_size=3, stride=1, padding=1, bias=False)
         # Down part of AE
         for feature in features:
-            self.downs_x.append(DoubleConv(in_channels, feature, activation))
+            self.downs_i.append(DoubleConv(in_channels, feature, activation))
             in_channels = feature
 
         # Up part of AE
         for feature in reversed(features):
-            self.ups_x.append(
+            self.ups_i.append(
                 nn.ConvTranspose3d(
                     feature*2, feature, kernel_size=2, stride=2,
                 )
             )
-            self.ups_x.append(DoubleConv(feature, feature, activation))
+            self.ups_i.append(DoubleConv(feature, feature, activation))
 
         # This is the "deepest" part.
-        self.bottleneck_x = DoubleConv(
+        self.bottleneck_i = DoubleConv(
             features[-1], features[-1]*2, activation)
         print('Model initialized: Autoencoder.')
 
@@ -458,65 +460,61 @@ class AE_u_x(nn.Module):
               Object of PyTorch-type tensor containing the information of a timestep.
             y:
               Object of string type acting as a flag to choose desired forward method.
-            skip_connections:
-              Object of type list containing objects of PyTorch-type tensor that
-              contain the U-Net unique skip_connections for later concatenation.
         Return:
             result:
               Object of PyTorch-type tensor returning the autoencoded result.
         """
-        t, c, h, d, w = x.shape
+        t, h, d, w = x.shape
         x.to(device)
-        u_x = x[:, 0, :, :, :].to(device)
-        u_x = torch.reshape(u_x, (t, 1, h, d, w)).to(device)
-        # print('Shape of u_x: ', u_x.shape)
+        u_i = torch.reshape(x, (t, 1, h, d, w)).to(device)
+        # print('Shape of u_i: ', u_i.shape)
 
         if y == 0 or y == 'get_bottleneck':
             # The following for-loop describes the entire (left) contracting side,
-            for down_x in self.downs_x:
-                u_x = down_x(u_x)
-                # print('Double Conv Down: ', u_x.shape)
-                u_x = self.pool_x(u_x)
-                # print('Pooling Down: ', u_x.shape)
+            for down_i in self.downs_i:
+                u_i = down_i(u_i)
+                # print('Double Conv Down: ', u_i.shape)
+                u_i = self.pool_i(u_i)
+                # print('Pooling Down: ', u_i.shape)
 
             # This is the bottleneck
-            u_x = self.helper_down_x(u_x)
-            u_x = self.activation(u_x)
-            # print('Helper Down Shape: ', u_x.shape)
-            u_x = self.bottleneck_x(u_x)
-            u_x = self.activation(u_x)
-            # print('Bottleneck Shape: ', u_x.shape)
+            u_i = self.helper_down_i(u_i)
+            u_i = self.activation(u_i)
+            # print('Helper Down Shape: ', u_i.shape)
+            u_i = self.bottleneck_i(u_i)
+            u_i = self.activation(u_i)
+            # print('Bottleneck Shape: ', u_i.shape)
 
             if y == 'get_bottleneck':
-                return u_x
+                return u_i
 
-            u_x = self.helper_up_1_x(u_x)
-            u_x = self.activation(u_x)
-            # print('Helper Up [1] Shape: ', u_x.shape)
+            u_i = self.helper_up_1_i(u_i)
+            u_i = self.activation(u_i)
+            # print('Helper Up [1] Shape: ', u_i.shape)
 
             # The following for-loop describes the entire (right) expanding side.
-            for idx in range(0, len(self.ups_x), 2):
-                u_x = self.ups_x[idx](u_x)
-                # print('DeConv Shape: ', u_x.shape)
-                u_x = self.ups_x[idx+1](u_x)
-                # print('DoubleConv Up Shape: ', u_x.shape)
+            for idx in range(0, len(self.ups_i), 2):
+                u_i = self.ups_i[idx](u_i)
+                # print('DeConv Shape: ', u_i.shape)
+                u_i = self.ups_i[idx+1](u_i)
+                # print('DoubleConv Up Shape: ', u_i.shape)
 
-            u_x = self.helper_up_2_x(u_x)
-            # print('Helper Up [2] Shape: ', u_x.shape)
+            u_i = self.helper_up_2_i(u_i)
+            # print('Helper Up [2] Shape: ', u_i.shape)
 
-            return u_x
+            return u_i
 
         if y == 'get_MD_output':
-            u_x = self.helper_up_1_x(x)
-            u_x = self.activation(u_x)
+            u_i = self.helper_up_1_i(x)
+            u_i = self.activation(u_i)
 
             # The following for-loop describes the entire (right) expanding side.
-            for idx in range(0, len(self.ups_x), 2):
-                u_x = self.ups_x[idx](u_x)
-                u_x = self.ups_x[idx+1](u_x)
+            for idx in range(0, len(self.ups_i), 2):
+                u_i = self.ups_i[idx](u_i)
+                u_i = self.ups_i[idx+1](u_i)
 
-            u_x = self.helper_up_2_x(u_x)
-            return u_x
+            u_i = self.helper_up_2_i(u_i)
+            return u_i
 
 
 class AE_u_y(nn.Module):
@@ -599,7 +597,7 @@ class AE_u_y(nn.Module):
         x.to(device)
         u_y = x[:, 1, :, :, :].to(device)
         u_y = torch.reshape(u_y, (t, 1, h, d, w)).to(device)
-        # print('Shape of u_x: ', u_y.shape)
+        # print('Shape of u_i: ', u_y.shape)
 
         if y == 0 or y == 'get_bottleneck':
             # The following for-loop describes the entire (left) contracting side,
@@ -1229,8 +1227,24 @@ if __name__ == "__main__":
     x = torch.cat((x, x_cat), 0)
     print(x.shape)
     '''
-    _x = torch.ones(1, 3, 24, 24, 24)
-    _model_x = AE_u_x(
+    _u = torch.ones(10, 3, 24, 24, 24)
+    _u[:, 1, :, :, :] = _u[:, 0, :, :, :] + 1
+    _u[:, 2, :, :, :] = _u[:, 2, :, :, :] + 2
+
+    print(_u.shape)
+    _u = _u.flatten(start_dim=0, end_dim=1)
+    print(_u.shape)
+    print(_u[0, 0, 0, 0])
+    print(_u[9, 0, 0, 0])
+    print(_u[10, 0, 0, 0])
+    print(_u[19, 0, 0, 0])
+    print(_u[20, 0, 0, 0])
+    print(_u[29, 0, 0, 0])
+
+    '''
+    _u_x = _u[:, 1, :, :, :]
+
+    _model_x = AE_u_i(
         device=device,
         in_channels=1,
         out_channels=1,
@@ -1238,6 +1252,7 @@ if __name__ == "__main__":
         activation=nn.ReLU(inplace=True)
     ).to(device)
 
-    _x_pred = _model_x(_x)
-
+    _x_pred = _model_x(_u_x)
+    print(_x_pred.shape)
+    '''
     pass

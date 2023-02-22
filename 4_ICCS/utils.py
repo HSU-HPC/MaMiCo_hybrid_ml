@@ -33,6 +33,8 @@ def mlready2dataset(file_name):
     t, c, d, h, w = (1000, 3, 26, 26, 26)
 
     original_dataset = dataset.reshape(t, c, d, h, w)
+    original_dataset = original_dataset[100:]
+    print('Test - removed 100 timesteps? - ', original_dataset.shape)
     return original_dataset
 
 

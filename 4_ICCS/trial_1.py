@@ -96,9 +96,9 @@ def train_AE(loader, model, optimizer, criterion, scaler, model_identifier, curr
     return _avg_loss
 
 
-def train_AE_u_i(loader, model_x, model_y, model_z, optimizer_x, optimizer_y, optimizer_z, model_identifier_x, model_identifier_y, model_identifier_z, criterion, scaler, current_epoch):
-    """The train_AE function trains the model and computes the average loss on
-    the training set.
+def train_AE_u_i(loader, model_i, optimizer_i, model_identifier_i, criterion, scaler, current_epoch):
+    """The train_AE function trains the single channel model and computes the
+    average loss on the training set.
 
     Args:
         loader:
@@ -123,76 +123,32 @@ def train_AE_u_i(loader, model_x, model_y, model_z, optimizer_x, optimizer_y, op
           A double value indicating average training loss for the current epoch.
     """
 
-    _epoch_loss_x = 0
-    _epoch_loss_y = 0
-    _epoch_loss_z = 0
+    _epoch_loss = 0
     _counter = 0
 
     for _batch_idx, (_data_0, _targ_0) in enumerate(loader):
         t, c, h, d, w = _data_0.shape
-        _data_u_x = torch.reshape(
-            _data_0[:, 0, :, :, :], (t, 1, h, d, w)).to(device=device)
-        _data_u_y = torch.reshape(
-            _data_0[:, 1, :, :, :], (t, 1, h, d, w)).to(device=device)
-        _data_u_z = torch.reshape(
-            _data_0[:, 2, :, :, :], (t, 1, h, d, w)).to(device=device)
-        _targ_u_x = torch.reshape(
-            _targ_0[:, 0, :, :, :], (t, 1, h, d, w)).to(device=device)
-        _targ_u_y = torch.reshape(
-            _targ_0[:, 1, :, :, :], (t, 1, h, d, w)).to(device=device)
-        _targ_u_z = torch.reshape(
-            _targ_0[:, 2, :, :, :], (t, 1, h, d, w)).to(device=device)
 
-        _data_1 = torch.cat((_data_u_y, _data_u_z, _data_u_x), 1).to(device)
-        _data_2 = torch.cat((_data_u_z, _data_u_x, _data_u_y), 1).to(device)
-        _targ_1 = torch.cat((_targ_u_y, _targ_u_z, _targ_u_x), 1).to(device)
-        _targ_2 = torch.cat((_targ_u_z, _targ_u_x, _targ_u_y), 1).to(device)
-
-        _data = torch.cat((_data_0.to(device), _data_1.to(
-            device), _data_2.to(device)), 0).float().to(device)
+        _data = _data_0.flatten(start_dim=0, end_dim=1).float().to(device)
         _data = torch.add(_data, 1.0).float().to(device)
-        _targ = torch.cat((_targ_0.to(device), _targ_1.to(
-            device), _targ_2.to(device)), 0).float().to(device)
+        _targ = _targ_0.flatten(start_dim=0, end_dim=1).float().to(device)
+        _targ = torch.reshape(_targ, (t*c, 1, h, d, w)).float().to(device)
 
         with torch.cuda.amp.autocast():
-            _preds_x = model_x(_data).float().to(device=device)
-            _preds_y = model_y(_data).float().to(device=device)
-            _preds_z = model_z(_data).float().to(device=device)
+            _pred = model_i(_data).float().to(device=device)
+            _pred = torch.add(_pred, -1.0).float().to(device=device)
 
-            _preds_x = torch.add(_preds_x, -1.0).float().to(device=device)
-            _preds_y = torch.add(_preds_y, -1.0).float().to(device=device)
-            _preds_z = torch.add(_preds_z, -1.0).float().to(device=device)
+            _loss = criterion(_pred, _targ)
 
-            _targs_x = torch.reshape(
-                _targ[:, 0, :, :, :].float(), (3*t, 1, h, d, w)).to(device=device)
-            _targs_y = torch.reshape(
-                _targ[:, 1, :, :, :].float(), (3*t, 1, h, d, w)).to(device=device)
-            _targs_z = torch.reshape(
-                _targ[:, 2, :, :, :].float(), (3*t, 1, h, d, w)).to(device=device)
-
-            _loss_x = criterion(_preds_x, _targs_x)
-            _loss_y = criterion(_preds_y, _targs_y)
-            _loss_z = criterion(_preds_z, _targs_z)
-
-            _epoch_loss_x += _loss_x.item()
-            _epoch_loss_y += _loss_y.item()
-            _epoch_loss_z += _loss_z.item()
+            _epoch_loss += _loss.item()
             _counter += 1
 
-        _loss_x.backward(retain_graph=True)
-        _loss_y.backward(retain_graph=True)
-        _loss_z.backward(retain_graph=True)
-        optimizer_x.step()
-        optimizer_y.step()
-        optimizer_z.step()
-        optimizer_x.zero_grad()
-        optimizer_y.zero_grad()
-        optimizer_z.zero_grad()
+        _loss.backward(retain_graph=True)
+        optimizer_i.step()
+        optimizer_i.zero_grad()
 
-    _avg_loss_x = _epoch_loss_x/_counter
-    _avg_loss_y = _epoch_loss_y/_counter
-    _avg_loss_z = _epoch_loss_z/_counter
-    return _avg_loss_x, _avg_loss_y, _avg_loss_z
+    _avg_loss = _epoch_loss/_counter
+    return _avg_loss
 
 
 def valid_AE(loader, model, criterion, model_identifier):
@@ -235,9 +191,9 @@ def valid_AE(loader, model, criterion, model_identifier):
     return _avg_loss
 
 
-def valid_AE_u_i(loader, model_x, model_y, model_z, optimizer_x, optimizer_y, optimizer_z, model_identifier_x, model_identifier_y, model_identifier_z, criterion, scaler, current_epoch):
-    """The valid_AE function computes the average loss on a given dataset
-    without updating/optimizing the learnable model parameters.
+def valid_AE_u_i(loader, model_i, optimizer_i, model_identifier_i, criterion, scaler, current_epoch):
+    """The valid_AE_u_i function computes the average loss on a given single
+    channel dataset without updating/optimizing the learnable model parameters.
 
     Args:
         loader:
@@ -262,41 +218,28 @@ def valid_AE_u_i(loader, model_x, model_y, model_z, optimizer_x, optimizer_y, op
           A double value indicating average training loss for the current epoch.
     """
 
-    _epoch_loss_x = 0
-    _epoch_loss_y = 0
-    _epoch_loss_z = 0
+    _epoch_loss = 0
     _counter = 0
 
-    for _batch_idx, (_data, _targets) in enumerate(loader):
-        _data = _data.float().to(device=device)
-        _targets = _targets.float().to(device=device)
-        t, c, h, d, w = _data.shape
+    for _batch_idx, (_data_0, _targ_0) in enumerate(loader):
+        t, c, h, d, w = _data_0.shape
+
+        _data = _data_0.flatten(start_dim=0, end_dim=1).float().to(device)
+        _data = torch.add(_data, 1.0).float().to(device)
+        _targ = _targ_0.flatten(start_dim=0, end_dim=1).float().to(device)
+        _targ = torch.reshape(_targ, (t*c, 1, h, d, w)).float().to(device)
 
         with torch.cuda.amp.autocast():
-            _preds_x = model_x(_data).float().to(device=device)
-            _preds_y = model_y(_data).float().to(device=device)
-            _preds_z = model_z(_data).float().to(device=device)
+            _pred = model_i(_data).float().to(device=device)
+            _pred = torch.add(_pred, -1.0).float().to(device=device)
 
-            _targs_x = torch.reshape(
-                _targets[:, 0, :, :, :].float(), (t, 1, h, d, w)).to(device=device)
-            _targs_y = torch.reshape(
-                _targets[:, 1, :, :, :].float(), (t, 1, h, d, w)).to(device=device)
-            _targs_z = torch.reshape(
-                _targets[:, 2, :, :, :].float(), (t, 1, h, d, w)).to(device=device)
+            _loss = criterion(_pred, _targ)
 
-            _loss_x = criterion(_preds_x, _targs_x)
-            _loss_y = criterion(_preds_y, _targs_y)
-            _loss_z = criterion(_preds_z, _targs_z)
-
-            _epoch_loss_x += _loss_x.item()
-            _epoch_loss_y += _loss_y.item()
-            _epoch_loss_z += _loss_z.item()
+            _epoch_loss += _loss.item()
             _counter += 1
 
-    _avg_loss_x = _epoch_loss_x/_counter
-    _avg_loss_y = _epoch_loss_y/_counter
-    _avg_loss_z = _epoch_loss_z/_counter
-    return _avg_loss_x, _avg_loss_y, _avg_loss_z
+    _avg_loss = _epoch_loss/_counter
+    return _avg_loss
 
 
 def get_latentspace_AE_u_i(loader, model_x, model_y, model_z, out_file_name):
@@ -628,27 +571,11 @@ def trial_1_AE_u_i(alpha, alpha_string, train_loaders, valid_loaders):
     _file_prefix = '/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/' + \
         '4_ICCS/Results/1_Conv_AE/'
 
-    _model_identifier_x = f'LR{alpha_string}_x'
-    _model_identifier_y = f'LR{alpha_string}_y'
-    _model_identifier_z = f'LR{alpha_string}_z'
+    _model_identifier_i = f'LR{alpha_string}_i'
 
-    print('Initializing AE_u_x/y/z model.')
+    print('Initializing AE_u_i model.')
 
-    _model_x = AE_u_x(
-        device=device,
-        in_channels=1,
-        out_channels=1,
-        features=[4, 8, 16],
-        activation=nn.ReLU(inplace=True)
-    ).to(device)
-    _model_y = AE_u_y(
-        device=device,
-        in_channels=1,
-        out_channels=1,
-        features=[4, 8, 16],
-        activation=nn.ReLU(inplace=True)
-    ).to(device)
-    _model_z = AE_u_z(
+    _model_i = AE_u_i(
         device=device,
         in_channels=1,
         out_channels=1,
@@ -658,108 +585,51 @@ def trial_1_AE_u_i(alpha, alpha_string, train_loaders, valid_loaders):
 
     print('Initializing training parameters.')
     _scaler = torch.cuda.amp.GradScaler()
-    _optimizer_x = optim.Adam(_model_x.parameters(), lr=alpha)
-    _optimizer_y = optim.Adam(_model_y.parameters(), lr=alpha)
-    _optimizer_z = optim.Adam(_model_z.parameters(), lr=alpha)
+    _optimizer_i = optim.Adam(_model_i.parameters(), lr=alpha)
 
     print('Beginning training.')
-    for epoch in range(100):
-        _avg_loss_x = 0
-        _avg_loss_y = 0
-        _avg_loss_z = 0
+    for epoch in range(1):
+        _avg_loss = 0
 
         for _train_loader in train_loaders:
-            _loss_x, _loss_y, _loss_z = train_AE_u_i(
+            _loss = train_AE_u_i(
                 loader=_train_loader,
-                model_x=_model_x,
-                model_y=_model_y,
-                model_z=_model_z,
-                optimizer_x=_optimizer_x,
-                optimizer_y=_optimizer_y,
-                optimizer_z=_optimizer_z,
-                model_identifier_x=_model_identifier_x,
-                model_identifier_y=_model_identifier_y,
-                model_identifier_z=_model_identifier_z,
+                model_i=_model_i,
+                optimizer_i=_optimizer_i,
+                model_identifier_i=_model_identifier_i,
                 criterion=_criterion,
                 scaler=_scaler,
                 current_epoch=epoch+1
             )
-            _avg_loss_x += _loss_x
-            _avg_loss_y += _loss_y
-            _avg_loss_z += _loss_z
+            _avg_loss += _loss
 
-        _avg_loss_x = _avg_loss_x/len(train_loaders)
-        _avg_loss_y = _avg_loss_y/len(train_loaders)
-        _avg_loss_z = _avg_loss_z/len(train_loaders)
+        _avg_loss = _avg_loss/len(train_loaders)
         print('------------------------------------------------------------')
         print(f'Training Epoch: {epoch+1}')
-        print(f'-> Avg u_x {_avg_loss_x:.3f}')
-        print(f'-> Avg u_y {_avg_loss_y:.3f}')
-        print(f'-> Avg u_z {_avg_loss_z:.3f}')
+        print(f'-> Avg u_i {_avg_loss:.3f}')
 
-        _sum_loss_x = 0
-        _sum_loss_y = 0
-        _sum_loss_z = 0
+        _sum_loss = 0
+
         for _valid_loader in valid_loaders:
-            _loss_x, _loss_y, _loss_z = valid_AE_u_i(
+            _loss = valid_AE_u_i(
                 loader=_train_loader,
-                model_x=_model_x,
-                model_y=_model_y,
-                model_z=_model_z,
-                optimizer_x=_optimizer_x,
-                optimizer_y=_optimizer_y,
-                optimizer_z=_optimizer_z,
-                model_identifier_x=_model_identifier_x,
-                model_identifier_y=_model_identifier_y,
-                model_identifier_z=_model_identifier_z,
+                model_i=_model_i,
+                optimizer_i=_optimizer_i,
+                model_identifier_i=_model_identifier_i,
                 criterion=_criterion,
                 scaler=_scaler,
                 current_epoch=epoch+1
             )
-            _sum_loss_x += _loss_x
-            _sum_loss_y += _loss_y
-            _sum_loss_z += _loss_z
+            _sum_loss += _loss
 
-        _avg_valid_x = _sum_loss_x/len(train_loaders)
-        _avg_valid_y = _sum_loss_y/len(train_loaders)
-        _avg_valid_z = _sum_loss_z/len(train_loaders)
+        _avg_valid = _sum_loss/len(train_loaders)
         print('------------------------------------------------------------')
         print(f'Validation Epoch: {epoch+1}')
-        print(f'-> Avg u_x {_avg_valid_x:.3f}')
-        print(f'-> Avg u_y {_avg_valid_y:.3f}')
-        print(f'-> Avg u_z {_avg_valid_z:.3f}')
+        print(f'-> Avg u_x {_avg_valid:.3f}')
 
-    '''
-    losses2file(
-        losses=_epoch_losses,
-        file_name=f'{_file_prefix}Losses_AE_u_i_{_model_identifier}'
-    )
-    losses2file(
-        losses=_epoch_valids,
-        file_name=f'{_file_prefix}Valids_AE_u_i_{_model_identifier}'
-    )
-
-    compareLossVsValid(
-        loss_files=[
-            f'{_file_prefix}Losses_AE_u_i_{_model_identifier}.csv',
-            f'{_file_prefix}Valids_AE_u_i_{_model_identifier}.csv'
-        ],
-        loss_labels=['Training', 'Validation'],
-        file_prefix=_file_prefix,
-        file_name=f'AE_u_i_{_model_identifier}'
-    )
-    '''
     torch.save(
-        _model_x.state_dict(),
-        f'{_file_prefix}Model_AE_u_i_{_model_identifier_x}'
-    )
-    torch.save(
-        _model_y.state_dict(),
-        f'{_file_prefix}Model_AE_u_i_{_model_identifier_y}'
-    )
-    torch.save(
-        _model_z.state_dict(),
-        f'{_file_prefix}Model_AE_u_i_{_model_identifier_z}'
+        _model_i.state_dict(),
+        f'{_file_prefix}Model_AE_u_i_{_model_identifier_i}'
     )
     return
 
@@ -767,8 +637,8 @@ def trial_1_AE_u_i(alpha, alpha_string, train_loaders, valid_loaders):
 def trial_1_AE_mp():
     """The trial_1_AE_mp function is essentially a helper function to
     facilitate the training of multiple concurrent models via multiprocessing
-    of the trial_1_AE function. Here, 6 unique models are trained using
-    the 6 learning rates (_alphas) respectively. Refer to the trial_1_AE
+    of the trial_1_AE/trial_1_AE_u_i function. Here, 6 unique models are trained
+    using the 6 learning rates (_alphas) respectively. Refer to the trial_1_AE
     function for more details.
 
     Args:
@@ -777,11 +647,11 @@ def trial_1_AE_mp():
     Returns:
         NONE
     """
-    print('Starting Trial 1: AE (Couette)')
+    print('Starting Trial 1: AE_u_i (KVS)')
     _alphas = [0.01, 0.005, 0.001, 0.0005, 0.0001, 0.00005]
     _alpha_strings = ['0_01', '0_005', '0_001', '0_0005', '0_0001', '0_00005']
     _train_loaders, _valid_loaders = get_AE_loaders(
-        data_distribution='get_couette',
+        data_distribution='get_KVS',
         batch_size=32,
         shuffle=True
     )
@@ -790,7 +660,7 @@ def trial_1_AE_mp():
 
     for i in range(6):
         _p = mp.Process(
-            target=trial_1_AE,
+            target=trial_1_AE_u_i,
             args=(_alphas[i], _alpha_strings[i],
                   _train_loaders, _valid_loaders,)
         )
@@ -933,9 +803,10 @@ def prediction_retriever_u_i(model_directory, model_name_x, model_name_y, model_
 
 
 if __name__ == "__main__":
-    '''
-    print('Starting Trial 1: AE (KVS + Aug, MAE, LRLU)')
+    print('Starting Trial 1: AE (KVS, MAE, L1Loss)')
+    trial_1_AE_mp()
 
+'''
     _alpha = 0.0001
     _alpha_string = '0_0001'
     _train_loaders, _valid_loaders = get_AE_loaders(
@@ -959,8 +830,7 @@ if __name__ == "__main__":
         dataset_name=_dataset_name,
         save2file_name=_save2file_name
     )
-    '''
-    '''
+
     print('Starting Trial 1: AE_u_i (KVS + Aug, MAE, ReLU, torch.add(1.0))')
     _alpha = 0.0001
     _alpha_string = '0_0001'
@@ -992,5 +862,6 @@ if __name__ == "__main__":
         save2file_prefix=_save2file_prefix,
         save2file_name=_save2file_name
     )
-    '''
+
     get_latentspace_AE_u_i_helper()
+    '''
