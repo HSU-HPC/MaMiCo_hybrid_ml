@@ -797,7 +797,7 @@ def prediction_retriever_u_i(model_directory, model_name_i, dataset_name, save2f
         _preds = np.vstack(_preds)
         _targs = np.vstack(_targs)
     _lbm_1 = np.loadtxt(
-        'dataset_mlready/01_raw_lbm/*20000_NE*.csv', delimiter=";")
+        'dataset_mlready/01_clean_lbm/kvs_20000_NE_lbm.csv', delimiter=";")
     _lbm_1 = _lbm_1.reshape(1000, 3)
     plotPredVsTargKVS(input_pred=_preds, input_targ=_targs,
                       input_lbm=_lbm_1, file_name=save2file_name_1)
@@ -821,7 +821,7 @@ def prediction_retriever_u_i(model_directory, model_name_i, dataset_name, save2f
         _preds = np.vstack(_preds)
         _targs = np.vstack(_targs)
     _lbm_2 = np.loadtxt(
-        'dataset_mlready/01_raw_lbm/*28000_SW*.csv', delimiter=";")
+        f'dataset_mlready/01_raw_lbm/*{save2file_name_2}*.csv', delimiter=";")
     _lbm_2 = _lbm_2.reshape(1000, 3)
     plotPredVsTargKVS(input_pred=_preds, input_targ=_targs,
                       input_lbm=_lbm_2, file_name=save2file_name_2)
