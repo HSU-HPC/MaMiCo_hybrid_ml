@@ -379,7 +379,7 @@ def get_latentspace_AE_u_i_helper():
     model_name_x = 'Model_AE_u_i_LR0_0001_x'
     model_name_y = 'Model_AE_u_i_LR0_0001_y'
     model_name_z = 'Model_AE_u_i_LR0_0001_z'
-    _model_x = AE_u_x(
+    _model_x = AE_u_i(
         device=device,
         in_channels=1,
         out_channels=1,
@@ -746,7 +746,7 @@ def prediction_retriever_u_i(model_directory, model_name_x, model_name_y, model_
             shuffle=False
         )
 
-    _model_x = AE_u_x(
+    _model_x = AE_u_i(
         device=device,
         in_channels=1,
         out_channels=1,
@@ -804,9 +804,7 @@ def prediction_retriever_u_i(model_directory, model_name_x, model_name_y, model_
 
 if __name__ == "__main__":
     print('Starting Trial 1: AE (KVS, MAE, L1Loss)')
-    trial_1_AE_mp()
 
-'''
     _alpha = 0.0001
     _alpha_string = '0_0001'
     _train_loaders, _valid_loaders = get_AE_loaders(
@@ -815,8 +813,9 @@ if __name__ == "__main__":
         shuffle=True
     )
 
-    trial_1_AE(_alpha, _alpha_string, _train_loaders, _valid_loaders)
+    trial_1_AE_u_i(_alpha, _alpha_string, _train_loaders, _valid_loaders)
 
+    '''
     print('Starting Trial 1: Prediction Retriever (KVS + Aug, MAE, LReLU, AE)')
 
     _model_directory = '/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/4_ICCS/Results/1_Conv_AE/kvs_aug_04_mae_lrelu/'
