@@ -416,11 +416,5 @@ def visualize_lbm_dataset_mp():
 
 
 if __name__ == "__main__":
-    # print('Starting Data Preprocessing: Visualization of Augmented Datasets')
-    # visualize_mlready_dataset_mp()
-    # clean2mlready_mp()
-    # mlready2augmented_mp()
-    # visualize_lbm_dataset_mp()
-    clean_mamico_data_mp()
-
+    clean2mlready_mp()
     pass
