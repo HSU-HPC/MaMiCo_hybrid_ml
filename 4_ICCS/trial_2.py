@@ -1097,6 +1097,8 @@ def trial_2_RNN_single_verification():
 if __name__ == "__main__":
     # trial_2_train_LSTM_single()
     # trial_2_train_RNN_single()
-    trial_2_RNN_single_verification()
+    # trial_2_RNN_single_verification()
 
+    _lbm = np.loadtxt('dataset_mlready/kvs_20000_NE_lbm.csv', delimiter=";")
+    _lbm = _lbm.reshape(1000, 3)
     pass
