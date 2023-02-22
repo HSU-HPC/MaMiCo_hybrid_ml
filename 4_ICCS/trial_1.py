@@ -647,7 +647,7 @@ def trial_1_AE_mp():
     Returns:
         NONE
     """
-    print('Starting Trial 1: AE_u_i (KVS)')
+    print('Starting Trial 1: AE_u_i_mp (KVS)')
     _alphas = [0.01, 0.005, 0.001, 0.0005, 0.0001, 0.00005]
     _alpha_strings = ['0_01', '0_005', '0_001', '0_0005', '0_0001', '0_00005']
     _train_loaders, _valid_loaders = get_AE_loaders(
