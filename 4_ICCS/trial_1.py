@@ -821,7 +821,7 @@ def prediction_retriever_u_i(model_directory, model_name_i, dataset_name, save2f
         _preds = np.vstack(_preds)
         _targs = np.vstack(_targs)
     _lbm_2 = np.loadtxt(
-        f'dataset_mlready/01_raw_lbm/kvs_{save2file_name_2}_lbm.csv', delimiter=";")
+        f'dataset_mlready/01_clean_lbm/kvs_{save2file_name_2}_lbm.csv', delimiter=";")
     _lbm_2 = _lbm_2.reshape(1000, 3)
     plotPredVsTargKVS(input_pred=_preds, input_targ=_targs,
                       input_lbm=_lbm_2, file_name=save2file_name_2)
