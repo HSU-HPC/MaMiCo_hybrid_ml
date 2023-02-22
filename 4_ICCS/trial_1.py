@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import torch.optim as optim
 import torch.nn as nn
 import numpy as np
-from model import AE, AE_u_i, AE_u_x, AE_u_y, AE_u_z
+from model import AE, AE_u_i, AE_u_y, AE_u_z
 from torchmetrics import MeanSquaredLogError
 from utils import get_AE_loaders, losses2file, dataset2csv
 from plotting import compareLossVsValid, plot_flow_profile, plotPredVsTargKVS
