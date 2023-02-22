@@ -778,10 +778,10 @@ def prediction_retriever_u_i(model_directory, model_name_i, dataset_name, save2f
         f'{model_directory}/{model_name_i}', map_location='cpu'))
     _model_z.eval()
 
-    for i in range(len(_1_train_loaders)):
+    for train_loader in _1_train_loaders:
         _preds = []
         _targs = []
-        for batch_idx, (data, target) in enumerate(_1_train_loaders[i]):
+        for batch_idx, (data, target) in enumerate(train_loader):
             data = data.float().to(device=device)
             data = torch.add(data, 1.0).float().to(device=device)
             with torch.cuda.amp.autocast():
@@ -802,10 +802,10 @@ def prediction_retriever_u_i(model_directory, model_name_i, dataset_name, save2f
     plotPredVsTargKVS(input_pred=_preds, input_targ=_targs,
                       input_lbm=_lbm_1, file_name=save2file_name_1)
 
-    for i in range(len(_2_valid_loaders)):
+    for valid_loader in _2_valid_loaders:
         _preds = []
         _targs = []
-        for batch_idx, (data, target) in enumerate(_2_valid_loaders[i]):
+        for batch_idx, (data, target) in enumerate(valid_loader):
             data = data.float().to(device=device)
             data = torch.add(data, 1.0).float().to(device=device)
             with torch.cuda.amp.autocast():
