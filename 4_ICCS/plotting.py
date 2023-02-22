@@ -69,8 +69,8 @@ def plot_flow_profile(file_name, dataset_md, dataset_lbm=None):
     axs[1].set_ylabel("$u_y$")
     axs[1].grid(axis='y', alpha=0.3)
 
-    axs[0].plot(t_axis, avg_ux, linewidth=0.3, label='md avg u_x')
-    axs[1].plot(t_axis, avg_uy, linewidth=0.3, label='md avg u_y')
+    axs[0].plot(t_axis, avg_ux, linewidth=0.3, label='md local u_x')
+    axs[1].plot(t_axis, avg_uy, linewidth=0.3, label='md local u_y')
 
     if dataset_lbm is not None:
         axs[0].plot(t_axis, lbm_loc_ux, linewidth=0.3, label='lbm local u_x')
