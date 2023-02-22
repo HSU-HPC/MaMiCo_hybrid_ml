@@ -588,7 +588,7 @@ def trial_1_AE_u_i(alpha, alpha_string, train_loaders, valid_loaders):
     _optimizer_i = optim.Adam(_model_i.parameters(), lr=alpha)
 
     print('Beginning training.')
-    for epoch in range(1):
+    for epoch in range(50):
         _avg_loss = 0
 
         for _train_loader in train_loaders:
@@ -658,7 +658,7 @@ def trial_1_AE_mp():
 
     _processes = []
 
-    for i in range(6):
+    for i in range(4):
         _p = mp.Process(
             target=trial_1_AE_u_i,
             args=(_alphas[i], _alpha_strings[i],
@@ -803,8 +803,9 @@ def prediction_retriever_u_i(model_directory, model_name_i, dataset_name, save2f
 
 if __name__ == "__main__":
     print('Starting Trial 1_mp: AE (KVS, MAE, L1Loss)')
-    # trial_1_AE_mp()
+    trial_1_AE_mp()
 
+    '''
     _alpha = 0.0001
     _alpha_string = '0_0001'
     _train_loaders, _valid_loaders = get_AE_loaders(
@@ -815,7 +816,6 @@ if __name__ == "__main__":
 
     trial_1_AE_u_i(_alpha, _alpha_string, _train_loaders, _valid_loaders)
 
-    '''
     print('Starting Trial 1: Prediction Retriever (KVS + Aug, MAE, LReLU, AE)')
 
     _model_directory = '/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/4_ICCS/Results/1_Conv_AE/kvs_aug_04_mae_lrelu/'
