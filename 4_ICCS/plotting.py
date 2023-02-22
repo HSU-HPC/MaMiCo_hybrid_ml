@@ -46,20 +46,14 @@ def plot_flow_profile(file_name, dataset_md, dataset_lbm=None):
     t_axis = np.arange(1, t_max+1)
     lbm_loc_ux = dataset_lbm[:, 1]
     lbm_loc_uy = dataset_lbm[:, 2]
-    avg_ux = []
-    avg_uy = []
-
-    for dt in range(t):
-        avg_ux.append(dataset_md[dt, 0, 6, 6, 6])
-        avg_uy.append(dataset_md[dt, 1, 6, 6, 6])
-        # avg_ux.append(dataset_md[dt, 0, :, :, :].mean())
-        # avg_uy.append(dataset_md[dt, 1, :, :, :].mean())
+    avg_ux = dataset_md[:, 0, 6, 6, 6]
+    avg_uy = dataset_md[:, 1, 6, 6, 6]
 
     fig, axs = plt.subplots(
         2, sharex=True, constrained_layout=True)
 
     fig.suptitle(
-        f'Average Velocity Components vs Time: {dataset_name}', fontsize=10)
+        f'Velocity Components vs Time: {dataset_name}', fontsize=10)
 
     axs[0].set_xlabel("t")
     axs[0].set_ylabel("$u_x$")
@@ -112,117 +106,82 @@ def compareLossVsValid(loss_files, loss_labels, file_prefix=0, file_name=0):
     plt.close()
 
 
-def plotPredVsTargKVS(input_1, input_2='void', input_3='void', file_prefix=0, file_name=0):
+def plotPredVsTargKVS(input_pred, input_targ=None, input_lbm=None, file_name=None):
     """The plotPredVsTargKVS function aims to graphically compare model
     performance via plotting domain-wise averaged predicted and target
     velocities vs time. The standard deviations are additionally included for
     better comparison.
 
     Args:
-        input_1:
+        input_pred:
           Object of type PyTorch-Tensor containing the predicted dataset
-        input_2:
+        input_targ:
           Object of type PyTorch-Tensor containing the target dataset
-        file_prefix:
-          Object of type string containing
+        input_lbm:
+          Object of type np-array containing the lbm dataset
         file_name:
-          Object of type string containing
+          Object of type string containing unique file_name
 
     Returns:
         NONE:
           This function saves the graphical comparison to file.
     """
+    t, c, x, y, z = input_pred.shape
 
-    if input_2 == 'void':
-        print('Invalid input_2.')
-
-    t, c, x, y, z = input_1.shape
-
-    #  mid = y//2
-    mid = 6
+    cell = 6
     t_max = t
     t_axis = np.arange(1, t_max+1)
 
-    p_std_x = np.std(input_1[:, 0, :, :, :], axis=(1, 2, 3))
-    t_std_x = np.std(input_2[:, 0, :, :, :], axis=(1, 2, 3))
-    p_std_y = np.std(input_1[:, 1, :, :, :], axis=(1, 2, 3))
-    t_std_y = np.std(input_2[:, 1, :, :, :], axis=(1, 2, 3))
-    p_std_z = np.std(input_1[:, 2, :, :, :], axis=(1, 2, 3))
-    t_std_z = np.std(input_2[:, 2, :, :, :], axis=(1, 2, 3))
-
-    p_avg_x = np.mean(input_1[:, 0, :, :, :], axis=(1, 2, 3))
-    t_avg_x = np.mean(input_2[:, 0, :, :, :], axis=(1, 2, 3))
-    p_avg_y = np.mean(input_1[:, 1, :, :, :], axis=(1, 2, 3))
-    t_avg_y = np.mean(input_2[:, 1, :, :, :], axis=(1, 2, 3))
-    p_avg_z = np.mean(input_1[:, 2, :, :, :], axis=(1, 2, 3))
-    t_avg_z = np.mean(input_2[:, 2, :, :, :], axis=(1, 2, 3))
-
-    my_s = 0.25
-
-    p_loc_x = input_1[:, 0, mid, mid, mid]
-    p_loc_y = input_1[:, 1, mid, mid, mid]
-    p_loc_z = input_1[:, 2, mid, mid, mid]
-    t_loc_x = input_2[:, 0, mid, mid, mid]
-    t_loc_y = input_2[:, 1, mid, mid, mid]
-    lbm_loc_y = input_3[:, 2]
-    t_loc_z = input_2[:, 2, mid, mid, mid]
-
-    print('std array shape: ', t_std_z.shape)
-    print('avg array shape: ', t_avg_z.shape)
+    p_loc_x = input_pred[:, 0, cell, cell, cell]
+    p_loc_y = input_pred[:, 1, cell, cell, cell]
+    p_loc_z = input_pred[:, 2, cell, cell, cell]
 
     fig, axs = plt.subplots(3, sharex=True, constrained_layout=True)
-    '''
-    axs[0].plot(t_axis, p_avg_x, linewidth=0.5, label='Prediction')
-    axs[0].fill_between(t_axis, p_avg_x-p_std_x, p_avg_x
-                        + p_std_x, alpha=0.2, label='Prediction')
-    axs[0].plot(t_axis, t_avg_x, linewidth=0.5, label='Target')
-    axs[0].fill_between(t_axis, t_avg_x-t_std_x, t_avg_x
-                        + t_std_x, alpha=0.2, label='Target')
-    '''
-    axs[0].scatter(t_axis, p_loc_x, s=my_s, label='[P] Central Cell')
-    axs[0].scatter(t_axis, t_loc_x, s=my_s, label='[T] Central Cell')
-    axs[0].set_ylabel('Local $u_x$')
+
+    fig.suptitle(
+        f'Velocity Components vs Time: {file_name}', fontsize=10)
+
+    axs[0].set_xlabel("t")
+    axs[0].set_ylabel("$u_x$")
     axs[0].grid(axis='y', alpha=0.3)
 
-    '''
-    axs[1].plot(t_axis, p_avg_y, linewidth=0.5, label='Prediction')
-    axs[1].fill_between(t_axis, p_avg_y-p_std_y, p_avg_y
-                        + p_std_y, alpha=0.2, label='Prediction')
-    axs[1].plot(t_axis, t_avg_y, linewidth=0.5, label='Target')
-    axs[1].fill_between(t_axis, t_avg_y-t_std_y, t_avg_y
-                        + t_std_y, alpha=0.2, label='Target')
-    '''
-    axs[1].scatter(t_axis, p_loc_y, s=my_s, label='[P] Central Cell')
-    axs[1].scatter(t_axis, t_loc_y, s=my_s, label='[T] Central Cell')
-    axs[1].set_ylabel('Local $u_y$')
+    axs[1].set_xlabel("t")
+    axs[1].set_ylabel("$u_y$")
     axs[1].grid(axis='y', alpha=0.3)
 
-    '''
-    axs[2].plot(t_axis, p_avg_z, linewidth=0.5, label='Prediction')
-    axs[2].fill_between(t_axis, p_avg_z-p_std_z, p_avg_z
-                        + p_std_z, alpha=0.2, label='Prediction')
-    axs[2].plot(t_axis, t_avg_z, linewidth=0.5, label='Target')
-    axs[2].fill_between(t_axis, t_avg_z-t_std_z, t_avg_z
-                        + t_std_z, alpha=0.2, label='Target')
-    '''
-    axs[2].scatter(t_axis, p_loc_y, s=my_s, label='[P] Central Cell')
-    axs[2].scatter(t_axis, lbm_loc_y, s=my_s, label='[T] lbm')
-    axs[2].set_ylabel('Local $u_y$')
+    axs[2].set_xlabel("t")
+    axs[2].set_ylabel("$u_z$")
     axs[2].grid(axis='y', alpha=0.3)
 
-    axs[2].set_xlabel('Timestep')
-    axs[2].legend(ncol=3, fontsize=9)
+    axs[0].plot(t_axis, p_loc_x, linewidth=0.3, label='prediction')
+    axs[1].plot(t_axis, p_loc_y, linewidth=0.3, label='prediction')
+    axs[2].plot(t_axis, p_loc_z, linewidth=0.3, label='prediction')
 
-    fig.set_size_inches(6, 4)
-    if file_name != 0:
-        fig.savefig(
-            f'{file_prefix}Plot_PredVsTarg_KVS_{file_name}.svg')
-    #plt.show()
+    if input_targ is not None:
+        t_loc_x = input_targ[:, 0, cell, cell, cell]
+        t_loc_y = input_targ[:, 1, cell, cell, cell]
+        t_loc_z = input_targ[:, 2, cell, cell, cell]
+
+        axs[0].plot(t_axis, t_loc_x, linewidth=0.3, label='target')
+        axs[1].plot(t_axis, t_loc_y, linewidth=0.3, label='target')
+        axs[2].plot(t_axis, t_loc_z, linewidth=0.3, label='target')
+
+    if input_lbm is not None:
+        lbm_loc_x = input_lbm[100:, 1]
+        lbm_loc_y = input_lbm[100:, 2]
+
+        axs[0].plot(t_axis, lbm_loc_x, linewidth=0.3, label='lbm')
+        axs[1].plot(t_axis, lbm_loc_y, linewidth=0.3, label='lbm')
+
+    axs[0].legend(ncol=1, fontsize=9)
+    axs[1].legend(ncol=1, fontsize=9)
+    axs[2].legend(ncol=1, fontsize=9)
+
+    fig.savefig(f'plots/Compare_loc_flow_profiles_{file_name}.png')
     plt.close()
-    pass
 
 
-def plotPredVsTargKVS_new(input_1, input_2='void', file_prefix=0, file_name=0):
+def plotPredVsTargKVS_graveyard(input_1, input_2='void', file_prefix=0, file_name=0):
     """The plotPredVsTargKVS function aims to graphically compare model
     performance via plotting domain-wise averaged predicted and target
     velocities vs time. The standard deviations are additionally included for

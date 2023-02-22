@@ -724,7 +724,7 @@ def prediction_retriever(model_directory, model_name, dataset_name, save2file_na
     plot_flow_profile(_preds, save2file_name)
 
 
-def prediction_retriever_u_i(model_directory, model_name_i, dataset_name, save2file_prefix, save2file_name):
+def prediction_retriever_u_i(model_directory, model_name_i, dataset_name, save2file_name_1, save2file_name_2):
     """The prediction_retriever function is used to evaluate model performance
     of a trained model. This is done by loading the saved model, feeding it
     with datasets and then saving the corresponding predictions for later
@@ -740,7 +740,7 @@ def prediction_retriever_u_i(model_directory, model_name_i, dataset_name, save2f
     Returns:
         NONE
     """
-    _, valid_loaders = get_AE_loaders(
+    _1_train_loaders, _2_valid_loaders = get_AE_loaders(
             data_distribution=dataset_name,
             batch_size=1,
             shuffle=False
@@ -778,10 +778,10 @@ def prediction_retriever_u_i(model_directory, model_name_i, dataset_name, save2f
         f'{model_directory}/{model_name_i}', map_location='cpu'))
     _model_z.eval()
 
-    for i in range(len(valid_loaders)):
+    for i in range(len(_1_train_loaders)):
         _preds = []
         _targs = []
-        for batch_idx, (data, target) in enumerate(valid_loaders[i]):
+        for batch_idx, (data, target) in enumerate(_1_train_loaders[i]):
             data = data.float().to(device=device)
             data = torch.add(data, 1.0).float().to(device=device)
             with torch.cuda.amp.autocast():
@@ -796,16 +796,43 @@ def prediction_retriever_u_i(model_directory, model_name_i, dataset_name, save2f
                 _targs.append(target.cpu().detach().numpy())
         _preds = np.vstack(_preds)
         _targs = np.vstack(_targs)
+    _lbm_1 = np.loadtxt(
+        'dataset_mlready/01_raw_lbm/*20000_NE*.csv', delimiter=";")
+    _lbm_1 = _lbm_1.reshape(1000, 3)
+    plotPredVsTargKVS(input_pred=_preds, input_targ=_targs,
+                      input_lbm=_lbm_1, file_name=save2file_name_1)
 
-    plotPredVsTargKVS(input_1=_preds, input_2=_targs,
-                      file_prefix=save2file_prefix, file_name=save2file_name)
+    for i in range(len(_2_valid_loaders)):
+        _preds = []
+        _targs = []
+        for batch_idx, (data, target) in enumerate(_2_valid_loaders[i]):
+            data = data.float().to(device=device)
+            data = torch.add(data, 1.0).float().to(device=device)
+            with torch.cuda.amp.autocast():
+                data_pred_x = _model_x(data[:, 0, :, :, :])
+                data_pred_y = _model_y(data[:, 1, :, :, :])
+                data_pred_z = _model_z(data[:, 2, :, :, :])
+                data_pred = torch.cat(
+                    (data_pred_x, data_pred_y, data_pred_z), 1).to(device)
+                data_pred = torch.add(
+                    data_pred, -1.0).float().to(device=device)
+                _preds.append(data_pred.cpu().detach().numpy())
+                _targs.append(target.cpu().detach().numpy())
+        _preds = np.vstack(_preds)
+        _targs = np.vstack(_targs)
+    _lbm_2 = np.loadtxt(
+        'dataset_mlready/01_raw_lbm/*28000_SW*.csv', delimiter=";")
+    _lbm_2 = _lbm_2.reshape(1000, 3)
+    plotPredVsTargKVS(input_pred=_preds, input_targ=_targs,
+                      input_lbm=_lbm_2, file_name=save2file_name_2)
 
 
 if __name__ == "__main__":
-    print('Starting Trial 1_mp: AE (KVS, MAE, L1Loss)')
+    '''
+    print('Starting Trial 1_mp: AE_u_i (KVS, MAE, L1Loss)')
     trial_1_AE_mp()
 
-    '''
+
     _alpha = 0.0001
     _alpha_string = '0_0001'
     _train_loaders, _valid_loaders = get_AE_loaders(
@@ -815,21 +842,24 @@ if __name__ == "__main__":
     )
 
     trial_1_AE_u_i(_alpha, _alpha_string, _train_loaders, _valid_loaders)
+    '''
+    print('Starting Trial 1: Prediction Retriever (KVS, AE_u_i)')
 
-    print('Starting Trial 1: Prediction Retriever (KVS + Aug, MAE, LReLU, AE)')
-
-    _model_directory = '/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/4_ICCS/Results/1_Conv_AE/kvs_aug_04_mae_lrelu/'
-    _model_name = 'Model_AE_u_i_LR0_0001'
+    _model_directory = '/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/4_ICCS/Results/1_Conv_AE/'
+    _model_name = 'Model_AE_u_i_LR0_0001_i'
     _dataset_name = 'get_KVS_eval'
-    _save2file_name = 'pred_10_lrelu_kvs_aug_combined_domain_init_20000_NW'
+    _save2file_name_1 = '20000_NE'
+    _save2file_name_2 = '28000_SW'
 
     prediction_retriever(
         model_directory=_model_directory,
         model_name=_model_name,
         dataset_name=_dataset_name,
-        save2file_name=_save2file_name
+        save2file_name_1=_save2file_name_1,
+        save2file_name_2=_save2file_name_2
     )
 
+    '''
     print('Starting Trial 1: AE_u_i (KVS + Aug, MAE, ReLU, torch.add(1.0))')
     _alpha = 0.0001
     _alpha_string = '0_0001'
