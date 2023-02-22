@@ -279,7 +279,7 @@ def visualize_mlready_dataset_mp():
         _file_name = file.replace(_directory+'/', '')
         print(f'New file: {_file_name}')
         _md_file_names.append(_file_name)
-        
+
         '''
         _dataset = mlready2dataset(_file_name)
         _datasets.append(_dataset)
@@ -301,6 +301,7 @@ def visualize_mlready_dataset_mp():
         process.join()
         print('Joining Process')
         '''
+
 
 def mlready2augmented(file_name):
     """The mlready2augmented function retrieves a numpy array from a csv file
@@ -424,5 +425,5 @@ def visualize_lbm_dataset_mp():
 
 
 if __name__ == "__main__":
-    clean2mlready_mp()
+    visualize_mlready_dataset_mp()
     pass
