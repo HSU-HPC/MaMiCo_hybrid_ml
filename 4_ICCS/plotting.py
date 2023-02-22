@@ -40,6 +40,7 @@ def plot_flow_profile(file_name, dataset_md, dataset_lbm=None):
     """
     dataset_name = file_name.replace('.csv', '')
     dataset_name = dataset_name.replace('02_clean/', '')
+    dataset_name = dataset_name.replace('/', '')
     t, c, d, h, w = dataset_md.shape
     # mid = int(h/2)t_max = 1000
     t_max = 1000
