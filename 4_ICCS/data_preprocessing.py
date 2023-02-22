@@ -248,11 +248,15 @@ def visualize_clean_mamico_data_mp():
     pass
 
 
+def visualize_mlready_dataset(file_name):
+    pass
+
+
 def visualize_mlready_dataset_mp():
     """The visualize_mlready_dataset_mp visualizes the mlready datasets so as to
     validate proper simulation, i.e. validate that the data makes sense. This
     is done by generating meaningful plots to recognize characteristic flow
-    behavior (couette, couette_oscillating, KVS)
+    behavior (KVS)
     Args:
         NONE
 
@@ -263,16 +267,20 @@ def visualize_mlready_dataset_mp():
     """
     print('Performing: visualize_mlready_dataset_mp()')
     _directory = "/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/4_ICCS/dataset_mlready"
-    _raw_files = glob.glob(
-        f"{_directory}/**/*NW_2.csv", recursive=True)
-    _file_names = []
-    _datasets = []
+    _raw_md_files = glob.glob(
+        f"{_directory}/**/clean_kvs*.csv", recursive=True)
+    _raw_lbm_files = glob.glob(
+        f"{_directory}/**/*lbm*.csv", recursive=True)
+    _md_file_names = []
+    _lbm_file_names = []
 
-    for file in _raw_files:
+    for file in _raw_md_files:
         print(f'Raw file: {file}')
         _file_name = file.replace(_directory+'/', '')
         print(f'New file: {_file_name}')
-        _file_names.append(_file_name)
+        _md_file_names.append(_file_name)
+        
+        '''
         _dataset = mlready2dataset(_file_name)
         _datasets.append(_dataset)
 
@@ -292,7 +300,7 @@ def visualize_mlready_dataset_mp():
     for process in processes:
         process.join()
         print('Joining Process')
-
+        '''
 
 def mlready2augmented(file_name):
     """The mlready2augmented function retrieves a numpy array from a csv file
