@@ -385,7 +385,7 @@ def visualize_lbm_dataset_mp():
     """The visualize_lbm_dataset_mp function is used to call the visualize_lbm_dataset
     function in a multiprocessing manner.
     """
-    _directory = "/beegfs/project/MaMiCo/mamico-ml/dataset/01_raw_lbm"
+    _directory = "/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/4_ICCS/dataset_mlready/01_raw_lbm"
     _raw_files = glob.glob(
         f"{_directory}/*.csv", recursive=True)
     _files = []
@@ -393,6 +393,8 @@ def visualize_lbm_dataset_mp():
     for file in _raw_files:
         print(file)
         _file = file.replace('.csv', '')
+        print(_file)
+        _file = _file.replace(f'{_directory}', '')
         print(_file)
         _files.append(_file)
 
