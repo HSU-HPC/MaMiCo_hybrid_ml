@@ -178,9 +178,9 @@ def get_AE_loaders(data_distribution, batch_size=32, shuffle=True, num_workers=1
             f"{_directory}KVS/Validation/*bottom_0_oscil_3_0*.csv")
     elif _data_tag == 'KVS':
         _train_files = glob.glob(f"{_directory}KVS/Training/*.csv")
-        print(_train_files)
+        # print(_train_files)
         _valid_files = glob.glob(f"{_directory}KVS/Validation/*.csv")
-        print(_valid_files)
+        # print(_valid_files)
     elif _data_tag == 'KVS_eval':
         _train_files = glob.glob(f"{_directory}KVS/Validation/*20000_NE*.csv")
         _valid_files = glob.glob(f"{_directory}KVS/Validation/*28000_SW*.csv")
