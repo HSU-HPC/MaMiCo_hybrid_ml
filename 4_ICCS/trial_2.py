@@ -239,7 +239,7 @@ def trial_2_train_RNN_u_i():
 
     _criterion = nn.L1Loss()
     _file_prefix = '/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/4_ICCS/Results/2_RNN/'
-    _file_prefix_AE = '/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/4_ICCS/Results/1_Conv_AE/kvs_aug_100_mae_relu_upshift/'
+    _file_prefix_AE = '/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/4_ICCS/Results/1_Conv_AE/'
     _alpha_string = '1e-5'
     _alpha = 1e-5
     _num_layers = 1
@@ -317,8 +317,8 @@ def trial_2_train_RNN_u_i():
 def trial_2_RNN_single_verification():
     print('Starting Trial 2: Prediction Retriever (KVS + Aug, MAE, ReLU, AE_u_i, torch.add())')
 
-    _model_AE_directory = '/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/4_ICCS/Results/1_Conv_AE/kvs_aug_100_mae_relu_upshift/'
-    _model_RNN_directory = '/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/4_ICCS/Results/2_RNN/kvs_aug_10_Piet_single_RNN/'
+    _model_AE_directory = '/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/4_ICCS/Results/1_Conv_AE/'
+    _model_RNN_directory = '/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/4_ICCS/Results/2_RNN/'
     _model_name_x = 'Model_AE_u_i_LR0_0001_x'
     _model_name_y = 'Model_AE_u_i_LR0_0001_y'
     _model_name_z = 'Model_AE_u_i_LR0_0001_z'
