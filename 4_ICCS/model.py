@@ -755,7 +755,7 @@ class Hybrid_MD_RNN_AE_u_i(nn.Module):
         u_z = self.AE_z(x[:, 2, :, :, :], y='get_bottleneck').to(self.device)
 
         u_x_shape = u_x.shape
-        # # print('Shape [latentspace_x]: ', u_x.shape)
+        print('Shape u_x_shape: ', u_x.shape)
         ()
         self.sequence_x = tensor_FIFO_pipe(
             tensor=self.sequence_x,
@@ -793,6 +793,7 @@ class Hybrid_MD_RNN_AE_u_i(nn.Module):
         u_x = self.AE_x(u_x, y='get_MD_output').to(self.device)
         u_y = self.AE_y(u_y, y='get_MD_output').to(self.device)
         u_z = self.AE_z(u_z, y='get_MD_output').to(self.device)
+        print('Shape u_x_shape: ', u_x.shape)
 
         out = torch.cat((u_x, u_y, u_z), 1).to(device)
         # print('Shape [out]: ', out.shape)
