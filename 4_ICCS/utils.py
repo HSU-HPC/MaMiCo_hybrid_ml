@@ -4,7 +4,7 @@ import csv
 import glob
 import torch.multiprocessing as mp
 import concurrent.futures
-from dataset import MyMamicoDataset_AE, MyMamicoDataset_RNN, MyMamicoDataset_RNN_verification
+from dataset import MyMamicoDataset_AE, MyMamicoDataset_RNN, MyMamicoDataset_RNN_verification, MyMamicoDataset_Hybrid
 from torch.utils.data import DataLoader
 
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -545,6 +545,126 @@ def get_RNN_loaders(data_distribution, batch_size=32, shuffle=True, num_workers=
         _dataloaders_valid_z.append(_dataloader_z)
 
     return _dataloaders_train_x, _dataloaders_train_y, _dataloaders_train_z, _dataloaders_valid_x, _dataloaders_valid_y, _dataloaders_valid_z
+
+
+def get_Hybrid_loaders(data_distribution, batch_size=1, shuffle=False, num_workers=1):
+    """The get_Hybrid_loaders retrieves the loaders of PyTorch-type DataLoader
+    to automatically feed datasets to the Hybrid model.
+
+    Args:
+        data_distribution:
+          Object of string type to differentiate between loading couette, kvs,
+          both or random valued datasets:
+          ['get_couette', 'get_KVS', 'get_both', 'get_random']
+        num_workers:
+          Object of integer type that will turn on multi-process data loading
+          with the specified number of loader worker processes.
+        batch_size:
+          Object of integer type that specifies the batch size.
+        shuffle:
+          Object of boolean type used to turn data shuffling on.
+
+    Returns:
+        _dataloaders_train:
+          Object of PyTorch-type DataLoader to automatically feed training datasets.
+        _dataloaders_valid:
+          Object of PyTorch-type DataLoader to automatically feed validation datasets.
+    """
+    _batch_size = batch_size
+    _shuffle = shuffle
+    _num_workers = num_workers
+    _data_tag = ''
+
+    if _shuffle is True:
+        shuffle_switch = 'on'
+    elif _shuffle is False:
+        shuffle_switch = 'off'
+        _batch_size = 1
+
+    elif data_distribution == "get_KVS":
+        _data_tag = 'KVS'
+    elif data_distribution == "get_KVS_eval":
+        _data_tag = 'KVS_eval'
+
+    print('------------------------------------------------------------')
+    print('                      Loader Summary                        ')
+    print('Cur. Loader\t : get_AE_loaders')
+    print(f'Data Dist. \t= {_data_tag}')
+    print(f'Batch size\t= {_batch_size}')
+    print(f'Num worker\t= {_num_workers}')
+    print(f'Shuffle\t\t= {shuffle_switch}')
+
+    _data_train = []
+    _data_valid = []
+    _dataloaders_train = []
+    _dataloaders_valid = []
+    _directory = '/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/4_ICCS/dataset_mlready/'
+
+    if _data_tag == 'KVS':
+        _train_files = glob.glob(f"{_directory}KVS/Training/*.csv")
+        _valid_files = glob.glob(f"{_directory}KVS/Validation/*.csv")
+    elif _data_tag == 'KVS_eval':
+        _train_files = glob.glob(f"{_directory}KVS/Training/*20000_NW*.csv")
+        _valid_files = glob.glob(f"{_directory}KVS/Validation/*28000_SW*.csv")
+    else:
+        print('Invalid value for function parameter: data_distribution.')
+        return
+
+    print('successful data tag')
+
+    if _shuffle is True:
+        _data_train = mlready2dataset_mp(_train_files)
+        _data_valid = mlready2dataset_mp(_valid_files)
+        _data_train_stack = np.vstack(_data_train)
+        print('Training stack shape:', _data_train_stack.shape)
+        _data_valid_stack = np.vstack(_data_valid)
+
+        _dataset_train = MyMamicoDataset_AE(_data_train_stack)
+        _dataloader_train = DataLoader(
+            dataset=_dataset_train,
+            batch_size=_batch_size,
+            shuffle=_shuffle,
+            num_workers=_num_workers
+            )
+
+        _dataset_valid = MyMamicoDataset_AE(_data_valid_stack)
+        _dataloader_valid = DataLoader(
+            dataset=_dataset_valid,
+            batch_size=_batch_size,
+            shuffle=_shuffle,
+            num_workers=_num_workers
+            )
+
+        print(f'Num Train Loaders = {len([_dataloader_train])}')
+        print(f'Num Valid Loaders = {len([_dataloader_valid])}')
+        return [_dataloader_train], [_dataloader_valid]
+
+    else:
+        for _file in _train_files:
+            _data_train = mlready2dataset(_file)
+            _dataset_train = MyMamicoDataset_Hybrid(_data_train)
+            _dataloader_train = DataLoader(
+                dataset=_dataset_train,
+                batch_size=_batch_size,
+                shuffle=_shuffle,
+                num_workers=_num_workers
+                )
+            _dataloaders_train.append(_dataloader_train)
+        for _file in _valid_files:
+            print(_file)
+            _data_valid = mlready2dataset(_file)
+            _dataset_valid = MyMamicoDataset_Hybrid(_data_valid)
+            _dataloader_valid = DataLoader(
+                dataset=_dataset_valid,
+                batch_size=_batch_size,
+                shuffle=_shuffle,
+                num_workers=_num_workers
+                )
+            _dataloaders_valid.append(_dataloader_valid)
+
+        print(f'Num Train Loaders = {len(_dataloaders_train)}')
+        print(f'Num Valid Loaders = {len(_dataloaders_valid)}')
+        return _dataloaders_train, _dataloaders_valid
 
 
 def dataset2csv(dataset, dataset_name,  model_identifier=''):
