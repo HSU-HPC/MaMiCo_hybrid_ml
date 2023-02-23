@@ -606,7 +606,7 @@ def get_Hybrid_loaders(data_distribution, batch_size=1, shuffle=False, num_worke
     elif _data_tag == 'KVS_eval':
         _train_files = glob.glob(f"{_directory}KVS/Training/*20000_NW*.csv")
         print(_train_files)
-        _valid_files = glob.glob(f"{_directory}KVS/Validation/*28000_SW*.csv")
+        _valid_files = glob.glob(f"{_directory}KVS/Validation/*20000_NE*.csv")
     else:
         print('Invalid value for function parameter: data_distribution.')
         return
