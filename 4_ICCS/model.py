@@ -261,7 +261,6 @@ class AE_u_i(nn.Module):
             t, h, d, w = x.shape
             x.to(device)
             u_i = torch.reshape(x, (t, 1, h, d, w)).to(device)
-            u_i = x.to(device)
             print('Shape of u_i: ', u_i.shape)
             for down_i in self.downs_i:
                 u_i = down_i(u_i)
