@@ -301,6 +301,7 @@ def prediction_retriever_hybrid(model_AE_directory, model_name_i, model_RNN_dire
         # print('model_x(data) -> shape: ', data.shape)
         with torch.cuda.amp.autocast():
             _pred = _model_Hybrid(data)
+            print('Shape of _pred: ', _pred.shape)
             _preds = torch.cat((_preds, _pred), 0).to(device)
             _targs.append(target.cpu().detach().numpy())
 
