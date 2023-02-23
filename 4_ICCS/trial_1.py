@@ -518,7 +518,7 @@ def prediction_retriever_latentspace_u_i(model_directory, model_name_i, dataset_
 
     _trains, _valids = get_AE_loaders(
             data_distribution=dataset_name,
-            batch_size=1,
+            batch_size=32,
             shuffle=False
         )
 
