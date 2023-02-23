@@ -182,7 +182,7 @@ def get_AE_loaders(data_distribution, batch_size=32, shuffle=True, num_workers=1
         _valid_files = glob.glob(f"{_directory}KVS/Validation/*.csv")
         # print(_valid_files)
     elif _data_tag == 'KVS_eval':
-        _train_files = glob.glob(f"{_directory}KVS/Validation/*20000_NE*.csv")
+        _train_files = glob.glob(f"{_directory}KVS/Validation/*20000_NW*.csv")
         _valid_files = glob.glob(f"{_directory}KVS/Validation/*28000_SW*.csv")
     elif _data_tag == 'Couette and KVS':
         _train_files = glob.glob(f"{_directory}Couette/Training/*.csv") + \
@@ -372,11 +372,11 @@ def get_RNN_loaders(data_distribution, batch_size=32, shuffle=True, num_workers=
             f"{_directory}KVS/Latentspace/Validation/*_z.csv")
     elif _data_tag == 'KVS_eval':
         _train_files_x = glob.glob(
-            f"{_directory}KVS/Latentspace/Training/*20000_NE_x.csv")
+            f"{_directory}KVS/Latentspace/Training/*20000_NW_x.csv")
         _train_files_y = glob.glob(
-            f"{_directory}KVS/Latentspace/Training/*20000_NE_y.csv")
+            f"{_directory}KVS/Latentspace/Training/*20000_NW_y.csv")
         _train_files_z = glob.glob(
-            f"{_directory}KVS/Latentspace/Training/*20000_NE_z.csv")
+            f"{_directory}KVS/Latentspace/Training/*20000_NW_z.csv")
         _valid_files_x = glob.glob(
             f"{_directory}KVS/Latentspace/Validation/*28000_SW_x.csv")
         _valid_files_y = glob.glob(
