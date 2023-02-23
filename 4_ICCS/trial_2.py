@@ -271,7 +271,7 @@ def trial_2_train_RNN_u_i():
     _model_AE.eval()
 
     print('Beginning training.')
-    for epoch in range(1):
+    for epoch in range(50):
         _avg_loss = 0
         for _train_i in _trains_i:
             loss = train_RNN_u_i(
@@ -285,7 +285,7 @@ def trial_2_train_RNN_u_i():
                 current_epoch=epoch
             )
             _avg_loss += loss
-        _avg_loss = _avg_loss/len(_train_i)
+        _avg_loss = _avg_loss/len(_trains_i)
         print('------------------------------------------------------------')
         print(f'Training Epoch: {epoch+1}')
         print(f'-> Avg loss {_avg_loss:.3f}')
@@ -303,7 +303,7 @@ def trial_2_train_RNN_u_i():
                 current_epoch=epoch
             )
             _avg_loss += loss
-        _avg_loss = _avg_loss/len(_valid_i)
+        _avg_loss = _avg_loss/len(_valids_i)
         print('------------------------------------------------------------')
         print(f'Validation Epoch: {epoch+1}')
         print(f'-> Avg loss{_avg_loss:.3f}')
