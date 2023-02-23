@@ -605,6 +605,7 @@ def get_Hybrid_loaders(data_distribution, batch_size=1, shuffle=False, num_worke
         _valid_files = glob.glob(f"{_directory}KVS/Validation/*.csv")
     elif _data_tag == 'KVS_eval':
         _train_files = glob.glob(f"{_directory}KVS/Training/*20000_NW*.csv")
+        print(_train_files)
         _valid_files = glob.glob(f"{_directory}KVS/Validation/*28000_SW*.csv")
     else:
         print('Invalid value for function parameter: data_distribution.')
@@ -641,6 +642,7 @@ def get_Hybrid_loaders(data_distribution, batch_size=1, shuffle=False, num_worke
 
     else:
         for _file in _train_files:
+            print(_file)
             _data_train = mlready2dataset(_file)
             _dataset_train = MyMamicoDataset_Hybrid(_data_train)
             _dataloader_train = DataLoader(
