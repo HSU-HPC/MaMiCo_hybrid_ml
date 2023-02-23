@@ -557,7 +557,7 @@ def prediction_retriever_latentspace_u_i(model_directory, model_name_i, dataset_
             data_pred_z = _model_i(data, 'get_MD_output').to(device=device)
             data_preds_z = torch.cat((data_preds_z, data_pred_z), 0).to(device)
 
-    for data, target in _trains:
+    for data, target in _trains[0]:
         with torch.cuda.amp.autocast():
             target = target.cpu().detach().numpy()
             print(target.shape)
