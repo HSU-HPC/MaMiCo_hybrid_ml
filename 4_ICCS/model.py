@@ -255,9 +255,10 @@ class AE_u_i(nn.Module):
             result:
               Object of PyTorch-type tensor returning the autoencoded result.
         """
-        t, h, d, w = x.shape
+        # t, h, d, w = x.shape
         x.to(device)
-        u_i = torch.reshape(x, (t, 1, h, d, w)).to(device)
+        # u_i = torch.reshape(x, (t, 1, h, d, w)).to(device)
+        u_i = x.to(device)
         # print('Shape of u_i: ', u_i.shape)
 
         if y == 0 or y == 'get_bottleneck':
