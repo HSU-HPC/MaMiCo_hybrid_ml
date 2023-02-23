@@ -541,7 +541,6 @@ def prediction_retriever_latentspace_u_i(model_directory, model_name_i, dataset_
 
     for data, target in _t_x[0]:
         data = data.float().to(device=device)
-        data = data[:, 0, :, :, :].to(device=device)
         print('model_x(data) -> shape: ', data.shape)
         with torch.cuda.amp.autocast():
             data_pred_x = _model_i(data, 'get_MD_output').to(device=device)
@@ -549,14 +548,12 @@ def prediction_retriever_latentspace_u_i(model_directory, model_name_i, dataset_
 
     for data, target in _t_y[0]:
         data = data.float().to(device=device)
-        data = data[:, 0, :, :, :].to(device=device)
         with torch.cuda.amp.autocast():
             data_pred_y = _model_i(data, 'get_MD_output').to(device=device)
             data_preds_y = torch.cat((data_preds_y, data_pred_y), 0).to(device)
 
     for data, target in _t_z[0]:
         data = data.float().to(device=device)
-        data = data[:, 0, :, :, :].to(device=device)
         with torch.cuda.amp.autocast():
             data_pred_z = _model_i(data, 'get_MD_output').to(device=device)
             data_preds_z = torch.cat((data_preds_z, data_pred_z), 0).to(device)
