@@ -310,7 +310,8 @@ def prediction_retriever_hybrid(model_AE_directory, model_name_i, model_RNN_dire
     _targs = np.vstack(_targs)
     print('Size of _preds:', _preds.size)
     print('Size of _targs:', _targs.size)
-    _lbm = np.loadtxt('dataset_mlready/kvs_20000_NW_lbm.csv', delimiter=";")
+    _lbm = np.loadtxt(
+        'dataset_mlready/01_clean_lbm/kvs_20000_NW_lbm.csv', delimiter=";")
     _lbm = _lbm.reshape(1000, 3)
 
     plotPredVsTargKVS(input_1=_preds, input_2=_targs, input_3=_lbm,
