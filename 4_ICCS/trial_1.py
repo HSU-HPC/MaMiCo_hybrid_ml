@@ -828,11 +828,11 @@ def prediction_retriever_u_i(model_directory, model_name_i, dataset_name, save2f
 
 
 if __name__ == "__main__":
-
+    '''
     print('Starting Trial 1_mp: AE_u_i (KVS, MAE, L1Loss)')
     trial_1_AE_mp()
 
-    '''
+
     _alpha = 0.0001
     _alpha_string = '0_0001'
     _train_loaders, _valid_loaders = get_AE_loaders(
@@ -842,11 +842,11 @@ if __name__ == "__main__":
     )
 
     trial_1_AE_u_i(_alpha, _alpha_string, _train_loaders, _valid_loaders)
-
+    '''
     print('Starting Trial 1: Prediction Retriever (KVS, AE_u_i)')
 
     _model_directory = '/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/4_ICCS/Results/1_Conv_AE/'
-    _model_name = 'Model_AE_u_i_LR0_0001_i'
+    _model_name = 'Model_AE_u_i_LR0_001_i'
     _dataset_name = 'get_KVS_eval'
     _save2file_name_1 = '20000_NE'
     _save2file_name_2 = '28000_SW'
@@ -858,7 +858,7 @@ if __name__ == "__main__":
         save2file_name_1=_save2file_name_1,
         save2file_name_2=_save2file_name_2
     )
-
+    '''
     print('Starting Trial 1: AE_u_i (KVS + Aug, MAE, ReLU, torch.add(1.0))')
     _alpha = 0.0001
     _alpha_string = '0_0001'
