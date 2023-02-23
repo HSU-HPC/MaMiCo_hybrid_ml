@@ -311,7 +311,7 @@ def prediction_retriever_hybrid(model_AE_directory, model_name_i, model_RNN_dire
         'dataset_mlready/01_clean_lbm/kvs_20000_NW_lbm.csv', delimiter=";")
     _lbm = _lbm.reshape(1000, 3)
 
-    plotPredVsTargKVS(input_1=_preds, input_2=_targs, input_3=_lbm,
+    plotPredVsTargKVS(input_pred=_preds, input_targ=_targs, input_lbm=_lbm[1:],
                       file_prefix=save2file_prefix, file_name=save2file_name)
 
 
