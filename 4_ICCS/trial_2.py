@@ -301,15 +301,12 @@ def prediction_retriever_hybrid(model_AE_directory, model_name_i, model_RNN_dire
         # print('model_x(data) -> shape: ', data.shape)
         with torch.cuda.amp.autocast():
             _pred = _model_Hybrid(data)
-            print('Shape of _pred: ', _pred.shape)
             _preds = torch.cat((_preds, _pred), 0).to(device)
             _targs.append(target.cpu().detach().numpy())
 
     _preds = torch.add(_preds, -1.0).float().to(device=device)
     _preds = _preds[1:, :, :, :, :].cpu().detach().numpy()
     _targs = np.vstack(_targs)
-    print('Size of _preds:', _preds.size)
-    print('Size of _targs:', _targs.size)
     _lbm = np.loadtxt(
         'dataset_mlready/01_clean_lbm/kvs_20000_NW_lbm.csv', delimiter=";")
     _lbm = _lbm.reshape(1000, 3)
