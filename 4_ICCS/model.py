@@ -748,14 +748,14 @@ class Hybrid_MD_RNN_AE_u_i(nn.Module):
         print('Model initialized: Hybrid_MD_RNN_AE_u_i')
 
     def forward(self, x):
-        # print('Shape [x]: ', x.shape)
+        print('Shape [pre AE] u_x: ', x[:, 0, :, :, :].shape)
 
         u_x = self.AE_x(x[:, 0, :, :, :], y='get_bottleneck').to(self.device)
         u_y = self.AE_y(x[:, 1, :, :, :], y='get_bottleneck').to(self.device)
         u_z = self.AE_z(x[:, 2, :, :, :], y='get_bottleneck').to(self.device)
 
         u_x_shape = u_x.shape
-        print('Shape u_x_shape: ', u_x.shape)
+        print('Shape [latentspace] u_x: ', u_x.shape)
         ()
         self.sequence_x = tensor_FIFO_pipe(
             tensor=self.sequence_x,
@@ -785,15 +785,17 @@ class Hybrid_MD_RNN_AE_u_i(nn.Module):
         u_x = self.rnn_x(interim_x).to(self.device)
         u_y = self.rnn_y(interim_y).to(self.device)
         u_z = self.rnn_z(interim_z).to(self.device)
+        print('Shape [post RNN] u_x: ', u_x.shape)
 
         u_x = torch.reshape(u_x, u_x_shape).to(self.device)
         u_y = torch.reshape(u_y, u_y_shape).to(self.device)
         u_z = torch.reshape(u_z, u_z_shape).to(self.device)
+        print('Shape [reshaped] u_x: ', u_x.shape)
 
         u_x = self.AE_x(u_x, y='get_MD_output').to(self.device)
         u_y = self.AE_y(u_y, y='get_MD_output').to(self.device)
         u_z = self.AE_z(u_z, y='get_MD_output').to(self.device)
-        print('Shape u_x_shape: ', u_x.shape)
+        print('Shape [post AE]: ', u_x.shape)
 
         out = torch.cat((u_x, u_y, u_z), 1).to(device)
         # print('Shape [out]: ', out.shape)
