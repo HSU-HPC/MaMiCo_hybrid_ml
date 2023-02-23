@@ -242,7 +242,7 @@ def valid_AE_u_i(loader, model_i, optimizer_i, model_identifier_i, criterion, sc
     return _avg_loss
 
 
-def get_latentspace_AE_u_i(loader, model_x, model_y, model_z, out_file_name):
+def get_latentspace_AE_u_i(loader, model_i, out_file_name):
     """The get_latentspace_AE function extracts the model-specific latentspace
     for a given dataset and saves it to file.
 
@@ -250,7 +250,8 @@ def get_latentspace_AE_u_i(loader, model_x, model_y, model_z, out_file_name):
         loader:
           Object of PyTorch-type DataLoader to automatically feed dataset
         model:
-          Object of PyTorch MOdule class, i.e. the model to be trained.
+          Object of PyTorch Module class, i.e. the model from which to extract
+          the latentspace.
         out_file_name:
           A string containing the name of the file that the latentspace should
           be saved to.
@@ -260,102 +261,40 @@ def get_latentspace_AE_u_i(loader, model_x, model_y, model_z, out_file_name):
           This function does not have a return value. Instead it saves the
           latentspace to file.
     """
-    latentspace_x_0 = []
-    latentspace_x_1 = []
-    latentspace_x_2 = []
-    latentspace_y_0 = []
-    latentspace_y_1 = []
-    latentspace_y_2 = []
-    latentspace_z_0 = []
-    latentspace_z_1 = []
-    latentspace_z_2 = []
+    latentspace_x = []
+    latentspace_y = []
+    latentspace_z = []
 
-    for batch_idx, (_data_0, _) in enumerate(loader):
-        t, c, h, d, w = _data_0.shape
-        _data_u_x = torch.reshape(
-            _data_0[:, 0, :, :, :], (t, 1, h, d, w)).to(device=device)
-        _data_u_y = torch.reshape(
-            _data_0[:, 1, :, :, :], (t, 1, h, d, w)).to(device=device)
-        _data_u_z = torch.reshape(
-            _data_0[:, 2, :, :, :], (t, 1, h, d, w)).to(device=device)
-
-        _data_0 = _data_0.float().to(device)
-        _data_1 = torch.cat(
-            (_data_u_y, _data_u_z, _data_u_x), 1).float().to(device)
-        _data_2 = torch.cat(
-            (_data_u_z, _data_u_x, _data_u_y), 1).float().to(device)
+    for batch_idx, (_data, _) in enumerate(loader):
+        t, c, h, d, w = _data.shape
+        _data = torch.add(_data, 1.0).float().to(device)
+        _data_x = _data[:, 0, :, :, :]
+        _data_y = _data[:, 1, :, :, :]
+        _data_z = _data[:, 2, :, :, :]
 
         with torch.cuda.amp.autocast():
-            bottleneck_x_0 = model_x(_data_0,  y='get_bottleneck')
-            bottleneck_x_1 = model_x(_data_1,  y='get_bottleneck')
-            bottleneck_x_2 = model_x(_data_2,  y='get_bottleneck')
-            latentspace_x_0.append(bottleneck_x_0.cpu().detach().numpy())
-            latentspace_x_1.append(bottleneck_x_1.cpu().detach().numpy())
-            latentspace_x_2.append(bottleneck_x_2.cpu().detach().numpy())
+            bottleneck_x = model_i(_data_x,  y='get_bottleneck')
+            bottleneck_y = model_i(_data_y,  y='get_bottleneck')
+            bottleneck_z = model_i(_data_z,  y='get_bottleneck')
+            latentspace_x.append(bottleneck_x.cpu().detach().numpy())
+            latentspace_y.append(bottleneck_y.cpu().detach().numpy())
+            latentspace_z.append(bottleneck_z.cpu().detach().numpy())
 
-            bottleneck_y_0 = model_y(_data_0,  y='get_bottleneck')
-            bottleneck_y_1 = model_y(_data_1,  y='get_bottleneck')
-            bottleneck_y_2 = model_y(_data_2,  y='get_bottleneck')
-            latentspace_y_0.append(bottleneck_y_0.cpu().detach().numpy())
-            latentspace_y_1.append(bottleneck_y_1.cpu().detach().numpy())
-            latentspace_y_2.append(bottleneck_y_2.cpu().detach().numpy())
-
-            bottleneck_z_0 = model_z(_data_0,  y='get_bottleneck')
-            bottleneck_z_1 = model_z(_data_1,  y='get_bottleneck')
-            bottleneck_z_2 = model_z(_data_2,  y='get_bottleneck')
-            latentspace_z_0.append(bottleneck_z_0.cpu().detach().numpy())
-            latentspace_z_1.append(bottleneck_z_1.cpu().detach().numpy())
-            latentspace_z_2.append(bottleneck_z_2.cpu().detach().numpy())
-
-    np_latentspace_x_0 = np.vstack(latentspace_x_0)
-    np_latentspace_x_1 = np.vstack(latentspace_x_1)
-    np_latentspace_x_2 = np.vstack(latentspace_x_2)
+    np_latentspace_x = np.vstack(latentspace_x)
+    np_latentspace_y = np.vstack(latentspace_y)
+    np_latentspace_z = np.vstack(latentspace_z)
 
     dataset2csv(
-        dataset=np_latentspace_x_0,
-        dataset_name=f'{out_file_name}_x_0'
+        dataset=np_latentspace_x,
+        dataset_name=f'{out_file_name}_x'
     )
     dataset2csv(
-        dataset=np_latentspace_x_1,
-        dataset_name=f'{out_file_name}_x_1'
+        dataset=np_latentspace_y,
+        dataset_name=f'{out_file_name}_y'
     )
     dataset2csv(
-        dataset=np_latentspace_x_2,
-        dataset_name=f'{out_file_name}_x_2'
-    )
-
-    np_latentspace_y_0 = np.vstack(latentspace_y_0)
-    np_latentspace_y_1 = np.vstack(latentspace_y_1)
-    np_latentspace_y_2 = np.vstack(latentspace_y_2)
-
-    dataset2csv(
-        dataset=np_latentspace_y_0,
-        dataset_name=f'{out_file_name}_y_0'
-    )
-    dataset2csv(
-        dataset=np_latentspace_y_1,
-        dataset_name=f'{out_file_name}_y_1'
-    )
-    dataset2csv(
-        dataset=np_latentspace_y_2,
-        dataset_name=f'{out_file_name}_y_2'
-    )
-
-    np_latentspace_z_0 = np.vstack(latentspace_z_0)
-    np_latentspace_z_1 = np.vstack(latentspace_z_1)
-    np_latentspace_z_2 = np.vstack(latentspace_z_2)
-
-    dataset2csv(
-        dataset=np_latentspace_z_0,
-        dataset_name=f'{out_file_name}_z_0'
-    )
-    dataset2csv(
-        dataset=np_latentspace_z_1,
-        dataset_name=f'{out_file_name}_z_1'
-    )
-    dataset2csv(
-        dataset=np_latentspace_z_2,
-        dataset_name=f'{out_file_name}_z_2'
+        dataset=np_latentspace_z,
+        dataset_name=f'{out_file_name}_z'
     )
     return
 
@@ -375,25 +314,9 @@ def get_latentspace_AE_u_i_helper():
     """
     print('Starting Trial 1: Get Latentspace (KVS)')
 
-    model_directory = '/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/4_ICCS/Results/1_Conv_AE/kvs_aug_100_mae_relu_upshift'
-    model_name_x = 'Model_AE_u_i_LR0_0001_x'
-    model_name_y = 'Model_AE_u_i_LR0_0001_y'
-    model_name_z = 'Model_AE_u_i_LR0_0001_z'
-    _model_x = AE_u_i(
-        device=device,
-        in_channels=1,
-        out_channels=1,
-        features=[4, 8, 16],
-        activation=nn.ReLU(inplace=True)
-    ).to(device)
-    _model_y = AE_u_y(
-        device=device,
-        in_channels=1,
-        out_channels=1,
-        features=[4, 8, 16],
-        activation=nn.ReLU(inplace=True)
-    ).to(device)
-    _model_z = AE_u_z(
+    model_directory = '/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/4_ICCS/Results/1_Conv_AE'
+    model_name_i = 'Model_AE_u_i_LR0_001_i'
+    _model_i = AE_u_i(
         device=device,
         in_channels=1,
         out_channels=1,
@@ -401,21 +324,16 @@ def get_latentspace_AE_u_i_helper():
         activation=nn.ReLU(inplace=True)
     ).to(device)
 
-    _model_x.load_state_dict(torch.load(
-        f'{model_directory}/{model_name_x}', map_location='cpu'))
-    _model_x.eval()
-    _model_y.load_state_dict(torch.load(
-        f'{model_directory}/{model_name_y}', map_location='cpu'))
-    _model_y.eval()
-    _model_z.load_state_dict(torch.load(
-        f'{model_directory}/{model_name_z}', map_location='cpu'))
-    _model_z.eval()
+    _model_i.load_state_dict(torch.load(
+        f'{model_directory}/{model_name_i}', map_location='cpu'))
+    _model_i.eval()
 
     _loader_1, _loader_2_ = get_AE_loaders(
         data_distribution='get_KVS',
         batch_size=1,
         shuffle=False
     )
+
     _loaders = _loader_1 + _loader_2_
     _out_directory = '/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/4_ICCS/dataset_mlready/KVS/Latentspace'
 
@@ -423,25 +341,28 @@ def get_latentspace_AE_u_i_helper():
         'kvs_latentspace_20000_NW',
         'kvs_latentspace_20000_SE',
         'kvs_latentspace_20000_SW',
+        'kvs_latentspace_22000_NE',
         'kvs_latentspace_22000_SE',
         'kvs_latentspace_22000_SW',
+        'kvs_latentspace_24000_NE',
+        'kvs_latentspace_24000_NW',
+        'kvs_latentspace_24000_SE',
         'kvs_latentspace_24000_SW',
         'kvs_latentspace_26000_NE',
         'kvs_latentspace_26000_NW',
-        'kvs_latentspace_26000_SE',
+        'kvs_latentspace_26000_SW',
         'kvs_latentspace_28000_NE',
         'kvs_latentspace_28000_NW',
+        'kvs_latentspace_28000_SE',
         'kvs_latentspace_20000_NE',
         'kvs_latentspace_22000_NW',
-        'kvs_latentspace_24000_SE',
-        'kvs_latentspace_26000_SW',
+        'kvs_latentspace_26000_SE',
+        'kvs_latentspace_28000_SW',
     ]
     for idx, _loader in enumerate(_loaders):
         get_latentspace_AE_u_i(
             loader=_loader,
-            model_x=_model_x,
-            model_y=_model_y,
-            model_z=_model_z,
+            model_i=_model_i,
             out_file_name=f'{_out_directory}/{_out_file_names[idx]}'
         )
 
@@ -842,7 +763,7 @@ if __name__ == "__main__":
     )
 
     trial_1_AE_u_i(_alpha, _alpha_string, _train_loaders, _valid_loaders)
-    '''
+
     print('Starting Trial 1: Prediction Retriever (KVS, AE_u_i)')
 
     _model_directory = '/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/4_ICCS/Results/1_Conv_AE/'
@@ -858,7 +779,7 @@ if __name__ == "__main__":
         save2file_name_1=_save2file_name_1,
         save2file_name_2=_save2file_name_2
     )
-    '''
+
     print('Starting Trial 1: AE_u_i (KVS + Aug, MAE, ReLU, torch.add(1.0))')
     _alpha = 0.0001
     _alpha_string = '0_0001'
@@ -890,6 +811,5 @@ if __name__ == "__main__":
         save2file_prefix=_save2file_prefix,
         save2file_name=_save2file_name
     )
-
-    get_latentspace_AE_u_i_helper()
     '''
+    get_latentspace_AE_u_i_helper()
