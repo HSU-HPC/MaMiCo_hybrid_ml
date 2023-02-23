@@ -581,7 +581,7 @@ def get_Hybrid_loaders(data_distribution, batch_size=1, shuffle=False, num_worke
         shuffle_switch = 'off'
         _batch_size = 1
 
-    elif data_distribution == "get_KVS":
+    if data_distribution == "get_KVS":
         _data_tag = 'KVS'
     elif data_distribution == "get_KVS_eval":
         _data_tag = 'KVS_eval'
