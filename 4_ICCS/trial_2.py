@@ -312,7 +312,7 @@ def prediction_retriever_hybrid(model_AE_directory, model_name_i, model_RNN_dire
     _lbm = _lbm.reshape(1000, 3)
 
     plotPredVsTargKVS(input_pred=_preds, input_targ=_targs, input_lbm=_lbm[1:],
-                      file_prefix=save2file_prefix, file_name=save2file_name)
+                      file_name=save2file_name)
 
 
 def trial_2_RNN_single_verification():
