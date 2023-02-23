@@ -750,9 +750,9 @@ class Hybrid_MD_RNN_AE_u_i(nn.Module):
     def forward(self, x):
         # print('Shape [x]: ', x.shape)
 
-        u_x = self.AE_x(x, y='get_bottleneck').to(self.device)
-        u_y = self.AE_y(x, y='get_bottleneck').to(self.device)
-        u_z = self.AE_z(x, y='get_bottleneck').to(self.device)
+        u_x = self.AE_x(x[:, 0, :, :, :], y='get_bottleneck').to(self.device)
+        u_y = self.AE_y(x[:, 1, :, :, :], y='get_bottleneck').to(self.device)
+        u_z = self.AE_z(x[:, 2, :, :, :], y='get_bottleneck').to(self.device)
 
         u_x_shape = u_x.shape
         # # print('Shape [latentspace_x]: ', u_x.shape)
