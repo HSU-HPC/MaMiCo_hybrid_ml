@@ -295,7 +295,7 @@ def prediction_retriever_hybrid(model_AE_directory, model_name_i, model_RNN_dire
     _preds = torch.zeros(1, 3, 24, 24, 24).to(device=device)
     _targs = []
 
-    for data, target in train_loaders[0]:
+    for data, target in valid_loaders[0]:
         data = data.float().to(device=device)
         data = torch.add(data, 1.0).float().to(device=device)
         # print('model_x(data) -> shape: ', data.shape)
@@ -308,7 +308,7 @@ def prediction_retriever_hybrid(model_AE_directory, model_name_i, model_RNN_dire
     _preds = _preds[1:, :, :, :, :].cpu().detach().numpy()
     _targs = np.vstack(_targs)
     _lbm = np.loadtxt(
-        'dataset_mlready/01_clean_lbm/kvs_20000_NW_lbm.csv', delimiter=";")
+        'dataset_mlready/01_clean_lbm/kvs_28000_SW_lbm.csv', delimiter=";")
     _lbm = _lbm.reshape(1000, 3)
 
     plotPredVsTargKVS(input_pred=_preds, input_targ=_targs, input_lbm=_lbm[1:],
@@ -323,7 +323,7 @@ def trial_2_RNN_single_verification():
     _model_name_i = 'Model_AE_u_i_LR0_001_i'
     _model_name_RNN = 'Model_RNN_LR1e-5_Lay1_Seq25_i'
     _dataset_name = 'get_KVS_eval'
-    _save2file_name = 'Hybrid_KVS_20000_NW'
+    _save2file_name = 'Hybrid_KVS_28000_SW'
 
     prediction_retriever_hybrid(
         model_AE_directory=_model_AE_directory,
