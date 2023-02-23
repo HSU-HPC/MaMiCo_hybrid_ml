@@ -178,7 +178,9 @@ def get_AE_loaders(data_distribution, batch_size=32, shuffle=True, num_workers=1
             f"{_directory}KVS/Validation/*bottom_0_oscil_3_0*.csv")
     elif _data_tag == 'KVS':
         _train_files = glob.glob(f"{_directory}KVS/Training/*.csv")
+        print(_train_files)
         _valid_files = glob.glob(f"{_directory}KVS/Validation/*.csv")
+        print(_valid_files)
     elif _data_tag == 'KVS_eval':
         _train_files = glob.glob(f"{_directory}KVS/Validation/*20000_NE*.csv")
         _valid_files = glob.glob(f"{_directory}KVS/Validation/*28000_SW*.csv")
@@ -608,8 +610,8 @@ def csv2dataset_mp(filenames, output_shape=0):
 
 if __name__ == '__main__':
 
-    _loader_1, _loader_2_ = get_RNN_loaders(
-        data_distribution='get_KVS_eval',
+    _loader_1, _loader_2_ = get_AE_loaders(
+        data_distribution='get_KVS',
         batch_size=1,
         shuffle=False
     )
