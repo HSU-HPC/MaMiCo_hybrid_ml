@@ -559,7 +559,9 @@ def prediction_retriever_latentspace_u_i(model_directory, model_name_i, dataset_
 
     for data, target in _trains:
         with torch.cuda.amp.autocast():
-            targs.append(target.cpu().detach().numpy())
+            target = target.cpu().detach().numpy()
+            print(target.shape)
+            targs.append(target)
 
     targs = np.vstack(targs)
 
