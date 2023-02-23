@@ -295,7 +295,7 @@ def prediction_retriever_hybrid(model_AE_directory, model_name_i, model_RNN_dire
     _preds = torch.zeros(1, 3, 24, 24, 24).to(device=device)
     _targs = []
 
-    for data, target in valid_loaders:
+    for data, target in train_loaders[0]:
         data = data.float().to(device=device)
         data = torch.add(data, 1.0).float().to(device=device)
         # print('model_x(data) -> shape: ', data.shape)
