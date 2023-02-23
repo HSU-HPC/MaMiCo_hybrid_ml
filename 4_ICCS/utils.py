@@ -359,17 +359,30 @@ def get_RNN_loaders(data_distribution, batch_size=32, shuffle=True, num_workers=
 
     if _data_tag == 'KVS':
         _train_files_x = glob.glob(
-            f"{_directory}KVS/Latentspace/Training/*_x.csv")
-        _train_files_y = glob.glob(
-            f"{_directory}KVS/Latentspace/Training/*_y.csv")
-        _train_files_z = glob.glob(
-            f"{_directory}KVS/Latentspace/Training/*_z.csv")
+            f"{_directory}KVS/Latentspace/Training/*.csv")
         _valid_files_x = glob.glob(
-            f"{_directory}KVS/Latentspace/Validation/*_x.csv")
-        _valid_files_y = glob.glob(
-            f"{_directory}KVS/Latentspace/Validation/*_y.csv")
-        _valid_files_z = glob.glob(
-            f"{_directory}KVS/Latentspace/Validation/*_z.csv")
+            f"{_directory}KVS/Latentspace/Validation/*.csv")
+        for idx, _file in enumerate(_train_files_x):
+            _data_train_x = mlready2latentspace(_train_files_x[idx])
+            _dataset_x = MyMamicoDataset_RNN_verification(_data_train_x)
+            _dataloader_x = DataLoader(
+                dataset=_dataset_x,
+                batch_size=_batch_size,
+                shuffle=_shuffle,
+                num_workers=_num_workers
+                )
+            _dataloaders_train_x.append(_dataloader_x)
+        for idx, _file in enumerate(_valid_files_x):
+            _data_valid_x = mlready2latentspace(_valid_files_x[idx])
+            _dataset_x = MyMamicoDataset_RNN_verification(_data_valid_x)
+            _dataloader_x = DataLoader(
+                dataset=_dataset_x,
+                batch_size=_batch_size,
+                shuffle=_shuffle,
+                num_workers=_num_workers
+                )
+            _dataloaders_valid_x.append(_dataloader_x)
+        return _dataloaders_train_x, _dataloaders_valid_x
     elif _data_tag == 'KVS_eval':
         _train_files_x = glob.glob(
             f"{_directory}KVS/Latentspace/Training/*20000_NW_x.csv")
@@ -609,11 +622,5 @@ def csv2dataset_mp(filenames, output_shape=0):
 
 
 if __name__ == '__main__':
-
-    _loader_1, _loader_2_ = get_AE_loaders(
-        data_distribution='get_KVS',
-        batch_size=1,
-        shuffle=False
-    )
 
     pass
