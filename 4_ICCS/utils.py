@@ -362,6 +362,7 @@ def get_RNN_loaders(data_distribution, batch_size=32, shuffle=True, num_workers=
             f"{_directory}KVS/Latentspace/Training/*.csv")
         _valid_files_x = glob.glob(
             f"{_directory}KVS/Latentspace/Validation/*.csv")
+
         for idx, _file in enumerate(_train_files_x):
             _data_train_x = mlready2latentspace(_train_files_x[idx])
             _dataset_x = MyMamicoDataset_RNN_verification(_data_train_x)

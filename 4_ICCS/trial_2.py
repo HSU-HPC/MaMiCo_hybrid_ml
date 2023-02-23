@@ -273,7 +273,7 @@ def trial_2_train_RNN_u_i():
     print('Beginning training.')
     for epoch in range(10):
         _avg_loss = 0
-        for idx, _train_i in _trains_i:
+        for _train_i in _trains_i:
             loss = train_RNN_u_i(
                 loader_i=_train_i,
                 model_i=_model_i,
@@ -292,7 +292,7 @@ def trial_2_train_RNN_u_i():
 
         _avg_loss = 0
 
-        for idx, _valid_i in enumerate(_valids_i):
+        for _valid_i in _valids_i:
             loss = valid_RNN_u_i(
                 loader_i=_valid_i,
                 model_i=_model_i,
