@@ -359,30 +359,30 @@ def get_RNN_loaders(data_distribution, batch_size=32, shuffle=True, num_workers=
 
     if _data_tag == 'KVS':
         _train_files_x = glob.glob(
-            f"{_directory}KVS/Latentspace/Training/*_x_*.csv")
+            f"{_directory}KVS/Latentspace/Training/*_x.csv")
         _train_files_y = glob.glob(
-            f"{_directory}KVS/Latentspace/Training/*_y_*.csv")
+            f"{_directory}KVS/Latentspace/Training/*_y.csv")
         _train_files_z = glob.glob(
-            f"{_directory}KVS/Latentspace/Training/*_z_*.csv")
+            f"{_directory}KVS/Latentspace/Training/*_z.csv")
         _valid_files_x = glob.glob(
-            f"{_directory}KVS/Latentspace/Validation/*_x_*.csv")
+            f"{_directory}KVS/Latentspace/Validation/*_x.csv")
         _valid_files_y = glob.glob(
-            f"{_directory}KVS/Latentspace/Validation/*_y_*.csv")
+            f"{_directory}KVS/Latentspace/Validation/*_y.csv")
         _valid_files_z = glob.glob(
-            f"{_directory}KVS/Latentspace/Validation/*_z_*.csv")
+            f"{_directory}KVS/Latentspace/Validation/*_z.csv")
     elif _data_tag == 'KVS_eval':
         _train_files_x = glob.glob(
-            f"{_directory}KVS/Latentspace/Training/*_x_*.csv")
+            f"{_directory}KVS/Latentspace/Training/*20000_NE_x.csv")
         _train_files_y = glob.glob(
-            f"{_directory}KVS/Latentspace/Training/*_y_*.csv")
+            f"{_directory}KVS/Latentspace/Training/*20000_NE_y.csv")
         _train_files_z = glob.glob(
-            f"{_directory}KVS/Latentspace/Training/*_z_*.csv")
+            f"{_directory}KVS/Latentspace/Training/*20000_NE_z.csv")
         _valid_files_x = glob.glob(
-            f"{_directory}KVS/Latentspace/Validation/*22000_NW_x_0.csv")
+            f"{_directory}KVS/Latentspace/Validation/*28000_SW_x.csv")
         _valid_files_y = glob.glob(
-            f"{_directory}KVS/Latentspace/Validation/*22000_NW_y_0.csv")
+            f"{_directory}KVS/Latentspace/Validation/*28000_SW_y.csv")
         _valid_files_z = glob.glob(
-            f"{_directory}KVS/Latentspace/Validation/*22000_NW_z_0.csv")
+            f"{_directory}KVS/Latentspace/Validation/*28000_SW_z.csv")
 
     elif _data_tag == 'random':
         print('Loading ---> RANDOM <--- training datasets as loader.')
@@ -470,7 +470,7 @@ def get_RNN_loaders(data_distribution, batch_size=32, shuffle=True, num_workers=
 
     for idx, _file in enumerate(_train_files_x):
         _data_train_x = mlready2latentspace(_train_files_x[idx])
-        _dataset_x = MyMamicoDataset_RNN(_data_train_x)
+        _dataset_x = MyMamicoDataset_RNN_verification(_data_train_x)
         _dataloader_x = DataLoader(
             dataset=_dataset_x,
             batch_size=_batch_size,
@@ -480,7 +480,7 @@ def get_RNN_loaders(data_distribution, batch_size=32, shuffle=True, num_workers=
         _dataloaders_train_x.append(_dataloader_x)
 
         _data_train_y = mlready2latentspace(_train_files_y[idx])
-        _dataset_y = MyMamicoDataset_RNN(_data_train_y)
+        _dataset_y = MyMamicoDataset_RNN_verification(_data_train_y)
         _dataloader_y = DataLoader(
             dataset=_dataset_y,
             batch_size=_batch_size,
@@ -490,7 +490,7 @@ def get_RNN_loaders(data_distribution, batch_size=32, shuffle=True, num_workers=
         _dataloaders_train_y.append(_dataloader_y)
 
         _data_train_z = mlready2latentspace(_train_files_z[idx])
-        _dataset_z = MyMamicoDataset_RNN(_data_train_z)
+        _dataset_z = MyMamicoDataset_RNN_verification(_data_train_z)
         _dataloader_z = DataLoader(
             dataset=_dataset_z,
             batch_size=_batch_size,
@@ -501,7 +501,7 @@ def get_RNN_loaders(data_distribution, batch_size=32, shuffle=True, num_workers=
 
     for idx, _file in enumerate(_valid_files_x):
         _data_valid_x = mlready2latentspace(_valid_files_x[idx])
-        _dataset_x = MyMamicoDataset_RNN(_data_valid_x)
+        _dataset_x = MyMamicoDataset_RNN_verification(_data_valid_x)
         _dataloader_x = DataLoader(
             dataset=_dataset_x,
             batch_size=_batch_size,
@@ -511,7 +511,7 @@ def get_RNN_loaders(data_distribution, batch_size=32, shuffle=True, num_workers=
         _dataloaders_valid_x.append(_dataloader_x)
 
         _data_valid_y = mlready2latentspace(_valid_files_y[idx])
-        _dataset_y = MyMamicoDataset_RNN(_data_valid_y)
+        _dataset_y = MyMamicoDataset_RNN_verification(_data_valid_y)
         _dataloader_y = DataLoader(
             dataset=_dataset_y,
             batch_size=_batch_size,
@@ -521,7 +521,7 @@ def get_RNN_loaders(data_distribution, batch_size=32, shuffle=True, num_workers=
         _dataloaders_valid_y.append(_dataloader_y)
 
         _data_valid_z = mlready2latentspace(_valid_files_z[idx])
-        _dataset_z = MyMamicoDataset_RNN(_data_valid_z)
+        _dataset_z = MyMamicoDataset_RNN_verification(_data_valid_z)
         _dataloader_z = DataLoader(
             dataset=_dataset_z,
             batch_size=_batch_size,

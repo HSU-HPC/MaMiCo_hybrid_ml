@@ -7,7 +7,7 @@ import torch.nn as nn
 import numpy as np
 from model import AE, AE_u_i, AE_u_y, AE_u_z
 from torchmetrics import MeanSquaredLogError
-from utils import get_AE_loaders, losses2file, dataset2csv
+from utils import get_AE_loaders, get_RNN_loaders, losses2file, dataset2csv
 from plotting import compareLossVsValid, plot_flow_profile, plotPredVsTargKVS
 
 torch.manual_seed(10)
@@ -25,75 +25,6 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 NUM_WORKERS = 1
 PIN_MEMORY = True
 LOAD_MODEL = False
-
-
-def train_AE(loader, model, optimizer, criterion, scaler, model_identifier, current_epoch):
-    """The train_AE function trains the model and computes the average loss on
-    the training set.
-
-    Args:
-        loader:
-          Object of PyTorch-type DataLoader to automatically feed dataset
-        model:
-          Object of PyTorch Module class, i.e. the model to be trained.
-        optimizer:
-          The optimization algorithm applied during training.
-        criterion:
-          The loss function applied to quantify the error.
-        scaler:
-          Object of torch.cuda.amp.GradScaler to conveniently help perform the
-          steps of gradient scaling.
-        model_identifier:
-          A unique string to identify the model. Here, the learning rate is
-          used to identify which model is being trained.
-        current_epoch:
-          A string containing the current epoch for terminal output.
-
-    Returns:
-        avg_loss:
-          A double value indicating average training loss for the current epoch.
-    """
-
-    _epoch_loss = 0
-    _counter = 0
-
-    for _batch_idx, (_data_0, _targ_0) in enumerate(loader):
-        t, c, h, d, w = _data_0.shape
-        _data_u_x = torch.reshape(
-            _data_0[:, 0, :, :, :], (t, 1, h, d, w)).to(device=device)
-        _data_u_y = torch.reshape(
-            _data_0[:, 1, :, :, :], (t, 1, h, d, w)).to(device=device)
-        _data_u_z = torch.reshape(
-            _data_0[:, 2, :, :, :], (t, 1, h, d, w)).to(device=device)
-        _targ_u_x = torch.reshape(
-            _targ_0[:, 0, :, :, :], (t, 1, h, d, w)).to(device=device)
-        _targ_u_y = torch.reshape(
-            _targ_0[:, 1, :, :, :], (t, 1, h, d, w)).to(device=device)
-        _targ_u_z = torch.reshape(
-            _targ_0[:, 2, :, :, :], (t, 1, h, d, w)).to(device=device)
-
-        _data_1 = torch.cat((_data_u_y, _data_u_z, _data_u_x), 1).to(device)
-        _data_2 = torch.cat((_data_u_z, _data_u_x, _data_u_y), 1).to(device)
-        _targ_1 = torch.cat((_targ_u_y, _targ_u_z, _targ_u_x), 1).to(device)
-        _targ_2 = torch.cat((_targ_u_z, _targ_u_x, _targ_u_y), 1).to(device)
-
-        _data = torch.cat((_data_0.to(device), _data_1.to(
-            device), _data_2.to(device)), 0).float().to(device)
-        _targ = torch.cat((_targ_0.to(device), _targ_1.to(
-            device), _targ_2.to(device)), 0).float().to(device)
-
-        with torch.cuda.amp.autocast():
-            _pred = model(_data).float().to(device)
-            _loss = criterion(_pred, _targ)
-            _epoch_loss += _loss.item()
-            _counter += 1
-
-        _loss.backward(retain_graph=True)
-        optimizer.step()
-        optimizer.zero_grad()
-
-    _avg_loss = _epoch_loss/_counter
-    return _avg_loss
 
 
 def train_AE_u_i(loader, model_i, optimizer_i, model_identifier_i, criterion, scaler, current_epoch):
@@ -146,46 +77,6 @@ def train_AE_u_i(loader, model_i, optimizer_i, model_identifier_i, criterion, sc
         _loss.backward(retain_graph=True)
         optimizer_i.step()
         optimizer_i.zero_grad()
-
-    _avg_loss = _epoch_loss/_counter
-    return _avg_loss
-
-
-def valid_AE(loader, model, criterion, model_identifier):
-    """The valid_AE function computes the average loss on a given dataset
-    without updating/optimizing the learnable model parameters.
-
-    Args:
-        loader:
-          Object of PyTorch-type DataLoader to automatically feed dataset
-        model:
-          Object of PyTorch MOdule class, i.e. the model to be trained.
-        criterion:
-          The loss function applied to quantify the error.
-        model_identifier:
-          A unique string to identify the model. Here, the learning rate is
-          used to identify which model is being trained.
-
-    Returns:
-        avg_loss:
-          A double value indicating average validation loss for the current epoch.
-    """
-
-    _epoch_loss = 0
-    _counter = 0
-
-    for _batch_idx, (_data, _targets) in enumerate(loader):
-        _data = _data.float().to(device=device)
-        _targets = _targets.float().to(device=device)
-
-        with torch.cuda.amp.autocast():
-            _predictions = model(_data)
-            _pred = _predictions.float()
-            _targ = _targets.float()
-            _loss = criterion(_pred, _targ)
-            # print('Current batch loss: ', loss.item())
-            _epoch_loss += _loss.item()
-            _counter += 1
 
     _avg_loss = _epoch_loss/_counter
     return _avg_loss
@@ -367,105 +258,6 @@ def get_latentspace_AE_u_i_helper():
         )
 
 
-def trial_1_AE(alpha, alpha_string, train_loaders, valid_loaders):
-    """The trial_1_AE function trains the given model and documents its
-    progress via saving average training and validation losses to file and
-    comparing them in a plot.
-
-    Args:
-        alpha:
-          A double value indicating the chosen learning rate.
-        alpha_string:
-          Object of type string used as a model identifier.
-        train_loaders:
-          Object of PyTorch-type DataLoader to automatically pass training
-          dataset to model.
-        valid_loaders:
-          Object of PyTorch-type DataLoader to automatically pass validation
-          dataset to model.
-
-    Returns:
-        NONE:
-          This function documents model progress by saving results to file and
-          creating meaningful plots.
-    """
-    _criterion = nn.L1Loss().to(device)
-    _file_prefix = '/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/' + \
-        '4_ICCS/Results/1_Conv_AE/'
-    _model_identifier = f'LR{alpha_string}'
-    print('Initializing AE model.')
-    _model = AE(
-        device=device,
-        in_channels=3,
-        out_channels=3,
-        features=[4, 8, 16],
-        activation=nn.LeakyReLU(negative_slope=0.1, inplace=True)
-    ).to(device)
-
-    print('Initializing training parameters.')
-    _scaler = torch.cuda.amp.GradScaler()
-    _optimizer = optim.Adam(_model.parameters(), lr=alpha)
-    _epoch_losses = []
-    _epoch_valids = []
-
-    print('Beginning training.')
-    for epoch in range(4):
-        _avg_loss = 0
-        for _train_loader in train_loaders:
-            _avg_loss += train_AE(
-                loader=_train_loader,
-                model=_model,
-                optimizer=_optimizer,
-                criterion=_criterion,
-                scaler=_scaler,
-                model_identifier=_model_identifier,
-                current_epoch=epoch+1
-            )
-        _avg_loss = _avg_loss/len(train_loaders)
-        print('------------------------------------------------------------')
-        print(f'{_model_identifier} Training Epoch: {epoch+1} -> Averaged'
-              f'Loader Loss: {_avg_loss:.3f}')
-        _epoch_losses.append(_avg_loss)
-
-        _avg_valid = 0
-        for _valid_loader in valid_loaders:
-            _avg_valid += valid_AE(
-                loader=_valid_loader,
-                model=_model,
-                criterion=_criterion,
-                model_identifier=_model_identifier
-            )
-        _avg_valid = _avg_valid/len(valid_loaders)
-        print('------------------------------------------------------------')
-        print(f'{_model_identifier} Validation -> Averaged Loader Loss:'
-              f'{_avg_valid:.3f}')
-        _epoch_valids.append(_avg_valid)
-
-    losses2file(
-        losses=_epoch_losses,
-        file_name=f'{_file_prefix}Losses_AE_u_i_{_model_identifier}'
-    )
-    losses2file(
-        losses=_epoch_valids,
-        file_name=f'{_file_prefix}Valids_AE_u_i_{_model_identifier}'
-    )
-
-    compareLossVsValid(
-        loss_files=[
-            f'{_file_prefix}Losses_AE_u_i_{_model_identifier}.csv',
-            f'{_file_prefix}Valids_AE_u_i_{_model_identifier}.csv'
-        ],
-        loss_labels=['Training', 'Validation'],
-        file_prefix=_file_prefix,
-        file_name=f'AE_u_i_{_model_identifier}'
-    )
-    torch.save(
-        _model.state_dict(),
-        f'{_file_prefix}Model_AE_u_i_{_model_identifier}'
-    )
-    return
-
-
 def trial_1_AE_u_i(alpha, alpha_string, train_loaders, valid_loaders):
     """The trial_1_AE function trains the given model and documents its
     progress via saving average training and validation losses to file and
@@ -555,7 +347,7 @@ def trial_1_AE_u_i(alpha, alpha_string, train_loaders, valid_loaders):
     return
 
 
-def trial_1_AE_mp():
+def trial_1_AE_u_i_mp():
     """The trial_1_AE_mp function is essentially a helper function to
     facilitate the training of multiple concurrent models via multiprocessing
     of the trial_1_AE/trial_1_AE_u_i function. Here, 6 unique models are trained
@@ -593,56 +385,6 @@ def trial_1_AE_mp():
         _process.join()
         print('Joining Process')
     return
-
-
-def prediction_retriever(model_directory, model_name, dataset_name, save2file_name):
-    """The prediction_retriever function is used to evaluate model performance
-    of a trained model. This is done by loading the saved model, feeding it
-    with datasets and then saving the corresponding predictions for later
-    visual comparison.
-
-    Args:
-        model_directory:
-
-        model_name:
-
-        dataset_name:
-
-    Returns:
-        NONE
-    """
-    _, valid_loaders = get_AE_loaders(
-            data_distribution=dataset_name,
-            batch_size=1,
-            shuffle=False
-        )
-
-    _model = AE(
-        device=device,
-        in_channels=3,
-        out_channels=3,
-        features=[4, 8, 16],
-        activation=nn.LeakyReLU(negative_slope=0.1, inplace=True)
-    ).to(device)
-    _model.load_state_dict(torch.load(
-        f'{model_directory}/{model_name}', map_location='cpu'))
-    _model.eval()
-
-    for i in range(len(valid_loaders)):
-        _preds = []
-        _targs = []
-        for batch_idx, (data, target) in enumerate(valid_loaders[i]):
-            data = data.float().to(device=device)
-            target = target.float().to(device=device)
-            with torch.cuda.amp.autocast():
-                data_pred = _model(data)
-                data_targ = target
-                _preds.append(data_pred.cpu().detach().numpy())
-                _targs.append(data_targ.cpu().detach().numpy())
-        _preds = np.vstack(_preds)
-        _targs = np.vstack(_targs)
-
-    plot_flow_profile(_preds, save2file_name)
 
 
 def prediction_retriever_u_i(model_directory, model_name_i, dataset_name, save2file_name_1, save2file_name_2):
@@ -748,68 +490,99 @@ def prediction_retriever_u_i(model_directory, model_name_i, dataset_name, save2f
                       input_lbm=_lbm_2, file_name=save2file_name_2)
 
 
+def prediction_retriever_latentspace_u_i(model_directory, model_name_i, dataset_name, save2file_name):
+    """The prediction_retriever function_latentspace_u_i is used to evaluate
+    correctness of extracted latentspaces. This is done by loading the trained
+    AE_u_i model, feeding it with the extracted latentspaces, saving the corresponding predictions for later
+    visual comparison.
+
+    Args:
+        model_directory:
+
+        model_name_i:
+
+        dataset_name:
+
+        save2file_prefix:
+
+        save2file_name:
+
+    Returns:
+        NONE
+    """
+    _t_x, _t_y, _t_z, _v_x, _v_y, _v_z = get_RNN_loaders(
+            data_distribution=dataset_name,
+            batch_size=1,
+            shuffle=False
+        )
+
+    _trains, _valids = get_AE_loaders(
+            data_distribution=dataset_name,
+            batch_size=1,
+            shuffle=False
+        )
+
+    _model_i = AE_u_i(
+        device=device,
+        in_channels=1,
+        out_channels=1,
+        features=[4, 8, 16],
+        activation=nn.ReLU(inplace=True)
+    ).to(device)
+
+    _model_i.load_state_dict(torch.load(
+        f'{model_directory}/{model_name_i}', map_location='cpu'))
+    _model_i.eval()
+
+    data_preds_x = torch.zeros(1, 1, 24, 24, 24).to(device=device)
+    data_preds_y = torch.zeros(1, 1, 24, 24, 24).to(device=device)
+    data_preds_z = torch.zeros(1, 1, 24, 24, 24).to(device=device)
+    targs = []
+
+    for data, target in _t_x:
+        data = data.float().to(device=device)
+        # print('model_x(data) -> shape: ', data.shape)
+        with torch.cuda.amp.autocast():
+            data_pred_x = _model_i(data, 'get_MD_output').to(device=device)
+            data_preds_x = torch.cat((data_preds_x, data_pred_x), 0).to(device)
+
+    for data, target in _t_y:
+        data = data.float().to(device=device)
+        with torch.cuda.amp.autocast():
+            data_pred_y = _model_i(data, 'get_MD_output').to(device=device)
+            data_preds_y = torch.cat((data_preds_y, data_pred_y), 0).to(device)
+
+    for data, target in _t_z:
+        data = data.float().to(device=device)
+        with torch.cuda.amp.autocast():
+            data_pred_z = _model_i(data, 'get_MD_output').to(device=device)
+            data_preds_z = torch.cat((data_preds_z, data_pred_z), 0).to(device)
+
+    for data, target in _trains:
+        with torch.cuda.amp.autocast():
+            targs.append(target.cpu().detach().numpy())
+
+    targs = np.vstack(targs)
+
+    print('data_preds_x.shape: ', data_preds_x.shape)
+    print('data_preds_y.shape: ', data_preds_y.shape)
+    print('data_preds_z.shape: ', data_preds_z.shape)
+    preds = torch.cat((data_preds_x, data_preds_y, data_preds_z), 1).to(device)
+    preds = torch.add(preds, -1.0).float().to(device=device)
+    preds = preds[1:, :, :, :, :].cpu().detach().numpy()
+
+    plotPredVsTargKVS(input_pred=preds, input_targ=targs,
+                      file_name=save2file_name)
+
+
 if __name__ == "__main__":
-    '''
-    print('Starting Trial 1_mp: AE_u_i (KVS, MAE, L1Loss)')
-    trial_1_AE_mp()
-
-
-    _alpha = 0.0001
-    _alpha_string = '0_0001'
-    _train_loaders, _valid_loaders = get_AE_loaders(
-        data_distribution='get_KVS',
-        batch_size=32,
-        shuffle=True
-    )
-
-    trial_1_AE_u_i(_alpha, _alpha_string, _train_loaders, _valid_loaders)
-
-    print('Starting Trial 1: Prediction Retriever (KVS, AE_u_i)')
-
-    _model_directory = '/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/4_ICCS/Results/1_Conv_AE/'
-    _model_name = 'Model_AE_u_i_LR0_001_i'
+    _model_directory = 'Results/1_Conv_AE'
+    _model_name_i = 'Model_AE_u_i_LR0_001_i'
     _dataset_name = 'get_KVS_eval'
-    _save2file_name_1 = '20000_NE'
-    _save2file_name_2 = '28000_SW'
+    _save2file_name = 'latentspace_validation_20k_NE'
 
-    prediction_retriever_u_i(
+    prediction_retriever_latentspace_u_i(
         model_directory=_model_directory,
-        model_name_i=_model_name,
+        model_name_i=_model_name_i,
         dataset_name=_dataset_name,
-        save2file_name_1=_save2file_name_1,
-        save2file_name_2=_save2file_name_2
-    )
-
-    print('Starting Trial 1: AE_u_i (KVS + Aug, MAE, ReLU, torch.add(1.0))')
-    _alpha = 0.0001
-    _alpha_string = '0_0001'
-    _train_loaders, _valid_loaders = get_AE_loaders(
-        data_distribution='get_KVS',
-        batch_size=32,
-        shuffle=True
-    )
-
-    trial_1_AE_u_i(_alpha, _alpha_string, _train_loaders, _valid_loaders)
-
-
-    print('Starting Trial 1: Prediction Retriever (KVS + Aug, MAE, LReLU, AE_u_i, torch.add())')
-
-    _model_directory = '/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/4_ICCS/Results/1_Conv_AE/kvs_aug_100_mae_relu_upshift/'
-    _model_name_x = 'Model_AE_u_i_LR0_0001_x'
-    _model_name_y = 'Model_AE_u_i_LR0_0001_y'
-    _model_name_z = 'Model_AE_u_i_LR0_0001_z'
-    _dataset_name = 'get_KVS_eval'
-    _save2file_prefix = 'Model_100_relu_kvs_aug_upshift'
-    _save2file_name = '22000_NW_no_std'
-
-    prediction_retriever_u_i(
-        model_directory=_model_directory,
-        model_name_x=_model_name_x,
-        model_name_y=_model_name_y,
-        model_name_z=_model_name_z,
-        dataset_name=_dataset_name,
-        save2file_prefix=_save2file_prefix,
-        save2file_name=_save2file_name
-    )
-    '''
-    get_latentspace_AE_u_i_helper()
+        save2file_name=_save2file_name)
