@@ -234,7 +234,7 @@ def trial_2_train_RNN_u_i():
     )
 
 
-def prediction_retriever_hybrid(model_AE_directory, model_name_i, model_RNN_directory, model_name_RNN, dataset_name, save2file_prefix, save2file_name):
+def prediction_retriever_hybrid(model_AE_directory, model_name_i, model_RNN_directory, model_name_RNN, dataset_name, save2file_name):
     """The prediction_retriever function is used to evaluate model performance
     of a trained model. This is done by loading the saved model, feeding it
     with datasets and then saving the corresponding predictions for later
@@ -323,8 +323,7 @@ def trial_2_RNN_single_verification():
     _model_name_i = 'Model_AE_u_i_LR0_001_i'
     _model_name_RNN = 'Model_RNN_LR1e-5_Lay1_Seq25_i'
     _dataset_name = 'get_KVS_eval'
-    _save2file_prefix = 'Model_Hybrid_RNN'
-    _save2file_name = 'KVS_20000_NW'
+    _save2file_name = 'Hybrid_KVS_20000_NW'
 
     prediction_retriever_hybrid(
         model_AE_directory=_model_AE_directory,
@@ -332,7 +331,6 @@ def trial_2_RNN_single_verification():
         model_RNN_directory=_model_RNN_directory,
         model_name_RNN=_model_name_RNN,
         dataset_name=_dataset_name,
-        save2file_prefix=_save2file_prefix,
         save2file_name=_save2file_name
     )
 
