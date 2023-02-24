@@ -1,5 +1,6 @@
 import torch
 import random
+import copy
 import torch.multiprocessing as mp
 import torch.optim as optim
 import torch.nn as nn
@@ -355,8 +356,8 @@ def md_substitution_retriever(model_AE_directory, model_name_i, model_RNN_direct
     _dataset = mlready2dataset(f'{_directory}{_file_name}')
     _dataset = _dataset[:, :, 1:-1, 1:-1, 1:-1]
     print('Dataset shape: ', _dataset.shape)
-    _targs = _dataset[1:, :, :, :, :]
-    _input = torch.from_numpy(_dataset[:-1, :, :, :, :])
+    _targs = copy.deepcopy(_dataset[1:, :, :, :, :])
+    _input = torch.from_numpy(copy.deepcopy(_dataset[:-1, :, :, :, :]))
 
     _model_i = AE_u_i(
         device=device,
