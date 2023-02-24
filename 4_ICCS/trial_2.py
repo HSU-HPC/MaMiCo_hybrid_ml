@@ -424,7 +424,7 @@ def md_substitution_retriever(model_AE_directory, model_name_i, model_RNN_direct
         'dataset_mlready/01_clean_lbm/kvs_20000_NE_lbm.csv', delimiter=";")
     _lbm = _lbm.reshape(1000, 3)
 
-    plotPredVsTargKVS(input_pred=_preds, input_targ=_targs, input_lbm=_lbm[1:, :, :],
+    plotPredVsTargKVS(input_pred=_preds, input_targ=_targs, input_lbm=_lbm[1:, :],
                       file_name=save2file_name)
 
 
