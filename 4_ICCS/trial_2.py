@@ -5,7 +5,7 @@ import torch.optim as optim
 import torch.nn as nn
 import numpy as np
 from model import AE_u_i, RNN, Hybrid_MD_RNN_AE_u_i
-from utils import get_RNN_loaders, get_Hybrid_loaders
+from utils import get_RNN_loaders, get_Hybrid_loaders, mlready2dataset
 from plotting import plotPredVsTargKVS
 
 torch.manual_seed(10)
@@ -314,7 +314,7 @@ def prediction_retriever_hybrid(model_AE_directory, model_name_i, model_RNN_dire
                       file_name=save2file_name)
 
 
-def trial_2_RNN_single_verification():
+def trial_2_Hybrid_verification():
     print('Starting Trial 2: Prediction Retriever (KVS + Aug, MAE, ReLU, AE_u_i, torch.add())')
 
     _model_AE_directory = '/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/4_ICCS/Results/1_Conv_AE/'
@@ -334,7 +334,117 @@ def trial_2_RNN_single_verification():
     )
 
 
+def md_substitution_retriever(model_AE_directory, model_name_i, model_RNN_directory, model_name_RNN, save2file_name):
+    """The prediction_retriever function is used to evaluate model performance
+    of a trained model. This is done by loading the saved model, feeding it
+    with datasets and then saving the corresponding predictions for later
+    visual comparison.
+
+    Args:
+        model_directory:
+
+        model_name:
+
+        dataset_name:
+
+    Returns:
+        NONE
+    """
+    _directory = '/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/4_ICCS/dataset_mlready/KVS/Validation/'
+    _file_name = 'clean_kvs_combined_domain_init_20000_NE.csv'
+    _dataset = mlready2dataset(f'{_directory}{_file_name}')
+    print('Dataset shape: ', _dataset.shape)
+    _targs = _dataset[1:, :, :, :, :]
+    _input = torch.from_numpy(_dataset[:-1, :, :, :, :])
+
+    _model_i = AE_u_i(
+        device=device,
+        in_channels=1,
+        out_channels=1,
+        features=[4, 8, 16],
+        activation=nn.ReLU(inplace=True)
+    ).to(device)
+
+    _num_layers = 1
+    _seq_length = 25
+    _model_RNN = RNN(
+        input_size=256,
+        hidden_size=256,
+        seq_size=_seq_length,
+        num_layers=_num_layers,
+        device=device
+    ).to(device)
+
+    _model_i.load_state_dict(torch.load(
+        f'{model_AE_directory}/{model_name_i}', map_location='cpu'))
+    _model_i.eval()
+    _model_RNN.load_state_dict(torch.load(
+        f'{model_RNN_directory}/{model_name_RNN}', map_location='cpu'))
+    _model_RNN.eval()
+
+    _model_Hybrid = Hybrid_MD_RNN_AE_u_i(
+        device=device,
+        AE_Model_x=_model_i,
+        AE_Model_y=_model_i,
+        AE_Model_z=_model_i,
+        RNN_Model_x=_model_RNN,
+        RNN_Model_y=_model_RNN,
+        RNN_Model_z=_model_RNN,
+        seq_length=_seq_length,
+    ).to(device)
+
+    _preds = torch.zeros(1, 3, 24, 24, 24).to(device=device)
+
+    t = 0
+    while t < 25:
+        data = torch.reshape(_input[t, :, :, :, :], (1, 3, 24, 24, 24))
+        print('[t < 25] Data shape: ', data.shape)
+        data = torch.add(data, 1.0).float().to(device=device)
+        # print('model_x(data) -> shape: ', data.shape)
+        with torch.cuda.amp.autocast():
+            _pred = _model_Hybrid(data)
+            _pred = torch.add(_pred, -1).float().to(device=device)
+            _preds = torch.cat((_preds, _pred), 0).to(device)
+        t += 1
+
+    while t < 899:
+        data = torch.reshape(_input[t, :, :, :, :], (1, 3, 24, 24, 24))
+        data[:, :, 3:22, 3:22, 3:22] = _preds[-1, :, 3:22, 3:22, 3:22]
+        data = torch.add(data, 1.0).float().to(device=device)
+        # print('model_x(data) -> shape: ', data.shape)
+        with torch.cuda.amp.autocast():
+            _pred = _model_Hybrid(data)
+            _pred = torch.add(_pred, -1).float().to(device=device)
+            _preds = torch.cat((_preds, _pred), 0).to(device)
+        t += 1
+
+    _preds = _preds[1:, :, :, :, :].cpu().detach().numpy()
+    _lbm = np.loadtxt(
+        'dataset_mlready/01_clean_lbm/kvs_20000_NE_lbm.csv', delimiter=";")
+    _lbm = _lbm.reshape(1000, 3)
+
+    plotPredVsTargKVS(input_pred=_preds, input_targ=_targs, input_lbm=_lbm[1:, :, :],
+                      file_name=save2file_name)
+
+
+def md_substitution_retriever_helper():
+    print('Starting Trial 2: Prediction Retriever (KVS + Aug, MAE, ReLU, AE_u_i, torch.add())')
+
+    _model_AE_directory = '/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/4_ICCS/Results/1_Conv_AE/'
+    _model_RNN_directory = '/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/4_ICCS/Results/2_RNN/'
+    _model_name_i = 'Model_AE_u_i_LR0_001_i'
+    _model_name_RNN = 'Model_RNN_LR1e-5_Lay1_Seq25_i'
+    _save2file_name = 'MD_Substitution_KVS_20000_NE'
+
+    md_substitution_retriever(
+        model_AE_directory=_model_AE_directory,
+        model_name_i=_model_name_i,
+        model_RNN_directory=_model_RNN_directory,
+        model_name_RNN=_model_name_RNN,
+        save2file_name=_save2file_name
+    )
+
+
 if __name__ == "__main__":
-    trial_2_RNN_single_verification()
 
     pass
