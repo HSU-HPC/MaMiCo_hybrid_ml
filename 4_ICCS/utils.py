@@ -585,6 +585,8 @@ def get_Hybrid_loaders(data_distribution, batch_size=1, shuffle=False, num_worke
         _data_tag = 'KVS'
     elif data_distribution == "get_KVS_eval":
         _data_tag = 'KVS_eval'
+    elif data_distribution == "get_Couette_eval":
+        _data_tag = 'Couette_eval'
 
     print('------------------------------------------------------------')
     print('                      Loader Summary                        ')
@@ -607,6 +609,11 @@ def get_Hybrid_loaders(data_distribution, batch_size=1, shuffle=False, num_worke
         _train_files = glob.glob(f"{_directory}KVS/Training/*20000_NW*.csv")
         print(_train_files)
         _valid_files = glob.glob(f"{_directory}KVS/Validation/*20000_NE*.csv")
+    elif _data_tag == 'Couette_eval':
+        _train_files = glob.glob(
+            f"{_directory}Couette/Training/clean_couette_combined_domain_bottom_0_oscil_2_0_u_wall.csv")
+        _valid_files = glob.glob(
+            f"{_directory}Couette/Validation/clean_couette_combined_domain_middle_1_oscil_3_0_u_wall.csv")
     else:
         print('Invalid value for function parameter: data_distribution.')
         return

@@ -307,11 +307,10 @@ def prediction_retriever_hybrid(model_AE_directory, model_name_i, model_RNN_dire
     _preds = torch.add(_preds, -1.0).float().to(device=device)
     _preds = _preds[1:, :, :, :, :].cpu().detach().numpy()
     _targs = np.vstack(_targs)
-    _lbm = np.loadtxt(
-        'dataset_mlready/01_clean_lbm/kvs_20000_NE_lbm.csv', delimiter=";")
-    _lbm = _lbm.reshape(1000, 3)
+    # _lbm = np.loadtxt('dataset_mlready/01_clean_lbm/kvs_20000_NE_lbm.csv', delimiter=";")
+    # _lbm = _lbm.reshape(1000, 3)
 
-    plotPredVsTargKVS(input_pred=_preds, input_targ=_targs, input_lbm=_lbm[1:],
+    plotPredVsTargKVS(input_pred=_preds, input_targ=_targs, input_lbm=None,
                       file_name=save2file_name)
 
 
@@ -322,8 +321,8 @@ def trial_2_RNN_single_verification():
     _model_RNN_directory = '/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/4_ICCS/Results/2_RNN/'
     _model_name_i = 'Model_AE_u_i_LR0_001_i'
     _model_name_RNN = 'Model_RNN_LR1e-5_Lay1_Seq25_i'
-    _dataset_name = 'get_KVS_eval'
-    _save2file_name = 'Hybrid_KVS_20000_NE'
+    _dataset_name = 'get_Couette_eval'
+    _save2file_name = 'Couette_bottom_0_oscil_2_0_u_wall'
 
     prediction_retriever_hybrid(
         model_AE_directory=_model_AE_directory,
