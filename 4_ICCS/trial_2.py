@@ -428,7 +428,7 @@ def md_substitution_retriever(model_AE_directory, model_name_i, model_RNN_direct
 
 
 def md_substitution_retriever_helper():
-    print('Starting Trial 2: Prediction Retriever (KVS + Aug, MAE, ReLU, AE_u_i, torch.add())')
+    print('Starting Trial 2: MD Substitution (KVS)')
 
     _model_AE_directory = '/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/4_ICCS/Results/1_Conv_AE/'
     _model_RNN_directory = '/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/4_ICCS/Results/2_RNN/'
