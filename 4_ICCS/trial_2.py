@@ -446,5 +446,4 @@ def md_substitution_retriever_helper():
 
 
 if __name__ == "__main__":
-
-    pass
+    md_substitution_retriever_helper()
