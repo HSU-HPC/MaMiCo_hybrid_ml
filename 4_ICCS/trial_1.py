@@ -2,13 +2,12 @@ import torch
 import random
 import copy
 import torch.multiprocessing as mp
-import matplotlib.pyplot as plt
 import torch.optim as optim
 import torch.nn as nn
 import numpy as np
-from model import AE, AE_u_i
-from utils import get_AE_loaders, get_RNN_loaders, losses2file, dataset2csv, mlready2dataset
-from plotting import compareLossVsValid, plot_flow_profile, plotPredVsTargKVS
+from model import AE_u_i
+from utils import get_AE_loaders, get_RNN_loaders, dataset2csv, mlready2dataset
+from plotting import plot_flow_profile, plotPredVsTargKVS
 
 torch.manual_seed(10)
 random.seed(10)

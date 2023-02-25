@@ -335,7 +335,7 @@ def trial_2_Hybrid_verification():
     )
 
 
-def md_substitution_retriever(model_AE_directory, model_name_i, model_RNN_directory, model_name_RNN, save2file_name):
+def md_substitution_retriever(model_AE_directory, model_name_i, model_RNN_directory, model_name_RNN):
     """The prediction_retriever function is used to evaluate model performance
     of a trained model. This is done by loading the saved model, feeding it
     with datasets and then saving the corresponding predictions for later
@@ -469,14 +469,12 @@ def fig_maker_3():
     _model_RNN_directory = '/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/4_ICCS/Results/2_RNN/'
     _model_name_i = 'Model_AE_u_i_LR0_001_i'
     _model_name_RNN = 'Model_RNN_LR1e-5_Lay1_Seq25_i'
-    _save2file_name = 'MD_Substitution_KVS_20000_NE'
 
     md_substitution_retriever(
         model_AE_directory=_model_AE_directory,
         model_name_i=_model_name_i,
         model_RNN_directory=_model_RNN_directory,
         model_name_RNN=_model_name_RNN,
-        save2file_name=_save2file_name
     )
 
 
