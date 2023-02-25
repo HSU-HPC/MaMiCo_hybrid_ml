@@ -408,7 +408,6 @@ def md_substitution_retriever(model_AE_directory, model_name_i, model_RNN_direct
 
     while t < t_max:
         data = torch.reshape(_input_a[t, :, :, :, :], (1, 3, 24, 24, 24))
-        print('[t < t_max] Data shape: ', data.shape)
         data = torch.add(data, 1.0).float().to(device=device)
         with torch.cuda.amp.autocast():
             _pred = _model_Hybrid(data)
@@ -427,7 +426,6 @@ def md_substitution_retriever(model_AE_directory, model_name_i, model_RNN_direct
     t = 0
     while t < 25:
         data = torch.reshape(_input_b[t, :, :, :, :], (1, 3, 24, 24, 24))
-        print('[t < 25] Data shape: ', data.shape)
         data = torch.add(data, 1.0).float().to(device=device)
         # print('model_x(data) -> shape: ', data.shape)
         with torch.cuda.amp.autocast():
