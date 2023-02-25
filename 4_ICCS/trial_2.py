@@ -335,7 +335,7 @@ def trial_2_Hybrid_verification():
     )
 
 
-def md_substitution_retriever(model_AE_directory, model_name_i, model_RNN_directory, model_name_RNN):
+def md_substitution_retriever(model_AE_directory, model_name_i, model_RNN_directory, model_name_RNN, id):
     """The prediction_retriever function is used to evaluate model performance
     of a trained model. This is done by loading the saved model, feeding it
     with datasets and then saving the corresponding predictions for later
@@ -352,7 +352,7 @@ def md_substitution_retriever(model_AE_directory, model_name_i, model_RNN_direct
         NONE
     """
     _directory = '/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/4_ICCS/dataset_mlready/KVS/Validation/'
-    _id = '22000_NW'
+    _id = id  # '22000_NW'
     _file_name = f'clean_kvs_combined_domain_init_{_id}.csv'
     _dataset = mlready2dataset(f'{_directory}{_file_name}')
     _dataset = _dataset[:, :, 1:-1, 1:-1, 1:-1]
@@ -469,8 +469,7 @@ def md_substitution_retriever(model_AE_directory, model_name_i, model_RNN_direct
     )
 
 
-
-def fig_maker_3():
+def fig_maker_3(id):
     print('Starting Trial 2: MD Substitution (KVS)')
 
     _model_AE_directory = '/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/4_ICCS/Results/1_Conv_AE/'
@@ -483,8 +482,11 @@ def fig_maker_3():
         model_name_i=_model_name_i,
         model_RNN_directory=_model_RNN_directory,
         model_name_RNN=_model_name_RNN,
+        id=id
     )
 
 
 if __name__ == "__main__":
-    fig_maker_3()
+    _ids = ['20000_NE', '22000_NW', '26000_SE', '28000_SW']
+    for _id in _ids:
+        fig_maker_3(id=_id)

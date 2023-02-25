@@ -575,9 +575,9 @@ def prediction_retriever_latentspace_u_i(model_directory, model_name_i, dataset_
                       file_name=save2file_name)
 
 
-def fig_maker_1():
+def fig_maker_1(id):
     _directory = '/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/4_ICCS/dataset_mlready/KVS/Validation/'
-    _id = '28000_SW'
+    _id = id  # '28000_SW'
     _file_name = f'clean_kvs_combined_domain_init_{_id}.csv'
     _model_directory = 'Results/1_Conv_AE'
     _model_name_i = 'Model_AE_u_i_LR0_001_i'
@@ -627,5 +627,6 @@ if __name__ == "__main__":
         dataset_name=_dataset_name,
         save2file_name=_save2file_name)
     '''
-
-    fig_maker_1()
+    _ids = ['20000_NE', '22000_NW', '26000_SE', '28000_SW']
+    for _id in _ids:
+        fig_maker_1(id=_id)
