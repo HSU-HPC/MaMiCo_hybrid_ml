@@ -72,7 +72,7 @@ def plot_flow_profile(np_datasets, dataset_legends, save2file):
 
     axs[2].legend(ncol=_n_datasets, fontsize=9)
 
-    fig.savefig(f'plots/Plot_loc_flow_profile_{save2file}.png')
+    fig.savefig(f'plots/Plot_loc_flow_profile_{save2file}.svg')
     plt.close()
 
 
