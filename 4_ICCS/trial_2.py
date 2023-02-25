@@ -7,7 +7,7 @@ import torch.nn as nn
 import numpy as np
 from model import AE_u_i, RNN, Hybrid_MD_RNN_AE_u_i
 from utils import get_RNN_loaders, get_Hybrid_loaders, mlready2dataset
-from plotting import plotPredVsTargKVS
+from plotting import plotPredVsTargKVS, plot_flow_profile
 
 torch.manual_seed(10)
 random.seed(10)
@@ -356,8 +356,10 @@ def md_substitution_retriever(model_AE_directory, model_name_i, model_RNN_direct
     _dataset = mlready2dataset(f'{_directory}{_file_name}')
     _dataset = _dataset[:, :, 1:-1, 1:-1, 1:-1]
     print('Dataset shape: ', _dataset.shape)
+
     _targs = copy.deepcopy(_dataset[1:, :, :, :, :])
-    _input = torch.from_numpy(copy.deepcopy(_dataset[:-1, :, :, :, :]))
+    _input_a = torch.from_numpy(copy.deepcopy(_dataset[:-1, :, :, :, :]))
+    _input_b = torch.from_numpy(copy.deepcopy(_dataset[:-1, :, :, :, :]))
 
     _model_i = AE_u_i(
         device=device,
@@ -395,41 +397,73 @@ def md_substitution_retriever(model_AE_directory, model_name_i, model_RNN_direct
         seq_length=_seq_length,
     ).to(device)
 
-    _preds = torch.zeros(1, 3, 24, 24, 24).to(device=device)
+    '''
+    [*_a] This portion creates a prediction dataset strictly on the basis of
+    the MaMiCo input data
+    '''
+    _preds_a = torch.zeros(1, 3, 24, 24, 24).to(device=device)
+
+    t = 0
+    t_max = 899
+
+    while t < t_max:
+        data = torch.reshape(_input_a[t, :, :, :, :], (1, 3, 24, 24, 24))
+        print('[t < t_max] Data shape: ', data.shape)
+        data = torch.add(data, 1.0).float().to(device=device)
+        with torch.cuda.amp.autocast():
+            _pred = _model_Hybrid(data)
+            _pred = torch.add(_pred, -1).float().to(device=device)
+            _preds_a = torch.cat((_preds_a, _pred), 0).to(device)
+        t += 1
+
+    _preds_a = _preds_a[1:, :, :, :, :].cpu().detach().numpy()
+
+    '''
+    [*_b] This portion creates a prediction dataset on the basis of the recursive
+    approach.
+    '''
+    _preds_b = torch.zeros(1, 3, 24, 24, 24).to(device=device)
 
     t = 0
     while t < 25:
-        data = torch.reshape(_input[t, :, :, :, :], (1, 3, 24, 24, 24))
+        data = torch.reshape(_input_b[t, :, :, :, :], (1, 3, 24, 24, 24))
         print('[t < 25] Data shape: ', data.shape)
         data = torch.add(data, 1.0).float().to(device=device)
         # print('model_x(data) -> shape: ', data.shape)
         with torch.cuda.amp.autocast():
             _pred = _model_Hybrid(data)
             _pred = torch.add(_pred, -1).float().to(device=device)
-            _preds = torch.cat((_preds, _pred), 0).to(device)
+            _preds_b = torch.cat((_preds_b, _pred), 0).to(device)
         t += 1
 
-    while t < 899:
-        data = torch.reshape(_input[t, :, :, :, :], (1, 3, 24, 24, 24))
-        data[:, :, 3:22, 3:22, 3:22] = _preds[-1, :, 3:22, 3:22, 3:22]
+    while t < t_max:
+        data = torch.reshape(_input_b[t, :, :, :, :], (1, 3, 24, 24, 24))
+        data[:, :, 3:22, 3:22, 3:22] = _preds_b[-1, :, 3:22, 3:22, 3:22]
         data = torch.add(data, 1.0).float().to(device=device)
         # print('model_x(data) -> shape: ', data.shape)
         with torch.cuda.amp.autocast():
             _pred = _model_Hybrid(data)
             _pred = torch.add(_pred, -1).float().to(device=device)
-            _preds = torch.cat((_preds, _pred), 0).to(device)
+            _preds_b = torch.cat((_preds_b, _pred), 0).to(device)
         t += 1
 
-    _preds = _preds[1:, :, :, :, :].cpu().detach().numpy()
-    _lbm = np.loadtxt(
-        'dataset_mlready/01_clean_lbm/kvs_20000_NE_lbm.csv', delimiter=";")
-    _lbm = _lbm.reshape(1000, 3)
+    _preds_b = _preds_b[1:, :, :, :, :].cpu().detach().numpy()
 
-    plotPredVsTargKVS(input_pred=_preds, input_targ=_targs, input_lbm=_lbm[1:, :],
-                      file_name=save2file_name)
+    '''
+    _preds = torch.cat((_preds_x, _preds_y, _preds_z), 1).to(device)
+    _preds = torch.add(_preds, -1.0).float().to(device)
+    _preds = _preds.cpu().detach().numpy()
+    _targs = _targs.numpy()
+    '''
+    plot_flow_profile(
+        np_datasets=[_preds_a, _preds_b, _targs],
+        dataset_legends=[
+            'Hybrid(MaMiCo)', 'Hybrid(MaMiCo, ML)', 'MaMiCo Target'],
+        save2file='Fig_Maker_3_ConvAE_vs_MaMiCo'
+    )
 
 
-def md_substitution_retriever_helper():
+def fig_maker_3():
     print('Starting Trial 2: MD Substitution (KVS)')
 
     _model_AE_directory = '/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/4_ICCS/Results/1_Conv_AE/'
@@ -448,4 +482,4 @@ def md_substitution_retriever_helper():
 
 
 if __name__ == "__main__":
-    md_substitution_retriever_helper()
+    fig_maker_3()
