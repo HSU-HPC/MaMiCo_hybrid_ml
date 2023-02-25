@@ -457,7 +457,7 @@ def md_substitution_retriever(model_AE_directory, model_name_i, model_RNN_direct
         np_datasets=[_targs, _preds_a, _preds_b],
         dataset_legends=[
             'MaMiCo Target', 'Hybrid(MaMiCo)', 'Hybrid(MaMiCo, ML)'],
-        save2file='Fig_Maker_3_Hybrid_vs_Recursive_vs_MaMiCo'
+        save2file='20000_NE_Fig_Maker_3_Hybrid_vs_Recursive_vs_MaMiCo'
     )
 
 

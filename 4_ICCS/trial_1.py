@@ -609,7 +609,7 @@ def fig_maker_1():
     plot_flow_profile(
         np_datasets=[_targs, _preds],
         dataset_legends=['MaMiCo Target', 'Autoencoder'],
-        save2file='Fig_Maker_1_ConvAE_vs_MaMiCo'
+        save2file='20000_NE_Fig_Maker_1_ConvAE_vs_MaMiCo'
     )
     pass
 
