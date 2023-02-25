@@ -352,7 +352,7 @@ def md_substitution_retriever(model_AE_directory, model_name_i, model_RNN_direct
         NONE
     """
     _directory = '/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/4_ICCS/dataset_mlready/KVS/Validation/'
-    _id = '28000_SW'
+    _id = '26000_SE'
     _file_name = f'clean_kvs_combined_domain_init_{_id}.csv'
     _dataset = mlready2dataset(f'{_directory}{_file_name}')
     _dataset = _dataset[:, :, 1:-1, 1:-1, 1:-1]
