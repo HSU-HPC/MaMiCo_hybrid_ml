@@ -63,16 +63,17 @@ def plot_flow_profile(np_datasets, dataset_legends, save2file):
     axs[2].grid(axis='y', alpha=0.3)
 
     for idx, dataset in enumerate(np_datasets):
+        mid = 12
         alpha = 1
         lw = 0.5
         if idx == 0:
             alpha = 0.5
             lw = 0.3
-        axs[0].plot(_t_axis, dataset[-850:, 0, 12, 12, 12],
+        axs[0].plot(_t_axis, dataset[-850:, 0, mid, mid, mid],
                     linewidth=lw, alpha=alpha, label=dataset_legends[idx])
-        axs[1].plot(_t_axis, dataset[-850:, 1, 12, 12, 12],
+        axs[1].plot(_t_axis, dataset[-850:, 1, mid, mid, mid],
                     linewidth=lw, alpha=alpha, label=dataset_legends[idx])
-        axs[2].plot(_t_axis, dataset[-850:, 2, 12, 12, 12],
+        axs[2].plot(_t_axis, dataset[-850:, 2, mid, mid, mid],
                     linewidth=lw, alpha=alpha, label=dataset_legends[idx])
 
     axs[2].legend(ncol=_n_datasets, fontsize=9)
@@ -128,17 +129,18 @@ def plot_flow_profile_std(np_datasets, dataset_legends, save2file):
     for idx, dataset in enumerate(np_datasets):
         alpha = 0.4
         lw = 0.5
+        mid = 12
         if idx == 0:
             alpha = 0.2
             lw = 0.3
 
-        _d_std_x = np.std(dataset[-850:, 0, :, :, :], axis=(1, 2, 3))
-        _d_std_y = np.std(dataset[-850:, 0, :, :, :], axis=(1, 2, 3))
-        _d_std_z = np.std(dataset[-850:, 0, :, :, :], axis=(1, 2, 3))
+        _d_std_x = np.std(dataset[-850:, 0, mid, mid, :], axis=(1))
+        _d_std_y = np.std(dataset[-850:, 1, mid, mid, :], axis=(1))
+        _d_std_z = np.std(dataset[-850:, 2, mid, mid, :], axis=(1))
 
-        _d_avg_x = np.mean(dataset[-850:, 0, :, :, :], axis=(1, 2, 3))
-        _d_avg_y = np.mean(dataset[-850:, 0, :, :, :], axis=(1, 2, 3))
-        _d_avg_z = np.mean(dataset[-850:, 0, :, :, :], axis=(1, 2, 3))
+        _d_avg_x = np.mean(dataset[-850:, 0, mid, mid, :], axis=(1))
+        _d_avg_y = np.mean(dataset[-850:, 1, mid, mid, :], axis=(1))
+        _d_avg_z = np.mean(dataset[-850:, 2, mid, mid, :], axis=(1))
 
         axs[0].plot(_t_axis, _d_avg_x, linewidth=lw,
                     label=dataset_legends[idx])
