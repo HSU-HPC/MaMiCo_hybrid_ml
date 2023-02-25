@@ -585,6 +585,7 @@ def fig_maker_1():
     _dataset = torch.from_numpy(mlready2dataset(
         f'{_directory}{_file_name}')[:, :, 1:-1, 1:-1, 1:-1])
     _targs = copy.deepcopy(_dataset)
+    _dataset = torch.add(_dataset, 1.0).float().to(device)
 
     _model_u_i = AE_u_i(
         device=device,
