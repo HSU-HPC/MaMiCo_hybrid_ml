@@ -578,7 +578,8 @@ def prediction_retriever_latentspace_u_i(model_directory, model_name_i, dataset_
 
 def fig_maker_1():
     _directory = '/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/4_ICCS/dataset_mlready/KVS/Validation/'
-    _file_name = 'clean_kvs_combined_domain_init_20000_NE.csv'
+    _id = '28000_SW'
+    _file_name = f'clean_kvs_combined_domain_init_{_id}.csv'
     _model_directory = 'Results/1_Conv_AE'
     _model_name_i = 'Model_AE_u_i_LR0_001_i'
 
@@ -609,7 +610,7 @@ def fig_maker_1():
     plot_flow_profile(
         np_datasets=[_targs, _preds],
         dataset_legends=['MaMiCo Target', 'Autoencoder'],
-        save2file='20000_NE_Fig_Maker_1_ConvAE_vs_MaMiCo'
+        save2file=f'{_id}_Fig_Maker_1_ConvAE_vs_MaMiCo'
     )
     pass
 

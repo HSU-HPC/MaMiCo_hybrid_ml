@@ -352,7 +352,8 @@ def md_substitution_retriever(model_AE_directory, model_name_i, model_RNN_direct
         NONE
     """
     _directory = '/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/4_ICCS/dataset_mlready/KVS/Validation/'
-    _file_name = 'clean_kvs_combined_domain_init_20000_NE.csv'
+    _id = '28000_SW'
+    _file_name = f'clean_kvs_combined_domain_init_{_id}.csv'
     _dataset = mlready2dataset(f'{_directory}{_file_name}')
     _dataset = _dataset[:, :, 1:-1, 1:-1, 1:-1]
     print('Dataset shape: ', _dataset.shape)
@@ -457,7 +458,7 @@ def md_substitution_retriever(model_AE_directory, model_name_i, model_RNN_direct
         np_datasets=[_targs, _preds_a, _preds_b],
         dataset_legends=[
             'MaMiCo Target', 'Hybrid(MaMiCo)', 'Hybrid(MaMiCo, ML)'],
-        save2file='20000_NE_Fig_Maker_3_Hybrid_vs_Recursive_vs_MaMiCo'
+        save2file=f'{_id}_Fig_Maker_3_Hybrid_vs_Recursive_vs_MaMiCo'
     )
 
 
