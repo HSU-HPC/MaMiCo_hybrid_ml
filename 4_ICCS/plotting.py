@@ -10,7 +10,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 from utils import csv2dataset_mp
- 
+
 
 def getColor(c, N, idx):
     cmap = mpl.cm.get_cmap(c)
@@ -70,8 +70,6 @@ def plot_flow_profile(np_datasets, dataset_legends, save2file):
         axs[2].plot(_t_axis, dataset[-850:, 2, 12, 12, 12],
                     linewidth=0.3, label=dataset_legends[idx])
 
-    axs[0].legend(ncol=_n_datasets, fontsize=9)
-    axs[1].legend(ncol=_n_datasets, fontsize=9)
     axs[2].legend(ncol=_n_datasets, fontsize=9)
 
     fig.savefig(f'plots/Plot_loc_flow_profile_{save2file}.png')
