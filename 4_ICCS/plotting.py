@@ -81,6 +81,86 @@ def plot_flow_profile(np_datasets, dataset_legends, save2file):
     plt.close()
 
 
+def plot_flow_profile_std(np_datasets, dataset_legends, save2file):
+    """The plot_flow_profile function visualizes datasets via 2D flow profiles
+    and as such is used to validate proper simulation/prediction. For our
+    purposes, we create 3 subplots to validate couette and KVS based simulations.
+        x-axis: time steps
+        y-axis: local velocity component (u_x, u_y, u_z) for a specific cell
+        (e.g. [t, 2, 12, 12, 12]).
+    Args:
+        directory:
+          Object of string type containing the path working directory (pwd) of
+          the dataset to be visualized. This is also the pwd of the plots.
+        file_name:
+          Object of string type containing the name of the csv file to be
+          visualized.
+
+    Returns:
+        NONE:
+          This function does not have a return value. Instead it generates the
+          aforementioned meaningful plots.
+    """
+    print('[plot_flow_profile()]')
+    _save2file = save2file.replace('.csv', '')
+    _save2file = _save2file.replace('01_clean_lbm/', '')
+    _t_max = 850
+    _t_axis = np.arange(1, _t_max+1)
+    _n_datasets = len(np_datasets)
+
+    for idx, dataset in enumerate(np_datasets):
+        print(f'[{dataset_legends[idx]}] Dataset shape: ', dataset.shape)
+
+    fig, axs = plt.subplots(3, sharex=True, constrained_layout=True)
+
+    axs[0].set_xlabel("t")
+    axs[0].set_ylabel("$u_x$")
+    axs[0].grid(axis='y', alpha=0.3)
+
+    axs[1].set_xlabel("t")
+    axs[1].set_ylabel("$u_y$")
+    axs[1].grid(axis='y', alpha=0.3)
+
+    axs[2].set_xlabel("t")
+    axs[2].set_ylabel("$u_z$")
+    axs[2].grid(axis='y', alpha=0.3)
+
+    for idx, dataset in enumerate(np_datasets):
+        alpha = 1
+        lw = 0.5
+        if idx == 0:
+            alpha = 0.5
+            lw = 0.3
+
+        _d_std_x = np.std(dataset[-850:, 0, :, :, :], axis=(1, 2, 3))
+        _d_std_y = np.std(dataset[-850:, 0, :, :, :], axis=(1, 2, 3))
+        _d_std_z = np.std(dataset[-850:, 0, :, :, :], axis=(1, 2, 3))
+
+        _d_avg_x = np.mean(dataset[-850:, 0, :, :, :], axis=(1, 2, 3))
+        _d_avg_y = np.mean(dataset[-850:, 0, :, :, :], axis=(1, 2, 3))
+        _d_avg_z = np.mean(dataset[-850:, 0, :, :, :], axis=(1, 2, 3))
+
+        axs[0].plot(_t_axis, _d_avg_x, linewidth=lw,
+                    label=dataset_legends[idx])
+        axs[0].fill_between(_t_axis, _d_avg_x-_d_std_x, _d_avg_x
+                            + _d_std_x, alpha=alpha, label=dataset_legends[idx])
+
+        axs[1].plot(_t_axis, _d_avg_y, linewidth=lw,
+                    label=dataset_legends[idx])
+        axs[1].fill_between(_t_axis, _d_avg_y - _d_std_y, _d_avg_y
+                            + _d_std_y, alpha=alpha, label=dataset_legends[idx])
+
+        axs[2].plot(_t_axis, _d_avg_z, linewidth=lw,
+                    label=dataset_legends[idx])
+        axs[2].fill_between(_t_axis, _d_avg_z - _d_std_z, _d_avg_z
+                            + _d_std_z, alpha=alpha, label=dataset_legends[idx])
+
+    axs[2].legend(ncol=_n_datasets, fontsize=9)
+
+    fig.savefig(f'plots/Plot_std_flow_profile_{save2file}.svg')
+    plt.close()
+
+
 def compareLossVsValid(loss_files, loss_labels, file_prefix=0, file_name=0):
     # BRIEF:
     # PARAMETERS:

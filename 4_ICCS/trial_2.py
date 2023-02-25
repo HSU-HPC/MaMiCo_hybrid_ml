@@ -7,7 +7,7 @@ import torch.nn as nn
 import numpy as np
 from model import AE_u_i, RNN, Hybrid_MD_RNN_AE_u_i
 from utils import get_RNN_loaders, get_Hybrid_loaders, mlready2dataset
-from plotting import plotPredVsTargKVS, plot_flow_profile
+from plotting import plotPredVsTargKVS, plot_flow_profile, plot_flow_profile_std
 
 torch.manual_seed(10)
 random.seed(10)
@@ -352,7 +352,7 @@ def md_substitution_retriever(model_AE_directory, model_name_i, model_RNN_direct
         NONE
     """
     _directory = '/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/4_ICCS/dataset_mlready/KVS/Validation/'
-    _id = '26000_SE'
+    _id = '22000_NW'
     _file_name = f'clean_kvs_combined_domain_init_{_id}.csv'
     _dataset = mlready2dataset(f'{_directory}{_file_name}')
     _dataset = _dataset[:, :, 1:-1, 1:-1, 1:-1]
@@ -460,6 +460,14 @@ def md_substitution_retriever(model_AE_directory, model_name_i, model_RNN_direct
             'MaMiCo Target', 'Hybrid(MaMiCo)', 'Hybrid(MaMiCo, ML)'],
         save2file=f'{_id}_Fig_Maker_3_Hybrid_vs_Recursive_vs_MaMiCo'
     )
+
+    plot_flow_profile_std(
+        np_datasets=[_targs, _preds_a],
+        dataset_legends=[
+            'MaMiCo Target', 'Hybrid(MaMiCo)'],
+        save2file=f'{_id}_Fig_Maker_3_Hybrid_vs_Recursive_vs_MaMiCo'
+    )
+
 
 
 def fig_maker_3():
