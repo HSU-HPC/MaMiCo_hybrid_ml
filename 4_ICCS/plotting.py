@@ -10,7 +10,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 from utils import csv2dataset_mp
-
+ 
 
 def getColor(c, N, idx):
     cmap = mpl.cm.get_cmap(c)
@@ -18,14 +18,14 @@ def getColor(c, N, idx):
     return cmap(norm(idx))
 
 
-def plot_flow_profile(file_name, dataset_md, dataset_lbm=None):
+def plot_flow_profile(np_datasets, dataset_legends, save2file):
     """The plot_flow_profile function visualizes datasets via 2D flow profiles
     and as such is used to validate proper simulation/prediction. For our
     purposes, we create 3 subplots to validate couette and KVS based simulations.
         x-axis: time steps
-        y-axis: averaged velocity component (u_x, u_y, u_z) as determined over
-        the column of central cells in y-direction (e.g. [t, 2, 12, :, 12]).
-
+        y-axis: local velocity component (u_x, u_y, u_z) for a specific cell
+        (e.g. [t, 2, 12, 12, 12]).
+    Args:
         directory:
           Object of string type containing the path working directory (pwd) of
           the dataset to be visualized. This is also the pwd of the plots.
@@ -38,22 +38,17 @@ def plot_flow_profile(file_name, dataset_md, dataset_lbm=None):
           This function does not have a return value. Instead it generates the
           aforementioned meaningful plots.
     """
-    dataset_name = file_name.replace('.csv', '')
-    dataset_name = dataset_name.replace('01_clean_lbm/', '')
-    t, c, d, h, w = dataset_md.shape
-    # mid = int(h/2)t_max = 1000
-    t_max = 1000
-    t_axis = np.arange(1, t_max+1)
-    lbm_loc_ux = dataset_lbm[:, 1]
-    lbm_loc_uy = dataset_lbm[:, 2]
-    avg_ux = dataset_md[:, 0, 6, 6, 6]
-    avg_uy = dataset_md[:, 1, 6, 6, 6]
+    print('[plot_flow_profile()]')
+    _save2file = save2file.replace('.csv', '')
+    _save2file = _save2file.replace('01_clean_lbm/', '')
+    _t_max = 850
+    _t_axis = np.arange(1, _t_max+1)
+    _n_datasets = len(np_datasets)
 
-    fig, axs = plt.subplots(
-        2, sharex=True, constrained_layout=True)
+    for idx, dataset in enumerate(np_datasets):
+        print(f'[{dataset_legends[idx]}] Dataset shape: ', dataset.shape)
 
-    fig.suptitle(
-        f'Velocity Components vs Time: {dataset_name}', fontsize=10)
+    fig, axs = plt.subplots(3, sharex=True, constrained_layout=True)
 
     axs[0].set_xlabel("t")
     axs[0].set_ylabel("$u_x$")
@@ -63,16 +58,23 @@ def plot_flow_profile(file_name, dataset_md, dataset_lbm=None):
     axs[1].set_ylabel("$u_y$")
     axs[1].grid(axis='y', alpha=0.3)
 
-    axs[0].plot(t_axis, avg_ux, linewidth=0.3, label='md local u_x')
-    axs[1].plot(t_axis, avg_uy, linewidth=0.3, label='md local u_y')
+    axs[2].set_xlabel("t")
+    axs[2].set_ylabel("$u_z$")
+    axs[2].grid(axis='y', alpha=0.3)
 
-    if dataset_lbm is not None:
-        axs[0].plot(t_axis, lbm_loc_ux, linewidth=0.3, label='lbm local u_x')
-        axs[1].plot(t_axis, lbm_loc_uy, linewidth=0.3, label='lbm local u_y')
+    for idx, dataset in enumerate(np_datasets):
+        axs[0].plot(_t_axis, dataset[-850:, 0, 12, 12, 12],
+                    linewidth=0.3, label=dataset_legends[idx])
+        axs[1].plot(_t_axis, dataset[-850:, 1, 12, 12, 12],
+                    linewidth=0.3, label=dataset_legends[idx])
+        axs[2].plot(_t_axis, dataset[-850:, 2, 12, 12, 12],
+                    linewidth=0.3, label=dataset_legends[idx])
 
-    axs[0].legend(ncol=1, fontsize=9)
-    axs[1].legend(ncol=1, fontsize=9)
-    fig.savefig(f'plots/Plot_loc_flow_profile_{dataset_name}.png')
+    axs[0].legend(ncol=_n_datasets, fontsize=9)
+    axs[1].legend(ncol=_n_datasets, fontsize=9)
+    axs[2].legend(ncol=_n_datasets, fontsize=9)
+
+    fig.savefig(f'plots/Plot_loc_flow_profile_{save2file}.png')
     plt.close()
 
 

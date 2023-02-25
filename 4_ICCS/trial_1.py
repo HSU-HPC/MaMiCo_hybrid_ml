@@ -1,13 +1,13 @@
 import torch
 import random
+import copy
 import torch.multiprocessing as mp
 import matplotlib.pyplot as plt
 import torch.optim as optim
 import torch.nn as nn
 import numpy as np
-from model import AE, AE_u_i, AE_u_y, AE_u_z
-from torchmetrics import MeanSquaredLogError
-from utils import get_AE_loaders, get_RNN_loaders, losses2file, dataset2csv
+from model import AE, AE_u_i
+from utils import get_AE_loaders, get_RNN_loaders, losses2file, dataset2csv, mlready2dataset
 from plotting import compareLossVsValid, plot_flow_profile, plotPredVsTargKVS
 
 torch.manual_seed(10)
@@ -576,7 +576,43 @@ def prediction_retriever_latentspace_u_i(model_directory, model_name_i, dataset_
                       file_name=save2file_name)
 
 
+def fig_maker_1():
+    _directory = '/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/4_ICCS/dataset_mlready/KVS/Validation/'
+    _file_name = 'clean_kvs_combined_domain_init_20000_NE.csv'
+    _model_directory = 'Results/1_Conv_AE'
+    _model_name_i = 'Model_AE_u_i_LR0_001_i'
+
+    _dataset = torch.from_numpy(mlready2dataset(
+        f'{_directory}{_file_name}')[:, :, 1:-1, 1:-1, 1:-1])
+    _targs = copy.deepcopy(_dataset)
+
+    _model_u_i = AE_u_i(
+        device=device,
+        in_channels=1,
+        out_channels=1,
+        features=[4, 8, 16],
+        activation=nn.ReLU(inplace=True)
+    ).to(device)
+    _model_u_i.load_state_dict(torch.load(
+        f'{_model_directory}/{_model_name_i}', map_location='cpu'))
+    _model_u_i.eval()
+
+    _preds_x = _model_u_i(_dataset[:, 0, :, :, :])
+    _preds_y = _model_u_i(_dataset[:, 1, :, :, :])
+    _preds_z = _model_u_i(_dataset[:, 2, :, :, :])
+
+    _preds = torch.cat((_preds_x, _preds_y, _preds_z), 0).to(device)
+
+    plot_flow_profile(
+        np_datasets=[_preds.numpy(), _targs.numpy()],
+        dataset_legends=['Autoencoder', 'MaMiCo Target'],
+        save2file='Fig_Maker_1_ConvAE_vs_MaMiCo'
+    )
+    pass
+
+
 if __name__ == "__main__":
+    '''
     _model_directory = 'Results/1_Conv_AE'
     _model_name_i = 'Model_AE_u_i_LR0_001_i'
     _dataset_name = 'get_KVS_eval'
@@ -587,3 +623,6 @@ if __name__ == "__main__":
         model_name_i=_model_name_i,
         dataset_name=_dataset_name,
         save2file_name=_save2file_name)
+    '''
+
+    fig_maker_1()
