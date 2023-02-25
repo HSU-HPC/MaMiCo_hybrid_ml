@@ -63,7 +63,7 @@ def plot_flow_profile(np_datasets, dataset_legends, save2file):
     axs[2].grid(axis='y', alpha=0.3)
 
     for idx, dataset in enumerate(np_datasets):
-        alpha = 1
+        alpha = 1.5
         if idx == 0:
             alpha = 0.5
         axs[0].plot(_t_axis, dataset[-850:, 0, 12, 12, 12],
