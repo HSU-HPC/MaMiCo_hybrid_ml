@@ -605,7 +605,7 @@ def fig_maker_1():
     _preds = torch.cat((_preds_x, _preds_y, _preds_z), 0).to(device)
 
     plot_flow_profile(
-        np_datasets=[_preds.numpy(), _targs.numpy()],
+        np_datasets=[_preds.cpu().numpy(), _targs.cpu().numpy()],
         dataset_legends=['Autoencoder', 'MaMiCo Target'],
         save2file='Fig_Maker_1_ConvAE_vs_MaMiCo'
     )
