@@ -603,6 +603,7 @@ def fig_maker_1():
     _preds_z = _model_u_i(_dataset[:, 2, :, :, :])
 
     _preds = torch.cat((_preds_x, _preds_y, _preds_z), 1).to(device)
+    _preds = torch.add(_preds, -1.0).float().to(device)
     _preds = _preds.cpu().detach().numpy()
     _targs = _targs.numpy()
     plot_flow_profile(
