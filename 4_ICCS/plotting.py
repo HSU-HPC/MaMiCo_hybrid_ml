@@ -126,10 +126,10 @@ def plot_flow_profile_std(np_datasets, dataset_legends, save2file):
     axs[2].grid(axis='y', alpha=0.3)
 
     for idx, dataset in enumerate(np_datasets):
-        alpha = 1
+        alpha = 0.4
         lw = 0.5
         if idx == 0:
-            alpha = 0.5
+            alpha = 0.2
             lw = 0.3
 
         _d_std_x = np.std(dataset[-850:, 0, :, :, :], axis=(1, 2, 3))
