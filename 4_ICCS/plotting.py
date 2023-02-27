@@ -10,6 +10,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 import matplotlib.font_manager as font_manager
+mpl.rc('text', usetex=True)
+mpl.rcParams['text.latex.preamble']=[r"\usepackage{amsmath}"]
 from utils import csv2dataset_mp
 
 
@@ -55,14 +57,14 @@ def plot_flow_profile(np_datasets, dataset_legends, save2file):
 
     fig, axs = plt.subplots(3, sharex=True, constrained_layout=True)
 
-    axs[0].set_ylabel("$u_x$", fontsize=12, fontweight='bold')
+    axs[0].set_ylabel("$\boldsymbol{u_x}$", fontsize=12, fontweight='bold')
     axs[0].grid(axis='y', alpha=0.3)
 
-    axs[1].set_ylabel("$u_y$", fontsize=12, fontweight='bold')
+    axs[1].set_ylabel("$\boldsymbol{u_y}$", fontsize=12, fontweight='bold')
     axs[1].grid(axis='y', alpha=0.3)
 
     axs[2].set_xlabel("t", fontsize=12, fontweight='bold')
-    axs[2].set_ylabel("$u_z$", fontsize=12, fontweight='bold')
+    axs[2].set_ylabel("$\boldsymbol{u_z}$", fontsize=12, fontweight='bold')
     axs[2].grid(axis='y', alpha=0.3)
 
     for idx, dataset in enumerate(np_datasets):
@@ -80,7 +82,7 @@ def plot_flow_profile(np_datasets, dataset_legends, save2file):
                     linewidth=lw, alpha=alpha, label=dataset_legends[idx])
 
     axs[2].legend(ncol=_n_datasets, prop=FONT)
-    
+
     fig.savefig(f'plots/Plot_loc_flow_profile_{save2file}.svg')
     plt.close()
 
