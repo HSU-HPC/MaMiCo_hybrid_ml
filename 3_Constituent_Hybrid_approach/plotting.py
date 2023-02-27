@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib as mpl
+import matplotlib.font_manager as font_manager
 import torch
 from utils_new import csv2dataset, csv2dataset_mp, mamico_csv2dataset, mamico_csv2dataset_mp
 mpl.use('Agg')
@@ -8,10 +9,190 @@ plt.style.use(['science'])
 np.set_printoptions(precision=2)
 
 
+FONT = font_manager.FontProperties(weight='bold', size=10)
+
+
 def getColor(c, N, idx):
     cmap = mpl.cm.get_cmap(c)
     norm = mpl.colors.Normalize(vmin=0.0, vmax=N - 1)
     return cmap(norm(idx))
+
+
+def plot_flow_profile(np_datasets, dataset_legends, save2file, unique_id=None):
+    """The plot_flow_profile function visualizes datasets via 2D flow profiles
+    and as such is used to validate proper simulation/prediction. For our
+    purposes, we create 3 subplots to validate couette and KVS based simulations.
+        x-axis: time steps
+        y-axis: local velocity component (u_x, u_y, u_z) for a specific cell
+        (e.g. [t, 2, 12, 12, 12]).
+    Args:
+        directory:
+          Object of string type containing the path working directory (pwd) of
+          the dataset to be visualized. This is also the pwd of the plots.
+        file_name:
+          Object of string type containing the name of the csv file to be
+          visualized.
+
+    Returns:
+        NONE:
+          This function does not have a return value. Instead it generates the
+          aforementioned meaningful plots.
+    """
+    print('[plot_flow_profile()]')
+    _save2file = save2file.replace('.csv', '')
+    _save2file = _save2file.replace('01_clean_lbm/', '')
+    _t_max = 850
+    _t_axis = np.arange(1, _t_max+1)
+    _n_datasets = len(np_datasets)
+
+    for idx, dataset in enumerate(np_datasets):
+        print(f'[{dataset_legends[idx]}] Dataset shape: ', dataset.shape)
+
+    fig, axs = plt.subplots(3, sharex=True, constrained_layout=True)
+
+    axs[0].set_ylabel(r'$\mathbf{u_x}$', fontproperties=FONT)
+    axs[0].grid(axis='y', alpha=0.3)
+    axs[0].set_ylim([2.5, 6.5])
+    axs[0].set_yticks([3, 4, 5, 6])
+    axs[0].set_yticklabels(axs[0].get_yticks(), fontproperties=FONT)
+
+    axs[1].set_ylabel(r'$\mathbf{u_y}$', fontproperties=FONT)
+    axs[1].grid(axis='y', alpha=0.3)
+    axs[1].set_ylim([-1.0, 1.0])
+    axs[1].set_yticklabels([-1, None, 0, None, 1], fontproperties=FONT)
+
+    axs[2].set_xlabel("t", fontproperties=FONT)
+    axs[2].set_ylabel(r'$\mathbf{u_z}$', fontproperties=FONT)
+    axs[2].grid(axis='y', alpha=0.3)
+    axs[2].set_ylim([-1.0, 1.0])
+    axs[2].set_yticklabels([-1, None, 0, None, 1], fontproperties=FONT)
+
+    for idx, dataset in enumerate(np_datasets):
+        mid = 12
+        alpha = 1
+        lw = 1.0
+        if idx == 0:
+            alpha = 0.7
+            lw = 0.6
+        axs[0].plot(_t_axis, dataset[-850:, 0, mid, mid, mid],
+                    linewidth=lw, alpha=alpha, label=dataset_legends[idx])
+        axs[1].plot(_t_axis, dataset[-850:, 1, mid, mid, mid],
+                    linewidth=lw, alpha=alpha, label=dataset_legends[idx])
+        axs[2].plot(_t_axis, dataset[-850:, 2, mid, mid, mid],
+                    linewidth=lw, alpha=alpha, label=dataset_legends[idx])
+
+    plt.xticks([0, 200, 400, 600, 800], fontproperties=FONT)
+    axs[2].legend(ncol=_n_datasets, prop=FONT, loc='lower left',
+                  bbox_to_anchor=(0, -0.7), fancybox=True, shadow=False)
+
+    if unique_id is not None:
+        if unique_id == 0:
+            plt.show()
+            return
+        else:
+            fig.savefig(
+                f'ICCS_plots/Plot_loc_flow_profile_{save2file}{unique_id}.svg')
+    else:
+        fig.savefig(f'ICCS_plots/Plot_loc_flow_profile_{save2file}.svg')
+    # plt.show()
+    plt.close()
+
+
+def plot_flow_profile_std(np_datasets, dataset_legends, save2file, unique_id=None):
+    """The plot_flow_profile function visualizes datasets via 2D flow profiles
+    and as such is used to validate proper simulation/prediction. For our
+    purposes, we create 3 subplots to validate couette and KVS based simulations.
+        x-axis: time steps
+        y-axis: local velocity component (u_x, u_y, u_z) for a specific cell
+        (e.g. [t, 2, 12, 12, 12]).
+    Args:
+        directory:
+          Object of string type containing the path working directory (pwd) of
+          the dataset to be visualized. This is also the pwd of the plots.
+        file_name:
+          Object of string type containing the name of the csv file to be
+          visualized.
+
+    Returns:
+        NONE:
+          This function does not have a return value. Instead it generates the
+          aforementioned meaningful plots.
+    """
+    print('[plot_flow_profile()]')
+    _save2file = save2file.replace('.csv', '')
+    _save2file = _save2file.replace('01_clean_lbm/', '')
+    _t_max = 850
+    _t_axis = np.arange(1, _t_max+1)
+    _n_datasets = len(np_datasets)
+
+    for idx, dataset in enumerate(np_datasets):
+        print(f'[{dataset_legends[idx]}] Dataset shape: ', dataset.shape)
+
+    fig, axs = plt.subplots(3, sharex=True, constrained_layout=True)
+
+    axs[0].set_ylabel(r'$\mathbf{u_x}$', fontproperties=FONT)
+    axs[0].grid(axis='y', alpha=0.3)
+    axs[0].set_ylim([2.5, 7.5])
+    axs[0].set_yticks([3, 4, 5, 6, 7])
+    axs[0].set_yticklabels([3, None, 5, None, 7], fontproperties=FONT)
+
+    axs[1].set_ylabel(r'$\mathbf{u_y}$', fontproperties=FONT)
+    axs[1].grid(axis='y', alpha=0.3)
+    axs[1].set_ylim([-0.5, 0.5])
+    axs[1].set_yticklabels([-0.5, None, 0, None, 0.5], fontproperties=FONT)
+
+    axs[2].set_xlabel("t", fontproperties=FONT)
+    axs[2].set_ylabel(r'$\mathbf{u_z}$', fontproperties=FONT)
+    axs[2].grid(axis='y', alpha=0.3)
+    axs[2].set_ylim([-0.5, 0.5])
+    axs[2].set_yticklabels([-0.5, None, 0, None, 0.5], fontproperties=FONT)
+
+    for idx, dataset in enumerate(np_datasets):
+        alpha = 0.4 * 2
+        lw = 0.5 * 2
+        mid = 12
+        if idx == 0:
+            alpha = 0.2 * 2
+            lw = 0.3 * 2
+
+        _d_std_x = np.std(dataset[-850:, 0, mid, mid, :], axis=(1))
+        _d_std_y = np.std(dataset[-850:, 1, mid, mid, :], axis=(1))
+        _d_std_z = np.std(dataset[-850:, 2, mid, mid, :], axis=(1))
+
+        _d_avg_x = np.mean(dataset[-850:, 0, mid, mid, :], axis=(1))
+        _d_avg_y = np.mean(dataset[-850:, 1, mid, mid, :], axis=(1))
+        _d_avg_z = np.mean(dataset[-850:, 2, mid, mid, :], axis=(1))
+
+        axs[0].plot(_t_axis, _d_avg_x, linewidth=lw,
+                    label=dataset_legends[idx])
+        axs[0].fill_between(_t_axis, _d_avg_x-_d_std_x, _d_avg_x
+                            + _d_std_x, alpha=alpha, label=dataset_legends[idx])
+
+        axs[1].plot(_t_axis, _d_avg_y, linewidth=lw,
+                    label=dataset_legends[idx])
+        axs[1].fill_between(_t_axis, _d_avg_y - _d_std_y, _d_avg_y
+                            + _d_std_y, alpha=alpha, label=dataset_legends[idx])
+
+        axs[2].plot(_t_axis, _d_avg_z, linewidth=lw,
+                    label=dataset_legends[idx])
+        axs[2].fill_between(_t_axis, _d_avg_z - _d_std_z, _d_avg_z
+                            + _d_std_z, alpha=alpha, label=dataset_legends[idx])
+
+    plt.xticks([0, 200, 400, 600, 800], fontproperties=FONT)
+    axs[2].legend(ncol=_n_datasets, prop=FONT, loc='lower left',
+                  bbox_to_anchor=(0, -0.85), fancybox=True, shadow=False)
+
+    if unique_id is not None:
+        if unique_id == 0:
+            plt.show()
+            return
+        else:
+            fig.savefig(
+                f'ICCS_plots/Plot_std_flow_profile_{save2file}{unique_id}.svg')
+    else:
+        fig.savefig(f'ICCS_plots/Plot_std_flow_profile_{save2file}.svg')
+    # plt.show()
+    plt.close()
 
 
 def colorMap(dataset, dataset_name):

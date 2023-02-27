@@ -8,6 +8,7 @@ from model import UNET_AE, RNN, GRU, LSTM, Hybrid_MD_RNN_UNET, resetPipeline
 from utils_new import get_Hybrid_loaders
 from trial_1 import error_timeline
 from plotting import compareFlowProfile3x3, compareErrorTimeline_np, plotPredVsTargCouette
+from plotting import plot_flow_profile, plot_flow_profile_std
 
 torch.manual_seed(10)
 random.seed(10)
@@ -80,12 +81,24 @@ def valid_HYBRID_Couette(loader, model, criterion, model_identifier, dataset_ide
         model_id=model_identifier,
         dataset_id=dataset_identifier
     )
-    '''
     plotPredVsTargCouette(
         input_1=np.vstack(_preds),
         input_2=np.vstack(_targs),
         file_prefix=_file_prefix,
         file_name=model_identifier+'_'+str(dataset_identifier)+'test_piet'
+    )
+    '''
+
+    plot_flow_profile(
+        np_datasets=[np.vstack(_preds), np.vstack(_targs)],
+        dataset_legends=['MD', 'MD + Hybrid ML'],
+        save2file=f'_Fig_Maker_4_MD_vs_Hybrid_MD{dataset_identifier}'
+    )
+
+    plot_flow_profile(
+        np_datasets=[np.vstack(_preds), np.vstack(_targs)],
+        dataset_legends=['MD', 'MD + Hybrid ML'],
+        save2file=f'_Fig_Maker_4_MD_vs_Hybrid_MD{dataset_identifier}'
     )
 
     _avg_loss = _epoch_loss/_counter
