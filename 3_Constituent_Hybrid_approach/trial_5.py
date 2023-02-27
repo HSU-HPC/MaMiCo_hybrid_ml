@@ -90,13 +90,13 @@ def valid_HYBRID_Couette(loader, model, criterion, model_identifier, dataset_ide
     '''
 
     plot_flow_profile(
-        np_datasets=[np.vstack(_preds), np.vstack(_targs)],
+        np_datasets=[np.vstack(_targs), np.vstack(_preds)],
         dataset_legends=['MD', 'MD + Hybrid ML'],
         save2file=f'Fig_Maker_4_MD_vs_Hybrid_MD{dataset_identifier}'
     )
 
     plot_flow_profile_std(
-        np_datasets=[np.vstack(_preds), np.vstack(_targs)],
+        np_datasets=[np.vstack(_targs), np.vstack(_preds)],
         dataset_legends=['MD', 'MD + Hybrid ML'],
         save2file=f'Fig_Maker_4_MD_vs_Hybrid_MD{dataset_identifier}'
     )
