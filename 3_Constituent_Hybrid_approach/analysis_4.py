@@ -21,7 +21,7 @@ try:
 except RuntimeError:
     pass
 
-plt.style.use(['science'])
+# plt.style.use(['science'])
 np.set_printoptions(precision=6)
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
