@@ -48,14 +48,15 @@ def plot_flow_profile(np_datasets, dataset_legends, save2file, unique_id=None):
     for idx, dataset in enumerate(np_datasets):
         print(f'[{dataset_legends[idx]}] Dataset shape: ', dataset.shape)
 
-    fig, axs = plt.subplots(3, sharex=True, constrained_layout=True)
+    fig, axs = plt.subplots(1, sharex=True, constrained_layout=True)
 
-    axs[0].set_ylabel(r'$\mathbf{u_x}$', fontproperties=FONT)
-    axs[0].grid(axis='y', alpha=0.3)
-    axs[0].set_ylim([2.5, 6.5])
-    axs[0].set_yticks([3, 4, 5, 6])
-    axs[0].set_yticklabels(axs[0].get_yticks(), fontproperties=FONT)
-
+    axs.set_ylabel(r'$\mathbf{u_x}$', fontproperties=FONT)
+    axs.grid(axis='y', alpha=0.3)
+    axs.set_ylim([-0.5, 0.6])
+    axs.set_yticks([-0.4, -0.2, 0, 0.2, 0.4])
+    axs.set_yticklabels([-0.4, None, 0, None, 0.4], fontproperties=FONT)
+    axs.set_xlabel("t", fontproperties=FONT)
+    '''
     axs[1].set_ylabel(r'$\mathbf{u_y}$', fontproperties=FONT)
     axs[1].grid(axis='y', alpha=0.3)
     axs[1].set_ylim([-1.0, 1.0])
@@ -66,7 +67,7 @@ def plot_flow_profile(np_datasets, dataset_legends, save2file, unique_id=None):
     axs[2].grid(axis='y', alpha=0.3)
     axs[2].set_ylim([-1.0, 1.0])
     axs[2].set_yticklabels([-1, None, 0, None, 1], fontproperties=FONT)
-
+    '''
     for idx, dataset in enumerate(np_datasets):
         mid = 12
         alpha = 1
@@ -74,16 +75,17 @@ def plot_flow_profile(np_datasets, dataset_legends, save2file, unique_id=None):
         if idx == 0:
             alpha = 0.7
             lw = 0.6
-        axs[0].plot(_t_axis, dataset[-850:, 0, mid, mid, mid],
-                    linewidth=lw, alpha=alpha, label=dataset_legends[idx])
+        axs.plot(_t_axis, dataset[-850:, 0, mid, mid, mid],
+                 linewidth=lw, alpha=alpha, label=dataset_legends[idx])
+        '''
         axs[1].plot(_t_axis, dataset[-850:, 1, mid, mid, mid],
                     linewidth=lw, alpha=alpha, label=dataset_legends[idx])
         axs[2].plot(_t_axis, dataset[-850:, 2, mid, mid, mid],
                     linewidth=lw, alpha=alpha, label=dataset_legends[idx])
-
+        '''
     plt.xticks([0, 200, 400, 600, 800], fontproperties=FONT)
-    axs[2].legend(ncol=_n_datasets, prop=FONT, loc='lower left',
-                  bbox_to_anchor=(0, -0.7), fancybox=True, shadow=False)
+    axs.legend(ncol=_n_datasets, prop=FONT, loc='lower left',
+               bbox_to_anchor=(0, -0.7), fancybox=True, shadow=False)
 
     if unique_id is not None:
         if unique_id == 0:
@@ -128,24 +130,26 @@ def plot_flow_profile_std(np_datasets, dataset_legends, save2file, unique_id=Non
     for idx, dataset in enumerate(np_datasets):
         print(f'[{dataset_legends[idx]}] Dataset shape: ', dataset.shape)
 
-    fig, axs = plt.subplots(3, sharex=True, constrained_layout=True)
+    fig, axs = plt.subplots(1, sharex=True, constrained_layout=True)
 
-    axs[0].set_ylabel(r'$\mathbf{u_x}$', fontproperties=FONT)
-    axs[0].grid(axis='y', alpha=0.3)
-    axs[0].set_ylim([2.5, 7.5])
-    axs[0].set_yticks([3, 4, 5, 6, 7])
-    axs[0].set_yticklabels([3, None, 5, None, 7], fontproperties=FONT)
-
+    axs.set_ylabel(r'$\mathbf{u_x}$', fontproperties=FONT)
+    axs.grid(axis='y', alpha=0.3)
+    axs.set_ylim([-1.1, 1.1])
+    axs.set_yticks([-1.0, -0.5, 0, 0.5, 1.0])
+    axs.set_yticklabels([-1.0, None, 0, None, 1.0], fontproperties=FONT)
+    axs.set_xlabel("t", fontproperties=FONT)
+    '''
     axs[1].set_ylabel(r'$\mathbf{u_y}$', fontproperties=FONT)
     axs[1].grid(axis='y', alpha=0.3)
-    axs[1].set_ylim([-0.5, 0.5])
-    axs[1].set_yticklabels([-0.5, None, 0, None, 0.5], fontproperties=FONT)
+    axs[1].set_ylim([-1.0, 1.0])
+    axs[1].set_yticklabels([-1, None, 0, None, 1], fontproperties=FONT)
 
     axs[2].set_xlabel("t", fontproperties=FONT)
     axs[2].set_ylabel(r'$\mathbf{u_z}$', fontproperties=FONT)
     axs[2].grid(axis='y', alpha=0.3)
-    axs[2].set_ylim([-0.5, 0.5])
-    axs[2].set_yticklabels([-0.5, None, 0, None, 0.5], fontproperties=FONT)
+    axs[2].set_ylim([-1.0, 1.0])
+    axs[2].set_yticklabels([-1, None, 0, None, 1], fontproperties=FONT)
+    '''
 
     for idx, dataset in enumerate(np_datasets):
         alpha = 0.4 * 2
@@ -163,11 +167,11 @@ def plot_flow_profile_std(np_datasets, dataset_legends, save2file, unique_id=Non
         _d_avg_y = np.mean(dataset[-850:, 1, mid, mid, :], axis=(1))
         _d_avg_z = np.mean(dataset[-850:, 2, mid, mid, :], axis=(1))
 
-        axs[0].plot(_t_axis, _d_avg_x, linewidth=lw,
-                    label=dataset_legends[idx])
-        axs[0].fill_between(_t_axis, _d_avg_x-_d_std_x, _d_avg_x
-                            + _d_std_x, alpha=alpha, label=dataset_legends[idx])
-
+        axs.plot(_t_axis, _d_avg_x, linewidth=lw,
+                 label=dataset_legends[idx])
+        axs.fill_between(_t_axis, _d_avg_x-_d_std_x, _d_avg_x
+                         + _d_std_x, alpha=alpha, label=dataset_legends[idx])
+        '''
         axs[1].plot(_t_axis, _d_avg_y, linewidth=lw,
                     label=dataset_legends[idx])
         axs[1].fill_between(_t_axis, _d_avg_y - _d_std_y, _d_avg_y
@@ -177,10 +181,10 @@ def plot_flow_profile_std(np_datasets, dataset_legends, save2file, unique_id=Non
                     label=dataset_legends[idx])
         axs[2].fill_between(_t_axis, _d_avg_z - _d_std_z, _d_avg_z
                             + _d_std_z, alpha=alpha, label=dataset_legends[idx])
-
+        '''
     plt.xticks([0, 200, 400, 600, 800], fontproperties=FONT)
-    axs[2].legend(ncol=_n_datasets, prop=FONT, loc='lower left',
-                  bbox_to_anchor=(0, -0.85), fancybox=True, shadow=False)
+    axs.legend(ncol=_n_datasets, prop=FONT, loc='lower left',
+               bbox_to_anchor=(0, -0.85), fancybox=True, shadow=False)
 
     if unique_id is not None:
         if unique_id == 0:
@@ -918,20 +922,13 @@ def main():
 
 
 if __name__ == "__main__":
-    _dir = '/home/lerdo/lerdo_HPC_Lab_Project/Trainingdata/CleanCouette/Testing/'
-    _file_names = [
-        f'{_dir}clean_couette_test_combined_domain_6_0_bottom.csv',
-        f'{_dir}clean_couette_test_combined_domain_6_0_middle.csv',
-        f'{_dir}clean_couette_test_combined_domain_6_0_top.csv'
-    ]
-    _dataset_names = [
-        'C-6-0-B',
-        'C-6-0-M',
-        'C-6-0-T'
-    ]
-    _u_wall = [6, 6, 6]
-    visualizeMaMiCoDataset(
-        file_names=_file_names,
-        dataset_names=_dataset_names,
-        u_wall=_u_wall
-    )
+    _x_rand_1 = np.random.rand(850, 3, 13, 13, 13) * 0.3
+    _x_desc_1 = 'Description_1'
+    _x_rand_2 = np.random.rand(850, 3, 13, 13, 13) * 0.3
+    _x_desc_2 = 'Description_2'
+    _x_rand_3 = np.random.rand(850, 3, 8, 8, 8) * 0.3
+    _x_desc_3 = 'Description_3'
+    _x_file = 'file_name'
+
+    plot_flow_profile_std(np_datasets=[_x_rand_1, _x_rand_2], dataset_legends=[
+                      _x_desc_1, _x_desc_2], save2file=_x_file, unique_id=0)
