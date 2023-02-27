@@ -11,8 +11,16 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 import matplotlib.font_manager as font_manager
-mpl.rc('text', usetex=True)
-mpl.rcParams['text.latex.preamble'] = [r"\usepackage{amsmath}"]
+plt.rcParams.update(
+    {
+        "text.usetex": True,
+        "text.latex.preamble": r"\usepackage{bm}",
+
+        # Enforce default LaTeX font.
+        "font.family": "serif",
+        "font.serif": ["Computer Modern"],
+    }
+)
 
 
 def getColor(c, N, idx):
