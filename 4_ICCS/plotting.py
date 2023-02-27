@@ -54,18 +54,22 @@ def plot_flow_profile(np_datasets, dataset_legends, save2file):
 
     fig, axs = plt.subplots(3, sharex=True, constrained_layout=True)
 
-    axs[0].set_ylabel(r'$\mathbf{u_x}$', fontsize=12, fontweight='bold')
+    axs[0].set_ylabel(r'$\mathbf{u_x}$', fontproperties=FONT)
     axs[0].grid(axis='y', alpha=0.3)
-    axs[0].set_ylim([3.0, 6.5])
+    axs[0].set_ylim([2.5, 6.5])
+    axs[0].set_yticks([3, 4, 5, 6])
+    axs[0].set_yticklabels(axs[0].get_yticks(), fontproperties=FONT)
 
-    axs[1].set_ylabel(r'$\mathbf{u_y}$', fontsize=12, fontweight='bold')
+    axs[1].set_ylabel(r'$\mathbf{u_y}$', fontproperties=FONT)
     axs[1].grid(axis='y', alpha=0.3)
     axs[1].set_ylim([-1.0, 1.0])
+    axs[1].set_yticklabels([-1, None, 0, None, 1], fontproperties=FONT)
 
-    axs[2].set_xlabel("t", fontsize=12, fontweight='bold')
-    axs[2].set_ylabel(r'$\mathbf{u_z}$', fontsize=12, fontweight='bold')
+    axs[2].set_xlabel("t", fontproperties=FONT)
+    axs[2].set_ylabel(r'$\mathbf{u_z}$', fontproperties=FONT)
     axs[2].grid(axis='y', alpha=0.3)
     axs[2].set_ylim([-1.0, 1.0])
+    axs[2].set_yticklabels([-1, None, 0, None, 1], fontproperties=FONT)
 
     for idx, dataset in enumerate(np_datasets):
         mid = 12
@@ -81,12 +85,13 @@ def plot_flow_profile(np_datasets, dataset_legends, save2file):
         axs[2].plot(_t_axis, dataset[-850:, 2, mid, mid, mid],
                     linewidth=lw, alpha=alpha, label=dataset_legends[idx])
 
+    plt.xticks([0, 200, 400, 600, 800], fontproperties=FONT)
     axs[2].legend(ncol=_n_datasets, prop=FONT, loc='lower left',
                   bbox_to_anchor=(0, -0.7), fancybox=True, shadow=False)
 
-    fig.savefig(f'plots/Plot_loc_flow_profile_{save2file}.svg')
-    # plt.show()
-    plt.close()
+    # fig.savefig(f'plots/Plot_loc_flow_profile_{save2file}.svg')
+    plt.show()
+    # plt.close()
 
 
 def plot_flow_profile_std(np_datasets, dataset_legends, save2file):
@@ -495,13 +500,13 @@ def plotlbm(lbm_input, file_directory, file_id):
 
 
 if __name__ == "__main__":
-    _x_rand_1 = np.random.rand(850, 3, 8, 8, 8)
+    _x_rand_1 = np.random.rand(850, 3, 13, 13, 13)
     _x_desc_1 = 'Description_1'
-    _x_rand_2 = np.random.rand(850, 3, 8, 8, 8)
+    _x_rand_2 = np.random.rand(850, 3, 13, 13, 13)
     _x_desc_2 = 'Description_2'
     _x_rand_3 = np.random.rand(850, 3, 8, 8, 8)
     _x_desc_3 = 'Description_3'
     _x_file = 'file_name'
 
-    plot_flow_profile_std(np_datasets=[_x_rand_1, _x_rand_2], dataset_legends=[
+    plot_flow_profile(np_datasets=[_x_rand_1, _x_rand_2], dataset_legends=[
                       _x_desc_1, _x_desc_2], save2file=_x_file)
