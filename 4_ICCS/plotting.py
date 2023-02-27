@@ -184,7 +184,7 @@ def plot_flow_profile_std(np_datasets, dataset_legends, save2file, unique_id=Non
 
     plt.xticks([0, 200, 400, 600, 800], fontproperties=FONT)
     axs[2].legend(ncol=_n_datasets, prop=FONT, loc='lower left',
-                  bbox_to_anchor=(0, -0.7), fancybox=True, shadow=False)
+                  bbox_to_anchor=(0, -0.85), fancybox=True, shadow=False)
 
     if unique_id is not None:
         if unique_id == 0:
