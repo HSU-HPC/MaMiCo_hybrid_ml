@@ -19,9 +19,8 @@ def getColor(c, N, idx):
     return cmap(norm(idx))
 
 
-FONT = font_manager.FontProperties(family='Comic Sans MS',
-                                   weight='bold',
-                                   size=30)
+FONT = font_manager.FontProperties(weight='bold',
+                                   size=12)
 
 
 def plot_flow_profile(np_datasets, dataset_legends, save2file):
@@ -59,11 +58,11 @@ def plot_flow_profile(np_datasets, dataset_legends, save2file):
     axs[0].set_ylabel("$u_x$", prop=FONT)
     axs[0].grid(axis='y', alpha=0.3)
 
-    axs[1].set_ylabel("$u_y$", prop=FONT)
+    axs[1].set_ylabel("$u_yfontsize=12, fontweight='bold')
     axs[1].grid(axis='y', alpha=0.3)
 
-    axs[2].set_xlabel("t", prop=FONT)
-    axs[2].set_ylabel("$u_z$", prop=FONT)
+    axs[2].set_xlabel("fontsize=12, fontweight='bold')
+    axs[2].set_ylabel("$u_zfontsize=12, fontweight='bold')
     axs[2].grid(axis='y', alpha=0.3)
 
     for idx, dataset in enumerate(np_datasets):
@@ -118,14 +117,14 @@ def plot_flow_profile_std(np_datasets, dataset_legends, save2file):
 
     fig, axs = plt.subplots(3, sharex=True, constrained_layout=True)
 
-    axs[0].set_ylabel("$u_x$", prop=FONT)
+    axs[0].set_ylabel("$u_xfontsize=12, fontweight='bold')
     axs[0].grid(axis='y', alpha=0.3)
 
-    axs[1].set_ylabel("$u_y$", prop=FONT)
+    axs[1].set_ylabel("$u_yfontsize=12, fontweight='bold')
     axs[1].grid(axis='y', alpha=0.3)
 
-    axs[2].set_xlabel("t", prop=FONT)
-    axs[2].set_ylabel("$u_z$", prop=FONT)
+    axs[2].set_xlabel("fontsize=12, fontweight='bold')
+    axs[2].set_ylabel("$u_zfontsize=12, fontweight='bold')
     axs[2].grid(axis='y', alpha=0.3)
 
     for idx, dataset in enumerate(np_datasets):
