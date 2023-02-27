@@ -462,11 +462,11 @@ def md_substitution_retriever(model_AE_directory, model_name_i, model_RNN_direct
     )
 
     plot_flow_profile_std(
-        np_datasets=[_targs, _preds_b],
+        np_datasets=[_targs, _preds_a],
         dataset_legends=[
-            'MD', 'Hybrid ML only'],
+            'MD', 'MD + Hybrid ML'],
         save2file=f'{_id}_Fig_Maker_3_Hybrid_vs_Recursive_vs_MaMiCo',
-        unique_id='test_0_0'
+        unique_id='_md_and_ml'
     )
 
 
