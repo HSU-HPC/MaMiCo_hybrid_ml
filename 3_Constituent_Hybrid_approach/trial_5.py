@@ -51,8 +51,9 @@ def valid_HYBRID_Couette(loader, model, criterion, model_identifier, dataset_ide
           A list of numpy arrays containing model predictions.
     """
     # _file_prefix = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/7_Analysis_1_Testing/'
-    _file_prefix = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/8_Analysis_2_Larger_Time_Intervals/'
-    # _file_prefix = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/' + \ '3_Constituent_Hybrid_approach/Results/9_Analysis_3_non_UNET/AE/'
+    # _file_prefix = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/3_Constituent_Hybrid_approach/Results/8_Analysis_2_Larger_Time_Intervals/'
+    _file_prefix = '/home/lerdo/lerdo_HPC_Lab_Project/MD_U-Net/' + \
+        '3_Constituent_Hybrid_approach/Results/9_Analysis_3_non_UNET/AE/'
 
     _epoch_loss = 0
     _timeline = []
@@ -84,7 +85,7 @@ def valid_HYBRID_Couette(loader, model, criterion, model_identifier, dataset_ide
         input_1=np.vstack(_preds),
         input_2=np.vstack(_targs),
         file_prefix=_file_prefix,
-        file_name=model_identifier+'_'+str(dataset_identifier)
+        file_name=model_identifier+'_'+str(dataset_identifier)+'test_piet'
     )
 
     _avg_loss = _epoch_loss/_counter
