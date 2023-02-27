@@ -18,8 +18,8 @@ try:
 except RuntimeError:
     pass
 
-plt.style.use(['science'])
-np.set_printoptions(precision=6)
+# plt.style.use(['science'])
+# np.set_printoptions(precision=6)
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 NUM_WORKERS = 1             # guideline: 4* num_GPU
