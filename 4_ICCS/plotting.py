@@ -90,7 +90,12 @@ def plot_flow_profile(np_datasets, dataset_legends, save2file, unique_id=None):
                   bbox_to_anchor=(0, -0.7), fancybox=True, shadow=False)
 
     if unique_id is not None:
-        fig.savefig(f'plots/Plot_loc_flow_profile_{save2file}{unique_id}.svg')
+        if unique_id == 0:
+            plt.show()
+            return
+        else:
+            fig.savefig(
+                f'plots/Plot_loc_flow_profile_{save2file}{unique_id}.svg')
     else:
         fig.savefig(f'plots/Plot_loc_flow_profile_{save2file}.svg')
     # plt.show()
@@ -137,14 +142,14 @@ def plot_flow_profile_std(np_datasets, dataset_legends, save2file, unique_id=Non
 
     axs[1].set_ylabel(r'$\mathbf{u_y}$', fontproperties=FONT)
     axs[1].grid(axis='y', alpha=0.3)
-    axs[1].set_ylim([-1.0, 1.0])
-    axs[1].set_yticklabels([-1, None, 0, None, 1], fontproperties=FONT)
+    axs[1].set_ylim([-0.5, 0.5])
+    axs[1].set_yticklabels([-0.5, None, 0, None, 0.5], fontproperties=FONT)
 
     axs[2].set_xlabel("t", fontproperties=FONT)
     axs[2].set_ylabel(r'$\mathbf{u_z}$', fontproperties=FONT)
     axs[2].grid(axis='y', alpha=0.3)
-    axs[2].set_ylim([-1.0, 1.0])
-    axs[2].set_yticklabels([-1, None, 0, None, 1], fontproperties=FONT)
+    axs[2].set_ylim([-0.5, 0.5])
+    axs[2].set_yticklabels([-0.5, None, 0, None, 0.5], fontproperties=FONT)
 
     for idx, dataset in enumerate(np_datasets):
         alpha = 0.4 * 2
@@ -182,7 +187,12 @@ def plot_flow_profile_std(np_datasets, dataset_legends, save2file, unique_id=Non
                   bbox_to_anchor=(0, -0.7), fancybox=True, shadow=False)
 
     if unique_id is not None:
-        fig.savefig(f'plots/Plot_std_flow_profile_{save2file}{unique_id}.svg')
+        if unique_id == 0:
+            plt.show()
+            return
+        else:
+            fig.savefig(
+                f'plots/Plot_std_flow_profile_{save2file}{unique_id}.svg')
     else:
         fig.savefig(f'plots/Plot_std_flow_profile_{save2file}.svg')
     # plt.show()
@@ -511,13 +521,13 @@ def plotlbm(lbm_input, file_directory, file_id):
 
 
 if __name__ == "__main__":
-    _x_rand_1 = np.random.rand(850, 3, 13, 13, 13)
+    _x_rand_1 = np.random.rand(850, 3, 13, 13, 13) * 0.3
     _x_desc_1 = 'Description_1'
-    _x_rand_2 = np.random.rand(850, 3, 13, 13, 13)
+    _x_rand_2 = np.random.rand(850, 3, 13, 13, 13) * 0.3
     _x_desc_2 = 'Description_2'
-    _x_rand_3 = np.random.rand(850, 3, 8, 8, 8)
+    _x_rand_3 = np.random.rand(850, 3, 8, 8, 8) * 0.3
     _x_desc_3 = 'Description_3'
     _x_file = 'file_name'
 
-    plot_flow_profile(np_datasets=[_x_rand_1, _x_rand_2], dataset_legends=[
-                      _x_desc_1, _x_desc_2], save2file=_x_file)
+    plot_flow_profile_std(np_datasets=[_x_rand_1, _x_rand_2], dataset_legends=[
+                      _x_desc_1, _x_desc_2], save2file=_x_file, unique_id=0)
