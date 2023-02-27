@@ -483,6 +483,5 @@ def fig_maker_3(id):
 
 if __name__ == "__main__":
     _ids = ['20000_NE', '22000_NW', '26000_SE', '28000_SW']
-    #  for _id in _ids:
-    #     fig_maker_3(id=_id)
-    fig_maker_3(id=_ids[0])
+    for _id in _ids:
+        fig_maker_3(id=_id)

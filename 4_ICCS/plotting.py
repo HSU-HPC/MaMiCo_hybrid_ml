@@ -126,18 +126,23 @@ def plot_flow_profile_std(np_datasets, dataset_legends, save2file):
 
     fig, axs = plt.subplots(3, sharex=True, constrained_layout=True)
 
-    axs[0].set_ylabel(r'$\mathbf{u_x}$', fontsize=12, fontweight='bold')
+    axs[0].set_ylabel(r'$\mathbf{u_x}$', fontproperties=FONT)
     axs[0].grid(axis='y', alpha=0.3)
-    axs[0].set_ylim([2.9, 6.5])
+    axs[0].set_ylim([2.5, 6.5])
+    axs[0].set_yticks([3, 4, 5, 6])
+    axs[0].set_yticklabels(axs[0].get_yticks(), fontproperties=FONT)
 
-    axs[1].set_ylabel(r'$\mathbf{u_y}$', fontsize=12, fontweight='bold')
+    axs[1].set_ylabel(r'$\mathbf{u_y}$', fontproperties=FONT)
     axs[1].grid(axis='y', alpha=0.3)
     axs[1].set_ylim([-1.0, 1.0])
+    axs[1].set_yticklabels([-1, None, 0, None, 1], fontproperties=FONT)
 
-    axs[2].set_xlabel("t", fontsize=12, fontweight='bold')
-    axs[2].set_ylabel(r'$\mathbf{u_z}$', fontsize=12, fontweight='bold')
+    axs[2].set_xlabel("t", fontproperties=FONT)
+    axs[2].set_ylabel(r'$\mathbf{u_z}$', fontproperties=FONT)
     axs[2].grid(axis='y', alpha=0.3)
     axs[2].set_ylim([-1.0, 1.0])
+    axs[2].set_yticklabels([-1, None, 0, None, 1], fontproperties=FONT)
+
 
     for idx, dataset in enumerate(np_datasets):
         alpha = 0.4 * 2
@@ -170,12 +175,13 @@ def plot_flow_profile_std(np_datasets, dataset_legends, save2file):
         axs[2].fill_between(_t_axis, _d_avg_z - _d_std_z, _d_avg_z
                             + _d_std_z, alpha=alpha, label=dataset_legends[idx])
 
+    plt.xticks([0, 200, 400, 600, 800], fontproperties=FONT)
     axs[2].legend(ncol=_n_datasets, prop=FONT, loc='lower left',
                   bbox_to_anchor=(0, -0.7), fancybox=True, shadow=False)
 
-    # fig.savefig(f'plots/Plot_std_flow_profile_{save2file}.svg')
-    plt.show()
-    # plt.close()
+    fig.savefig(f'plots/Plot_std_flow_profile_{save2file}.svg')
+    # plt.show()
+    plt.close()
 
 
 def compareLossVsValid(loss_files, loss_labels, file_prefix=0, file_name=0):
