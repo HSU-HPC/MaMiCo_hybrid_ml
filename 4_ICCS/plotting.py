@@ -9,6 +9,7 @@ plot_flow_profile
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib as mpl
+import matplotlib.font_manager as font_manager
 from utils import csv2dataset_mp
 
 
@@ -16,6 +17,11 @@ def getColor(c, N, idx):
     cmap = mpl.cm.get_cmap(c)
     norm = mpl.colors.Normalize(vmin=0.0, vmax=N - 1)
     return cmap(norm(idx))
+
+
+FONT = font_manager.FontProperties(family='Comic Sans MS',
+                                   weight='bold',
+                                   size=30)
 
 
 def plot_flow_profile(np_datasets, dataset_legends, save2file):
@@ -50,14 +56,14 @@ def plot_flow_profile(np_datasets, dataset_legends, save2file):
 
     fig, axs = plt.subplots(3, sharex=True, constrained_layout=True)
 
-    axs[0].set_ylabel("$u_x$", fontsize=12, fontweight='bold')
+    axs[0].set_ylabel("$u_x$", prop=FONT)
     axs[0].grid(axis='y', alpha=0.3)
 
-    axs[1].set_ylabel("$u_y$", fontsize=12, fontweight='bold')
+    axs[1].set_ylabel("$u_y$", prop=FONT)
     axs[1].grid(axis='y', alpha=0.3)
 
-    axs[2].set_xlabel("t", fontsize=12, fontweight='bold')
-    axs[2].set_ylabel("$u_z$", fontsize=12, fontweight='bold')
+    axs[2].set_xlabel("t", prop=FONT)
+    axs[2].set_ylabel("$u_z$", prop=FONT)
     axs[2].grid(axis='y', alpha=0.3)
 
     for idx, dataset in enumerate(np_datasets):
@@ -74,7 +80,7 @@ def plot_flow_profile(np_datasets, dataset_legends, save2file):
         axs[2].plot(_t_axis, dataset[-850:, 2, mid, mid, mid],
                     linewidth=lw, alpha=alpha, label=dataset_legends[idx])
 
-    axs[2].legend(ncol=_n_datasets, fontsize=12, fontweight='bold')
+    axs[2].legend(ncol=_n_datasets, prop=FONT)
 
     fig.savefig(f'plots/Plot_loc_flow_profile_{save2file}.svg')
     plt.close()
@@ -112,14 +118,14 @@ def plot_flow_profile_std(np_datasets, dataset_legends, save2file):
 
     fig, axs = plt.subplots(3, sharex=True, constrained_layout=True)
 
-    axs[0].set_ylabel("$u_x$", fontsize=12, fontweight='bold')
+    axs[0].set_ylabel("$u_x$", prop=FONT)
     axs[0].grid(axis='y', alpha=0.3)
 
-    axs[1].set_ylabel("$u_y$", fontsize=12, fontweight='bold')
+    axs[1].set_ylabel("$u_y$", prop=FONT)
     axs[1].grid(axis='y', alpha=0.3)
 
-    axs[2].set_xlabel("t", fontsize=12, fontweight='bold')
-    axs[2].set_ylabel("$u_z$", fontsize=12, fontweight='bold')
+    axs[2].set_xlabel("t", prop=FONT)
+    axs[2].set_ylabel("$u_z$", prop=FONT)
     axs[2].grid(axis='y', alpha=0.3)
 
     for idx, dataset in enumerate(np_datasets):
@@ -153,7 +159,7 @@ def plot_flow_profile_std(np_datasets, dataset_legends, save2file):
         axs[2].fill_between(_t_axis, _d_avg_z - _d_std_z, _d_avg_z
                             + _d_std_z, alpha=alpha, label=dataset_legends[idx])
 
-    axs[2].legend(ncol=_n_datasets, fontsize=12, fontweight='bold')
+    axs[2].legend(ncol=_n_datasets, prop=FONT)
 
     fig.savefig(f'plots/Plot_std_flow_profile_{save2file}.svg')
     plt.close()
