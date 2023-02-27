@@ -79,7 +79,7 @@ def plot_flow_profile(np_datasets, dataset_legends, save2file):
                     linewidth=lw, alpha=alpha, label=dataset_legends[idx])
 
     fig.legend(ncol=_n_datasets, prop=FONT, loc='center left',
-               bbox_to_anchor=(1, 0.5), fancybox=True, shadow=False)
+               bbox_to_anchor=(0, 0), fancybox=True, shadow=False)
     # axs[2].legend(ncol=_n_datasets, prop=FONT)
 
     fig.savefig(f'plots/Plot_loc_flow_profile_{save2file}.svg')
