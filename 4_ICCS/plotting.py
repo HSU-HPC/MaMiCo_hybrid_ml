@@ -74,7 +74,7 @@ def plot_flow_profile(np_datasets, dataset_legends, save2file):
         axs[2].plot(_t_axis, dataset[-850:, 2, mid, mid, mid],
                     linewidth=lw, alpha=alpha, label=dataset_legends[idx])
 
-    axs[2].legend(ncol=_n_datasets, fontsize=12, weight='bold')
+    axs[2].legend(ncol=_n_datasets, fontsize=12, fontweight='bold')
 
     fig.savefig(f'plots/Plot_loc_flow_profile_{save2file}.svg')
     plt.close()
@@ -153,7 +153,7 @@ def plot_flow_profile_std(np_datasets, dataset_legends, save2file):
         axs[2].fill_between(_t_axis, _d_avg_z - _d_std_z, _d_avg_z
                             + _d_std_z, alpha=alpha, label=dataset_legends[idx])
 
-    axs[2].legend(ncol=_n_datasets, fontsize=12, weight='bold')
+    axs[2].legend(ncol=_n_datasets, fontsize=12, fontweight='bold')
 
     fig.savefig(f'plots/Plot_std_flow_profile_{save2file}.svg')
     plt.close()
