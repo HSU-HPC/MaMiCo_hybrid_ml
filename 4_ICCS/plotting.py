@@ -11,26 +11,15 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 import matplotlib.font_manager as font_manager
-plt.rcParams.update(
-    {
-        "text.usetex": True,
-        "text.latex.preamble": r"\usepackage{bm}",
 
-        # Enforce default LaTeX font.
-        "font.family": "serif",
-        "font.serif": ["Computer Modern"],
-    }
-)
+
+FONT = font_manager.FontProperties(weight='bold', size=10)
 
 
 def getColor(c, N, idx):
     cmap = mpl.cm.get_cmap(c)
     norm = mpl.colors.Normalize(vmin=0.0, vmax=N - 1)
     return cmap(norm(idx))
-
-
-FONT = font_manager.FontProperties(weight='bold',
-                                   size=10)
 
 
 def plot_flow_profile(np_datasets, dataset_legends, save2file):
