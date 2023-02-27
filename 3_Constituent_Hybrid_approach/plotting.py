@@ -39,6 +39,7 @@ def plot_flow_profile(np_datasets, dataset_legends, save2file, unique_id=None):
           aforementioned meaningful plots.
     """
     print('[plot_flow_profile()]')
+    t, c, x, y, z = np_datasets[0].shape
     _save2file = save2file.replace('.csv', '')
     _save2file = _save2file.replace('01_clean_lbm/', '')
     _t_max = 850
@@ -69,7 +70,7 @@ def plot_flow_profile(np_datasets, dataset_legends, save2file, unique_id=None):
     axs[2].set_yticklabels([-1, None, 0, None, 1], fontproperties=FONT)
     '''
     for idx, dataset in enumerate(np_datasets):
-        mid = 12
+        mid = int(x/2)
         alpha = 1
         lw = 1.0
         if idx == 0:
@@ -121,6 +122,7 @@ def plot_flow_profile_std(np_datasets, dataset_legends, save2file, unique_id=Non
           aforementioned meaningful plots.
     """
     print('[plot_flow_profile()]')
+    t, c, x, y, z = np_datasets[0].shape
     _save2file = save2file.replace('.csv', '')
     _save2file = _save2file.replace('01_clean_lbm/', '')
     _t_max = 850
@@ -154,14 +156,14 @@ def plot_flow_profile_std(np_datasets, dataset_legends, save2file, unique_id=Non
     for idx, dataset in enumerate(np_datasets):
         alpha = 0.4 * 2
         lw = 0.5 * 2
-        mid = 12
+        mid = int(x/2)
         if idx == 0:
             alpha = 0.2 * 2
             lw = 0.3 * 2
 
-        _d_std_x = np.std(dataset[-850:, 0, mid, mid, :], axis=(1))
-        _d_std_y = np.std(dataset[-850:, 1, mid, mid, :], axis=(1))
-        _d_std_z = np.std(dataset[-850:, 2, mid, mid, :], axis=(1))
+        _d_std_x = np.std(dataset[-850:, 0, mid, :, mid], axis=(1))
+        _d_std_y = np.std(dataset[-850:, 1, mid, :, mid], axis=(1))
+        _d_std_z = np.std(dataset[-850:, 2, mid, :, mid], axis=(1))
 
         _d_avg_x = np.mean(dataset[-850:, 0, mid, mid, :], axis=(1))
         _d_avg_y = np.mean(dataset[-850:, 1, mid, mid, :], axis=(1))
