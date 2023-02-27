@@ -55,7 +55,7 @@ def plot_flow_profile(np_datasets, dataset_legends, save2file):
 
     fig, axs = plt.subplots(3, sharex=True, constrained_layout=True)
 
-    axs[0].set_ylabel("$u_x$", prop=FONT)
+    axs[0].set_ylabel("$u_x$", fontsize=12, fontweight='bold')
     axs[0].grid(axis='y', alpha=0.3)
 
     axs[1].set_ylabel("$u_y$", fontsize=12, fontweight='bold')
