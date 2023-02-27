@@ -423,8 +423,8 @@ def md_substitution_retriever(model_AE_directory, model_name_i, model_RNN_direct
     approach.
     '''
     _preds_b = torch.zeros(1, 3, 24, 24, 24).to(device=device)
-    _input_b[:, :, 3:22, 3:22, 3:22] = torch.zeros(900, 3, 18, 18, 18)
-
+    _input_b[:, :, 3:21, 3:21, 3:21] = torch.zeros(899, 3, 18, 18, 18)
+    t_max = 899
     t = 0
     while t < 25:
         data = torch.reshape(_input_b[t, :, :, :, :], (1, 3, 24, 24, 24))
