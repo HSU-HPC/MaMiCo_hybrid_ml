@@ -4,9 +4,9 @@ import matplotlib as mpl
 import matplotlib.font_manager as font_manager
 import torch
 from utils_new import csv2dataset, csv2dataset_mp, mamico_csv2dataset, mamico_csv2dataset_mp
-mpl.use('Agg')
-plt.style.use(['science'])
-np.set_printoptions(precision=2)
+# mpl.use('Agg')
+# plt.style.use(['science'])
+# np.set_printoptions(precision=2)
 
 
 FONT = font_manager.FontProperties(weight='bold', size=10)
