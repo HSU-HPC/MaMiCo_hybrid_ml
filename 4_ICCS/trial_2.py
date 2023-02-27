@@ -401,7 +401,7 @@ def md_substitution_retriever(model_AE_directory, model_name_i, model_RNN_direct
     '''
     [*_a] This portion creates a prediction dataset strictly on the basis of
     the MaMiCo input data
-
+    '''
     _preds_a = torch.zeros(1, 3, 24, 24, 24).to(device=device)
 
     t = 0
@@ -417,7 +417,7 @@ def md_substitution_retriever(model_AE_directory, model_name_i, model_RNN_direct
         t += 1
 
     _preds_a = _preds_a[1:, :, :, :, :].cpu().detach().numpy()
-    '''
+
     '''
     [*_b] This portion creates a prediction dataset on the basis of the recursive
     approach.
@@ -448,14 +448,14 @@ def md_substitution_retriever(model_AE_directory, model_name_i, model_RNN_direct
         t += 1
 
     _preds_b = _preds_b[1:, :, :, :, :].cpu().detach().numpy()
-    '''
+
     plot_flow_profile(
         np_datasets=[_targs, _preds_a, _preds_b],
         dataset_legends=[
             'MD', 'MD + Hybrid ML', 'Hybrid ML only'],
         save2file=f'{_id}_Fig_Maker_3_Hybrid_vs_Recursive_vs_MaMiCo'
     )
-    '''
+
 
     plot_flow_profile_std(
         np_datasets=[_targs, _preds_b],
