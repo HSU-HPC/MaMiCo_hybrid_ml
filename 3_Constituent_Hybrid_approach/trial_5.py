@@ -92,13 +92,13 @@ def valid_HYBRID_Couette(loader, model, criterion, model_identifier, dataset_ide
     plot_flow_profile(
         np_datasets=[np.vstack(_preds), np.vstack(_targs)],
         dataset_legends=['MD', 'MD + Hybrid ML'],
-        save2file=f'_Fig_Maker_4_MD_vs_Hybrid_MD{dataset_identifier}'
+        save2file=f'Fig_Maker_4_MD_vs_Hybrid_MD{dataset_identifier}'
     )
 
     plot_flow_profile(
         np_datasets=[np.vstack(_preds), np.vstack(_targs)],
         dataset_legends=['MD', 'MD + Hybrid ML'],
-        save2file=f'_Fig_Maker_4_MD_vs_Hybrid_MD{dataset_identifier}'
+        save2file=f'Fig_Maker_4_MD_vs_Hybrid_MD{dataset_identifier}'
     )
 
     _avg_loss = _epoch_loss/_counter
