@@ -52,8 +52,8 @@ def plot_flow_profile(np_datasets, dataset_legends, save2file, unique_id=None):
 
     axs.set_ylabel(r'$\mathbf{u_x}$', fontproperties=FONT)
     axs.grid(axis='y', alpha=0.3)
-    axs.set_ylim([-0.5, 0.6])
-    axs.set_yticks([-0.4, -0.2, 0, 0.2, 0.4])
+    axs.set_ylim([-1.1, 1.1])
+    axs.set_yticks([-1.0, -0.5, 0, 0.5, 1.0])
     axs.set_yticklabels([-0.4, None, 0, None, 0.4], fontproperties=FONT)
     axs.set_xlabel("t", fontproperties=FONT)
     '''
@@ -134,8 +134,8 @@ def plot_flow_profile_std(np_datasets, dataset_legends, save2file, unique_id=Non
 
     axs.set_ylabel(r'$\mathbf{u_x}$', fontproperties=FONT)
     axs.grid(axis='y', alpha=0.3)
-    axs.set_ylim([-1.1, 1.1])
-    axs.set_yticks([-1.0, -0.5, 0, 0.5, 1.0])
+    axs.set_ylim([-0.5, 0.6])
+    axs.set_yticks([-0.4, -0.2, 0, 0.2, 0.4])
     axs.set_yticklabels([-1.0, None, 0, None, 1.0], fontproperties=FONT)
     axs.set_xlabel("t", fontproperties=FONT)
     '''
