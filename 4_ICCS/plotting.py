@@ -50,25 +50,23 @@ def plot_flow_profile(np_datasets, dataset_legends, save2file):
 
     fig, axs = plt.subplots(3, sharex=True, constrained_layout=True)
 
-    axs[0].set_xlabel("t")
-    axs[0].set_ylabel("$u_x$")
+    axs[0].set_ylabel("$u_x$", weight='bold', fontsize=12)
     axs[0].grid(axis='y', alpha=0.3)
 
-    axs[1].set_xlabel("t")
-    axs[1].set_ylabel("$u_y$")
+    axs[1].set_ylabel("$u_y$", weight='bold', fontsize=12)
     axs[1].grid(axis='y', alpha=0.3)
 
-    axs[2].set_xlabel("t")
-    axs[2].set_ylabel("$u_z$")
+    axs[2].set_xlabel("t", weight='bold', fontsize=12)
+    axs[2].set_ylabel("$u_z$", weight='bold', fontsize=12)
     axs[2].grid(axis='y', alpha=0.3)
 
     for idx, dataset in enumerate(np_datasets):
-        mid = 12
+        mid = 6
         alpha = 1
-        lw = 0.5
+        lw = 1.0
         if idx == 0:
-            alpha = 0.5
-            lw = 0.3
+            alpha = 0.7
+            lw = 0.6
         axs[0].plot(_t_axis, dataset[-850:, 0, mid, mid, mid],
                     linewidth=lw, alpha=alpha, label=dataset_legends[idx])
         axs[1].plot(_t_axis, dataset[-850:, 1, mid, mid, mid],
@@ -76,7 +74,7 @@ def plot_flow_profile(np_datasets, dataset_legends, save2file):
         axs[2].plot(_t_axis, dataset[-850:, 2, mid, mid, mid],
                     linewidth=lw, alpha=alpha, label=dataset_legends[idx])
 
-    axs[2].legend(ncol=_n_datasets, fontsize=9)
+    axs[2].legend(ncol=_n_datasets, weight='bold', fontsize=12)
 
     fig.savefig(f'plots/Plot_loc_flow_profile_{save2file}.svg')
     plt.close()
@@ -114,25 +112,23 @@ def plot_flow_profile_std(np_datasets, dataset_legends, save2file):
 
     fig, axs = plt.subplots(3, sharex=True, constrained_layout=True)
 
-    axs[0].set_xlabel("t")
-    axs[0].set_ylabel("$u_x$")
+    axs[0].set_ylabel("$u_x$", weight='bold', fontsize=12)
     axs[0].grid(axis='y', alpha=0.3)
 
-    axs[1].set_xlabel("t")
-    axs[1].set_ylabel("$u_y$")
+    axs[1].set_ylabel("$u_y$", weight='bold', fontsize=12)
     axs[1].grid(axis='y', alpha=0.3)
 
-    axs[2].set_xlabel("t")
-    axs[2].set_ylabel("$u_z$")
+    axs[2].set_xlabel("t", weight='bold', fontsize=12)
+    axs[2].set_ylabel("$u_z$", weight='bold', fontsize=12)
     axs[2].grid(axis='y', alpha=0.3)
 
     for idx, dataset in enumerate(np_datasets):
-        alpha = 0.4
-        lw = 0.5
-        mid = 12
+        alpha = 0.4 * 2
+        lw = 0.5 * 2
+        mid = 6
         if idx == 0:
-            alpha = 0.2
-            lw = 0.3
+            alpha = 0.2 * 2
+            lw = 0.3 * 2
 
         _d_std_x = np.std(dataset[-850:, 0, mid, mid, :], axis=(1))
         _d_std_y = np.std(dataset[-850:, 1, mid, mid, :], axis=(1))
@@ -157,7 +153,7 @@ def plot_flow_profile_std(np_datasets, dataset_legends, save2file):
         axs[2].fill_between(_t_axis, _d_avg_z - _d_std_z, _d_avg_z
                             + _d_std_z, alpha=alpha, label=dataset_legends[idx])
 
-    axs[2].legend(ncol=_n_datasets, fontsize=9)
+    axs[2].legend(ncol=_n_datasets, weight='bold', fontsize=12)
 
     fig.savefig(f'plots/Plot_std_flow_profile_{save2file}.svg')
     plt.close()
