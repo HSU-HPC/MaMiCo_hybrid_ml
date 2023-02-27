@@ -136,9 +136,9 @@ def plot_flow_profile_std(np_datasets, dataset_legends, save2file, unique_id=Non
 
     axs[0].set_ylabel(r'$\mathbf{u_x}$', fontproperties=FONT)
     axs[0].grid(axis='y', alpha=0.3)
-    axs[0].set_ylim([2.5, 6.5])
-    axs[0].set_yticks([3, 4, 5, 6])
-    axs[0].set_yticklabels(axs[0].get_yticks(), fontproperties=FONT)
+    axs[0].set_ylim([2.5, 7.5])
+    axs[0].set_yticks([3, 4, 5, 6, 7])
+    axs[0].set_yticklabels([3, None, 5, None, 7], fontproperties=FONT)
 
     axs[1].set_ylabel(r'$\mathbf{u_y}$', fontproperties=FONT)
     axs[1].grid(axis='y', alpha=0.3)
