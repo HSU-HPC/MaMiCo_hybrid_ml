@@ -78,9 +78,8 @@ def plot_flow_profile(np_datasets, dataset_legends, save2file):
         axs[2].plot(_t_axis, dataset[-850:, 2, mid, mid, mid],
                     linewidth=lw, alpha=alpha, label=dataset_legends[idx])
 
-    fig.legend(ncol=_n_datasets, prop=FONT, loc='center left',
-               bbox_to_anchor=(0, 0), fancybox=True, shadow=False)
-    # axs[2].legend(ncol=_n_datasets, prop=FONT)
+    axs[2].legend(ncol=_n_datasets, prop=FONT, loc='lower left',
+                  bbox_to_anchor=(0, -0.7), fancybox=True, shadow=False)
 
     fig.savefig(f'plots/Plot_loc_flow_profile_{save2file}.svg')
     plt.close()
@@ -118,14 +117,14 @@ def plot_flow_profile_std(np_datasets, dataset_legends, save2file):
 
     fig, axs = plt.subplots(3, sharex=True, constrained_layout=True)
 
-    axs[0].set_ylabel("$u_x$", fontsize=12, fontweight='bold')
+    axs[0].set_ylabel(r'$\mathbf{u_x}$', fontsize=12, fontweight='bold')
     axs[0].grid(axis='y', alpha=0.3)
 
-    axs[1].set_ylabel("$u_y$", fontsize=12, fontweight='bold')
+    axs[1].set_ylabel(r'$\mathbf{u_y}$', fontsize=12, fontweight='bold')
     axs[1].grid(axis='y', alpha=0.3)
 
     axs[2].set_xlabel("t", fontsize=12, fontweight='bold')
-    axs[2].set_ylabel("$u_z$", fontsize=12, fontweight='bold')
+    axs[2].set_ylabel(r'$\mathbf{u_z}$', fontsize=12, fontweight='bold')
     axs[2].grid(axis='y', alpha=0.3)
 
     for idx, dataset in enumerate(np_datasets):
@@ -159,7 +158,8 @@ def plot_flow_profile_std(np_datasets, dataset_legends, save2file):
         axs[2].fill_between(_t_axis, _d_avg_z - _d_std_z, _d_avg_z
                             + _d_std_z, alpha=alpha, label=dataset_legends[idx])
 
-    axs[2].legend(ncol=_n_datasets, prop=FONT)
+    axs[2].legend(ncol=_n_datasets, prop=FONT, loc='lower left',
+                  bbox_to_anchor=(0, -0.7), fancybox=True, shadow=False)
 
     fig.savefig(f'plots/Plot_std_flow_profile_{save2file}.svg')
     plt.close()
@@ -487,9 +487,13 @@ def plotlbm(lbm_input, file_directory, file_id):
 
 
 if __name__ == "__main__":
-    _lbm = np.loadtxt('dataset_mlready/kvs_20000_NE_lbm.csv', delimiter=";")
-    _lbm = _lbm.reshape(1000, 3)
-    _file_directory = 'plots/'
-    _file_id = 'kvs_20000_NE'
+    _x_rand_1 = np.random.rand(850, 3, 8, 8, 8)
+    _x_desc_1 = 'Description_1'
+    _x_rand_2 = np.random.rand(850, 3, 8, 8, 8)
+    _x_desc_2 = 'Description_2'
+    _x_rand_3 = np.random.rand(850, 3, 8, 8, 8)
+    _x_desc_3 = 'Description_3'
+    _x_file = 'file_name'
 
-    plotlbm(_lbm, _file_directory, _file_id)
+    plot_flow_profile(np_datasets=[_x_rand_1, _x_rand_2, _x_rand_3], dataset_legends=[
+                      _x_desc_1, _x_desc_2, _x_desc_3], save2file=_x_file)
