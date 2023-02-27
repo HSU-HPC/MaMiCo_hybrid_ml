@@ -89,9 +89,9 @@ def plot_flow_profile(np_datasets, dataset_legends, save2file):
     axs[2].legend(ncol=_n_datasets, prop=FONT, loc='lower left',
                   bbox_to_anchor=(0, -0.7), fancybox=True, shadow=False)
 
-    # fig.savefig(f'plots/Plot_loc_flow_profile_{save2file}.svg')
-    plt.show()
-    # plt.close()
+    fig.savefig(f'plots/Plot_loc_flow_profile_{save2file}.svg')
+    # plt.show()
+    plt.close()
 
 
 def plot_flow_profile_std(np_datasets, dataset_legends, save2file):
