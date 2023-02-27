@@ -840,7 +840,7 @@ def analysis_3_Couette_Test_mp():
     )
 
     _processes = []
-    for i in range(3):
+    for i in range(1):
         _p = mp.Process(
             target=analysis_3_Couette_Test,
             args=(_models[i], _model_identifiers[i],
