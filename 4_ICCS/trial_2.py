@@ -423,7 +423,7 @@ def md_substitution_retriever(model_AE_directory, model_name_i, model_RNN_direct
     approach.
     '''
     _preds_b = torch.zeros(1, 3, 24, 24, 24).to(device=device)
-    _input_b[:, :, 3:21, 3:21, 3:21] = torch.zeros(899, 3, 18, 18, 18)
+    _input_b[:, :, 3:21, 3:21, 3:21] = torch.ones(899, 3, 18, 18, 18) * 4.2
     t_max = 899
     t = 0
     while t < 25:
@@ -453,14 +453,16 @@ def md_substitution_retriever(model_AE_directory, model_name_i, model_RNN_direct
         np_datasets=[_targs, _preds_a, _preds_b],
         dataset_legends=[
             'MD', 'MD + Hybrid ML', 'Hybrid ML only'],
-        save2file=f'{_id}_Fig_Maker_3_Hybrid_vs_Recursive_vs_MaMiCo'
+        save2file=f'{_id}_Fig_Maker_3_Hybrid_vs_Recursive_vs_MaMiCo',
+        unique_id='test_4_2'
     )
 
     plot_flow_profile_std(
         np_datasets=[_targs, _preds_b],
         dataset_legends=[
             'MD', 'Hybrid ML only'],
-        save2file=f'{_id}_Fig_Maker_3_Hybrid_vs_Recursive_vs_MaMiCo'
+        save2file=f'{_id}_Fig_Maker_3_Hybrid_vs_Recursive_vs_MaMiCo',
+        unique_id='test_4_2'
     )
 
 

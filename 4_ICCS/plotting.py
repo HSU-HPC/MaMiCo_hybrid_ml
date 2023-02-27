@@ -22,7 +22,7 @@ def getColor(c, N, idx):
     return cmap(norm(idx))
 
 
-def plot_flow_profile(np_datasets, dataset_legends, save2file):
+def plot_flow_profile(np_datasets, dataset_legends, save2file, unique_id=None):
     """The plot_flow_profile function visualizes datasets via 2D flow profiles
     and as such is used to validate proper simulation/prediction. For our
     purposes, we create 3 subplots to validate couette and KVS based simulations.
@@ -89,12 +89,15 @@ def plot_flow_profile(np_datasets, dataset_legends, save2file):
     axs[2].legend(ncol=_n_datasets, prop=FONT, loc='lower left',
                   bbox_to_anchor=(0, -0.7), fancybox=True, shadow=False)
 
-    fig.savefig(f'plots/Plot_loc_flow_profile_{save2file}.svg')
+    if unique_id is not None:
+        fig.savefig(f'plots/Plot_loc_flow_profile_{save2file}{unique_id}.svg')
+    else:
+        fig.savefig(f'plots/Plot_loc_flow_profile_{save2file}.svg')
     # plt.show()
     plt.close()
 
 
-def plot_flow_profile_std(np_datasets, dataset_legends, save2file):
+def plot_flow_profile_std(np_datasets, dataset_legends, save2file, unique_id=None):
     """The plot_flow_profile function visualizes datasets via 2D flow profiles
     and as such is used to validate proper simulation/prediction. For our
     purposes, we create 3 subplots to validate couette and KVS based simulations.
@@ -143,7 +146,6 @@ def plot_flow_profile_std(np_datasets, dataset_legends, save2file):
     axs[2].set_ylim([-1.0, 1.0])
     axs[2].set_yticklabels([-1, None, 0, None, 1], fontproperties=FONT)
 
-
     for idx, dataset in enumerate(np_datasets):
         alpha = 0.4 * 2
         lw = 0.5 * 2
@@ -179,7 +181,10 @@ def plot_flow_profile_std(np_datasets, dataset_legends, save2file):
     axs[2].legend(ncol=_n_datasets, prop=FONT, loc='lower left',
                   bbox_to_anchor=(0, -0.7), fancybox=True, shadow=False)
 
-    fig.savefig(f'plots/Plot_std_flow_profile_{save2file}.svg')
+    if unique_id is not None:
+        fig.savefig(f'plots/Plot_std_flow_profile_{save2file}{unique_id}.svg')
+    else:
+        fig.savefig(f'plots/Plot_std_flow_profile_{save2file}.svg')
     # plt.show()
     plt.close()
 
