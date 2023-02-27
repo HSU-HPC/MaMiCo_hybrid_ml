@@ -6,13 +6,13 @@ paper. In particular:
 plot_flow_profile
 
 """
+from utils import csv2dataset_mp
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 import matplotlib.font_manager as font_manager
 mpl.rc('text', usetex=True)
-mpl.rcParams['text.latex.preamble']=[r"\usepackage{amsmath}"]
-from utils import csv2dataset_mp
+mpl.rcParams['text.latex.preamble'] = [r"\usepackage{amsmath}"]
 
 
 def getColor(c, N, idx):
@@ -57,14 +57,14 @@ def plot_flow_profile(np_datasets, dataset_legends, save2file):
 
     fig, axs = plt.subplots(3, sharex=True, constrained_layout=True)
 
-    axs[0].set_ylabel("$\boldsymbol{u_x}$", fontsize=12, fontweight='bold')
+    axs[0].set_ylabel(r"$\boldsymbol{u_x}$", fontsize=12, fontweight='bold')
     axs[0].grid(axis='y', alpha=0.3)
 
-    axs[1].set_ylabel("$\boldsymbol{u_y}$", fontsize=12, fontweight='bold')
+    axs[1].set_ylabel(r"$\boldsymbol{u_y}$", fontsize=12, fontweight='bold')
     axs[1].grid(axis='y', alpha=0.3)
 
     axs[2].set_xlabel("t", fontsize=12, fontweight='bold')
-    axs[2].set_ylabel("$\boldsymbol{u_z}$", fontsize=12, fontweight='bold')
+    axs[2].set_ylabel(r"$\boldsymbol{u_z}$", fontsize=12, fontweight='bold')
     axs[2].grid(axis='y', alpha=0.3)
 
     for idx, dataset in enumerate(np_datasets):
