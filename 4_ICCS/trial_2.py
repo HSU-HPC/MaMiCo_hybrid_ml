@@ -423,11 +423,11 @@ def md_substitution_retriever(model_AE_directory, model_name_i, model_RNN_direct
     approach.
     '''
     _preds_b = torch.zeros(1, 3, 24, 24, 24).to(device=device)
-    _input_b[:, 0, 3:21, 3:21, 3:21] = torch.ones(
+    _input_b[:, 0, 3:21, 3:21, 3:21] = torch.zeros(
         899, 18, 18, 18) * _input_b[0, 0, 0, 0, 0]
-    _input_b[:, 1, 3:21, 3:21, 3:21] = torch.ones(
+    _input_b[:, 1, 3:21, 3:21, 3:21] = torch.zeros(
         899, 18, 18, 18) * _input_b[0, 1, 0, 0, 0]
-    _input_b[:, 2, 3:21, 3:21, 3:21] = torch.ones(
+    _input_b[:, 2, 3:21, 3:21, 3:21] = torch.zeros(
         899, 18, 18, 18) * _input_b[0, 2, 0, 0, 0]
     t_max = 899
     t = 0
@@ -466,7 +466,7 @@ def md_substitution_retriever(model_AE_directory, model_name_i, model_RNN_direct
         dataset_legends=[
             'MD', 'Hybrid ML only'],
         save2file=f'{_id}_Fig_Maker_3_Hybrid_vs_Recursive_vs_MaMiCo',
-        unique_id='test_4_2'
+        unique_id='test_0_0'
     )
 
 
