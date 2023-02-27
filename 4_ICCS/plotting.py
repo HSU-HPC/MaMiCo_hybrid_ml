@@ -56,13 +56,16 @@ def plot_flow_profile(np_datasets, dataset_legends, save2file):
 
     axs[0].set_ylabel(r'$\mathbf{u_x}$', fontsize=12, fontweight='bold')
     axs[0].grid(axis='y', alpha=0.3)
+    axs[0].set_ylim([3.0, 6.5])
 
     axs[1].set_ylabel(r'$\mathbf{u_y}$', fontsize=12, fontweight='bold')
     axs[1].grid(axis='y', alpha=0.3)
+    axs[1].set_ylim([-1.0, 1.0])
 
     axs[2].set_xlabel("t", fontsize=12, fontweight='bold')
     axs[2].set_ylabel(r'$\mathbf{u_z}$', fontsize=12, fontweight='bold')
     axs[2].grid(axis='y', alpha=0.3)
+    axs[2].set_ylim([-1.0, 1.0])
 
     for idx, dataset in enumerate(np_datasets):
         mid = 6
@@ -82,6 +85,7 @@ def plot_flow_profile(np_datasets, dataset_legends, save2file):
                   bbox_to_anchor=(0, -0.7), fancybox=True, shadow=False)
 
     fig.savefig(f'plots/Plot_loc_flow_profile_{save2file}.svg')
+    # plt.show()
     plt.close()
 
 
@@ -161,8 +165,9 @@ def plot_flow_profile_std(np_datasets, dataset_legends, save2file):
     axs[2].legend(ncol=_n_datasets, prop=FONT, loc='lower left',
                   bbox_to_anchor=(0, -0.7), fancybox=True, shadow=False)
 
-    fig.savefig(f'plots/Plot_std_flow_profile_{save2file}.svg')
-    plt.close()
+    # fig.savefig(f'plots/Plot_std_flow_profile_{save2file}.svg')
+    plt.show()
+    # plt.close()
 
 
 def compareLossVsValid(loss_files, loss_labels, file_prefix=0, file_name=0):
