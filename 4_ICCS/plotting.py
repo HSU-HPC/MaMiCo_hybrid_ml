@@ -197,6 +197,7 @@ def plot_flow_profile_std(np_datasets, dataset_legends, save2file, unique_id=Non
 
     # specify order of items in legend
     order = [0, 3, 1, 4, 2, 5]
+    order = [0, 1, 2, 3, 4, 5]
 
     # add legend to plot
     axs[2].legend([handles[idx] for idx in order], [labels[idx]
