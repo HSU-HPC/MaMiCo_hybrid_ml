@@ -9,8 +9,8 @@ from utils_new import csv2dataset, csv2dataset_mp, mamico_csv2dataset, mamico_cs
 # np.set_printoptions(precision=2)
 
 
-FONT = font_manager.FontProperties(weight='bold', size=15)
-FONT2 = font_manager.FontProperties(weight='bold', size=18)
+FONT = font_manager.FontProperties(weight='bold', size=22)
+FONT2 = font_manager.FontProperties(weight='bold', size=26)
 
 
 def getColor(c, N, idx):
