@@ -56,7 +56,7 @@ def plot_flow_profile(np_datasets, dataset_legends, save2file, unique_id=None):
     axs.grid(axis='y', alpha=0.3)
     axs.set_ylim([-1.1, 1.1])
     axs.set_yticks([-1.0, -0.5, 0, 0.5, 1.0])
-    axs.set_yticklabels([-0.4, None, 0, None, 0.4], fontproperties=FONT)
+    axs.set_yticklabels([-1.0, None, 0, None, 1.0], fontproperties=FONT)
     axs.set_xlabel("t", fontproperties=FONT2)
     '''
     axs[1].set_ylabel(r'$\mathbf{u_y}$', fontproperties=FONT)
@@ -140,7 +140,7 @@ def plot_flow_profile_std(np_datasets, dataset_legends, save2file, unique_id=Non
     axs.grid(axis='y', alpha=0.3)
     axs.set_ylim([-0.5, 0.6])
     axs.set_yticks([-0.4, -0.2, 0, 0.2, 0.4])
-    axs.set_yticklabels([-1.0, None, 0, None, 1.0], fontproperties=FONT)
+    axs.set_yticklabels([-0.4, None, 0, None, 0.4], fontproperties=FONT)
     axs.set_xlabel("t", fontproperties=FONT2)
     '''
     axs[1].set_ylabel(r'$\mathbf{u_y}$', fontproperties=FONT)
@@ -935,5 +935,5 @@ if __name__ == "__main__":
     _x_desc_3 = 'Description_3'
     _x_file = 'file_name'
 
-    plot_flow_profile(np_datasets=[_x_rand_1, _x_rand_2], dataset_legends=[
+    plot_flow_profile_std(np_datasets=[_x_rand_1, _x_rand_2], dataset_legends=[
                       _x_desc_1, _x_desc_2], save2file=_x_file, unique_id=0)
