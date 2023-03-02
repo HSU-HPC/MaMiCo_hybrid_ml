@@ -86,10 +86,9 @@ def plot_flow_profile(np_datasets, dataset_legends, save2file, unique_id=None):
                     linewidth=lw, alpha=alpha, label=dataset_legends[idx])
         '''
     plt.xticks([0, 200, 400, 600, 800], fontproperties=FONT)
-    fig.set_size_inches(8, 7)
-    # plt.yticks([0, 200, 400, 600, 800], fontproperties=FONT)
+    fig.set_size_inches(11.6, 7)
     axs.legend(ncol=_n_datasets, prop=FONT, loc='lower left',
-               bbox_to_anchor=(0, -0.25), fancybox=True, shadow=False)
+               bbox_to_anchor=(0, -0.4), fancybox=True, shadow=False)
 
     if unique_id is not None:
         if unique_id == 0:
@@ -188,9 +187,9 @@ def plot_flow_profile_std(np_datasets, dataset_legends, save2file, unique_id=Non
                             + _d_std_z, alpha=alpha, label=dataset_legends[idx])
         '''
     plt.xticks([0, 200, 400, 600, 800], fontproperties=FONT)
-    fig.set_size_inches(8, 7)
+    fig.set_size_inches(11.6, 7)
     axs.legend(ncol=_n_datasets, prop=FONT, loc='lower left',
-               bbox_to_anchor=(0, -0.25), fancybox=True, shadow=False)
+               bbox_to_anchor=(0, -0.4), fancybox=True, shadow=False)
 
     if unique_id is not None:
         if unique_id == 0:
@@ -937,7 +936,4 @@ if __name__ == "__main__":
     _x_file = 'file_name'
 
     plot_flow_profile(np_datasets=[_x_rand_1, _x_rand_2], dataset_legends=[
-                      _x_desc_1, _x_desc_2], save2file=_x_file, unique_id=0)
-
-    plot_flow_profile_std(np_datasets=[_x_rand_1, _x_rand_2], dataset_legends=[
                       _x_desc_1, _x_desc_2], save2file=_x_file, unique_id=0)
