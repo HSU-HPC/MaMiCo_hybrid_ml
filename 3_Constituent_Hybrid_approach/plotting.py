@@ -9,7 +9,8 @@ from utils_new import csv2dataset, csv2dataset_mp, mamico_csv2dataset, mamico_cs
 # np.set_printoptions(precision=2)
 
 
-FONT = font_manager.FontProperties(weight='bold', size=10)
+FONT = font_manager.FontProperties(weight='bold', size=15)
+FONT2 = font_manager.FontProperties(weight='bold', size=18)
 
 
 def getColor(c, N, idx):
@@ -51,12 +52,12 @@ def plot_flow_profile(np_datasets, dataset_legends, save2file, unique_id=None):
 
     fig, axs = plt.subplots(1, sharex=True, constrained_layout=True)
 
-    axs.set_ylabel(r'$\mathbf{u_x}$', fontproperties=FONT)
+    axs.set_ylabel(r'$\mathbf{u_x}$', fontproperties=FONT2)
     axs.grid(axis='y', alpha=0.3)
     axs.set_ylim([-1.1, 1.1])
     axs.set_yticks([-1.0, -0.5, 0, 0.5, 1.0])
     axs.set_yticklabels([-0.4, None, 0, None, 0.4], fontproperties=FONT)
-    axs.set_xlabel("t", fontproperties=FONT)
+    axs.set_xlabel("t", fontproperties=FONT2)
     '''
     axs[1].set_ylabel(r'$\mathbf{u_y}$', fontproperties=FONT)
     axs[1].grid(axis='y', alpha=0.3)
@@ -85,8 +86,10 @@ def plot_flow_profile(np_datasets, dataset_legends, save2file, unique_id=None):
                     linewidth=lw, alpha=alpha, label=dataset_legends[idx])
         '''
     plt.xticks([0, 200, 400, 600, 800], fontproperties=FONT)
+    fig.set_size_inches(8, 7)
+    # plt.yticks([0, 200, 400, 600, 800], fontproperties=FONT)
     axs.legend(ncol=_n_datasets, prop=FONT, loc='lower left',
-               bbox_to_anchor=(0, -0.3), fancybox=True, shadow=False)
+               bbox_to_anchor=(0, -0.25), fancybox=True, shadow=False)
 
     if unique_id is not None:
         if unique_id == 0:
@@ -134,12 +137,12 @@ def plot_flow_profile_std(np_datasets, dataset_legends, save2file, unique_id=Non
 
     fig, axs = plt.subplots(1, sharex=True, constrained_layout=True)
 
-    axs.set_ylabel(r'$\mathbf{u_x}$', fontproperties=FONT)
+    axs.set_ylabel(r'$\mathbf{u_x}$', fontproperties=FONT2)
     axs.grid(axis='y', alpha=0.3)
     axs.set_ylim([-0.5, 0.6])
     axs.set_yticks([-0.4, -0.2, 0, 0.2, 0.4])
     axs.set_yticklabels([-1.0, None, 0, None, 1.0], fontproperties=FONT)
-    axs.set_xlabel("t", fontproperties=FONT)
+    axs.set_xlabel("t", fontproperties=FONT2)
     '''
     axs[1].set_ylabel(r'$\mathbf{u_y}$', fontproperties=FONT)
     axs[1].grid(axis='y', alpha=0.3)
@@ -162,17 +165,17 @@ def plot_flow_profile_std(np_datasets, dataset_legends, save2file, unique_id=Non
             lw = 0.3 * 2
 
         _d_std_x = np.std(dataset[-850:, 0, mid, mid, :], axis=(1))
-        _d_std_y = np.std(dataset[-850:, 1, mid, mid, :], axis=(1))
-        _d_std_z = np.std(dataset[-850:, 2, mid, mid, :], axis=(1))
+        # _d_std_y = np.std(dataset[-850:, 1, mid, mid, :], axis=(1))
+        # _d_std_z = np.std(dataset[-850:, 2, mid, mid, :], axis=(1))
 
         _d_avg_x = np.mean(dataset[-850:, 0, mid, mid, :], axis=(1))
-        _d_avg_y = np.mean(dataset[-850:, 1, mid, mid, :], axis=(1))
-        _d_avg_z = np.mean(dataset[-850:, 2, mid, mid, :], axis=(1))
+        # _d_avg_y = np.mean(dataset[-850:, 1, mid, mid, :], axis=(1))
+        # _d_avg_z = np.mean(dataset[-850:, 2, mid, mid, :], axis=(1))
 
         axs.plot(_t_axis, _d_avg_x, linewidth=lw,
                  label=dataset_legends[idx])
         axs.fill_between(_t_axis, _d_avg_x-_d_std_x, _d_avg_x
-                         + _d_std_x, alpha=alpha, label=dataset_legends[idx])
+                         + _d_std_x, alpha=alpha, label=f'{dataset_legends[idx]} std. dev.')
         '''
         axs[1].plot(_t_axis, _d_avg_y, linewidth=lw,
                     label=dataset_legends[idx])
@@ -185,8 +188,9 @@ def plot_flow_profile_std(np_datasets, dataset_legends, save2file, unique_id=Non
                             + _d_std_z, alpha=alpha, label=dataset_legends[idx])
         '''
     plt.xticks([0, 200, 400, 600, 800], fontproperties=FONT)
+    fig.set_size_inches(8, 7)
     axs.legend(ncol=_n_datasets, prop=FONT, loc='lower left',
-               bbox_to_anchor=(0, -0.3), fancybox=True, shadow=False)
+               bbox_to_anchor=(0, -0.25), fancybox=True, shadow=False)
 
     if unique_id is not None:
         if unique_id == 0:
@@ -925,12 +929,15 @@ def main():
 
 if __name__ == "__main__":
     _x_rand_1 = np.random.rand(850, 3, 13, 13, 13) * 0.3
-    _x_desc_1 = 'Description_1'
+    _x_desc_1 = 'MD'
     _x_rand_2 = np.random.rand(850, 3, 13, 13, 13) * 0.3
-    _x_desc_2 = 'Description_2'
+    _x_desc_2 = 'MD + Hybrid ML'
     _x_rand_3 = np.random.rand(850, 3, 8, 8, 8) * 0.3
     _x_desc_3 = 'Description_3'
     _x_file = 'file_name'
+
+    plot_flow_profile(np_datasets=[_x_rand_1, _x_rand_2], dataset_legends=[
+                      _x_desc_1, _x_desc_2], save2file=_x_file, unique_id=0)
 
     plot_flow_profile_std(np_datasets=[_x_rand_1, _x_rand_2], dataset_legends=[
                       _x_desc_1, _x_desc_2], save2file=_x_file, unique_id=0)
