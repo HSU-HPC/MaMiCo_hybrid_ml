@@ -164,11 +164,11 @@ def plot_flow_profile_std(np_datasets, dataset_legends, save2file, unique_id=Non
             alpha = 0.2 * 2
             lw = 0.3 * 2
 
-        _d_std_x = np.std(dataset[-850:, 0, mid, mid, :], axis=(1))
+        _d_std_x = np.std(dataset[-850:, 0, mid, :, mid], axis=(1))
         # _d_std_y = np.std(dataset[-850:, 1, mid, mid, :], axis=(1))
         # _d_std_z = np.std(dataset[-850:, 2, mid, mid, :], axis=(1))
 
-        _d_avg_x = np.mean(dataset[-850:, 0, mid, mid, :], axis=(1))
+        _d_avg_x = np.mean(dataset[-850:, 0, mid, :, mid], axis=(1))
         # _d_avg_y = np.mean(dataset[-850:, 1, mid, mid, :], axis=(1))
         # _d_avg_z = np.mean(dataset[-850:, 2, mid, mid, :], axis=(1))
 
