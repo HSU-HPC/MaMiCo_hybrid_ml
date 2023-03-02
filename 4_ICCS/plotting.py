@@ -56,19 +56,21 @@ def plot_flow_profile(np_datasets, dataset_legends, save2file, unique_id=None):
 
     axs[0].set_ylabel(r'$\mathbf{u_x}$', fontproperties=FONT)
     axs[0].grid(axis='y', alpha=0.3)
-    axs[0].set_ylim([2.5, 6.5])
-    axs[0].set_yticks([3, 4, 5, 6])
-    axs[0].set_yticklabels(axs[0].get_yticks(), fontproperties=FONT)
+    axs[0].set_ylim([1, 7])
+    axs[0].set_yticks([2, 3, 4, 5, 6])
+    axs[0].set_yticklabels([2, None, 4, None, 6], fontproperties=FONT)
 
     axs[1].set_ylabel(r'$\mathbf{u_y}$', fontproperties=FONT)
     axs[1].grid(axis='y', alpha=0.3)
-    axs[1].set_ylim([-1.0, 1.0])
+    axs[1].set_ylim([-1.25, 1.25])
+    axs[1].set_yticks([-1.0, -0.5, 0, 0.5, 1.0])
     axs[1].set_yticklabels([-1, None, 0, None, 1], fontproperties=FONT)
 
     axs[2].set_xlabel("t", fontproperties=FONT)
     axs[2].set_ylabel(r'$\mathbf{u_z}$', fontproperties=FONT)
     axs[2].grid(axis='y', alpha=0.3)
-    axs[2].set_ylim([-1.0, 1.0])
+    axs[2].set_ylim([-1.25, 1.25])
+    axs[2].set_yticks([-1.0, -0.5, 0, 0.5, 1.0])
     axs[2].set_yticklabels([-1, None, 0, None, 1], fontproperties=FONT)
 
     for idx, dataset in enumerate(np_datasets):
@@ -86,8 +88,9 @@ def plot_flow_profile(np_datasets, dataset_legends, save2file, unique_id=None):
                     linewidth=lw, alpha=alpha, label=dataset_legends[idx])
 
     plt.xticks([0, 200, 400, 600, 800], fontproperties=FONT)
+    fig.set_size_inches(7.85, 7)
     axs[2].legend(ncol=_n_datasets, prop=FONT, loc='lower left',
-                  bbox_to_anchor=(0, -0.7), fancybox=True, shadow=False)
+                  bbox_to_anchor=(0, -0.55), fancybox=True, shadow=False)
 
     if unique_id is not None:
         if unique_id == 0:
@@ -136,19 +139,21 @@ def plot_flow_profile_std(np_datasets, dataset_legends, save2file, unique_id=Non
 
     axs[0].set_ylabel(r'$\mathbf{u_x}$', fontproperties=FONT)
     axs[0].grid(axis='y', alpha=0.3)
-    axs[0].set_ylim([2.5, 7.5])
-    axs[0].set_yticks([3, 4, 5, 6, 7])
-    axs[0].set_yticklabels([3, None, 5, None, 7], fontproperties=FONT)
+    axs[0].set_ylim([1.5, 6.5])
+    axs[0].set_yticks([2, 3, 4, 5, 6])
+    axs[0].set_yticklabels([2, None, 4, None, 6], fontproperties=FONT)
 
     axs[1].set_ylabel(r'$\mathbf{u_y}$', fontproperties=FONT)
     axs[1].grid(axis='y', alpha=0.3)
-    axs[1].set_ylim([-0.5, 0.5])
+    axs[1].set_ylim([-0.55, 0.55])
+    axs[1].set_yticks([-0.5, -0.25, 0, 0.25, 0.5])
     axs[1].set_yticklabels([-0.5, None, 0, None, 0.5], fontproperties=FONT)
 
     axs[2].set_xlabel("t", fontproperties=FONT)
     axs[2].set_ylabel(r'$\mathbf{u_z}$', fontproperties=FONT)
     axs[2].grid(axis='y', alpha=0.3)
-    axs[2].set_ylim([-0.5, 0.5])
+    axs[2].set_ylim([-0.55, 0.55])
+    axs[2].set_yticks([-0.5, -0.25, 0, 0.25, 0.5])
     axs[2].set_yticklabels([-0.5, None, 0, None, 0.5], fontproperties=FONT)
 
     for idx, dataset in enumerate(np_datasets):
@@ -169,22 +174,33 @@ def plot_flow_profile_std(np_datasets, dataset_legends, save2file, unique_id=Non
 
         axs[0].plot(_t_axis, _d_avg_x, linewidth=lw,
                     label=dataset_legends[idx])
+
         axs[0].fill_between(_t_axis, _d_avg_x-_d_std_x, _d_avg_x
-                            + _d_std_x, alpha=alpha, label=dataset_legends[idx])
+                            + _d_std_x, alpha=alpha, label=f'{dataset_legends[idx]} std. dev.')
 
         axs[1].plot(_t_axis, _d_avg_y, linewidth=lw,
                     label=dataset_legends[idx])
         axs[1].fill_between(_t_axis, _d_avg_y - _d_std_y, _d_avg_y
-                            + _d_std_y, alpha=alpha, label=dataset_legends[idx])
+                            + _d_std_y, alpha=alpha, label=f'{dataset_legends[idx]} std. dev.')
 
         axs[2].plot(_t_axis, _d_avg_z, linewidth=lw,
                     label=dataset_legends[idx])
         axs[2].fill_between(_t_axis, _d_avg_z - _d_std_z, _d_avg_z
-                            + _d_std_z, alpha=alpha, label=dataset_legends[idx])
+                            + _d_std_z, alpha=alpha, label=f'{dataset_legends[idx]} std. dev.')
 
     plt.xticks([0, 200, 400, 600, 800], fontproperties=FONT)
-    axs[2].legend(ncol=_n_datasets, prop=FONT, loc='lower left',
-                  bbox_to_anchor=(0, -0.85), fancybox=True, shadow=False)
+    fig.set_size_inches(7.85, 7)
+
+    # get handles and labels
+    handles, labels = axs[2].get_legend_handles_labels()
+    print(labels)
+
+    # specify order of items in legend
+    order = [0, 3, 1, 4, 2, 5]
+
+    # add legend to plot
+    axs[2].legend([handles[idx] for idx in order], [labels[idx]
+                                                    for idx in order], ncol=_n_datasets, prop=FONT, loc='lower left', bbox_to_anchor=(0, -0.55), fancybox=True, shadow=False)
 
     if unique_id is not None:
         if unique_id == 0:
@@ -304,179 +320,6 @@ def plotPredVsTargKVS(input_pred, input_targ=None, input_lbm=None, file_name=Non
     plt.close()
 
 
-def plotPredVsTargKVS_graveyard(input_1, input_2='void', file_prefix=0, file_name=0):
-    """The plotPredVsTargKVS function aims to graphically compare model
-    performance via plotting domain-wise averaged predicted and target
-    velocities vs time. The standard deviations are additionally included for
-    better comparison.
-
-    Args:
-        input_1:
-          Object of type PyTorch-Tensor containing the predicted dataset
-        input_2:
-          Object of type PyTorch-Tensor containing the target dataset
-        file_prefix:
-          Object of type string containing
-        file_name:
-          Object of type string containing
-
-    Returns:
-        NONE:
-          This function saves the graphical comparison to file.
-    """
-
-    if input_2 == 'void':
-        print('Invalid input_2.')
-
-    t, c, x, y, z = input_1.shape
-    mid = y//2
-    t_max = t
-    t_axis = np.arange(1, t_max+1)
-
-    p_std_x = np.std(input_1[:, 0, :, :, :], axis=(1, 2, 3))
-    t_std_x = np.std(input_2[:, 0, :, :, :], axis=(1, 2, 3))
-    p_std_y = np.std(input_1[:, 1, :, :, :], axis=(1, 2, 3))
-    t_std_y = np.std(input_2[:, 1, :, :, :], axis=(1, 2, 3))
-    p_std_z = np.std(input_1[:, 2, :, :, :], axis=(1, 2, 3))
-    t_std_z = np.std(input_2[:, 2, :, :, :], axis=(1, 2, 3))
-
-    p_avg_x = np.mean(input_1[:, 0, :, :, :], axis=(1, 2, 3))
-    t_avg_x = np.mean(input_2[:, 0, :, :, :], axis=(1, 2, 3))
-    p_avg_x_NE = np.mean(input_1[:, 0, mid:, mid:, :], axis=(1, 2, 3))
-    t_avg_x_NE = np.mean(input_2[:, 0, mid:, mid:, :], axis=(1, 2, 3))
-    p_avg_x_NW = np.mean(input_1[:, 0, :mid, mid:, :], axis=(1, 2, 3))
-    t_avg_x_NW = np.mean(input_2[:, 0, :mid, mid:, :], axis=(1, 2, 3))
-    p_avg_x_SE = np.mean(input_1[:, 0, mid:, :mid, :], axis=(1, 2, 3))
-    t_avg_x_SE = np.mean(input_2[:, 0, mid:, :mid, :], axis=(1, 2, 3))
-    p_avg_x_SW = np.mean(input_1[:, 0, :mid, :mid, :], axis=(1, 2, 3))
-    t_avg_x_SW = np.mean(input_2[:, 0, :mid, :mid, :], axis=(1, 2, 3))
-
-    p_avg_y = np.mean(input_1[:, 1, :, :, :], axis=(1, 2, 3))
-    t_avg_y = np.mean(input_2[:, 1, :, :, :], axis=(1, 2, 3))
-    p_avg_y_NE = np.mean(input_1[:, 1, mid:, mid:, :], axis=(1, 2, 3))
-    t_avg_y_NE = np.mean(input_2[:, 1, mid:, mid:, :], axis=(1, 2, 3))
-    p_avg_y_NW = np.mean(input_1[:, 1, :mid, mid:, :], axis=(1, 2, 3))
-    t_avg_y_NW = np.mean(input_2[:, 1, :mid, mid:, :], axis=(1, 2, 3))
-    p_avg_y_SE = np.mean(input_1[:, 1, mid:, :mid, :], axis=(1, 2, 3))
-    t_avg_y_SE = np.mean(input_2[:, 1, mid:, :mid, :], axis=(1, 2, 3))
-    p_avg_y_SW = np.mean(input_1[:, 1, :mid, :mid, :], axis=(1, 2, 3))
-    t_avg_y_SW = np.mean(input_2[:, 1, :mid, :mid, :], axis=(1, 2, 3))
-
-    p_avg_z = np.mean(input_1[:, 2, :, :, :], axis=(1, 2, 3))
-    t_avg_z = np.mean(input_2[:, 2, :, :, :], axis=(1, 2, 3))
-    p_avg_z_NE = np.mean(input_1[:, 2, mid:, mid:, :], axis=(1, 2, 3))
-    t_avg_z_NE = np.mean(input_2[:, 2, mid:, mid:, :], axis=(1, 2, 3))
-    p_avg_z_NW = np.mean(input_1[:, 2, :mid, mid:, :], axis=(1, 2, 3))
-    t_avg_z_NW = np.mean(input_2[:, 2, :mid, mid:, :], axis=(1, 2, 3))
-    p_avg_z_SE = np.mean(input_1[:, 2, mid:, :mid, :], axis=(1, 2, 3))
-    t_avg_z_SE = np.mean(input_2[:, 2, mid:, :mid, :], axis=(1, 2, 3))
-    p_avg_z_SW = np.mean(input_1[:, 2, :mid, :mid, :], axis=(1, 2, 3))
-    t_avg_z_SW = np.mean(input_2[:, 2, :mid, :mid, :], axis=(1, 2, 3))
-
-    p_loc_x = np.mean(input_1[:, 0, :, mid, mid], axis=(1))
-    print('p_loc_x.shape: ', p_loc_x.shape)
-    p_loc_y = np.mean(input_1[:, 1, :, mid, mid], axis=(1))
-    p_loc_z = np.mean(input_1[:, 2, :, mid, mid], axis=(1))
-    t_loc_x = np.mean(input_2[:, 0, :, mid, mid], axis=(1))
-    t_loc_y = np.mean(input_2[:, 1, :, mid, mid], axis=(1))
-    t_loc_z = np.mean(input_2[:, 2, :, mid, mid], axis=(1))
-
-    print('std array shape: ', t_std_z.shape)
-    print('avg array shape: ', t_avg_z.shape)
-
-    fig, axs = plt.subplots(3, 2, sharex=True, constrained_layout=True)
-    axs[0, 0].plot(t_axis, p_avg_x, linewidth=0.5, label='Prediction')
-    axs[0, 0].fill_between(t_axis, p_avg_x-p_std_x, p_avg_x
-                           + p_std_x, alpha=0.2, label='Prediction')
-    axs[0, 0].plot(t_axis, t_avg_x, linewidth=0.5, label='Target')
-    axs[0, 0].fill_between(t_axis, t_avg_x-t_std_x, t_avg_x
-                           + t_std_x, alpha=0.2, label='Target')
-    axs[0, 0].set_ylabel('Averaged $u_x$')
-    axs[0, 0].grid(axis='y', alpha=0.3)
-
-    axs[0, 1].plot(t_axis, p_avg_x_NE, color='green',
-                   linewidth=0.5, label='NE')
-    axs[0, 1].plot(t_axis, p_avg_x_NW, color='blue', linewidth=0.5, label='NW')
-    axs[0, 1].plot(t_axis, p_avg_x_SE, color='magenta',
-                   linewidth=0.5, label='SE')
-    axs[0, 1].plot(t_axis, p_avg_x_SW, color='red', linewidth=0.5, label='SW')
-    axs[0, 1].plot(t_axis, t_avg_x_NE, linestyle='dotted',
-                   color='green', linewidth=0.5, label='NE')
-    axs[0, 1].plot(t_axis, t_avg_x_NW, linestyle='dotted',
-                   color='blue', linewidth=0.5, label='NW')
-    axs[0, 1].plot(t_axis, t_avg_x_SE, linestyle='dotted',
-                   color='magenta', linewidth=0.5, label='SE')
-    axs[0, 1].plot(t_axis, t_avg_x_SW, linestyle='dotted',
-                   color='red', linewidth=0.5, label='SW')
-    axs[0, 1].set_ylabel('Averaged $u_x$')
-    axs[0, 1].grid(axis='y', alpha=0.3)
-
-    axs[1, 0].plot(t_axis, p_avg_y, linewidth=0.5, label='Prediction')
-    axs[1, 0].fill_between(t_axis, p_avg_y-p_std_y, p_avg_y
-                           + p_std_y, alpha=0.2, label='Prediction')
-    axs[1, 0].plot(t_axis, t_avg_y, linewidth=0.5, label='Target')
-    axs[1, 0].fill_between(t_axis, t_avg_y-t_std_y, t_avg_y
-                           + t_std_y, alpha=0.2, label='Target')
-    axs[1, 0].set_ylabel('Averaged $u_y$')
-    axs[1, 0].grid(axis='y', alpha=0.3)
-
-    axs[1, 1].plot(t_axis, p_avg_y_NE, color='green',
-                   linewidth=0.5, label='NE')
-    axs[1, 1].plot(t_axis, p_avg_y_NW, color='blue', linewidth=0.5, label='NW')
-    axs[1, 1].plot(t_axis, p_avg_y_SE, color='magenta',
-                   linewidth=0.5, label='SE')
-    axs[1, 1].plot(t_axis, p_avg_y_SW, color='red', linewidth=0.5, label='SW')
-    axs[1, 1].plot(t_axis, t_avg_y_NE, linestyle='dotted',
-                   color='green', linewidth=0.5, label='NE')
-    axs[1, 1].plot(t_axis, t_avg_y_NW, linestyle='dotted',
-                   color='blue', linewidth=0.5, label='NW')
-    axs[1, 1].plot(t_axis, t_avg_y_SE, linestyle='dotted',
-                   color='magenta', linewidth=0.5, label='SE')
-    axs[1, 1].plot(t_axis, t_avg_y_SW, linestyle='dotted',
-                   color='red', linewidth=0.5, label='SW')
-    axs[1, 1].set_ylabel('Averaged $u_y$')
-    axs[1, 1].grid(axis='y', alpha=0.3)
-
-    axs[2, 0].plot(t_axis, p_avg_z, linewidth=0.5, label='Prediction')
-    axs[2, 0].fill_between(t_axis, p_avg_z-p_std_z, p_avg_z
-                           + p_std_z, alpha=0.2, label='Prediction')
-    axs[2, 0].plot(t_axis, t_avg_z, linewidth=0.5, label='Target')
-    axs[2, 0].fill_between(t_axis, t_avg_z-t_std_z, t_avg_z
-                           + t_std_z, alpha=0.2, label='Target')
-    axs[2, 0].set_ylabel('Averaged $u_z$')
-    axs[2, 0].grid(axis='y', alpha=0.3)
-
-    axs[2, 0].set_xlabel('Timestep')
-
-    axs[2, 1].plot(t_axis, p_avg_z_NE, color='green',
-                   linewidth=0.5, label='NE')
-    axs[2, 1].plot(t_axis, p_avg_z_NW, color='blue', linewidth=0.5, label='NW')
-    axs[2, 1].plot(t_axis, p_avg_z_SE, color='magenta',
-                   linewidth=0.5, label='SE')
-    axs[2, 1].plot(t_axis, p_avg_z_SW, color='red', linewidth=0.5, label='SW')
-    axs[2, 1].plot(t_axis, t_avg_z_NE, linestyle='dotted',
-                   color='green', linewidth=0.5, label='NE')
-    axs[2, 1].plot(t_axis, t_avg_z_NW, linestyle='dotted',
-                   color='blue', linewidth=0.5, label='NW')
-    axs[2, 1].plot(t_axis, t_avg_z_SE, linestyle='dotted',
-                   color='magenta', linewidth=0.5, label='SE')
-    axs[2, 1].plot(t_axis, t_avg_z_SW, linestyle='dotted',
-                   color='red', linewidth=0.5, label='SW')
-    axs[2, 1].set_ylabel('Averaged $u_z$')
-    axs[2, 1].grid(axis='y', alpha=0.3)
-
-    axs[2, 0].legend(ncol=3, fontsize=9)
-    axs[2, 1].legend(ncol=4, fontsize=9)
-
-    fig.set_size_inches(12, 4)
-    if file_name != 0:
-        fig.savefig(
-            f'{file_prefix}Plot_PredVsTarg_KVS_{file_name}.svg')
-    #plt.show()
-    plt.close()
-    pass
-
-
 def plotlbm(lbm_input, file_directory, file_id):
     """The plotPredVsTargKVS function aims to graphically compare model
     performance via plotting domain-wise averaged predicted and target
@@ -522,12 +365,12 @@ def plotlbm(lbm_input, file_directory, file_id):
 
 if __name__ == "__main__":
     _x_rand_1 = np.random.rand(850, 3, 13, 13, 13) * 0.3
-    _x_desc_1 = 'Description_1'
+    _x_desc_1 = 'MD'
     _x_rand_2 = np.random.rand(850, 3, 13, 13, 13) * 0.3
-    _x_desc_2 = 'Description_2'
-    _x_rand_3 = np.random.rand(850, 3, 8, 8, 8) * 0.3
-    _x_desc_3 = 'Description_3'
+    _x_desc_2 = 'MD + Hybrid ML'
+    _x_rand_3 = np.random.rand(850, 3, 13, 13, 13) * 0.3
+    _x_desc_3 = 'Hybrid ML only'
     _x_file = 'file_name'
 
-    plot_flow_profile_std(np_datasets=[_x_rand_1, _x_rand_2], dataset_legends=[
-                      _x_desc_1, _x_desc_2], save2file=_x_file, unique_id=0)
+    plot_flow_profile_std(np_datasets=[_x_rand_1, _x_rand_2, _x_rand_3], dataset_legends=[
+                      _x_desc_1, _x_desc_2, _x_desc_3], save2file=_x_file, unique_id=0)
