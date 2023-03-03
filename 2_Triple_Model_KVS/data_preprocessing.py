@@ -7,7 +7,6 @@ to validate correctness/plausibility so as to reduce the likelihood of faulty
 simulation data.
 
 """
-import torch
 import csv
 import glob
 import numpy as np
