@@ -136,42 +136,5 @@ class MyMamicoDataset_Hybrid(Dataset):
         return image, mask
 
 
-class MyMamicoDataset_Hybrid_analysis(Dataset):
-    """This class inherits from the torch Dataset class and allows to create a
-    userdefined dataset. Here, the dataset is hardcoded to consider md+outer
-    dimensionality of 26^3 consisting of:
-    1x ghost_cell, 3x outer_cell, 18x md_cell, 3x outer_cell, 1x ghost_cell
-    As this dataset will be used for Hybrid_MD_RNN_UNET validation, this
-    dataset first removes the ghost_cells and then creates input (=image) and
-    output (=mask) pairs for timeseries prediction. In other words, the image
-    is for timestep = t and the mask is for timestep = t+20.
-
-    Note that the data dimensions [d_0, d_1, d_2, d_3, d_4] represent:
-    d_0 = 999  -> timestep,
-    d_1 = 3    -> RGB-channel (= u_x, u_y, u_z),
-    d_2 = 24   -> x-pos,
-    d_3 = 24   -> y-pos,
-    d_4 = 24   -> z-pos
-
-    Args:
-        my_images:
-          Object of type numpy array containing the timeseries of multichannel
-          volumetric data.
-    """
-
-    def __init__(self, my_images):
-        self.samples = my_images[::20]
-        self.sample_images = self.samples[:-1, :, 1:-1, 1:-1, 1:-1]
-        self.sample_masks = self.samples[1:, :, 1:-1, 1:-1, 1:-1]
-
-    def __len__(self):
-        return len(self.sample_images)
-
-    def __getitem__(self, idx):
-        image = torch.from_numpy(self.sample_images[idx])
-        mask = torch.from_numpy(self.sample_masks[idx])
-        return image, mask
-
-
 if __name__ == "__main__":
     pass
