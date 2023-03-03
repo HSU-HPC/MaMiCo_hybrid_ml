@@ -10,11 +10,11 @@ This subdirectory contains the single model approach as used for the Couette bas
 
 ### model.py
 
-### plotting.py
+### dataset.py
 
 ### utils.py
 
-### dataset.py
+### plotting.py
 
 ### trials 1 - 6 and analysis 1 - 4
 
