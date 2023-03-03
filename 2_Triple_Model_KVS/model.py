@@ -1,12 +1,17 @@
-# from ptflops import get_model_complexity_info
-# from torchsummary import summary
-# import torchvision.transforms.functional as TF
+"""model
+
+This script contains all the custom PyTorch models used for the entirety of
+this paper. In particular:
+
+DoubleConv
+AE_u_i
+RNN
+Hybrid_MD_RNN_AE_u_i
+
+"""
 import torch.nn as nn
 import torch
-import numpy as np
-from torchvision import models
-from torchsummary import summary
-# from ptflops import get_model_complexity_info
+
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 use_cuda = torch.cuda.is_available()
@@ -76,7 +81,7 @@ class DoubleConv(nn.Module):
 
 class AE(nn.Module):
     """The AE class aims at implementing a strictly convolutional autoencoder
-    very comparable to the above implemented U-Net autoencoder.
+    comparable to U-Net (Ronneberger et al., 2015).
 
     Attributes:
         in_channels:
@@ -183,8 +188,8 @@ class AE(nn.Module):
 
 
 class AE_u_i(nn.Module):
-    """The AE class aims at implementing a strictly convolutional autoencoder
-    very comparable to the above implemented U-Net autoencoder.
+    """The AE_u_i class aims at implementing a single channel version of the
+    aforementioned AE class.
 
     Attributes:
         in_channels:
@@ -360,112 +365,6 @@ class RNN(nn.Module):
         return out
 
 
-class GRU(nn.Module):
-    """The GRU class aims at implementing an adapted GRU to be used in the hybrid
-    model for time-series prediction of unrolled latent spaces.
-
-    input.shape  = (batch_size, num_seq, input_size)
-    output.shape = (batch_size, 1, input_size)
-
-    Attributes:
-        input_size:
-          Object of integer type describing the number of features in a single
-          element of the time-series sequence.
-        hidden_size:
-          Object of integer type describing the number of features in the hidden
-          state, i.e. the number of features in the output.
-        seq_size:
-          Object of integer type describing the number of elements in the
-          time-series sequence.
-        num_layers:
-          Object of integer type describing the number of stacked RNN units.
-    """
-
-    def __init__(self, input_size, hidden_size, seq_size, num_layers, device):
-        super(GRU, self).__init__()
-        self.input_size = input_size
-        self.hidden_size = hidden_size
-        self.seq_size = seq_size
-        self.num_layers = num_layers
-        self.device = device
-        self.gru = nn.GRU(
-            input_size=input_size,
-            hidden_size=hidden_size,
-            num_layers=num_layers,
-            batch_first=True
-        )
-        self.fc = nn.Linear(self.hidden_size*self.seq_size, self.input_size)
-        print('Model initialized: GRU.')
-
-    def forward(self, x):
-        # Set initial hidden states(for RNN, GRU, LSTM)
-        h0 = torch.zeros(self.num_layers, x.size(
-            0), self.hidden_size).to(self.device)
-
-        out, _ = self.gru(x, h0)
-
-        # Decode the hidden state of the last time step
-        out = out.reshape(out.shape[0], -1)
-
-        # Apply linear regressor to the last time step
-        out = self.fc(out)
-        return out
-
-
-class LSTM(nn.Module):
-    """The LSTM class aims at implementing an adapted LSTM to be used in the hybrid
-    model for time-series prediction of unrolled latent spaces.
-
-    input.shape  = (batch_size, num_seq, input_size)
-    output.shape = (batch_size, 1, input_size)
-
-    Attributes:
-        input_size:
-          Object of integer type describing the number of features in a single
-          element of the time-series sequence.
-        hidden_size:
-          Object of integer type describing the number of features in the hidden
-          state, i.e. the number of features in the output.
-        seq_size:
-          Object of integer type describing the number of elements in the
-          time-series sequence.
-        num_layers:
-          Object of integer type describing the number of stacked RNN units.
-    """
-
-    def __init__(self, input_size, hidden_size, seq_size, num_layers, device):
-        super(LSTM, self).__init__()
-        self.input_size = input_size
-        self.hidden_size = hidden_size
-        self.seq_size = seq_size
-        self.num_layers = num_layers
-        self.device = device
-        self.lstm = nn.LSTM(
-            input_size=input_size,
-            hidden_size=hidden_size,
-            num_layers=num_layers,
-            batch_first=True
-        )
-        self.fc = nn.Linear(hidden_size*self.seq_size, input_size)
-        print('Model initialized: LSTM.')
-
-    def forward(self, x):
-        # Set initial hidden states(for RNN, GRU, LSTM)
-        h0 = torch.zeros(self.num_layers, x.size(
-            0), self.hidden_size).to(self.device)
-        c0 = torch.zeros(self.num_layers, x.size(
-            0), self.hidden_size).to(self.device)
-
-        out, _ = self.lstm(x, (h0, c0))
-
-        # Decode the hidden state of the last time step
-        out = out.reshape(out.shape[0], -1)
-
-        # Apply linear regressor to the last time step
-        out = self.fc(out)
-        return out
-
-
 class Hybrid_MD_RNN_AE_u_i(nn.Module):
     """The Hybrid_MD_RNN_AE class aims at implementing the strictly convolutional
     autoencoder and RNN based hybrid model for time-series prediction of MD
@@ -476,10 +375,9 @@ class Hybrid_MD_RNN_AE_u_i(nn.Module):
 
     Attributes:
         AE_Model:
-          Object of type torch.nn.Module containing a trained strictly convolutional
-          autoencoder model
+          Object of type torch.nn.Module containing the trained AE_u_i model
         RNN_Model:
-          Object of type torch.nn.Module containing a trained RNN model
+          Object of type torch.nn.Module containing the trained RNN model
         seq_length:
           Object of integer type describing the number of elements to be
           considered in the time-series sequence of latent spaces.
@@ -553,15 +451,6 @@ class Hybrid_MD_RNN_AE_u_i(nn.Module):
         out = torch.cat((u_x, u_y, u_z), 1).to(device)
         # print('Shape [out]: ', out.shape)
         return out
-
-
-class MSLELoss(nn.Module):
-    def __init__(self):
-        super().__init__()
-        self.mse = nn.MSELoss()
-
-    def forward(self, pred, actual):
-        return self.mse(torch.log(pred + 1), torch.log(actual + 1))
 
 
 def resetPipeline(model):
@@ -731,71 +620,4 @@ def calculateFLOPS_ConvAE(c, d, h, w, features):
 
 
 if __name__ == "__main__":
-    '''
-
-    _model = AE_u_i(
-        device=device,
-        in_channels=1,
-        out_channels=1,
-        features=[4, 8, 16],
-        activation=nn.ReLU(inplace=True)
-    ).to(device)
-
-    _data = torch.rand(16, 3, 26, 26, 26)
-
-    _out = _model(_data)
-    '''
-    '''
-    x = torch.rand(10, 3, 3, 3, 3)
-    x_1 = x[:, 0, :, :, :]
-    x_1 = torch.reshape(x_1, (10, 1, 3, 3, 3))
-    print(x_1.shape)
-    x_2 = x[:, 1, :, :, :]
-    x_2 = torch.reshape(x_2, (10, 1, 3, 3, 3))
-    print(x_2.shape)
-    x_3 = x[:, 2, :, :, :]
-    x_3 = torch.reshape(x_3, (10, 1, 3, 3, 3))
-    print(x_3.shape)
-    x_cat = torch.cat((x_1, x_2, x_3), 1)
-    print(x_cat.shape)
-    t, c, h, d, w = x_cat.shape
-    print('t = ', t)
-    print('c = ', c)
-    print('d = ', d)
-    print('Is x == x_cat ?:')
-    if torch.equal(x, x_cat):
-        print('True')
-    else:
-        print('False')
-    x = torch.cat((x, x_cat), 0)
-    print(x.shape)
-    '''
-    _u = torch.ones(10, 3, 24, 24, 24)
-    _u[:, 1, :, :, :] = _u[:, 0, :, :, :] + 1
-    _u[:, 2, :, :, :] = _u[:, 2, :, :, :] + 2
-
-    print(_u.shape)
-    _u = _u.flatten(start_dim=0, end_dim=1)
-    print(_u.shape)
-    print(_u[0, 0, 0, 0])
-    print(_u[9, 0, 0, 0])
-    print(_u[10, 0, 0, 0])
-    print(_u[19, 0, 0, 0])
-    print(_u[20, 0, 0, 0])
-    print(_u[29, 0, 0, 0])
-
-    '''
-    _u_x = _u[:, 1, :, :, :]
-
-    _model_x = AE_u_i(
-        device=device,
-        in_channels=1,
-        out_channels=1,
-        features=[4, 8, 16],
-        activation=nn.ReLU(inplace=True)
-    ).to(device)
-
-    _x_pred = _model_x(_u_x)
-    print(_x_pred.shape)
-    '''
     pass
