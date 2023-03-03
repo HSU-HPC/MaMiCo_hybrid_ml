@@ -1,7 +1,7 @@
 """model
 
-This script contains all the custom PyTorch models used for the entirety of
-this paper. In particular:
+This script contains all the custom PyTorch models used for the triple model
+approach. In particular:
 
 DoubleConv
 AE_u_i
