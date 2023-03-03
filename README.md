@@ -74,7 +74,7 @@ This subdirectory is a code graveyard.
 [ConvRecAE_single]: https://github.com/HSU-HPC/MaMiCo_hybrid_ml/blob/master/3_Figures/ConvRecAE_single.drawio.svg "Convolutional recurrent autoencoder as employed in the single model approach"
 
 
-[ConvRecAE_triple]: https://github.com/HSU-HPC/MaMiCo_hybrid_ml/blob/master/3_Figures/ConvRecAE.drawio.svg "Convolutional recurrent autoencoder as employed in the triple model approach"
+[ConvRecAE_triple]: https://github.com/HSU-HPC/MaMiCo_hybrid_ml/blob/master/3_Figures/ConvRecAE_triple.drawio.svg "Convolutional recurrent autoencoder as employed in the triple model approach"
 
 
 [ConvAE]: https://github.com/HSU-HPC/MaMiCo_hybrid_ml/blob/master/3_Figures/ConvAe.drawio.svg "Convolutional autoencoder as employed in the triple model approach"
