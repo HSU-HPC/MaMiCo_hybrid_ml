@@ -487,7 +487,46 @@ def fig_maker_3(id):
 
 
 if __name__ == "__main__":
+    _model_i = AE_u_i(
+        device=device,
+        in_channels=1,
+        out_channels=1,
+        features=[4, 8, 16],
+        activation=nn.ReLU(inplace=True)
+    ).to(device)
+
+    _num_layers = 1
+    _seq_length = 25
+    _model_RNN = RNN(
+        input_size=256,
+        hidden_size=256,
+        seq_size=_seq_length,
+        num_layers=_num_layers,
+        device=device
+    ).to(device)
+
+    _model_i.eval()
+    _model_RNN.eval()
+
+    _model_Hybrid = Hybrid_MD_RNN_AE_u_i(
+        device=device,
+        AE_Model_x=_model_i,
+        AE_Model_y=_model_i,
+        AE_Model_z=_model_i,
+        RNN_Model_x=_model_RNN,
+        RNN_Model_y=_model_RNN,
+        RNN_Model_z=_model_RNN,
+        seq_length=_seq_length,
+    ).to(device)
+
+    _ins = torch.zeros((1, 24, 24, 24))
+
+    _outs = _model_i(_ins)
+
+    '''
     _ids = ['20000_NE', '22000_NW']  # , '26000_SE', '28000_SW']
     # _ids = ['22000_NW']
     for _id in _ids:
         fig_maker_3(id=_id)
+
+    '''
