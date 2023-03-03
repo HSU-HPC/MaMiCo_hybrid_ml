@@ -44,18 +44,34 @@ to any corresponding continuum flow information.
 
 ## 0_Data_Generation
 
+This subdirectory contains a file structure of configurations in order to
+generate the MD datasets. In this paper, we use the macro-micro coupling tool (MaMiCo)
+to generate datasets based on Couette and Karman-Vortex-Street scenarios for molecular-continuum coupled flow simulations.
+
+![alt text][molcont]
+
 ## 1_Single_Model_Couette
+
+This subdirectory contains the single model approach as used for the Couette based datasets.
 
 ![alt text][ConvRecAE_single]
 
 ## 2_Triple_Model_KVS
 
+This subdirectory contains the triple model approach as used for the KVS based datasets.
+
 ![alt text][ConvRecAE_triple]
+
+## 3_Figures
+
+This subdirectory contains our figures.
 
 ## X_Graveyard
 
+This subdirectory is a code graveyard.
 
-[ConvRecAE_single]: https://github.com/HSU-HPC/MaMiCo_hybrid_ml/blob/master/3_Figures/ConvRecAE_single.drawio.svg "Convolutional  recurrent autoencoder as employed in the single model approach"
+
+[ConvRecAE_single]: https://github.com/HSU-HPC/MaMiCo_hybrid_ml/blob/master/3_Figures/ConvRecAE_single.drawio.svg "Convolutional recurrent autoencoder as employed in the single model approach"
 
 
 [ConvRecAE_triple]: https://github.com/HSU-HPC/MaMiCo_hybrid_ml/blob/master/3_Figures/ConvRecAE.drawio.svg "Convolutional recurrent autoencoder as employed in the triple model approach"
@@ -67,4 +83,4 @@ to any corresponding continuum flow information.
 [RNN]: https://github.com/HSU-HPC/MaMiCo_hybrid_ml/blob/master/3_Figures/LatentspaceRNN.drawio.svg "Recurrent neural network as employed in the triple model approach"
 
 
-[molcont]: https://github.com/HSU-HPC/MaMiCo_hybrid_ml/blob/master/3_Figures/ConvRecAE.drawio.svg "Convolutional recurrent autoencoder as employed in the triple model approach"
+[molcont]: https://github.com/HSU-HPC/MaMiCo_hybrid_ml/blob/master/3_Figures/molcont.png "Dataset visualizations"
