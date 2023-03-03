@@ -25,11 +25,13 @@ In this paper, we develop an advanced hybrid ML model for MD data in
 the context of coupled molecular-continuum flow simulations. Our model
 is based on recent know-how from computer vision and speech recognition,
 applied to a computational fluid dynamics context: A convolutional
-autoencoder deals with the spatial extent of the flow data, while a
-recurrent neural network is used to capture its temporal correlation.
+autoencoder (ConvAE) deals with the spatial extent of the flow data, while a
+recurrent neural network (RNN) is used to capture its temporal correlation.
 We use the open source coupling tool MaMiCo to generate MD datasets for ML
 training and implement the hybrid model as a PyTorch-based filtering
-module for MaMiCo. The ML models are trained with real MD data from
+module for MaMiCo. 
+
+The ML models are trained with real MD data from
 different flow scenarios including a Couette flow validation setup
 and a three-dimensional vortex street test case. Our results show that
 the convolutional recurrent hybrid model is able to learn and predict
@@ -44,6 +46,25 @@ to any corresponding continuum flow information.
 
 ## 1_Single_Model_Couette
 
+![alt text][ConvRecAE_single]
+
 ## 2_Triple_Model_KVS
 
+![alt text][ConvRecAE_triple]
+
 ## X_Graveyard
+
+
+[ConvRecAE_single]: https://github.com/HSU-HPC/MaMiCo_hybrid_ml/blob/master/3_Figures/ConvRecAE_single.drawio.svg "Convolutional  recurrent autoencoder as employed in the single model approach"
+
+
+[ConvRecAE_triple]: https://github.com/HSU-HPC/MaMiCo_hybrid_ml/blob/master/3_Figures/ConvRecAE.drawio.svg "Convolutional recurrent autoencoder as employed in the triple model approach"
+
+
+[ConvAE]: https://github.com/HSU-HPC/MaMiCo_hybrid_ml/blob/master/3_Figures/ConvAe.drawio.svg "Convolutional autoencoder as employed in the triple model approach"
+
+
+[RNN]: https://github.com/HSU-HPC/MaMiCo_hybrid_ml/blob/master/3_Figures/LatentspaceRNN.drawio.svg "Recurrent neural network as employed in the triple model approach"
+
+
+[molcont]: https://github.com/HSU-HPC/MaMiCo_hybrid_ml/blob/master/3_Figures/ConvRecAE.drawio.svg "Convolutional recurrent autoencoder as employed in the triple model approach"
