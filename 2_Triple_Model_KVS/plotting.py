@@ -4,22 +4,15 @@ This script contains all plotting functionalities used for the entirety of this
 paper. In particular:
 
 plot_flow_profile
+plot_flow_profile_std
 
 """
-from utils import csv2dataset_mp
 import numpy as np
 import matplotlib.pyplot as plt
-import matplotlib as mpl
 import matplotlib.font_manager as font_manager
 
 
 FONT = font_manager.FontProperties(weight='bold', size=10)
-
-
-def getColor(c, N, idx):
-    cmap = mpl.cm.get_cmap(c)
-    norm = mpl.colors.Normalize(vmin=0.0, vmax=N - 1)
-    return cmap(norm(idx))
 
 
 def plot_flow_profile(np_datasets, dataset_legends, save2file, unique_id=None):
@@ -213,36 +206,6 @@ def plot_flow_profile_std(np_datasets, dataset_legends, save2file, unique_id=Non
     else:
         fig.savefig(f'plots/Plot_std_flow_profile_{save2file}.svg')
     # plt.show()
-    plt.close()
-
-
-def compareLossVsValid(loss_files, loss_labels, file_prefix=0, file_name=0):
-    # BRIEF:
-    # PARAMETERS:
-    losses = csv2dataset_mp(loss_files)
-
-    loss_list = []
-    for loss in losses:
-        loss_list.append(loss)
-
-    num_epoch = (loss_list[0]).shape[0]
-
-    x_axis = range(1, (num_epoch+1), 1)
-
-    fig, (ax1) = plt.subplots(1, constrained_layout=True)
-    for idx in range(int(len(loss_list)/2)):
-        ax1.plot(x_axis, loss_list[2*idx], color=getColor(c='tab20',
-                 N=12, idx=idx), label=loss_labels[2*idx])
-        ax1.plot(x_axis, loss_list[2*idx+1], color=getColor(c='tab20',
-                 N=12, idx=idx), linestyle='--', label=loss_labels[2*idx+1])
-    ax1.set_xlabel('Epoch')
-    ax1.set_ylabel('Average Loss')
-    ax1.grid(axis='y', alpha=0.3)
-    ax1.legend(ncol=2, fontsize=9)
-    fig.set_size_inches(7, 2.5)
-    if file_name != 0:
-        fig.savefig(f'{file_prefix}Compare_Loss_vs_Valid_{file_name}.svg')
-
     plt.close()
 
 

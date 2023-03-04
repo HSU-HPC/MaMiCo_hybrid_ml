@@ -1,3 +1,14 @@
+"""dataset
+
+This script contains all the custom PyTorch Dataset implementations used for
+the triple model approach. In particular:
+
+MyMamicoDataset_AE
+MyMamicoDataset_RNN
+MyMamicoDataset_RNN_verification
+MyMamicoDataset_Hybrid
+"""
+
 import numpy as np
 import torch
 from torch.utils.data import Dataset

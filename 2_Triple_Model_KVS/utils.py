@@ -1,3 +1,13 @@
+"""utils
+
+This script contains necessary auxillary functions from loading from file to
+getting the model specific DataLoader. In particular:
+
+get_AE_loaders
+get_RNN_loaders
+get_Hybrid_loaders
+"""
+
 import torch
 import numpy as np
 import glob
@@ -82,26 +92,6 @@ def mlready2latentspace(file_name):
     latentspace = dataset.reshape(t, c, d, h, w)
     print(latentspace.shape)
     return latentspace
-
-
-def losses2file(losses, file_name):
-    """The losses2file function saves a list to a csv file.
-
-    Args:
-        losses:
-          Object of type list containing the losses of interest.
-        file_name:
-          Object of string type containing the name of the csv file where the
-          losses will be saved to.
-
-    Returns:
-        NONE:
-          This function does not have a return value. Instead it saves the
-          losses of interest to file.
-    """
-
-    print(f'Saving losses to file: {file_name}')
-    np.savetxt(f"{file_name}.csv", losses, delimiter=", ", fmt='% s')
 
 
 def get_AE_loaders(data_distribution, batch_size=32, shuffle=True, num_workers=1):
