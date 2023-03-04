@@ -1,3 +1,10 @@
+"""trial_1
+
+This script focuses on training the convolutional autoencoder as used in the
+triple model approach. Afterwards, the latentspaces are retrieved from the
+trained model. Plots are created.
+"""
+
 import torch
 import random
 import copy
