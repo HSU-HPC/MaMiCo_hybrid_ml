@@ -2,85 +2,77 @@ ICCS 2023: Convolutional Recurrent Autoencoder for Molecular-Continuum Coupling
 
 Piet Jarmatz, Sebastian Lerdo, Philipp Neumann
 
-# Abstract
-
-
-Molecular-continuum coupled flow simulations are used in many
-applications to build a bridge across spatial or temporal scales.
-Hence, they allow to investigate effects beyond flow scenarios
-modeled by any single-scale method alone, such as a discrete particle
-system or a partial differential equation solver. On the particle
-side of the coupling, often molecular dynamics (MD) is used to obtain
-trajectories based on pairwise molecule interaction potentials. However,
-since MD is computationally expensive and macroscopic flow quantities
-sampled from MD systems often highly fluctuate due to thermal noise,
-the applicability of molecular-continuum methods is limited. If
-machine learning (ML) methods can learn and predict MD based flow
-data, then this can be used as a noise filter or even to replace MD
-computations – both generates potential for tremendous speed-up of
-molecular-continuum simulations, aiming to enable new applications
-emerging on the horizon.
-
-In this paper, we develop an advanced hybrid ML model for MD data in
-the context of coupled molecular-continuum flow simulations. Our model
-is based on recent know-how from computer vision and speech recognition,
-applied to a computational fluid dynamics context: A convolutional
-autoencoder (ConvAE) deals with the spatial extent of the flow data, while a
-recurrent neural network (RNN) is used to capture its temporal correlation.
-We use the open source coupling tool MaMiCo to generate MD datasets for ML
-training and implement the hybrid model as a PyTorch-based filtering
-module for MaMiCo. 
-
-The ML models are trained with real MD data from
-different flow scenarios including a Couette flow validation setup
-and a three-dimensional vortex street test case. Our results show that
-the convolutional recurrent hybrid model is able to learn and predict
-smooth flow quantities, even for very noisy MD input data. We furthermore
-demonstrate that also the more complex vortex street continuum flow
-data can accurately be reproduced by the ML module, without access
-to any corresponding continuum flow information.
-
-# Overview
-
-## 0_Data_Generation
-
-This subdirectory contains a file structure of configurations in order to
-generate the MD datasets. In this paper, we use the macro-micro coupling tool (MaMiCo)
-to generate datasets based on Couette and Karman-Vortex-Street scenarios for molecular-continuum coupled flow simulations.
-
-![alt text][molcont]
-
-## 1_Single_Model_Couette
-
-This subdirectory contains the single model approach as used for the Couette based datasets.
-
-![alt text][ConvRecAE_single]
-
 ## 2_Triple_Model_KVS
 
 This subdirectory contains the triple model approach as used for the KVS based datasets.
 
+### data_preprocessing.py
+
+This script allows to perform the required data preprocessing including data
+cleaning and data visualization. Data cleaning is necessary since the initial
+MaMiCo output files use faulty delimiters. Visualization of the raw data aims
+to validate correctness/plausibility so as to reduce the likelihood of faulty
+simulation data.
+
+### model.py
+
+This script contains all the custom PyTorch models used for the triple model
+approach. In particular:
+
+- `DoubleConv`
+
+- `AE_u_i`
+
+![alt text][ConvAE_triple]
+
+- `RNN`
+
+![alt text][RNN]
+
+- `Hybrid_MD_RNN_AE_u_i`
+
 ![alt text][ConvRecAE_triple]
 
-## 3_Figures
+### dataset.py
 
-This subdirectory contains our figures.
+This script contains all the custom PyTorch Dataset implementations used for
+the triple model approach.
 
-## X_Graveyard
+### utils.py
 
-This subdirectory is a code graveyard.
+This script contains necessary auxillary functions from loading from file to
+getting the model specific DataLoader. In particular:
 
+- `get_AE_loaders`
 
-[ConvRecAE_single]: https://github.com/HSU-HPC/MaMiCo_hybrid_ml/blob/master/3_Figures/ConvRecAE_single.drawio.svg "Convolutional recurrent autoencoder as employed in the single model approach"
+- `get_RNN_loaders`
 
+- `get_Hybrid_loaders`
+
+### plotting.py
+
+This script contains all plotting functionalities used for the triple model
+approach. In particular:
+
+- `plot_flow_profile`
+
+- `plot_flow_profile_std`
+
+### trial_1.py
+
+This script focuses on training the convolutional autoencoder as used in the
+triple model approach. Afterwards, the latentspaces are extracted from the
+trained model.
+
+### trial_2.py
+
+This script focuses on training the recurrent neural networks on the basis of the
+extracted latent spaces. Afterwards, the hybrid model is validated.
+
+[ConvAE_triple]: https://github.com/HSU-HPC/MaMiCo_hybrid_ml/blob/master/3_Figures/ConvAe_triple.drawio.svg "Convolutional autoencoder as employed in the triple model approach"
+
+[RNN]: https://github.com/HSU-HPC/MaMiCo_hybrid_ml/blob/master/3_Figures/LatentspaceRNN.drawio.svg "Recurrent neural network as employed in the triple model approach"
 
 [ConvRecAE_triple]: https://github.com/HSU-HPC/MaMiCo_hybrid_ml/blob/master/3_Figures/ConvRecAE_triple.drawio.svg "Convolutional recurrent autoencoder as employed in the triple model approach"
 
 
-[ConvAE]: https://github.com/HSU-HPC/MaMiCo_hybrid_ml/blob/master/3_Figures/ConvAe.drawio.svg "Convolutional autoencoder as employed in the triple model approach"
-
-
-[RNN]: https://github.com/HSU-HPC/MaMiCo_hybrid_ml/blob/master/3_Figures/LatentspaceRNN.drawio.svg "Recurrent neural network as employed in the triple model approach"
-
-
-[molcont]: https://github.com/HSU-HPC/MaMiCo_hybrid_ml/blob/master/3_Figures/molcont.png "Dataset visualizations"
