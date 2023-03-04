@@ -23,15 +23,9 @@ approach. In particular:
 
 - `AE_u_i`
 
-![alt text][ConvAE_triple]
-
 - `RNN`
 
-![alt text][RNN]
-
 - `Hybrid_MD_RNN_AE_u_i`
-
-![alt text][ConvRecAE_triple]
 
 ### dataset.py
 
@@ -68,11 +62,3 @@ trained model.
 
 This script focuses on training the recurrent neural networks on the basis of the
 extracted latent spaces. Afterwards, the hybrid model is validated.
-
-[ConvAE_triple]: https://github.com/HSU-HPC/MaMiCo_hybrid_ml/blob/master/3_Figures/ConvAe_triple.drawio.svg "Convolutional autoencoder as employed in the triple model approach"
-
-[RNN]: https://github.com/HSU-HPC/MaMiCo_hybrid_ml/blob/master/3_Figures/LatentspaceRNN.drawio.svg "Recurrent neural network as employed in the triple model approach"
-
-[ConvRecAE_triple]: https://github.com/HSU-HPC/MaMiCo_hybrid_ml/blob/master/3_Figures/ConvRecAE_triple.drawio.svg "Convolutional recurrent autoencoder as employed in the triple model approach"
-
-
