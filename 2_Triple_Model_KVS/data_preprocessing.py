@@ -5,8 +5,8 @@ cleaning and data visualization. Data cleaning is necessary since the initial
 MaMiCo output files use faulty delimiters. Visualization of the raw data aims
 to validate correctness/plausibility so as to reduce the likelihood of faulty
 simulation data.
-
 """
+
 import csv
 import glob
 import numpy as np
@@ -136,7 +136,7 @@ def clean2mlready(file_name):
           This function does not have a return value. Instead it saves the
           mlready dataset to file.
     """
-    _directory = "beegfs/project/MaMiCo/mamico-ml/dataset"
+    # _directory = "beegfs/project/MaMiCo/mamico-ml/dataset"
     _dataset = clean2dataset(file_name)
 
     print(f'Saving dataset to csv: {file_name}')

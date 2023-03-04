@@ -87,7 +87,7 @@ class MyMamicoDataset_RNN(Dataset):
 
 class MyMamicoDataset_RNN_verification(Dataset):
     """This class inherits from the torch Dataset class and allows to create a
-    userdefined dataset. Here, the dataset is hardcoded to consider latentspaces
+    userdefined dataset. Here, the dataset is hardcoded to consider latentspace
     of shape (1000, 256) derived from the md+outer dimensionality of 26^3.
     As this Dataset will be used to verify proper latent space generation, the
     inputs (=images) and outputs (=masks) are therefor identical.
