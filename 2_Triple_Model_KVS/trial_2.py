@@ -493,6 +493,7 @@ def fig_maker_3(id):
 
 
 if __name__ == "__main__":
+    '''
     device = 'cpu'
     _model_i = AE_u_i(
         device=device,
@@ -535,10 +536,10 @@ if __name__ == "__main__":
     end = time.time()
     print('Duration of one ML Calculation = 1 Coupling Cycle: ', end - start)
 
-    '''
     _ids = ['20000_NE', '22000_NW']  # , '26000_SE', '28000_SW']
     # _ids = ['22000_NW']
     for _id in _ids:
         fig_maker_3(id=_id)
 
     '''
+    trial_2_train_RNN_u_i()
