@@ -5,6 +5,8 @@ import torch.multiprocessing as mp
 import torch.optim as optim
 import torch.nn as nn
 import numpy as np
+import platform
+import time
 from model import AE_u_i, RNN, Hybrid_MD_RNN_AE_u_i
 from utils import get_RNN_loaders, get_Hybrid_loaders, mlready2dataset
 from plotting import plotPredVsTargKVS, plot_flow_profile, plot_flow_profile_std
@@ -487,6 +489,7 @@ def fig_maker_3(id):
 
 
 if __name__ == "__main__":
+    device = 'cpu'
     _model_i = AE_u_i(
         device=device,
         in_channels=1,
@@ -519,9 +522,14 @@ if __name__ == "__main__":
         seq_length=_seq_length,
     ).to(device)
 
-    _ins = torch.zeros((1, 24, 24, 24))
+    print(platform.processor())
 
+    _ins = torch.zeros((1, 24, 24, 24))
+    start = time.time()
     _outs = _model_i(_ins)
+
+    end = time.time()
+    print('Duration of one ML Calculation = 1 Coupling Cycle: ', end - start)
 
     '''
     _ids = ['20000_NE', '22000_NW']  # , '26000_SE', '28000_SW']
