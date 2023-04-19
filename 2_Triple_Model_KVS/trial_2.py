@@ -194,7 +194,9 @@ def trial_2_train_RNN_u_i():
     _model_AE.eval()
 
     print('Beginning training.')
-    for epoch in range(50):
+
+    for epoch in range(1):
+        start = time.time()
         _avg_loss = 0
         for _train_i in _trains_i:
             loss = train_RNN_u_i(
@@ -214,6 +216,8 @@ def trial_2_train_RNN_u_i():
         print(f'-> Avg loss {_avg_loss:.3f}')
 
         _avg_loss = 0
+        end = time.time()
+        print('Duration of one ML Calculation = 1 Coupling Cycle: ', end - start)
 
         for _valid_i in _valids_i:
             loss = valid_RNN_u_i(
