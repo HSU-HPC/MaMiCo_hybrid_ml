@@ -12,6 +12,8 @@ import torch.multiprocessing as mp
 import torch.optim as optim
 import torch.nn as nn
 import numpy as np
+import platform
+import time
 from model import AE_u_i
 from utils import get_AE_loaders, get_RNN_loaders, dataset2csv, mlready2dataset
 from plotting import plot_flow_profile, plotPredVsTargKVS
@@ -307,8 +309,11 @@ def trial_1_AE_u_i(alpha, alpha_string, train_loaders, valid_loaders):
     _optimizer_i = optim.Adam(_model_i.parameters(), lr=alpha)
 
     print('Beginning training.')
-    for epoch in range(50):
+    for epoch in range(1):
         _avg_loss = 0
+        print('Hardware: ', platform.processor())
+
+        start = time.time()
 
         for _train_loader in train_loaders:
             _loss = train_AE_u_i(
@@ -321,6 +326,9 @@ def trial_1_AE_u_i(alpha, alpha_string, train_loaders, valid_loaders):
                 current_epoch=epoch+1
             )
             _avg_loss += _loss
+
+        end = time.time()
+        print('Duration of one ML Calculation = 1 Coupling Cycle: ', end - start)
 
         _avg_loss = _avg_loss/len(train_loaders)
         print('------------------------------------------------------------')
@@ -377,7 +385,7 @@ def trial_1_AE_u_i_mp():
 
     _processes = []
 
-    for i in range(4):
+    for i in range(1):
         _p = mp.Process(
             target=trial_1_AE_u_i,
             args=(_alphas[i], _alpha_strings[i],
@@ -633,7 +641,9 @@ if __name__ == "__main__":
         model_name_i=_model_name_i,
         dataset_name=_dataset_name,
         save2file_name=_save2file_name)
-    '''
+
     _ids = ['20000_NE', '22000_NW', '26000_SE', '28000_SW']
     for _id in _ids:
         fig_maker_1(id=_id)
+    '''
+    trial_1_AE_u_i_mp()
