@@ -7,9 +7,9 @@
 #SBATCH --gpus=2
 #SBATCH --cpus-per-task=1    # number of cores per process
 #SBATCH --time=10:00:00
-#SBATCH --output=/beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/4_ICCS/trial_1_AE_u_i_%j.log
+#SBATCH --output=/beegfs/project/MaMiCo/mamico-ml/housecleaned_repo/MaMiCo_hybrid_ml/2_Triple_Model_KVS/trial_1_AE_u_i_%j.log
 # commands to be executed
 
-cd /beegfs/project/MaMiCo/mamico-ml/ICCS/MD_U-Net/4_ICCS/
+cd /beegfs/project/MaMiCo/mamico-ml/housecleaned_repo/MaMiCo_hybrid_ml/2_Triple_Model_KVS/
 
 python trial_1.py
