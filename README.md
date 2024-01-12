@@ -2,6 +2,8 @@ ICCS 2023: Convolutional Recurrent Autoencoder for Molecular-Continuum Coupling
 
 Piet Jarmatz, Sebastian Lerdo, Philipp Neumann
 
+ML data set generation for molecular-continuum simulations with [MaMiCo](https://github.com/HSU-HPC/MaMiCo).
+
 # Abstract
 
 
